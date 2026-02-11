@@ -116,6 +116,7 @@ model Habilidade {
   objeto_conhecimento String?  @db.Text
   versao_bncc         String   @default("2018") // Versionamento (futuro: 2024?)
   ativa               Boolean  @default(true) // Soft delete
+  searchable          String?  @db.Text // tsvector GENERATED ALWAYS (full-text search) - unsupported type in Prisma
   created_at          DateTime @default(now())
   updated_at          DateTime @updatedAt
 

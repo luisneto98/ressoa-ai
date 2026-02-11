@@ -77,11 +77,14 @@ export class TenantInterceptor implements NestInterceptor {
     // JWT should ALWAYS have escolaId as string (normal user) or null (ADMIN)
     if (escolaId === undefined) {
       // SECURITY LOG: Detect malicious attempts to bypass multi-tenancy
-      console.error('[SECURITY] Authenticated request with undefined escolaId', {
-        userId: user.userId,
-        email: user.email,
-        timestamp: new Date().toISOString(),
-      });
+      console.error(
+        '[SECURITY] Authenticated request with undefined escolaId',
+        {
+          userId: user.userId,
+          email: user.email,
+          timestamp: new Date().toISOString(),
+        },
+      );
 
       throw new UnauthorizedException(
         'Escola ID não encontrado no token JWT. Token inválido ou malformado.',

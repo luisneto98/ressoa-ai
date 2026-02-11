@@ -45,7 +45,9 @@ describe('ContextService', () => {
         throw error;
       });
 
-      await expect(service.run(escolaId, callback)).rejects.toThrow('Test error');
+      await expect(service.run(escolaId, callback)).rejects.toThrow(
+        'Test error',
+      );
     });
 
     it('should isolate context between concurrent calls', async () => {

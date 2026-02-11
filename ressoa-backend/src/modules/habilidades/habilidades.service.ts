@@ -77,7 +77,10 @@ export class HabilidadesService {
       }
     } catch (error) {
       // Log error but continue to DB query (degraded mode)
-      console.error('[HabilidadesService] Redis cache read error (degraded mode):', error);
+      console.error(
+        '[HabilidadesService] Redis cache read error (degraded mode):',
+        error,
+      );
     }
 
     // 2. Cache miss (or Redis error) - query database
@@ -135,7 +138,11 @@ export class HabilidadesService {
     }
 
     // Add unidade_tematica filter
-    if (where.unidade_tematica && typeof where.unidade_tematica === 'object' && 'contains' in where.unidade_tematica) {
+    if (
+      where.unidade_tematica &&
+      typeof where.unidade_tematica === 'object' &&
+      'contains' in where.unidade_tematica
+    ) {
       whereParams.push(`%${where.unidade_tematica.contains}%`);
       conditions.push(`unidade_tematica ILIKE $${whereParams.length}`);
     }
@@ -143,9 +150,12 @@ export class HabilidadesService {
     // Add full-text search
     const searchQuery = search.split(' ').join(' & ');
     whereParams.push(searchQuery);
-    conditions.push(`searchable @@ to_tsquery('portuguese', $${whereParams.length})`);
+    conditions.push(
+      `searchable @@ to_tsquery('portuguese', $${whereParams.length})`,
+    );
 
-    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+    const whereClause =
+      conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
     // Query data with pagination (separate parameters for LIMIT/OFFSET)
     const dataParams = [...whereParams, limit, offset];
@@ -167,7 +177,10 @@ export class HabilidadesService {
 
     const [data, countResult] = await Promise.all([
       this.prisma.$queryRawUnsafe<any[]>(dataQuery, ...dataParams),
-      this.prisma.$queryRawUnsafe<[{ count: bigint }]>(countQuery, ...whereParams),
+      this.prisma.$queryRawUnsafe<[{ count: bigint }]>(
+        countQuery,
+        ...whereParams,
+      ),
     ]);
 
     return {
@@ -194,7 +207,14 @@ export class HabilidadesService {
   private async queryDatabase(
     query: QueryHabilidadesDto,
   ): Promise<HabilidadesResponse> {
-    const { disciplina, serie, unidade_tematica, search, limit = 50, offset = 0 } = query;
+    const {
+      disciplina,
+      serie,
+      unidade_tematica,
+      search,
+      limit = 50,
+      offset = 0,
+    } = query;
 
     // Build WHERE clause dinamicamente
     const where: Prisma.HabilidadeWhereInput = {
@@ -219,7 +239,7 @@ export class HabilidadesService {
         {
           OR: [
             { ano_fim: { gte: serie } }, // Blocos compartilhados (ano_fim preenchido)
-            { ano_fim: null },            // Habilidades específicas (ano_fim null = ano_inicio == ano_fim)
+            { ano_fim: null }, // Habilidades específicas (ano_fim null = ano_inicio == ano_fim)
           ],
         },
       ];
@@ -238,7 +258,7 @@ export class HabilidadesService {
     // Execute query com pagination
     // Se houver full-text search, usar raw SQL (Prisma não suporta tsvector nativamente)
     if (hasFullTextSearch) {
-      return this.queryWithFullTextSearch(where, search!, limit, offset);
+      return this.queryWithFullTextSearch(where, search, limit, offset);
     }
 
     // Query normal sem full-text search
@@ -249,7 +269,7 @@ export class HabilidadesService {
         take: limit,
         orderBy: [
           { disciplina: 'asc' }, // Ordenar por disciplina primeiro
-          { codigo: 'asc' },      // Depois por código (ex: EF06MA01, EF06MA02...)
+          { codigo: 'asc' }, // Depois por código (ex: EF06MA01, EF06MA02...)
         ],
         select: {
           id: true,

@@ -121,7 +121,8 @@ export class PlanejamentoController {
         turma_id: turmaId,
         bimestre,
         ano_letivo: anoLetivo,
-        validado: validado === 'true' ? true : validado === 'false' ? false : undefined,
+        validado:
+          validado === 'true' ? true : validado === 'false' ? false : undefined,
       },
       user!,
     );
@@ -136,7 +137,8 @@ export class PlanejamentoController {
   @Roles('PROFESSOR', 'COORDENADOR', 'DIRETOR')
   @ApiOperation({
     summary: 'Buscar planejamento por ID',
-    description: 'Retorna planejamento completo com turma, habilidades e professor',
+    description:
+      'Retorna planejamento completo com turma, habilidades e professor',
   })
   @ApiParam({ name: 'id', description: 'ID do planejamento (UUID)' })
   @ApiResponse({
@@ -202,7 +204,10 @@ export class PlanejamentoController {
       'Remove planejamento (soft delete). Bloqueia se houver aulas vinculadas.',
   })
   @ApiParam({ name: 'id', description: 'ID do planejamento (UUID)' })
-  @ApiResponse({ status: 204, description: 'Planejamento excluído com sucesso' })
+  @ApiResponse({
+    status: 204,
+    description: 'Planejamento excluído com sucesso',
+  })
   @ApiResponse({
     status: 400,
     description: 'Não é possível excluir planejamento com aulas vinculadas',

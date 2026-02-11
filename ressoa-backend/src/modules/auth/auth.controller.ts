@@ -101,10 +101,12 @@ export class AuthController {
         nome: user.nome,
         role: user.perfil_usuario?.role || 'PROFESSOR',
         // ADMIN users have escola = null (global access)
-        escola: user.escola ? {
-          id: user.escola.id,
-          nome: user.escola.nome,
-        } : null,
+        escola: user.escola
+          ? {
+              id: user.escola.id,
+              nome: user.escola.nome,
+            }
+          : null,
       },
     };
   }
@@ -176,7 +178,10 @@ export class AuthController {
 
     // 3. FIX: Validate escola relationship exists
     // ADMIN users can have escola_id = null (global access)
-    if (!updatedUser.escola && updatedUser.perfil_usuario?.role !== RoleUsuario.ADMIN) {
+    if (
+      !updatedUser.escola &&
+      updatedUser.perfil_usuario?.role !== RoleUsuario.ADMIN
+    ) {
       throw new UnauthorizedException('Usuário sem escola associada');
     }
 
@@ -196,10 +201,12 @@ export class AuthController {
         nome: updatedUser.nome,
         role: updatedUser.perfil_usuario?.role || 'PROFESSOR',
         // ADMIN users have escola = null (global access)
-        escola: updatedUser.escola ? {
-          id: updatedUser.escola.id,
-          nome: updatedUser.escola.nome,
-        } : null,
+        escola: updatedUser.escola
+          ? {
+              id: updatedUser.escola.id,
+              nome: updatedUser.escola.nome,
+            }
+          : null,
       },
     };
   }
@@ -246,10 +253,12 @@ export class AuthController {
       nome: user.nome,
       role: user.perfil_usuario?.role || 'PROFESSOR',
       // ADMIN users have escola = null (global access)
-      escola: user.escola ? {
-        id: user.escola.id,
-        nome: user.escola.nome,
-      } : null,
+      escola: user.escola
+        ? {
+            id: user.escola.id,
+            nome: user.escola.nome,
+          }
+        : null,
     };
   }
 
@@ -361,7 +370,8 @@ export class AuthController {
       properties: {
         message: {
           type: 'string',
-          example: 'Senha redefinida com sucesso. Faça login com sua nova senha.',
+          example:
+            'Senha redefinida com sucesso. Faça login com sua nova senha.',
         },
       },
     },
@@ -374,10 +384,14 @@ export class AuthController {
     @Body() dto: ResetPasswordDto,
   ): Promise<{ message: string }> {
     // Audit logging: Reset password attempt
-    this.logger.log(`Password reset attempt with token: ${dto.token.substring(0, 8)}...`);
+    this.logger.log(
+      `Password reset attempt with token: ${dto.token.substring(0, 8)}...`,
+    );
 
     // 1. Buscar token no Redis (O(1) direct lookup - Story 1.2 learning)
-    const tokenData = await this.redisService.get(`reset_password:${dto.token}`);
+    const tokenData = await this.redisService.get(
+      `reset_password:${dto.token}`,
+    );
 
     if (!tokenData) {
       // Audit logging: Invalid/expired token
@@ -411,7 +425,9 @@ export class AuthController {
 
     if (!user) {
       // This shouldn't happen (token exists but user doesn't, or wrong escola)
-      this.logger.error(`Password reset: Token found but user ${userId} not found or escola mismatch`);
+      this.logger.error(
+        `Password reset: Token found but user ${userId} not found or escola mismatch`,
+      );
       throw new NotFoundException('Usuário não encontrado');
     }
 
@@ -457,10 +473,13 @@ export class AuthController {
         }
       }
 
-      this.logger.log(`Invalidated ${invalidatedCount} refresh tokens for user ${userId} (force logout)`);
+      this.logger.log(
+        `Invalidated ${invalidatedCount} refresh tokens for user ${userId} (force logout)`,
+      );
     } catch (error) {
       // Log error but don't fail password reset if token invalidation fails
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(`Failed to invalidate refresh tokens: ${errorMessage}`);
     }
 

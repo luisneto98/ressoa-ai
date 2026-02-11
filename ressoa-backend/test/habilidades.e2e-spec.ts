@@ -163,16 +163,21 @@ describe('Habilidades BNCC Query API (E2E) - Story 2.2', () => {
         .expect(200);
 
       expect(response.body.total).toBeGreaterThanOrEqual(25); // ~30 habilidades Matemática 6º ano
-      expect(response.body.data.every((h: any) => h.disciplina === 'MATEMATICA')).toBe(true);
+      expect(
+        response.body.data.every((h: any) => h.disciplina === 'MATEMATICA'),
+      ).toBe(true);
 
       // Verificar que todas habilidades cobrem série 6
       response.body.data.forEach((h: any) => {
-        const cobreSerie6 = h.ano_inicio <= 6 && (h.ano_fim === null || h.ano_fim >= 6);
+        const cobreSerie6 =
+          h.ano_inicio <= 6 && (h.ano_fim === null || h.ano_fim >= 6);
         expect(cobreSerie6).toBe(true);
       });
 
       // Verificar que códigos começam com EF06MA
-      const temEF06MA = response.body.data.some((h: any) => h.codigo.startsWith('EF06MA'));
+      const temEF06MA = response.body.data.some((h: any) =>
+        h.codigo.startsWith('EF06MA'),
+      );
       expect(temEF06MA).toBe(true);
     });
 
@@ -212,9 +217,13 @@ describe('Habilidades BNCC Query API (E2E) - Story 2.2', () => {
         .expect(200);
 
       expect(response.body.total).toBeGreaterThanOrEqual(10);
-      expect(response.body.data.every((h: any) => h.disciplina === 'CIENCIAS')).toBe(true);
+      expect(
+        response.body.data.every((h: any) => h.disciplina === 'CIENCIAS'),
+      ).toBe(true);
 
-      const temEF09CI = response.body.data.some((h: any) => h.codigo.startsWith('EF09CI'));
+      const temEF09CI = response.body.data.some((h: any) =>
+        h.codigo.startsWith('EF09CI'),
+      );
       expect(temEF09CI).toBe(true);
     });
   });
@@ -248,8 +257,8 @@ describe('Habilidades BNCC Query API (E2E) - Story 2.2', () => {
       expect(response.body.total).toBeGreaterThan(0);
 
       // PostgreSQL stemming deve encontrar "equação", "equações", etc.
-      const matchFound = response.body.data.some(
-        (h: any) => h.descricao.toLowerCase().match(/equaç(ão|ões)/),
+      const matchFound = response.body.data.some((h: any) =>
+        h.descricao.toLowerCase().match(/equaç(ão|ões)/),
       );
       expect(matchFound).toBe(true);
     });
@@ -277,7 +286,8 @@ describe('Habilidades BNCC Query API (E2E) - Story 2.2', () => {
       expect(response.body.total).toBeGreaterThan(0);
       expect(
         response.body.data.every(
-          (h: any) => h.unidade_tematica && h.unidade_tematica.includes('Números'),
+          (h: any) =>
+            h.unidade_tematica && h.unidade_tematica.includes('Números'),
         ),
       ).toBe(true);
     });
@@ -292,7 +302,8 @@ describe('Habilidades BNCC Query API (E2E) - Story 2.2', () => {
       expect(response.body.total).toBeGreaterThan(0);
       expect(
         response.body.data.every(
-          (h: any) => h.unidade_tematica && h.unidade_tematica.includes('Álgebra'),
+          (h: any) =>
+            h.unidade_tematica && h.unidade_tematica.includes('Álgebra'),
         ),
       ).toBe(true);
     });
@@ -463,9 +474,7 @@ describe('Habilidades BNCC Query API (E2E) - Story 2.2', () => {
 
   describe('AC #9: Authentication', () => {
     it('should reject unauthenticated requests (401)', async () => {
-      await request(app.getHttpServer())
-        .get('/api/v1/habilidades')
-        .expect(401); // Unauthorized
+      await request(app.getHttpServer()).get('/api/v1/habilidades').expect(401); // Unauthorized
     });
 
     it('should reject invalid token (401)', async () => {

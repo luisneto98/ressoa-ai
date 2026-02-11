@@ -69,9 +69,7 @@ export class EmailService {
       // Story 1.2 learning: Generic error messages
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
-      this.logger.error(
-        `Failed to send password reset email: ${errorMessage}`,
-      );
+      this.logger.error(`Failed to send password reset email: ${errorMessage}`);
     }
   }
 

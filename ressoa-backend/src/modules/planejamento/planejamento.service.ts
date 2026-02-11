@@ -336,8 +336,9 @@ export class PlanejamentoService {
       const totalHabilidades = dto.habilidades.length;
       const pesoDefault = 1.0 / totalHabilidades;
       const aulasPorBimestre =
-        this.AULAS_POR_BIMESTRE_MAP[turmaCompleta?.disciplina || 'MATEMATICA'] ||
-        40;
+        this.AULAS_POR_BIMESTRE_MAP[
+          turmaCompleta?.disciplina || 'MATEMATICA'
+        ] || 40;
       const aulasEstimadas = Math.ceil(aulasPorBimestre / totalHabilidades);
 
       const habilidadesProcessadas = dto.habilidades.map((h) => ({

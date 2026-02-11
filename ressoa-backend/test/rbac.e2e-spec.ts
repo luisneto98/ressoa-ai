@@ -28,7 +28,7 @@ describe('RBAC (Role-Based Access Control) E2E', () => {
   let coordenadorToken: string;
   let diretorToken: string;
   let testEscolaId: string;
-  let testUserIds: string[] = [];
+  const testUserIds: string[] = [];
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({

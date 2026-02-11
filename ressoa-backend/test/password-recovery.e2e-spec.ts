@@ -172,7 +172,6 @@ describe('Password Recovery E2E (Story 1.5)', () => {
         where: { id: ttlUser.id },
       });
     });
-
   });
 
   describe('POST /auth/reset-password', () => {

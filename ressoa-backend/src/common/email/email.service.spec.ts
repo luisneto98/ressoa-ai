@@ -135,23 +135,19 @@ describe('EmailService', () => {
     });
 
     it('should use correct email template with branding', async () => {
-      await service.sendPasswordResetEmail(
-        'user@test.com',
-        'test-token',
-      );
+      await service.sendPasswordResetEmail('user@test.com', 'test-token');
 
       const call = (sgMail.send as jest.Mock).mock.calls[0][0];
       expect(call.html).toContain('Ressoa AI');
       expect(call.html).toContain('Recuperação de Senha');
-      expect(call.html).toContain('Este link expira em <strong>1 hora</strong>');
+      expect(call.html).toContain(
+        'Este link expira em <strong>1 hora</strong>',
+      );
       expect(call.html).toContain('Se você não solicitou esta redefinição');
     });
 
     it('should include security warning in email', async () => {
-      await service.sendPasswordResetEmail(
-        'user@test.com',
-        'token',
-      );
+      await service.sendPasswordResetEmail('user@test.com', 'token');
 
       const call = (sgMail.send as jest.Mock).mock.calls[0][0];
       expect(call.html).toContain('Segurança');

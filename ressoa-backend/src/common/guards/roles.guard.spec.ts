@@ -58,10 +58,9 @@ describe('RolesGuard', () => {
 
   describe('Multiple roles required', () => {
     it('should allow access if user has one of multiple required roles (COORDENADOR)', () => {
-      jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue([
-        RoleUsuario.COORDENADOR,
-        RoleUsuario.DIRETOR,
-      ]);
+      jest
+        .spyOn(reflector, 'getAllAndOverride')
+        .mockReturnValue([RoleUsuario.COORDENADOR, RoleUsuario.DIRETOR]);
 
       const context = createMockContext({ role: RoleUsuario.COORDENADOR });
       const result = guard.canActivate(context);
@@ -70,10 +69,9 @@ describe('RolesGuard', () => {
     });
 
     it('should allow access if user has one of multiple required roles (DIRETOR)', () => {
-      jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue([
-        RoleUsuario.COORDENADOR,
-        RoleUsuario.DIRETOR,
-      ]);
+      jest
+        .spyOn(reflector, 'getAllAndOverride')
+        .mockReturnValue([RoleUsuario.COORDENADOR, RoleUsuario.DIRETOR]);
 
       const context = createMockContext({ role: RoleUsuario.DIRETOR });
       const result = guard.canActivate(context);
@@ -82,10 +80,9 @@ describe('RolesGuard', () => {
     });
 
     it('should deny access if user does not have any of required roles', () => {
-      jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue([
-        RoleUsuario.COORDENADOR,
-        RoleUsuario.DIRETOR,
-      ]);
+      jest
+        .spyOn(reflector, 'getAllAndOverride')
+        .mockReturnValue([RoleUsuario.COORDENADOR, RoleUsuario.DIRETOR]);
 
       const context = createMockContext({ role: RoleUsuario.PROFESSOR });
       const result = guard.canActivate(context);

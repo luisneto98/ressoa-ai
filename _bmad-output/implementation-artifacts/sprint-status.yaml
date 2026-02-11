@@ -61,7 +61,7 @@ development_status:
   epic-2: in-progress
   2-1-backend-planejamento-crud-api: done
   2-2-backend-habilidades-bncc-query-api: done
-  2-3-frontend-cadastro-de-planejamento-form-wizard: ready-for-dev
+  2-3-frontend-cadastro-de-planejamento-form-wizard: done
   2-4-frontend-listagem-e-edicao-de-planejamentos: backlog
   epic-2-retrospective: optional
 

@@ -26,7 +26,8 @@ export enum DisciplinaEnum {
 export class QueryHabilidadesDto {
   @IsOptional()
   @IsEnum(DisciplinaEnum, {
-    message: 'Disciplina inválida. Valores permitidos: MATEMATICA, LINGUA_PORTUGUESA, CIENCIAS',
+    message:
+      'Disciplina inválida. Valores permitidos: MATEMATICA, LINGUA_PORTUGUESA, CIENCIAS',
   })
   disciplina?: DisciplinaEnum;
 

@@ -10,6 +10,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { PlanejamentoModule } from './modules/planejamento/planejamento.module';
 import { HabilidadesModule } from './modules/habilidades/habilidades.module';
+import { TurmasModule } from './modules/turmas/turmas.module';
 import { TestModule } from './modules/test/test.module';
 import { ContextModule } from './common/context/context.module';
 import { EmailModule } from './common/email/email.module';
@@ -38,6 +39,7 @@ import { envSchema } from './config/env';
     AdminModule, // Admin endpoints for school/user management (Story 1.6)
     PlanejamentoModule, // Planejamento CRUD API (Story 2.1)
     HabilidadesModule, // Habilidades BNCC Query API (Story 2.2)
+    TurmasModule, // Turmas Query API (Story 2.3 - blocker resolution)
     // RBAC test endpoints - only load in non-production environments
     ...(process.env.NODE_ENV !== 'production' ? [TestModule] : []),
   ],

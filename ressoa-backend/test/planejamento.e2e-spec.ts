@@ -51,9 +51,7 @@ describe('Planejamento CRUD API (E2E) - Story 2.1', () => {
     });
 
     if (!escolaDemo) {
-      throw new Error(
-        'Demo school not found. Run: npx prisma db seed',
-      );
+      throw new Error('Demo school not found. Run: npx prisma db seed');
     }
     escola1Id = escolaDemo.id;
 
@@ -77,9 +75,7 @@ describe('Planejamento CRUD API (E2E) - Story 2.1', () => {
     });
 
     if (!professor1) {
-      throw new Error(
-        'Demo professor not found. Run: npx prisma db seed',
-      );
+      throw new Error('Demo professor not found. Run: npx prisma db seed');
     }
 
     const coordenador = await prisma.usuario.findFirst({
@@ -90,9 +86,7 @@ describe('Planejamento CRUD API (E2E) - Story 2.1', () => {
     });
 
     if (!coordenador) {
-      throw new Error(
-        'Demo coordenador not found. Run: npx prisma db seed',
-      );
+      throw new Error('Demo coordenador not found. Run: npx prisma db seed');
     }
 
     // Create professor for escola2 (for cross-tenant tests)
@@ -754,8 +748,9 @@ describe('Planejamento CRUD API (E2E) - Story 2.1', () => {
     });
 
     it('should return 401 if no token provided', async () => {
-      const response = await request(app.getHttpServer())
-        .get('/api/v1/planejamentos');
+      const response = await request(app.getHttpServer()).get(
+        '/api/v1/planejamentos',
+      );
 
       expect(response.status).toBe(401);
     });

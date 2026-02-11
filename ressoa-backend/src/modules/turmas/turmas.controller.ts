@@ -1,0 +1,52 @@
+import { Controller, Get, UseGuards } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import {
+  CurrentUser,
+  AuthenticatedUser,
+} from '../auth/decorators/current-user.decorator';
+import { TurmasService } from './turmas.service';
+
+@ApiTags('turmas')
+@Controller('turmas')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
+export class TurmasController {
+  constructor(private readonly turmasService: TurmasService) {}
+
+  @Get()
+  @ApiOperation({
+    summary: 'Listar turmas do professor',
+    description:
+      'Retorna todas as turmas do professor autenticado com isolamento de tenant (escola_id)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de turmas do professor',
+    schema: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          id: { type: 'string', format: 'uuid' },
+          nome: { type: 'string', example: '6A' },
+          disciplina: { type: 'string', example: 'MATEMATICA' },
+          serie: {
+            type: 'string',
+            enum: ['SEXTO_ANO', 'SETIMO_ANO', 'OITAVO_ANO', 'NONO_ANO'],
+          },
+          ano_letivo: { type: 'number', example: 2026 },
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'Não autenticado' })
+  async findAll(@CurrentUser() user: AuthenticatedUser) {
+    return this.turmasService.findAllByProfessor(user.userId);
+  }
+}

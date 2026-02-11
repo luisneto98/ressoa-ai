@@ -19,7 +19,7 @@ import { RedisModule } from '../../redis/redis.module';
 @Module({
   imports: [
     PrismaModule, // Para queries no banco
-    RedisModule,  // Para cache
+    RedisModule, // Para cache
   ],
   controllers: [HabilidadesController],
   providers: [HabilidadesService],

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { usePlanejamentoWizard } from './hooks/usePlanejamentoWizard';
 import { usePlanejamento } from './hooks/usePlanejamento';
@@ -14,14 +14,17 @@ interface PlanejamentoWizardProps {
 
 export const PlanejamentoWizard = ({ mode = 'create' }: PlanejamentoWizardProps) => {
   const { id: planejamentoId } = useParams<{ id: string }>();
-  const { currentStep, setCurrentStep, reset, setFormData, toggleHabilidade, selectedHabilidades } = usePlanejamentoWizard();
+  const { currentStep, setCurrentStep, reset, setFormData, toggleHabilidade } = usePlanejamentoWizard();
 
   // Fetch planejamento data if in edit mode
   const { data: planejamento, isLoading } = usePlanejamento(mode === 'edit' ? planejamentoId : undefined);
 
+  // Track if wizard has been initialized to prevent re-running effect
+  const initializedRef = useRef(false);
+
   // Pre-fill wizard state in edit mode
   useEffect(() => {
-    if (mode === 'edit' && planejamento) {
+    if (mode === 'edit' && planejamento && !initializedRef.current) {
       // Set form data (cast turma to match wizard type which includes ano_letivo)
       setFormData({
         turma_id: planejamento.turma_id,
@@ -34,25 +37,23 @@ export const PlanejamentoWizard = ({ mode = 'create' }: PlanejamentoWizardProps)
         ano_letivo: planejamento.ano_letivo,
       });
 
-      // Pre-select habilidades (avoid duplicates)
+      // Pre-select habilidades
       planejamento.habilidades.forEach((hab: any) => {
         const habilidadeData = {
           id: hab.habilidade_id,
           codigo: hab.habilidade.codigo,
           descricao: hab.habilidade.descricao,
         };
-
-        // Only add if not already selected
-        const exists = selectedHabilidades.find(h => h.id === habilidadeData.id);
-        if (!exists) {
-          toggleHabilidade(habilidadeData);
-        }
+        toggleHabilidade(habilidadeData);
       });
-    } else if (mode === 'create') {
+
+      initializedRef.current = true;
+    } else if (mode === 'create' && !initializedRef.current) {
       // Reset wizard for create mode
       reset();
+      initializedRef.current = true;
     }
-  }, [mode, planejamento, setFormData, toggleHabilidade, reset, selectedHabilidades]);
+  }, [mode, planejamento, setFormData, toggleHabilidade, reset]);
 
   const handleStepClick = (step: 1 | 2 | 3) => {
     // Only allow going back to previous steps

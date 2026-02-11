@@ -13,7 +13,7 @@ import { Type } from 'class-transformer';
 
 export class HabilidadePlanejamentoDto {
   @IsUUID()
-  habilidade_id: string;
+  habilidade_id!: string;
 
   @IsOptional()
   @IsNumber()
@@ -28,20 +28,20 @@ export class HabilidadePlanejamentoDto {
 
 export class CreatePlanejamentoDto {
   @IsUUID()
-  turma_id: string;
+  turma_id!: string;
 
   @IsInt()
   @Min(1)
   @Max(4)
-  bimestre: number;
+  bimestre!: number;
 
   @IsInt()
   @Min(2024)
-  ano_letivo: number;
+  ano_letivo!: number;
 
   @IsArray()
   @ArrayMinSize(1, { message: 'Selecione ao menos uma habilidade' })
   @ValidateNested({ each: true })
   @Type(() => HabilidadePlanejamentoDto)
-  habilidades: HabilidadePlanejamentoDto[];
+  habilidades!: HabilidadePlanejamentoDto[];
 }

@@ -46,9 +46,13 @@ export class HabilidadesService {
     const sortedQuery = Object.keys(query)
       .sort()
       .reduce((acc, key) => {
-        acc[key] = query[key];
+        const typedKey = key as keyof QueryHabilidadesDto;
+        const value = query[typedKey];
+        if (value !== undefined) {
+          (acc as any)[typedKey] = value;
+        }
         return acc;
-      }, {} as any);
+      }, {} as Partial<QueryHabilidadesDto>);
 
     return `habilidades:${JSON.stringify(sortedQuery)}`;
   }
@@ -129,7 +133,8 @@ export class HabilidadesService {
     if (where.AND && Array.isArray(where.AND)) {
       const serieCondition = where.AND.find((cond: any) => cond.ano_inicio);
       if (serieCondition && serieCondition.ano_inicio && serieCondition.OR) {
-        const serie = serieCondition.ano_inicio.lte;
+        const anoInicio = serieCondition.ano_inicio;
+        const serie = typeof anoInicio === 'object' && 'lte' in anoInicio ? anoInicio.lte : anoInicio;
         whereParams.push(serie);
         conditions.push(
           `(ano_inicio <= $${whereParams.length} AND (ano_fim >= $${whereParams.length} OR ano_fim IS NULL))`,
@@ -280,6 +285,11 @@ export class HabilidadesService {
           ano_fim: true,
           unidade_tematica: true,
           objeto_conhecimento: true,
+          created_at: true,
+          updated_at: true,
+          versao_bncc: true,
+          ativa: true,
+          searchable: true,
         },
       }),
       this.prisma.habilidade.count({ where }), // Total sem pagination

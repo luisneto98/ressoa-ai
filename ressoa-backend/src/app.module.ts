@@ -9,6 +9,7 @@ import { RedisModule } from './redis/redis.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { TestModule } from './modules/test/test.module';
 import { ContextModule } from './common/context/context.module';
+import { EmailModule } from './common/email/email.module';
 import { TenantInterceptor } from './common/interceptors/tenant.interceptor';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
@@ -27,6 +28,7 @@ import { envSchema } from './config/env';
       },
     ]),
     ContextModule, // Global module for multi-tenant context
+    EmailModule, // Global module for email service (Story 1.5)
     PrismaModule,
     RedisModule,
     AuthModule,

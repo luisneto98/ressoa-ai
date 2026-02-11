@@ -22,6 +22,11 @@ export const envSchema = z.object({
   // External APIs - optional until Stories 4.x/5.x (STT/LLM)
   OPENAI_API_KEY: z.string().optional(),
   ANTHROPIC_API_KEY: z.string().optional(),
+  // Email Service - Story 1.5 (Password Recovery)
+  EMAIL_PROVIDER: z.enum(['sendgrid', 'ses']).default('sendgrid'),
+  EMAIL_API_KEY: z.string().optional(),
+  EMAIL_FROM: z.string().email().optional(),
+  FRONTEND_URL: z.string().url().default('http://localhost:5173'),
 });
 
 export type Env = z.infer<typeof envSchema>;

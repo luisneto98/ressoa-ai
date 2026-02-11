@@ -53,8 +53,8 @@ development_status:
   1-2-login-logout-endpoints: done
   1-3-multi-tenancy-isolation-postgresql-rls-prisma-middleware: done
   1-4-role-based-access-control-rbac-guards: done
-  1-5-password-recovery-flow: backlog
-  1-6-admin-user-school-management-internal-tool: backlog
+  1-5-password-recovery-flow: done
+  1-6-admin-user-school-management-internal-tool: ready-for-dev
   1-7-frontend-login-page: backlog
   epic-1-retrospective: optional
 

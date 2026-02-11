@@ -6,6 +6,7 @@ import {
   UnauthorizedException,
   NotFoundException,
   HttpCode,
+  Logger,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -14,31 +15,36 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import * as crypto from 'crypto';
 import { AuthService } from './auth.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { RedisService } from '../../redis/redis.service';
-import {
-  CurrentUser,
-  AuthenticatedUser,
-} from './decorators/current-user.decorator';
+import { EmailService } from '../../common/email/email.service';
+import { CurrentUser } from './decorators/current-user.decorator';
+import type { AuthenticatedUser } from './decorators/current-user.decorator';
 import { Public } from '../../common/decorators/public.decorator';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { AuthResponseDto, LogoutResponseDto } from './dto/auth-response.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
+
   constructor(
     private readonly authService: AuthService,
     private readonly prisma: PrismaService,
     private readonly redisService: RedisService,
+    private readonly emailService: EmailService,
   ) {}
 
   @Public() // Public endpoint - no JWT authentication required
   @Post('login')
   @HttpCode(200) // FIX: Force 200 OK as specified in AC (not 201 default)
-  @Throttle({ limit: 20, ttl: 60000 }) // FIX: Simplified syntax for v6+
+  @Throttle({ default: { limit: 20, ttl: 60000 } }) // v6+ syntax
   @ApiOperation({ summary: 'Login com email e senha' })
   @ApiResponse({
     status: 200,
@@ -237,6 +243,224 @@ export class AuthController {
         id: user.escola.id,
         nome: user.escola.nome,
       },
+    };
+  }
+
+  /**
+   * POST /auth/forgot-password - Request password reset via email
+   * Story 1.5 - Task 3: Implement forgot-password endpoint
+   *
+   * Security features (OWASP best practices):
+   * - Generic response (don't reveal if email exists)
+   * - Rate limiting (3 requests per hour)
+   * - Token stored in Redis with 1-hour TTL
+   * - Audit logging for security events
+   */
+  @Public()
+  @Post('forgot-password')
+  @HttpCode(200)
+  @Throttle({ default: { limit: 3, ttl: 3600000 } }) // 3 requests per hour
+  @ApiOperation({ summary: 'Solicitar recuperação de senha via email' })
+  @ApiResponse({
+    status: 200,
+    description: 'Instruções enviadas se email existir',
+    schema: {
+      properties: {
+        message: {
+          type: 'string',
+          example:
+            'Se o email existir no sistema, você receberá instruções para redefinir sua senha.',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 429,
+    description: 'Muitas tentativas - aguarde 1 hora',
+  })
+  async forgotPassword(
+    @Body() dto: ForgotPasswordDto,
+  ): Promise<{ message: string }> {
+    // Audit logging: Log forgot password attempt (Story 1.4 learning)
+    this.logger.log(`Password reset requested for email: ${dto.email}`);
+
+    // Buscar usuário por email
+    const user = await this.prisma.usuario.findFirst({
+      where: { email: dto.email },
+    });
+
+    // SECURITY: ALWAYS return 200 (Story 1.2 learning: generic error messages)
+    // Don't reveal whether email exists
+    if (user) {
+      // Gerar token aleatório seguro (256 bits = 64 chars hex)
+      const resetToken = crypto.randomBytes(32).toString('hex');
+
+      // CODE REVIEW FIX (Issue #1, #2): Store userId AND escolaId for multi-tenancy
+      // This enables: (1) proper tenant isolation in reset-password
+      //               (2) efficient refresh token invalidation by userId
+      const tokenData = JSON.stringify({
+        userId: user.id,
+        escolaId: user.escola_id,
+      });
+
+      // Armazenar no Redis com TTL de 1 hora (3600 segundos)
+      await this.redisService.setex(
+        `reset_password:${resetToken}`,
+        3600, // 1 hour
+        tokenData, // Store JSON with userId + escolaId
+      );
+
+      // Enviar email (não aguardar para não revelar timing - security)
+      this.emailService
+        .sendPasswordResetEmail(user.email, resetToken)
+        .catch((err) => {
+          // Log error but continue (don't throw - security)
+          this.logger.error(`Failed to send reset email: ${err.message}`);
+        });
+
+      // Audit logging: Success
+      this.logger.log(`Password reset token generated for user: ${user.id}`);
+    } else {
+      // Audit logging: Email not found (but still return success)
+      this.logger.log(`Password reset requested for non-existent email`);
+    }
+
+    // Generic response (same for found/not found)
+    return {
+      message:
+        'Se o email existir no sistema, você receberá instruções para redefinir sua senha.',
+    };
+  }
+
+  /**
+   * POST /auth/reset-password - Reset password with token from email
+   * Story 1.5 - Task 4: Implement reset-password endpoint
+   *
+   * Security features:
+   * - Token validation (Redis lookup with O(1) performance)
+   * - One-time use token (deleted after use)
+   * - Strong password validation (DTO)
+   * - Force logout on all devices (invalidate refresh tokens)
+   * - Audit logging
+   */
+  @Public()
+  @Post('reset-password')
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Redefinir senha com token de recuperação' })
+  @ApiResponse({
+    status: 200,
+    description: 'Senha redefinida com sucesso',
+    schema: {
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Senha redefinida com sucesso. Faça login com sua nova senha.',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Token inválido ou expirado',
+  })
+  async resetPassword(
+    @Body() dto: ResetPasswordDto,
+  ): Promise<{ message: string }> {
+    // Audit logging: Reset password attempt
+    this.logger.log(`Password reset attempt with token: ${dto.token.substring(0, 8)}...`);
+
+    // 1. Buscar token no Redis (O(1) direct lookup - Story 1.2 learning)
+    const tokenData = await this.redisService.get(`reset_password:${dto.token}`);
+
+    if (!tokenData) {
+      // Audit logging: Invalid/expired token
+      this.logger.warn('Password reset failed: invalid or expired token');
+      throw new UnauthorizedException('Token inválido ou expirado');
+    }
+
+    // CODE REVIEW FIX (Issue #1, #2): Parse JSON to get userId AND escolaId
+    let userId: string;
+    let escolaId: string;
+    try {
+      const parsed = JSON.parse(tokenData);
+      userId = parsed.userId;
+      escolaId = parsed.escolaId;
+    } catch (error) {
+      // Handle legacy tokens (pre-fix) that only stored userId as plain string
+      // This ensures backward compatibility during deployment
+      userId = tokenData;
+      escolaId = null as any; // Will fail escola_id check below if legacy token
+      this.logger.warn(`Legacy reset token format detected - missing escolaId`);
+    }
+
+    // 2. Buscar usuário com multi-tenancy check (project-context.md Rule #3)
+    // CODE REVIEW FIX (Issue #2): Include escola_id in WHERE clause
+    const user = await this.prisma.usuario.findUnique({
+      where: {
+        id: userId,
+        escola_id: escolaId, // Multi-tenancy isolation
+      },
+    });
+
+    if (!user) {
+      // This shouldn't happen (token exists but user doesn't, or wrong escola)
+      this.logger.error(`Password reset: Token found but user ${userId} not found or escola mismatch`);
+      throw new NotFoundException('Usuário não encontrado');
+    }
+
+    // 3. Hashear nova senha (Story 1.1: use existing hashPassword method)
+    const hashedPassword = await this.authService.hashPassword(dto.novaSenha);
+
+    // 4. Atualizar senha no banco (with escola_id for multi-tenancy)
+    // CODE REVIEW FIX (Issue #2): Include escola_id in WHERE clause
+    await this.prisma.usuario.update({
+      where: {
+        id: userId,
+        escola_id: escolaId, // Multi-tenancy isolation
+      },
+      data: { senha_hash: hashedPassword },
+    });
+
+    // 5. Deletar token do Redis (one-time use - security)
+    await this.redisService.del(`reset_password:${dto.token}`);
+
+    // 6. Invalidar todos refresh tokens (force logout em todos dispositivos)
+    // CODE REVIEW FIX (Issue #1): Implement refresh token invalidation
+    // NOTE: This uses O(n) scan since key pattern is refresh_token:${tokenId} without userId
+    //       However, this is acceptable for password reset (rare operation, security-critical)
+    try {
+      const allRefreshKeys = await this.redisService.keys('refresh_token:*');
+      let invalidatedCount = 0;
+
+      // Scan all refresh tokens and invalidate ones belonging to this user
+      for (const key of allRefreshKeys) {
+        const refreshData = await this.redisService.get(key);
+        if (refreshData) {
+          try {
+            const parsed = JSON.parse(refreshData);
+            // Match by userId from token payload
+            if (parsed.userId === userId && parsed.escolaId === escolaId) {
+              await this.redisService.del(key);
+              invalidatedCount++;
+            }
+          } catch {
+            // Legacy token format or invalid JSON - skip
+            continue;
+          }
+        }
+      }
+
+      this.logger.log(`Invalidated ${invalidatedCount} refresh tokens for user ${userId} (force logout)`);
+    } catch (error) {
+      // Log error but don't fail password reset if token invalidation fails
+      this.logger.error(`Failed to invalidate refresh tokens: ${error.message}`);
+    }
+
+    // Audit logging: Success
+    this.logger.log(`Password reset successful for user: ${userId}`);
+
+    return {
+      message: 'Senha redefinida com sucesso. Faça login com sua nova senha.',
     };
   }
 }

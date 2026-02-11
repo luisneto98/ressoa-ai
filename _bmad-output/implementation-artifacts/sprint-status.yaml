@@ -38,75 +38,66 @@ project: professor-analytics
 project_key: ressoa-ai-mvp
 tracking_system: file-system
 story_location: _bmad-output/implementation-artifacts
-
 development_status:
-  epic-0: in-progress
-  0-1-initialize-frontend-project-with-design-system: review
-  0-2-initialize-backend-project-with-core-dependencies: done
-  0-3-setup-development-environment-with-docker-compose: done
-  0-4-bncc-curriculum-data-seeding: in-progress
-  0-5-ci-cd-pipeline-setup: ready-for-dev
-  epic-0-retrospective: optional
-
-  epic-1: in-progress
-  1-1-backend-auth-foundation-passport-jwt-refresh-tokens: done
-  1-2-login-logout-endpoints: done
-  1-3-multi-tenancy-isolation-postgresql-rls-prisma-middleware: done
-  1-4-role-based-access-control-rbac-guards: done
-  1-5-password-recovery-flow: done
-  1-6-admin-user-school-management-internal-tool: done
-  1-7-frontend-login-page: in-progress
-  epic-1-retrospective: optional
-
-  epic-2: in-progress
-  2-1-backend-planejamento-crud-api: done
-  2-2-backend-habilidades-bncc-query-api: done
-  2-3-frontend-cadastro-de-planejamento-form-wizard: done
-  2-4-frontend-listagem-e-edicao-de-planejamentos: done
-  epic-2-retrospective: optional
-
-  epic-3: in-progress
-  3-1-backend-aula-entity-basic-crud: done
-  3-2-backend-tus-upload-server-resumable-upload: ready-for-dev
-  3-3-backend-multiple-input-methods-audio-texto-manual: backlog
-  3-4-frontend-upload-page-with-drag-and-drop: backlog
-  3-5-frontend-aulas-list-with-status-tracking: backlog
-  epic-3-retrospective: optional
-
-  epic-4: backlog
-  4-1-backend-stt-service-abstraction-layer: backlog
-  4-2-backend-whisper-google-speech-integration: backlog
-  4-3-backend-transcription-worker-bull-queue: backlog
-  4-4-backend-notification-system-email-in-app: backlog
-  epic-4-retrospective: optional
-
-  epic-5: backlog
-  5-1-backend-llm-service-abstraction-prompt-versioning: backlog
-  5-2-backend-pipeline-serial-de-5-prompts-orquestrador: backlog
-  5-3-backend-prompts-1-2-cobertura-bncc-analise-qualitativa: backlog
-  5-4-backend-prompts-3-4-relatorio-exercicios: backlog
-  5-5-backend-prompt-5-analysis-worker-alertas-integracao: backlog
-  epic-5-retrospective: optional
-
-  epic-6: backlog
-  6-1-visualizacao-de-analise-completa: backlog
-  6-2-edicao-e-aprovacao-de-relatorio: backlog
-  6-3-visualizacao-e-edicao-de-exercicios-contextuais: backlog
-  6-4-sugestoes-para-proxima-aula: backlog
-  6-5-dashboard-pessoal-do-professor-cobertura-propria: backlog
-  epic-6-retrospective: optional
-
-  epic-7: backlog
-  7-1-materialized-view-de-cobertura-bimestral: backlog
-  7-2-dashboard-do-coordenador-visao-por-professor: backlog
-  7-3-dashboard-do-coordenador-visao-por-turma: backlog
-  7-4-dashboard-do-diretor-metricas-agregadas-da-escola: backlog
-  7-5-rbac-guards-privacy-enforcement: backlog
-  epic-7-retrospective: optional
-
-  epic-8: backlog
-  8-1-dashboard-de-monitoramento-de-stt: backlog
-  8-2-dashboard-de-monitoramento-de-analise-pedagogica: backlog
-  8-3-dashboard-de-custos-por-escola: backlog
-  8-4-dashboard-de-qualidade-de-prompts-a-b-testing: backlog
-  epic-8-retrospective: optional
+    epic-0: in-progress
+    0-1-initialize-frontend-project-with-design-system: review
+    0-2-initialize-backend-project-with-core-dependencies: done
+    0-3-setup-development-environment-with-docker-compose: done
+    0-4-bncc-curriculum-data-seeding: in-progress
+    0-5-ci-cd-pipeline-setup: ready-for-dev
+    epic-0-retrospective: optional
+    epic-1: in-progress
+    1-1-backend-auth-foundation-passport-jwt-refresh-tokens: done
+    1-2-login-logout-endpoints: done
+    1-3-multi-tenancy-isolation-postgresql-rls-prisma-middleware: done
+    1-4-role-based-access-control-rbac-guards: done
+    1-5-password-recovery-flow: done
+    1-6-admin-user-school-management-internal-tool: done
+    1-7-frontend-login-page: in-progress
+    epic-1-retrospective: optional
+    epic-2: in-progress
+    2-1-backend-planejamento-crud-api: done
+    2-2-backend-habilidades-bncc-query-api: done
+    2-3-frontend-cadastro-de-planejamento-form-wizard: done
+    2-4-frontend-listagem-e-edicao-de-planejamentos: done
+    epic-2-retrospective: optional
+    epic-3: in-progress
+    3-1-backend-aula-entity-basic-crud: done
+    3-2-backend-tus-upload-server-resumable-upload: done
+    3-3-backend-multiple-input-methods-audio-texto-manual: backlog
+    3-4-frontend-upload-page-with-drag-and-drop: backlog
+    3-5-frontend-aulas-list-with-status-tracking: backlog
+    epic-3-retrospective: optional
+    epic-4: backlog
+    4-1-backend-stt-service-abstraction-layer: backlog
+    4-2-backend-whisper-google-speech-integration: backlog
+    4-3-backend-transcription-worker-bull-queue: backlog
+    4-4-backend-notification-system-email-in-app: backlog
+    epic-4-retrospective: optional
+    epic-5: backlog
+    5-1-backend-llm-service-abstraction-prompt-versioning: backlog
+    5-2-backend-pipeline-serial-de-5-prompts-orquestrador: backlog
+    5-3-backend-prompts-1-2-cobertura-bncc-analise-qualitativa: backlog
+    5-4-backend-prompts-3-4-relatorio-exercicios: backlog
+    5-5-backend-prompt-5-analysis-worker-alertas-integracao: backlog
+    epic-5-retrospective: optional
+    epic-6: backlog
+    6-1-visualizacao-de-analise-completa: backlog
+    6-2-edicao-e-aprovacao-de-relatorio: backlog
+    6-3-visualizacao-e-edicao-de-exercicios-contextuais: backlog
+    6-4-sugestoes-para-proxima-aula: backlog
+    6-5-dashboard-pessoal-do-professor-cobertura-propria: backlog
+    epic-6-retrospective: optional
+    epic-7: backlog
+    7-1-materialized-view-de-cobertura-bimestral: backlog
+    7-2-dashboard-do-coordenador-visao-por-professor: backlog
+    7-3-dashboard-do-coordenador-visao-por-turma: backlog
+    7-4-dashboard-do-diretor-metricas-agregadas-da-escola: backlog
+    7-5-rbac-guards-privacy-enforcement: backlog
+    epic-7-retrospective: optional
+    epic-8: backlog
+    8-1-dashboard-de-monitoramento-de-stt: backlog
+    8-2-dashboard-de-monitoramento-de-analise-pedagogica: backlog
+    8-3-dashboard-de-custos-por-escola: backlog
+    8-4-dashboard-de-qualidade-de-prompts-a-b-testing: backlog
+    epic-8-retrospective: optional

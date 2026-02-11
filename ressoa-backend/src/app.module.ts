@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, DynamicModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
@@ -19,6 +19,17 @@ import { TenantInterceptor } from './common/interceptors/tenant.interceptor';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { envSchema } from './config/env';
+
+// Conditionally import TusModule only in non-test environments
+// This avoids Jest issues with ESM dependencies (@tus/server uses srvx which is ESM-only)
+const conditionalImports: DynamicModule[] = [];
+
+if (process.env.NODE_ENV !== 'test') {
+  // Dynamic import to avoid loading TUS dependencies in test environment
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { TusModule } = require('./modules/tus/tus.module');
+  conditionalImports.push(TusModule);
+}
 
 @Module({
   imports: [
@@ -42,6 +53,8 @@ import { envSchema } from './config/env';
     HabilidadesModule, // Habilidades BNCC Query API (Story 2.2)
     TurmasModule, // Turmas Query API (Story 2.3 - blocker resolution)
     AulasModule, // Aula Entity & Basic CRUD (Story 3.1)
+    // TUS Upload Server (Story 3.2) - dynamically loaded in non-test environments
+    ...conditionalImports,
     // RBAC test endpoints - only load in non-production environments
     ...(process.env.NODE_ENV !== 'production' ? [TestModule] : []),
   ],

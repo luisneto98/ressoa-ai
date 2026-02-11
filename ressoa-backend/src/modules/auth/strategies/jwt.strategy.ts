@@ -6,7 +6,7 @@ import { ConfigService } from '@nestjs/config';
 export interface JwtPayload {
   sub: string;
   email: string;
-  escolaId: string;
+  escolaId: string | null; // null para ADMIN (não pertence a escola)
   role: string;
 }
 
@@ -27,13 +27,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   validate(payload: JwtPayload): {
     userId: string;
     email: string;
-    escolaId: string;
+    escolaId: string | null; // null para ADMIN
     role: string;
   } {
     return {
       userId: payload.sub,
       email: payload.email,
-      escolaId: payload.escolaId,
+      escolaId: payload.escolaId, // Pode ser null para ADMIN
       role: payload.role,
     };
   }

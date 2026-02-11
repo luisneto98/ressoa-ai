@@ -107,6 +107,33 @@ describe('TenantInterceptor', () => {
       expect(contextEscolaId).toBe(escolaId);
     });
 
+    it('should bypass multi-tenancy for ADMIN user (escolaId = null)', async () => {
+      // Arrange: ADMIN user with escolaId = null (Story 1.6)
+      const request = {
+        user: {
+          userId: 'admin-id',
+          email: 'admin@ressoaai.com',
+          escolaId: null, // ADMIN não pertence a escola
+          role: 'ADMIN',
+        },
+      };
+      (executionContext.switchToHttp as jest.Mock).mockReturnValue({
+        getRequest: () => request,
+      });
+
+      // Spy on contextService.run - should NOT be called for ADMIN
+      const runSpy = jest.spyOn(contextService, 'run');
+
+      // Act
+      const result$ = interceptor.intercept(executionContext, callHandler);
+      const result = await result$.toPromise();
+
+      // Assert: contextService.run was NOT called (no multi-tenancy)
+      expect(runSpy).not.toHaveBeenCalled();
+      expect(callHandler.handle).toHaveBeenCalled();
+      expect(result).toBe('test-result');
+    });
+
     it('should throw UnauthorizedException if escolaId missing from JWT', async () => {
       // Arrange: Authenticated but no escolaId (malformed JWT)
       const request = {

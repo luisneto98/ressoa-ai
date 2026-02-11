@@ -29,6 +29,11 @@ import { ContextService } from '../context/context.service';
  * - If request.user is undefined (no JWT), interceptor allows request to proceed
  * - This enables public endpoints like /auth/login to work without tenant context
  *
+ * Admin Users (Story 1.6):
+ * - ADMIN users have escolaId = null (do not belong to any school)
+ * - TenantInterceptor skips multi-tenancy for ADMIN (escolaId === null)
+ * - Admin endpoints have global access across all schools
+ *
  * Security:
  * - Part of Story 1.3: Multi-Tenancy Isolation
  * - Ensures every authenticated request has tenant context
@@ -60,11 +65,19 @@ export class TenantInterceptor implements NestInterceptor {
     // Extract escolaId from JWT payload
     const escolaId = user.escolaId;
 
-    // If authenticated but no escolaId, this is a data integrity issue
-    // JWT should ALWAYS have escolaId (set in Story 1.1)
-    if (!escolaId) {
+    // ADMIN users (Story 1.6): escolaId = null (não pertencem a escola)
+    // ADMIN tem acesso global ao sistema sem isolamento de tenant
+    // TenantInterceptor deve IGNORAR (skip) quando escolaId = null
+    if (escolaId === null) {
+      // Admin bypass - sem context de multi-tenancy
+      return next.handle();
+    }
+
+    // If authenticated but escolaId is undefined (not null, not string), this is a data integrity issue
+    // JWT should ALWAYS have escolaId as string (normal user) or null (ADMIN)
+    if (escolaId === undefined) {
       // SECURITY LOG: Detect malicious attempts to bypass multi-tenancy
-      console.error('[SECURITY] Authenticated request without escolaId', {
+      console.error('[SECURITY] Authenticated request with undefined escolaId', {
         userId: user.userId,
         email: user.email,
         timestamp: new Date().toISOString(),

@@ -28,6 +28,7 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { AuthResponseDto, LogoutResponseDto } from './dto/auth-response.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { RoleUsuario } from '@prisma/client';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -82,7 +83,8 @@ export class AuthController {
     }
 
     // 4. FIX: Validate escola relationship exists (prevent null pointer)
-    if (!user.escola) {
+    // ADMIN users can have escola_id = null (global access)
+    if (!user.escola && user.perfil_usuario?.role !== RoleUsuario.ADMIN) {
       throw new UnauthorizedException('Usuário sem escola associada');
     }
 
@@ -98,10 +100,11 @@ export class AuthController {
         email: user.email,
         nome: user.nome,
         role: user.perfil_usuario?.role || 'PROFESSOR',
-        escola: {
+        // ADMIN users have escola = null (global access)
+        escola: user.escola ? {
           id: user.escola.id,
           nome: user.escola.nome,
-        },
+        } : null,
       },
     };
   }
@@ -172,7 +175,8 @@ export class AuthController {
     }
 
     // 3. FIX: Validate escola relationship exists
-    if (!updatedUser.escola) {
+    // ADMIN users can have escola_id = null (global access)
+    if (!updatedUser.escola && updatedUser.perfil_usuario?.role !== RoleUsuario.ADMIN) {
       throw new UnauthorizedException('Usuário sem escola associada');
     }
 
@@ -191,10 +195,11 @@ export class AuthController {
         email: updatedUser.email,
         nome: updatedUser.nome,
         role: updatedUser.perfil_usuario?.role || 'PROFESSOR',
-        escola: {
+        // ADMIN users have escola = null (global access)
+        escola: updatedUser.escola ? {
           id: updatedUser.escola.id,
           nome: updatedUser.escola.nome,
-        },
+        } : null,
       },
     };
   }
@@ -230,7 +235,8 @@ export class AuthController {
     }
 
     // FIX: Validate escola relationship exists
-    if (!user.escola) {
+    // ADMIN users can have escola_id = null (global access)
+    if (!user.escola && user.perfil_usuario?.role !== RoleUsuario.ADMIN) {
       throw new UnauthorizedException('Usuário sem escola associada');
     }
 
@@ -239,10 +245,11 @@ export class AuthController {
       email: user.email,
       nome: user.nome,
       role: user.perfil_usuario?.role || 'PROFESSOR',
-      escola: {
+      // ADMIN users have escola = null (global access)
+      escola: user.escola ? {
         id: user.escola.id,
         nome: user.escola.nome,
-      },
+      } : null,
     };
   }
 
@@ -453,7 +460,8 @@ export class AuthController {
       this.logger.log(`Invalidated ${invalidatedCount} refresh tokens for user ${userId} (force logout)`);
     } catch (error) {
       // Log error but don't fail password reset if token invalidation fails
-      this.logger.error(`Failed to invalidate refresh tokens: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Failed to invalidate refresh tokens: ${errorMessage}`);
     }
 
     // Audit logging: Success

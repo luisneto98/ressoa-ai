@@ -1,8 +1,9 @@
 import 'dotenv/config';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, RoleUsuario } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
+import * as bcrypt from 'bcrypt';
 
 interface HabilidadeJson {
   codigo: string;
@@ -147,15 +148,124 @@ async function seedHabilidades() {
   console.log(`✅ Created ${totalRelacionamentos} HabilidadeAno relationships`);
 }
 
+async function seedAdmin() {
+  console.log('🌱 Seeding Admin User...');
+
+  const adminEmail = 'admin@ressoaai.com';
+
+  // Check if admin already exists (idempotência)
+  const adminExists = await prisma.usuario.findFirst({
+    where: { email: adminEmail },
+  });
+
+  if (adminExists) {
+    console.log('✅ Admin já existe, pulando criação');
+    return;
+  }
+
+  // Criar admin user
+  const hashedPassword = await bcrypt.hash('Admin@123', 10);
+  const admin = await prisma.usuario.create({
+    data: {
+      email: adminEmail,
+      senha_hash: hashedPassword,
+      nome: 'Admin Sistema',
+      escola_id: null, // Admin não pertence a escola
+      perfil_usuario: {
+        create: {
+          role: RoleUsuario.ADMIN,
+        },
+      },
+    },
+  });
+
+  console.log(`✅ Admin criado: ${admin.email}`);
+}
+
+async function seedDemoSchool() {
+  console.log('🌱 Seeding Demo School...');
+
+  const demoCNPJ = '12.345.678/0001-90';
+
+  // Criar ou buscar escola demo (idempotência)
+  const escola = await prisma.escola.upsert({
+    where: { cnpj: demoCNPJ },
+    update: {},
+    create: {
+      nome: 'Escola Demo ABC',
+      cnpj: demoCNPJ,
+      email_contato: 'contato@escolademo.com',
+      telefone: '(11) 98765-4321',
+    },
+  });
+
+  console.log(`✅ Escola demo criada/atualizada: ${escola.nome}`);
+
+  // Criar 3 usuários: Professor, Coordenador, Diretor
+  const usuarios = [
+    {
+      email: 'professor@escolademo.com',
+      nome: 'João Professor',
+      role: RoleUsuario.PROFESSOR,
+    },
+    {
+      email: 'coordenador@escolademo.com',
+      nome: 'Maria Coordenadora',
+      role: RoleUsuario.COORDENADOR,
+    },
+    {
+      email: 'diretor@escolademo.com',
+      nome: 'Ricardo Diretor',
+      role: RoleUsuario.DIRETOR,
+    },
+  ];
+
+  for (const userData of usuarios) {
+    const hashedPassword = await bcrypt.hash('Demo@123', 10);
+
+    const existingUser = await prisma.usuario.findFirst({
+      where: {
+        email: userData.email,
+        escola_id: escola.id,
+      },
+    });
+
+    if (!existingUser) {
+      await prisma.usuario.create({
+        data: {
+          email: userData.email,
+          senha_hash: hashedPassword,
+          nome: userData.nome,
+          escola_id: escola.id,
+          perfil_usuario: {
+            create: {
+              role: userData.role,
+            },
+          },
+        },
+      });
+
+      console.log(`✅ Usuário ${userData.role} criado: ${userData.email}`);
+    } else {
+      console.log(`✅ Usuário ${userData.role} já existe: ${userData.email}`);
+    }
+  }
+}
+
 async function main() {
-  console.log('🚀 Starting BNCC seed...');
+  console.log('🚀 Starting seed...');
   console.log(`📦 Database: ${process.env['DATABASE_URL']?.split('@')[1] || 'configured'}`);
 
+  // Seed BNCC (Epic 0)
   await seedDisciplinas();
   await seedAnos();
   await seedHabilidades();
 
-  console.log('🎉 BNCC seed completed successfully!');
+  // Seed Admin & Demo School (Story 1.6)
+  await seedAdmin();
+  await seedDemoSchool();
+
+  console.log('🎉 Seed completed successfully!');
 }
 
 main()

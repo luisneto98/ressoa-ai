@@ -7,7 +7,7 @@ export class LoginDto {
     example: 'professor@escola.com',
   })
   @IsEmail({}, { message: 'Email inválido' })
-  email: string;
+  email!: string;
 
   @ApiProperty({
     description: 'Senha do usuário (mínimo 8 caracteres)',
@@ -16,5 +16,5 @@ export class LoginDto {
   })
   @IsString()
   @MinLength(8, { message: 'Senha deve ter no mínimo 8 caracteres' })
-  senha: string;
+  senha!: string;
 }

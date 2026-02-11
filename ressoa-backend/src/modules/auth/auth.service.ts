@@ -9,7 +9,7 @@ import { randomUUID } from 'crypto';
 interface PerfilUsuarioData {
   id: string;
   usuario_id: string;
-  role: 'PROFESSOR' | 'COORDENADOR' | 'DIRETOR';
+  role: 'PROFESSOR' | 'COORDENADOR' | 'DIRETOR' | 'ADMIN';
   created_at: Date;
   updated_at: Date;
 }
@@ -19,7 +19,7 @@ interface UsuarioComPerfil {
   nome: string;
   email: string;
   senha_hash: string;
-  escola_id: string;
+  escola_id: string | null; // null para ADMIN
   created_at: Date;
   updated_at: Date;
   perfil_usuario: PerfilUsuarioData | null;

@@ -43,6 +43,26 @@ npx prisma migrate dev
 npm run start:dev
 ```
 
+## Credenciais de Desenvolvimento
+
+⚠️ **ATENÇÃO:** Estas credenciais são APENAS para desenvolvimento local. **NUNCA** use em produção!
+
+### Admin (Acesso Global)
+- **Email:** `admin@ressoaai.com`
+- **Senha:** `Admin@123`
+- **Role:** ADMIN
+- **Acesso:** Todas as escolas (multi-tenancy bypass)
+
+### Escola Demo ABC (CNPJ: 12.345.678/0001-90)
+- **Professor:** `professor@escolademo.com` | `Demo@123`
+- **Coordenador:** `coordenador@escolademo.com` | `Demo@123`
+- **Diretor:** `diretor@escolademo.com` | `Demo@123`
+
+### Como Usar
+1. Execute o seed: `npx prisma db seed`
+2. Faça login com qualquer credencial acima no endpoint `POST /api/v1/auth/login`
+3. Use o token JWT retornado para acessar endpoints protegidos
+
 ## Scripts Disponíveis
 
 ```bash

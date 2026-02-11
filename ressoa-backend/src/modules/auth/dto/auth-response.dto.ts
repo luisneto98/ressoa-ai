@@ -2,42 +2,45 @@ import { ApiProperty } from '@nestjs/swagger';
 
 class UserDataDto {
   @ApiProperty({ description: 'ID do usuário' })
-  id: string;
+  id!: string;
 
   @ApiProperty({ description: 'Email do usuário' })
-  email: string;
+  email!: string;
 
   @ApiProperty({ description: 'Nome do usuário' })
-  nome: string;
+  nome!: string;
 
   @ApiProperty({
     description: 'Role do usuário',
     enum: ['PROFESSOR', 'COORDENADOR', 'DIRETOR'],
   })
-  role: string;
+  role!: string;
 
-  @ApiProperty({ description: 'Dados da escola' })
-  escola: {
+  @ApiProperty({
+    description: 'Dados da escola (null para ADMIN)',
+    nullable: true,
+  })
+  escola!: {
     id: string;
     nome: string;
-  };
+  } | null;
 }
 
 export class AuthResponseDto {
   @ApiProperty({ description: 'JWT access token (15 minutos)' })
-  accessToken: string;
+  accessToken!: string;
 
   @ApiProperty({ description: 'Refresh token (7 dias)' })
-  refreshToken: string;
+  refreshToken!: string;
 
   @ApiProperty({
     description: 'Dados do usuário autenticado',
     type: UserDataDto,
   })
-  user: UserDataDto;
+  user!: UserDataDto;
 }
 
 export class LogoutResponseDto {
   @ApiProperty({ description: 'Mensagem de confirmação' })
-  message: string;
+  message!: string;
 }

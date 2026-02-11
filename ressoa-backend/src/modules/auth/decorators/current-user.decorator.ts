@@ -4,7 +4,7 @@ import { RoleUsuario } from '@prisma/client';
 export interface AuthenticatedUser {
   userId: string;
   email: string;
-  escolaId: string;
+  escolaId: string | null; // null para ADMIN (não pertence a escola)
   role: RoleUsuario;
 }
 

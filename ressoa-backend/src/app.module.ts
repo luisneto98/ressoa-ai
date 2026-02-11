@@ -7,6 +7,8 @@ import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { AdminModule } from './modules/admin/admin.module';
+import { PlanejamentoModule } from './modules/planejamento/planejamento.module';
 import { TestModule } from './modules/test/test.module';
 import { ContextModule } from './common/context/context.module';
 import { EmailModule } from './common/email/email.module';
@@ -32,6 +34,8 @@ import { envSchema } from './config/env';
     PrismaModule,
     RedisModule,
     AuthModule,
+    AdminModule, // Admin endpoints for school/user management (Story 1.6)
+    PlanejamentoModule, // Planejamento CRUD API (Story 2.1)
     // RBAC test endpoints - only load in non-production environments
     ...(process.env.NODE_ENV !== 'production' ? [TestModule] : []),
   ],

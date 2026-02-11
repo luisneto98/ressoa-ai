@@ -14,17 +14,29 @@ enum RoleUsuario {
   PROFESSOR
   COORDENADOR
   DIRETOR
+  ADMIN
+}
+
+enum Serie {
+  SEXTO_ANO
+  SETIMO_ANO
+  OITAVO_ANO
+  NONO_ANO
 }
 
 model Escola {
-  id         String   @id @default(uuid())
-  nome       String
-  cnpj       String?  @unique
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id             String   @id @default(uuid())
+  nome           String
+  cnpj           String?  @unique
+  email_contato  String?
+  telefone       String?
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
 
   // Relations
-  usuarios   Usuario[]
+  usuarios       Usuario[]
+  turmas         Turma[]
+  planejamentos  Planejamento[]
 
   @@map("escola")
 }
@@ -34,15 +46,17 @@ model Usuario {
   nome        String
   email       String
   senha_hash  String
-  escola_id   String
+  escola_id   String?  // Nullable para ADMIN (não pertence a escola)
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
   // Relations
-  escola          Escola         @relation(fields: [escola_id], references: [id], onDelete: Cascade)
+  escola          Escola?        @relation(fields: [escola_id], references: [id], onDelete: Cascade)
   perfil_usuario  PerfilUsuario?
+  turmas          Turma[]
+  planejamentos   Planejamento[]
 
-  @@unique([email, escola_id])
+  @@unique([email, escola_id])  // PostgreSQL permite múltiplos NULL sem violar unique
   @@index([escola_id])
   @@index([email])
   @@map("usuario")
@@ -105,7 +119,8 @@ model Habilidade {
   created_at          DateTime @default(now())
   updated_at          DateTime @updatedAt
 
-  anos HabilidadeAno[]
+  anos                        HabilidadeAno[]
+  planejamentos_habilidades   PlanejamentoHabilidade[]
 
   @@index([disciplina, ano_inicio])
   @@index([codigo])
@@ -124,4 +139,75 @@ model HabilidadeAno {
   @@unique([habilidade_id, ano_id])
   @@index([ano_id])
   @@map("habilidades_anos")
+}
+
+// ============================================
+// Domínio Planejamento - Turmas & Planejamento Bimestral
+// ============================================
+
+model Turma {
+  id            String      @id @default(uuid())
+  nome          String      // ex: "6A", "7B"
+  disciplina    String      // Código da disciplina: MATEMATICA, LINGUA_PORTUGUESA, CIENCIAS
+  serie         Serie
+  ano_letivo    Int
+  escola_id     String
+  professor_id  String
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+
+  // Relations
+  escola        Escola      @relation(fields: [escola_id], references: [id], onDelete: Cascade)
+  professor     Usuario     @relation(fields: [professor_id], references: [id], onDelete: Cascade)
+  planejamentos Planejamento[]
+
+  @@index([escola_id])
+  @@index([professor_id])
+  @@index([ano_letivo, disciplina])
+  @@map("turma")
+}
+
+model Planejamento {
+  id                     String    @id @default(uuid())
+  turma_id               String
+  bimestre               Int       // 1-4
+  ano_letivo             Int
+  escola_id              String
+  professor_id           String
+  validado_coordenacao   Boolean   @default(false)
+  deleted_at             DateTime? // Soft delete (LGPD compliance)
+  created_at             DateTime  @default(now())
+  updated_at             DateTime  @updatedAt
+
+  // Relations
+  escola                 Escola   @relation(fields: [escola_id], references: [id], onDelete: Cascade)
+  professor              Usuario  @relation(fields: [professor_id], references: [id], onDelete: Cascade)
+  turma                  Turma    @relation(fields: [turma_id], references: [id], onDelete: Cascade)
+  habilidades            PlanejamentoHabilidade[]
+
+  @@unique([turma_id, bimestre, ano_letivo]) // RN-PLAN-04: Sem duplicatas
+  @@index([escola_id])
+  @@index([professor_id])
+  @@index([turma_id])
+  @@index([ano_letivo, bimestre])
+  @@index([deleted_at])
+  @@map("planejamento")
+}
+
+model PlanejamentoHabilidade {
+  id                String        @id @default(uuid())
+  planejamento_id   String
+  habilidade_id     String
+  peso              Float         @default(1.0) // RN-PLAN-02: Peso padrão 1.0
+  aulas_previstas   Int?          // RN-PLAN-03: Opcional, estimado se não fornecido
+  created_at        DateTime      @default(now())
+
+  // Relations
+  planejamento      Planejamento  @relation(fields: [planejamento_id], references: [id], onDelete: Cascade)
+  habilidade        Habilidade    @relation(fields: [habilidade_id], references: [id], onDelete: Cascade)
+
+  @@unique([planejamento_id, habilidade_id]) // N:N sem duplicatas
+  @@index([planejamento_id])
+  @@index([habilidade_id])
+  @@map("planejamento_habilidade")
 }

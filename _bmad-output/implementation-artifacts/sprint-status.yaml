@@ -45,7 +45,7 @@ development_status:
   0-2-initialize-backend-project-with-core-dependencies: done
   0-3-setup-development-environment-with-docker-compose: done
   0-4-bncc-curriculum-data-seeding: in-progress
-  0-5-ci-cd-pipeline-setup: backlog
+  0-5-ci-cd-pipeline-setup: ready-for-dev
   epic-0-retrospective: optional
 
   epic-1: in-progress
@@ -54,13 +54,13 @@ development_status:
   1-3-multi-tenancy-isolation-postgresql-rls-prisma-middleware: done
   1-4-role-based-access-control-rbac-guards: done
   1-5-password-recovery-flow: done
-  1-6-admin-user-school-management-internal-tool: ready-for-dev
-  1-7-frontend-login-page: backlog
+  1-6-admin-user-school-management-internal-tool: done
+  1-7-frontend-login-page: in-progress
   epic-1-retrospective: optional
 
-  epic-2: backlog
-  2-1-backend-planejamento-crud-api: backlog
-  2-2-backend-habilidades-bncc-query-api: backlog
+  epic-2: in-progress
+  2-1-backend-planejamento-crud-api: done
+  2-2-backend-habilidades-bncc-query-api: in-progress
   2-3-frontend-cadastro-de-planejamento-form-wizard: backlog
   2-4-frontend-listagem-e-edicao-de-planejamentos: backlog
   epic-2-retrospective: optional

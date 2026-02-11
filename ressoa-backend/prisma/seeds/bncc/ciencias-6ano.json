@@ -1,0 +1,118 @@
+{
+  "disciplina": "CIENCIAS",
+  "ano": 6,
+  "habilidades": [
+    {
+      "codigo": "EF06CI01",
+      "descricao": "Classificar como homogênea ou heterogênea a mistura de dois ou mais materiais (água e sal, água e óleo, água e areia etc.).",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Matéria e Energia",
+      "objeto_conhecimento": "Misturas homogêneas e heterogêneas"
+    },
+    {
+      "codigo": "EF06CI02",
+      "descricao": "Identificar evidências de transformações químicas a partir do resultado de misturas de materiais que originam produtos diferentes dos que foram misturados (mistura de ingredientes para fazer um bolo, mistura de vinagre com bicarbonato de sódio etc.).",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Matéria e Energia",
+      "objeto_conhecimento": "Transformações químicas"
+    },
+    {
+      "codigo": "EF06CI03",
+      "descricao": "Selecionar métodos mais adequados para a separação de diferentes sistemas heterogêneos a partir da identificação de processos de separação de materiais (como a produção de sal de cozinha, a destilação de petróleo, entre outros).",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Matéria e Energia",
+      "objeto_conhecimento": "Separação de materiais"
+    },
+    {
+      "codigo": "EF06CI04",
+      "descricao": "Associar a produção de medicamentos e outros materiais sintéticos ao desenvolvimento científico e tecnológico, reconhecendo benefícios e avaliando impactos socioambientais.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Matéria e Energia",
+      "objeto_conhecimento": "Materiais sintéticos"
+    },
+    {
+      "codigo": "EF06CI05",
+      "descricao": "Explicar a organização básica das células e seu papel como unidade estrutural e funcional dos seres vivos.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Vida e Evolução",
+      "objeto_conhecimento": "Célula como unidade da vida"
+    },
+    {
+      "codigo": "EF06CI06",
+      "descricao": "Concluir, com base na análise de ilustrações e/ou modelos (físicos ou digitais), que os organismos são um complexo arranjo de sistemas com diferentes níveis de organização.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Vida e Evolução",
+      "objeto_conhecimento": "Célula como unidade da vida"
+    },
+    {
+      "codigo": "EF06CI07",
+      "descricao": "Justificar o papel do sistema nervoso na coordenação das ações motoras e sensoriais do corpo, com base na análise de suas estruturas básicas e respectivas funções.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Vida e Evolução",
+      "objeto_conhecimento": "Interação entre os sistemas locomotor e nervoso"
+    },
+    {
+      "codigo": "EF06CI08",
+      "descricao": "Explicar a importância do sistema nervoso para a interação do organismo com o ambiente, a partir da análise de situações do cotidiano.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Vida e Evolução",
+      "objeto_conhecimento": "Interação entre os sistemas locomotor e nervoso"
+    },
+    {
+      "codigo": "EF06CI09",
+      "descricao": "Deduzir que a estrutura, a sustentação e a movimentação dos animais resultam da interação entre os sistemas muscular, ósseo e nervoso.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Vida e Evolução",
+      "objeto_conhecimento": "Interação entre os sistemas locomotor e nervoso"
+    },
+    {
+      "codigo": "EF06CI10",
+      "descricao": "Explicar como o funcionamento do sistema nervoso pode ser afetado por substâncias psicoativas.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Vida e Evolução",
+      "objeto_conhecimento": "Interação entre os sistemas locomotor e nervoso"
+    },
+    {
+      "codigo": "EF06CI11",
+      "descricao": "Identificar as diferentes camadas que estruturam o planeta Terra (da estrutura interna à atmosfera) e suas principais características.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Terra e Universo",
+      "objeto_conhecimento": "Forma, estrutura e movimentos da Terra"
+    },
+    {
+      "codigo": "EF06CI12",
+      "descricao": "Identificar diferentes tipos de rocha, relacionando a formação de fósseis a rochas sedimentares em diferentes períodos geológicos.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Terra e Universo",
+      "objeto_conhecimento": "Forma, estrutura e movimentos da Terra"
+    },
+    {
+      "codigo": "EF06CI13",
+      "descricao": "Selecionar argumentos e evidências que demonstrem a esfericidade da Terra.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Terra e Universo",
+      "objeto_conhecimento": "Forma, estrutura e movimentos da Terra"
+    },
+    {
+      "codigo": "EF06CI14",
+      "descricao": "Inferir que as mudanças na sombra de uma vara (gnômon) ao longo do dia em diferentes períodos do ano são uma evidência dos movimentos relativos entre a Terra e o Sol, que podem ser explicados por meio dos movimentos de rotação e translação da Terra e da inclinação de seu eixo de rotação em relação ao plano de sua órbita em torno do Sol.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Terra e Universo",
+      "objeto_conhecimento": "Forma, estrutura e movimentos da Terra"
+    }
+  ]
+}

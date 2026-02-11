@@ -1,0 +1,134 @@
+{
+  "disciplina": "CIENCIAS",
+  "ano": 7,
+  "habilidades": [
+    {
+      "codigo": "EF07CI01",
+      "descricao": "Discutir a aplicação, ao longo da história, das máquinas simples e propor soluções e invenções para a realização de tarefas mecânicas cotidianas.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Matéria e Energia",
+      "objeto_conhecimento": "Máquinas simples"
+    },
+    {
+      "codigo": "EF07CI02",
+      "descricao": "Diferenciar temperatura, calor e sensação térmica nas diferentes situações de equilíbrio termodinâmico cotidianas.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Matéria e Energia",
+      "objeto_conhecimento": "Formas de propagação do calor"
+    },
+    {
+      "codigo": "EF07CI03",
+      "descricao": "Utilizar o conhecimento das formas de propagação do calor para justificar a utilização de determinados materiais (condutores e isolantes) na vida cotidiana, explicar o princípio de funcionamento de alguns equipamentos (garrafa térmica, coletor solar etc.) e/ou propor soluções tecnológicas a problemas do dia a dia.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Matéria e Energia",
+      "objeto_conhecimento": "Formas de propagação do calor"
+    },
+    {
+      "codigo": "EF07CI04",
+      "descricao": "Avaliar o papel do equilíbrio termodinâmico para a manutenção da vida na Terra, para o funcionamento de máquinas térmicas e em outras situações cotidianas.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Matéria e Energia",
+      "objeto_conhecimento": "Equilíbrio termodinâmico e vida na Terra"
+    },
+    {
+      "codigo": "EF07CI05",
+      "descricao": "Discutir o uso de diferentes tipos de combustível e máquinas térmicas ao longo do tempo, para avaliar avanços, questões econômicas e problemas socioambientais causados pela produção e uso desses materiais e máquinas.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Matéria e Energia",
+      "objeto_conhecimento": "História dos combustíveis e das máquinas térmicas"
+    },
+    {
+      "codigo": "EF07CI06",
+      "descricao": "Discutir e avaliar mudanças econômicas, culturais e sociais, tanto na vida cotidiana quanto no mundo do trabalho, decorrentes do desenvolvimento de novos materiais e tecnologias (como automação e informatização).",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Matéria e Energia",
+      "objeto_conhecimento": "História dos combustíveis e das máquinas térmicas"
+    },
+    {
+      "codigo": "EF07CI07",
+      "descricao": "Caracterizar os principais ecossistemas brasileiros quanto à paisagem, à quantidade de água, ao tipo de solo, à disponibilidade de luz solar, à temperatura etc., correlacionando essas características à flora e fauna específicas.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Vida e Evolução",
+      "objeto_conhecimento": "Diversidade de ecossistemas"
+    },
+    {
+      "codigo": "EF07CI08",
+      "descricao": "Avaliar como os impactos provocados por catástrofes naturais ou mudanças nos componentes físicos, biológicos ou sociais de um ecossistema afetam suas populações, podendo ameaçar ou provocar a extinção de espécies, alteração de hábitos, migração etc.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Vida e Evolução",
+      "objeto_conhecimento": "Fenômenos naturais e impactos ambientais"
+    },
+    {
+      "codigo": "EF07CI09",
+      "descricao": "Interpretar as condições de saúde da comunidade, cidade ou estado, com base na análise e comparação de indicadores de saúde (como taxa de mortalidade infantil, cobertura de saneamento básico e incidência de doenças de veiculação hídrica, atmosférica entre outras) e dos resultados de políticas públicas destinadas à saúde.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Vida e Evolução",
+      "objeto_conhecimento": "Programas e indicadores de saúde pública"
+    },
+    {
+      "codigo": "EF07CI10",
+      "descricao": "Argumentar sobre a importância da vacinação para a saúde pública, com base em informações sobre a maneira como a vacina atua no organismo e o papel histórico da vacinação para a manutenção da saúde individual e coletiva e para a erradicação de doenças.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Vida e Evolução",
+      "objeto_conhecimento": "Programas e indicadores de saúde pública"
+    },
+    {
+      "codigo": "EF07CI11",
+      "descricao": "Analisar historicamente o uso da tecnologia, incluindo a digital, nas diferentes dimensões da vida humana, considerando indicadores ambientais e de qualidade de vida.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Vida e Evolução",
+      "objeto_conhecimento": "Programas e indicadores de saúde pública"
+    },
+    {
+      "codigo": "EF07CI12",
+      "descricao": "Demonstrar que o ar é uma mistura de gases, identificando sua composição, e discutir fenômenos naturais ou antrópicos que podem alterar essa composição.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Terra e Universo",
+      "objeto_conhecimento": "Composição do ar"
+    },
+    {
+      "codigo": "EF07CI13",
+      "descricao": "Descrever o mecanismo natural do efeito estufa, seu papel fundamental para o desenvolvimento da vida na Terra, discutir as ações humanas responsáveis pelo seu aumento artificial (queima dos combustíveis fósseis, desmatamento, queimadas etc.) e selecionar e implementar propostas para a reversão ou controle desse quadro.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Terra e Universo",
+      "objeto_conhecimento": "Efeito estufa"
+    },
+    {
+      "codigo": "EF07CI14",
+      "descricao": "Justificar a importância da camada de ozônio para a vida na Terra, identificando os fatores que aumentam ou diminuem sua presença na atmosfera, e discutir propostas individuais e coletivas para sua preservação.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Terra e Universo",
+      "objeto_conhecimento": "Camada de ozônio"
+    },
+    {
+      "codigo": "EF07CI15",
+      "descricao": "Interpretar fenômenos naturais (como vulcões, terremotos e tsunamis) e justificar a rara ocorrência desses fenômenos no Brasil, com base no modelo das placas tectônicas.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Terra e Universo",
+      "objeto_conhecimento": "Fenômenos naturais (vulcões, terremotos e tsunamis)"
+    },
+    {
+      "codigo": "EF07CI16",
+      "descricao": "Justificar o formato das costas brasileira e africana com base na teoria da deriva dos continentes.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Terra e Universo",
+      "objeto_conhecimento": "Placas tectônicas e deriva continental"
+    }
+  ]
+}

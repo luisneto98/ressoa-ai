@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Product Brief - Professor Analytics</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 900px; margin: 40px auto; padding: 20px; line-height: 1.6; color: #333; }
+    h1 { color: #1a1a2e; border-bottom: 3px solid #4a90d9; padding-bottom: 10px; }
+    h2 { color: #16213e; border-bottom: 2px solid #e8e8e8; padding-bottom: 8px; margin-top: 40px; }
+    h3 { color: #0f3460; }
+    h4 { color: #533483; }
+    table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+    th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+    th { background-color: #4a90d9; color: white; }
+    tr:nth-child(even) { background-color: #f9f9f9; }
+    strong { color: #1a1a2e; }
+    hr { border: none; border-top: 1px solid #e8e8e8; margin: 30px 0; }
+    code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; }
+    blockquote { border-left: 4px solid #4a90d9; margin: 20px 0; padding-left: 20px; color: #666; }
+    ul, ol { margin: 15px 0; }
+    li { margin: 8px 0; }
+  </style>
+</head>
+<body>
+<hr>
+<h2>stepsCompleted: [1, 2, 3, 4, 5, 6]
+status: complete
+inputDocuments:
+  - &#39;_bmad-output/analysis/brainstorming-session-2026-02-05.md&#39;
+date: 2026-02-05
+author: Luisneto98</h2>
+<h1>Product Brief: professor-analytics</h1>
+<h2>Executive Summary</h2>
+<p>Professor Analytics é uma plataforma de analytics pedagógico que transforma o ensino escolar de caixa preta em processo transparente e orientado por dados. Ao cruzar o currículo oficial (BNCC), o planejamento do professor e a transcrição real das aulas, o sistema revela gaps de conteúdo e absorção em tempo real - permitindo correção de rota antes que lacunas se tornem problemas irreversíveis no vestibular ou na vida acadêmica do aluno.</p>
+<p>Posicionamento central: <strong>&quot;IA como lente, nunca como juiz&quot;</strong> - o sistema revela a realidade para que humanos tomem melhores decisões, sem punir ou avaliar.</p>
+<p><strong>Pitch por stakeholder:</strong></p>
+<ul>
+<li><strong>Professor:</strong> &quot;Nunca mais faça relatório na mão - e saiba exatamente onde sua turma precisa de reforço&quot;</li>
+<li><strong>Dono/Diretor:</strong> &quot;Saiba exatamente o que acontece em cada sala de aula, em tempo real, sem depender de coordenador sobrecarregado&quot;</li>
+<li><strong>Pais:</strong> &quot;Acompanhe o aprendizado do seu filho com dados reais, não apenas notas&quot;</li>
+</ul>
+<hr>
+<h2>Core Vision</h2>
+<h3>Problem Statement</h3>
+<p>O ensino escolar opera como um sistema fechado e invisível. O professor ensina, cria a prova sobre o que ensinou, e avalia se o aluno aprendeu o que ele ensinou. Ninguém verifica se o currículo completo está sendo coberto, se os alunos estão realmente absorvendo o conteúdo, ou onde estão as lacunas de conhecimento - até que seja tarde demais.</p>
+<h3>Problem Impact</h3>
+<ul>
+<li><strong>Para o aluno:</strong> Gaps de conhecimento acumulados silenciosamente resultam em reprovação no vestibular, dificuldades acadêmicas futuras e menor desenvolvimento profissional</li>
+<li><strong>Para os pais:</strong> Ausência total de visibilidade sobre o que seus filhos estão realmente aprendendo - só descobrem problemas quando as notas caem</li>
+<li><strong>Para o professor:</strong> Sem feedback real sobre efetividade do ensino, não consegue ajustar abordagem ou identificar onde a turma está perdida</li>
+<li><strong>Para a escola:</strong> Coordenação só consegue assistir 2-3 aulas por semestre por professor - 99% do que acontece em sala é invisível</li>
+</ul>
+<h3>Why Existing Solutions Fall Short</h3>
+<ul>
+<li><strong>Plataformas de conteúdo</strong> (Descomplica, Stoodi): Focam em entregar conteúdo, não em analisar o que está sendo ensinado em sala</li>
+<li><strong>Sistemas de gestão escolar</strong> (Sponte, ClassApp): Gerenciam notas, frequência e comunicação, mas não a qualidade pedagógica</li>
+<li><strong>Avaliação tradicional:</strong> O próprio professor cria a prova, criando um ciclo fechado que valida a si mesmo sem verificar cobertura curricular completa</li>
+<li><strong>Observação presencial:</strong> Coordenadores não têm capacidade física de assistir todas as aulas - modelo não escala</li>
+<li><strong>Hardware existente (R$1.200+):</strong> Dispositivos de gravação existem, mas são caros e não integram análise pedagógica inteligente</li>
+</ul>
+<h3>Proposed Solution</h3>
+<p>Plataforma que opera em três camadas de validação:</p>
+<ol>
+<li><strong>BNCC → Planejamento:</strong> Verifica se o planejamento do professor cobre as competências exigidas para a série/disciplina</li>
+<li><strong>Planejamento → Execução:</strong> Cruza transcrições de aulas com o planejamento para detectar gaps de cobertura</li>
+<li><strong>Execução → Absorção:</strong> Analisa interações, perguntas e participação dos alunos na transcrição para identificar sinais de dificuldade ou desengajamento</li>
+</ol>
+<p>O sistema gera insights acionáveis: &quot;Professor, você não cobriu X ainda&quot;, &quot;Turma apresenta dificuldade em Y&quot;, &quot;Sugestão para próxima aula: reforçar Z&quot;.</p>
+<p><strong>Captura de áudio simplificada:</strong> Dispositivo em sala de aula com botão único - professor apenas inicia a aula. O planejamento já é obrigação existente do professor, apenas passa a ser cadastrado na plataforma.</p>
+<h3>Key Differentiators</h3>
+<ul>
+<li><strong>Primeiro analytics de execução pedagógica no Brasil:</strong> Nenhuma solução atual cruza currículo oficial com execução real de aula</li>
+<li><strong>Quebra o ciclo fechado:</strong> BNCC como régua externa impede que o professor avalie apenas o que ele mesmo ensinou</li>
+<li><strong>Timing estratégico:</strong> Primeira escola a usar se destaca; as demais serão forçadas a adotar para não ficar para trás</li>
+<li><strong>IA como lente, não juiz:</strong> Posicionamento que gera confiança do professor (ferramenta que ajuda) em vez de resistência (sistema que pune)</li>
+<li><strong>Lock-in via hardware:</strong> Dispositivo próprio cria barreira de saída e switching cost alto para concorrentes</li>
+<li><strong>Atrito mínimo:</strong> Professor aperta um botão; planejamento já é obrigação existente</li>
+</ul>
+<h3>Go-to-Market Strategy</h3>
+<p><strong>Fase 1 - Validação (Capital Mínimo):</strong></p>
+<ul>
+<li>Software puro, escola usa hardware existente ou celular do professor</li>
+<li>Provar que a análise de IA entrega valor real</li>
+<li>Meta: X escolas, Y meses, métricas de adoção e satisfação</li>
+</ul>
+<p><strong>Fase 2 - Escala (Pós-Validação):</strong></p>
+<ul>
+<li>Dispositivo próprio com margens otimizadas</li>
+<li>Modelo de arrendamento: escola paga por uso, não compra equipamento</li>
+<li>Lock-in + receita recorrente previsível</li>
+</ul>
+<h3>Unit Economics (Escola de 10 salas)</h3>
+<table>
+<thead>
+<tr>
+<th>Métrica</th>
+<th>Valor</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Horas/mês</td>
+<td>800 (10 turmas × 4h × 20 dias)</td>
+</tr>
+<tr>
+<td>Receita</td>
+<td>R$1.200/mês (R$1,50/hora)</td>
+</tr>
+<tr>
+<td>Custo IA</td>
+<td>R$400/mês (R$0,50/hora)</td>
+</tr>
+<tr>
+<td><strong>Margem bruta</strong></td>
+<td><strong>R$800/mês</strong></td>
+</tr>
+<tr>
+<td>Custo dispositivos (10 salas)</td>
+<td>~R$3.000</td>
+</tr>
+<tr>
+<td><strong>Payback</strong></td>
+<td><strong>&lt; 4 meses</strong></td>
+</tr>
+</tbody></table>
+<p><em>Custo de IA reduz com volume. Margem tende a aumentar com escala.</em></p>
+<hr>
+<h2>Target Users</h2>
+<h3>Primary Users</h3>
+<h4>Professor João - O Usuário do Dia-a-Dia</h4>
+<p><strong>Perfil:</strong> 38 anos, professor de Matemática, 15 anos de experiência
+<strong>Contexto:</strong> Leciona para 6 turmas (6º ao 9º ano) em escola particular de médio porte (~500 alunos)</p>
+<p><strong>Situação atual:</strong></p>
+<ul>
+<li>Competente mas sobrecarregado - passa 2-3 horas por semana em relatórios e diários de classe manuais</li>
+<li>Sente que burocracia rouba tempo que deveria ser dedicado aos alunos</li>
+<li>Não sabe exatamente onde cada turma está em relação ao currículo completo</li>
+</ul>
+<p><strong>Motivações e medos:</strong></p>
+<ul>
+<li><strong>Medo principal:</strong> Ser vigiado e punido. &quot;Mais um sistema pra me controlar.&quot;</li>
+<li><strong>Desejo real:</strong> Algo que tire trabalho das costas, não que adicione</li>
+<li><strong>Tech:</strong> Usa WhatsApp e planilhas, não é early adopter mas aceita se for fácil e útil</li>
+</ul>
+<p><strong>O que sucesso significa:</strong> &quot;Nunca mais perco 2 horas por semana em relatório. E agora sei exatamente o que preciso reforçar na próxima aula.&quot;</p>
+<hr>
+<h3>Secondary Users</h3>
+<h4>Dono Ricardo - O Comprador</h4>
+<p><strong>Perfil:</strong> 52 anos, dono de escola familiar (400-600 alunos), formação em administração
+<strong>Contexto:</strong> Escola fundada pelo pai, ele assumiu há 15 anos. Compete com 3-4 escolas na região.</p>
+<p><strong>Situação atual:</strong></p>
+<ul>
+<li>Margem apertada, precisa se diferenciar</li>
+<li>Depende da coordenação pra questões pedagógicas - não tem visibilidade direta</li>
+<li>Só descobre problemas quando pai reclama ou nota cai</li>
+</ul>
+<p><strong>Motivações e medos:</strong></p>
+<ul>
+<li><strong>Medo principal:</strong> Investir em tecnologia que ninguém usa (já se queimou antes)</li>
+<li><strong>Desejo real:</strong> Controle operacional sem microgerenciar. &quot;Quero ver, não quero fazer.&quot;</li>
+<li><strong>Tech:</strong> Usa sistemas de gestão (Sponte, etc), mas nunca teve ferramenta pra qualidade pedagógica</li>
+</ul>
+<p><strong>O que sucesso significa:</strong> &quot;Sei exatamente o que está acontecendo em cada sala de aula. Tomo decisões com dados, não com achismo.&quot;</p>
+<h4>Coordenadora Marcia - A Ponte</h4>
+<p><strong>Perfil:</strong> 45 anos, Coordenadora Pedagógica, 20 anos em educação, 8 como coordenadora
+<strong>Contexto:</strong> Responsável por 25 professores, consegue assistir 2-3 aulas por semestre de cada um</p>
+<p><strong>Situação atual:</strong></p>
+<ul>
+<li>Sabe quem são os professores &quot;problema&quot; mas não tem dados pra provar</li>
+<li>Posição delicada: ponte entre dono (quer resultados) e professores (querem autonomia)</li>
+<li>99% do que acontece em sala é invisível pra ela</li>
+</ul>
+<p><strong>Motivações e medos:</strong></p>
+<ul>
+<li><strong>Medo principal:</strong> Sistema que cria conflito com professores. &quot;Vou virar a vilã.&quot;</li>
+<li><strong>Desejo real:</strong> Dados objetivos pra embasar conversas difíceis, sem parecer perseguição</li>
+<li><strong>Tech:</strong> Usa bem o que a escola oferece, mas não busca novidades por conta própria</li>
+</ul>
+<p><strong>O que sucesso significa:</strong> &quot;Tenho dados concretos pra conversar com professores. Foco minha energia onde realmente precisa, não em amostragem aleatória.&quot;</p>
+<h4>Pais e Alunos - Beneficiários Indiretos (MVP)</h4>
+<p><strong>Contexto:</strong> Não acessam a plataforma no MVP, mas são os beneficiários finais.</p>
+<p><strong>Benefícios indiretos:</strong></p>
+<ul>
+<li><strong>Alunos:</strong> Aulas mais assertivas, gaps de conhecimento identificados e corrigidos antes de virarem problemas no vestibular</li>
+<li><strong>Pais:</strong> Filhos recebendo ensino mais completo e direcionado, mesmo sem visibilidade direta (portal de pais vem pós-MVP)</li>
+</ul>
+<hr>
+<h3>User Journey</h3>
+<h4>Jornada do Professor João</h4>
+<table>
+<thead>
+<tr>
+<th>Etapa</th>
+<th>Experiência</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Descoberta</strong></td>
+<td>Coordenadora Marcia apresenta em reunião pedagógica: &quot;Vamos testar uma ferramenta que faz relatório automático pra vocês&quot;</td>
+</tr>
+<tr>
+<td><strong>Onboarding</strong></td>
+<td>Cadastra planejamento do bimestre (1x) - algo que já faz, só muda o lugar</td>
+</tr>
+<tr>
+<td><strong>Uso diário</strong></td>
+<td>Aperta botão no início da aula, aperta no fim. 5 segundos de esforço</td>
+</tr>
+<tr>
+<td><strong>Pós-aula</strong></td>
+<td>Recebe relatório gerado + exercícios sugeridos. Revisa em 5 min, aprova ou ajusta</td>
+</tr>
+<tr>
+<td><strong>Momento &quot;aha!&quot;</strong></td>
+<td>Primeira vez que vê: &quot;Você cobriu 60% do conteúdo de equações, faltam X e Y&quot; - insight que não teria sozinho</td>
+</tr>
+<tr>
+<td><strong>Longo prazo</strong></td>
+<td>Para de fazer relatório manual. Usa sugestões de exercícios. Começa a confiar nos insights de gaps</td>
+</tr>
+</tbody></table>
+<h4>Jornada do Dono Ricardo</h4>
+<table>
+<thead>
+<tr>
+<th>Etapa</th>
+<th>Experiência</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Descoberta</strong></td>
+<td>Vendedor apresenta: &quot;Saiba o que acontece em cada sala sem depender de coordenador sobrecarregado&quot;</td>
+</tr>
+<tr>
+<td><strong>Decisão</strong></td>
+<td>Piloto de 30 dias com 5 professores, dados reais da escola dele</td>
+</tr>
+<tr>
+<td><strong>Onboarding</strong></td>
+<td>Coordenadora Marcia lidera implantação, ele só acompanha</td>
+</tr>
+<tr>
+<td><strong>Uso</strong></td>
+<td>Acessa dashboard semanal: visão agregada de cobertura curricular por turma/série</td>
+</tr>
+<tr>
+<td><strong>Momento &quot;aha!&quot;</strong></td>
+<td>Descobre que 7º ano está 3 semanas atrasado em matemática antes de qualquer pai reclamar</td>
+</tr>
+<tr>
+<td><strong>Longo prazo</strong></td>
+<td>Usa dados em reunião com coordenação. Toma decisões baseadas em evidência, não intuição</td>
+</tr>
+</tbody></table>
+<h4>Jornada da Coordenadora Marcia</h4>
+<table>
+<thead>
+<tr>
+<th>Etapa</th>
+<th>Experiência</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Descoberta</strong></td>
+<td>Ricardo (dono) pede pra ela liderar o piloto</td>
+</tr>
+<tr>
+<td><strong>Onboarding</strong></td>
+<td>Treina professores, acompanha primeiras semanas, resolve atritos iniciais</td>
+</tr>
+<tr>
+<td><strong>Uso</strong></td>
+<td>Vê métricas por professor: aderência ao planejamento, ritmo de cobertura, alertas</td>
+</tr>
+<tr>
+<td><strong>Momento &quot;aha!&quot;</strong></td>
+<td>Consegue ter conversa objetiva com professor: &quot;Os dados mostram que turma X está atrasada&quot; - sem parecer perseguição</td>
+</tr>
+<tr>
+<td><strong>Longo prazo</strong></td>
+<td>Deixa de assistir aulas aleatórias, foca energia onde os dados indicam necessidade real</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Success Metrics</h2>
+<h3>User Success Metrics</h3>
+<table>
+<thead>
+<tr>
+<th>Persona</th>
+<th>Métrica</th>
+<th>Meta</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Professor João</strong></td>
+<td>Tempo gasto em relatórios manuais</td>
+<td>Redução de 2-3h/semana → &lt;30min/semana</td>
+</tr>
+<tr>
+<td><strong>Professor João</strong></td>
+<td>Taxa de aprovação dos relatórios gerados</td>
+<td>&gt;80% aprovados sem edição significativa</td>
+</tr>
+<tr>
+<td><strong>Professor João</strong></td>
+<td>Uso contínuo após 30 dias</td>
+<td>&gt;70% dos professores ativos</td>
+</tr>
+<tr>
+<td><strong>Coordenadora Marcia</strong></td>
+<td>Conversas pedagógicas baseadas em dados</td>
+<td>Pelo menos 1x/mês por professor</td>
+</tr>
+<tr>
+<td><strong>Dono Ricardo</strong></td>
+<td>Visibilidade de cobertura curricular</td>
+<td>100% das turmas com dados semanais</td>
+</tr>
+</tbody></table>
+<h3>Business Objectives</h3>
+<table>
+<thead>
+<tr>
+<th>Horizonte</th>
+<th>Objetivo</th>
+<th>Meta</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>3 meses</strong></td>
+<td>Validar produto com piloto</td>
+<td>2-3 escolas, &gt;70% adoção de professores</td>
+</tr>
+<tr>
+<td><strong>6 meses</strong></td>
+<td>Provar retenção</td>
+<td>Taxa de renovação &gt;80% após piloto</td>
+</tr>
+<tr>
+<td><strong>12 meses</strong></td>
+<td>Escalar modelo</td>
+<td>15-20 escolas ativas, break-even operacional</td>
+</tr>
+</tbody></table>
+<h3>Key Performance Indicators</h3>
+<table>
+<thead>
+<tr>
+<th>Categoria</th>
+<th>KPI</th>
+<th>Como Medir</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Adoção</strong></td>
+<td>% de professores ativos/mês</td>
+<td>Professores que fizeram upload ≥1x/semana</td>
+</tr>
+<tr>
+<td><strong>Engajamento</strong></td>
+<td>Horas de aula processadas/escola/mês</td>
+<td>Volume de transcrições analisadas</td>
+</tr>
+<tr>
+<td><strong>Qualidade</strong></td>
+<td>NPS do professor</td>
+<td>Pesquisa trimestral</td>
+</tr>
+<tr>
+<td><strong>Retenção</strong></td>
+<td>Churn mensal de escolas</td>
+<td>Cancelamentos / base ativa</td>
+</tr>
+<tr>
+<td><strong>Financeiro</strong></td>
+<td>MRR (Receita Recorrente Mensal)</td>
+<td>Soma de contratos ativos</td>
+</tr>
+<tr>
+<td><strong>Financeiro</strong></td>
+<td>CAC (Custo de Aquisição)</td>
+<td>Investimento em vendas / novas escolas</td>
+</tr>
+<tr>
+<td><strong>Financeiro</strong></td>
+<td>LTV/CAC</td>
+<td>Lifetime value vs custo de aquisição (meta: &gt;3x)</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>MVP Scope</h2>
+<h3>Core Features</h3>
+<p><strong>1. Gestão de Planejamento</strong></p>
+<ul>
+<li>Cadastro de planejamento bimestral pelo professor (conteúdos do período)</li>
+<li>Vinculação com competências da BNCC por série/disciplina</li>
+<li>Cadastro opcional de objetivos específicos por aula</li>
+</ul>
+<p><strong>2. Captura e Processamento de Aulas</strong></p>
+<ul>
+<li>Upload de transcrição/áudio de múltiplas fontes (celular, Read.ai, digitação manual)</li>
+<li>Processamento assíncrono (batch) para otimização de custos</li>
+<li>Transcrição automática de áudio via Whisper/Google Speech</li>
+</ul>
+<p><strong>3. Análise Pedagógica por IA</strong></p>
+<ul>
+<li>Cruzamento da aula com planejamento do bimestre</li>
+<li>Detecção de gaps de conteúdo (&quot;Você não cobriu X ainda&quot;)</li>
+<li>Análise de % de progresso do conteúdo planejado</li>
+<li>Identificação de sinais de dificuldade/desengajamento via interações dos alunos</li>
+</ul>
+<p><strong>4. Outputs para o Professor</strong></p>
+<ul>
+<li>Relatório automático da aula (formato configurável pela escola)</li>
+<li>Exercícios contextuais gerados do conteúdo real da aula</li>
+<li>Sugestões para próxima aula baseadas em gaps detectados</li>
+<li>Tela de revisão/aprovação antes de finalizar</li>
+</ul>
+<p><strong>5. Dashboard de Gestão (Básico)</strong></p>
+<ul>
+<li>Uma métrica agregada visível para coordenação/direção: % de cobertura curricular por turma</li>
+<li>Alertas de turmas atrasadas em relação ao planejamento</li>
+<li>Visão por professor (para coordenador) e agregada (para dono)</li>
+</ul>
+<p><strong>6. Controle de Permissões</strong></p>
+<ul>
+<li>Professor vê apenas seus próprios dados</li>
+<li>Coordenador vê métricas por professor (sem transcrição bruta)</li>
+<li>Dono/Diretor vê apenas dados agregados da escola</li>
+</ul>
+<h3>Out of Scope for MVP</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Motivo do Adiamento</th>
+<th>Versão Planejada</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Dispositivo de hardware próprio</td>
+<td>Validar software primeiro, hardware na Fase 2</td>
+<td>V2</td>
+</tr>
+<tr>
+<td>Dashboard com 6 dimensões completas</td>
+<td>Uma métrica já prova valor, complexidade adicional</td>
+<td>V2</td>
+</tr>
+<tr>
+<td>Portal de pais</td>
+<td>Foco primeiro em professor e gestão</td>
+<td>V3</td>
+</tr>
+<tr>
+<td>Analytics individual por aluno</td>
+<td>Requer identificação de voz, complexidade alta</td>
+<td>Futuro</td>
+</tr>
+<tr>
+<td>Identificação de voz por aluno</td>
+<td>Complexidade técnica e privacidade</td>
+<td>Futuro</td>
+</tr>
+<tr>
+<td>Processamento em tempo real</td>
+<td>Assíncrono é suficiente e mais barato</td>
+<td>Futuro</td>
+</tr>
+<tr>
+<td>Coaching personalizado por estilo do professor</td>
+<td>Requer base de dados maior</td>
+<td>Futuro</td>
+</tr>
+<tr>
+<td>Integração com sistemas de gestão (Sponte, etc)</td>
+<td>Foco no core primeiro</td>
+<td>V2</td>
+</tr>
+</tbody></table>
+<h3>MVP Success Criteria</h3>
+<p><strong>Critérios de Go/No-Go para Fase 2:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Critério</th>
+<th>Meta Mínima</th>
+<th>Como Medir</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Adoção de professores</td>
+<td>&gt;70% dos professores do piloto usando semanalmente</td>
+<td>Logs de upload</td>
+</tr>
+<tr>
+<td>Qualidade do output</td>
+<td>&gt;80% dos relatórios aprovados sem edição significativa</td>
+<td>Taxa de aprovação no sistema</td>
+</tr>
+<tr>
+<td>Redução de trabalho manual</td>
+<td>Professores reportam economia de &gt;1h/semana</td>
+<td>Pesquisa qualitativa</td>
+</tr>
+<tr>
+<td>Satisfação</td>
+<td>NPS &gt;30 entre professores</td>
+<td>Pesquisa ao final do piloto</td>
+</tr>
+<tr>
+<td>Retenção de escola</td>
+<td>Escola renova após piloto de 30 dias</td>
+<td>Contrato assinado</td>
+</tr>
+<tr>
+<td>Viabilidade financeira</td>
+<td>Custo de IA &lt;40% da receita por escola</td>
+<td>Unit economics real</td>
+</tr>
+</tbody></table>
+<p><strong>Sinais de Validação:</strong></p>
+<ul>
+<li>Professor João diz: &quot;Não quero voltar a fazer relatório manual&quot;</li>
+<li>Coordenadora Marcia usa dados em pelo menos 1 conversa com professor</li>
+<li>Dono Ricardo menciona dados do sistema em reunião de gestão</li>
+</ul>
+<h3>Future Vision</h3>
+<p><strong>V2 - Dashboard Completo (6-12 meses pós-MVP)</strong></p>
+<ul>
+<li>6 dimensões de métricas: desenvoltura, domínio de conteúdo, aderência ao planejamento, adequação linguagem/metodologia, sequência lógica, fugas de pensamento</li>
+<li>Comparativos entre turmas e professores</li>
+<li>Dispositivo próprio de captura de áudio</li>
+<li>Integração com sistemas de gestão escolar</li>
+</ul>
+<p><strong>V3 - Ecossistema Família (12-18 meses)</strong></p>
+<ul>
+<li>Portal do pai com informações do filho</li>
+<li>Exercícios personalizados por aluno baseados em gaps detectados</li>
+<li>Analytics por turma (participação, engajamento)</li>
+<li>Mapa de calor de participação - detecção de alunos &quot;invisíveis&quot;</li>
+</ul>
+<p><strong>Visão de Longo Prazo (2-3 anos)</strong></p>
+<ul>
+<li>Analytics individual por aluno via identificação de voz</li>
+<li>IA que aprende estilo individual do professor - coaching personalizado</li>
+<li>Rede de escolas com benchmarks comparativos</li>
+<li>Base de dados pedagógica para pesquisa e políticas públicas</li>
+<li>Expansão para redes educacionais (1 contrato = 50 escolas)</li>
+</ul>
+</body></html>

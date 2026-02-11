@@ -1,0 +1,142 @@
+{
+  "disciplina": "CIENCIAS",
+  "ano": 9,
+  "habilidades": [
+    {
+      "codigo": "EF09CI01",
+      "descricao": "Investigar as mudanças de estado físico da matéria e explicar essas transformações com base no modelo de constituição submicroscópica.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Matéria e Energia",
+      "objeto_conhecimento": "Estrutura da matéria"
+    },
+    {
+      "codigo": "EF09CI02",
+      "descricao": "Comparar quantidades de reagentes e produtos envolvidos em transformações químicas, estabelecendo a proporção entre as suas massas.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Matéria e Energia",
+      "objeto_conhecimento": "Aspectos quantitativos das transformações químicas"
+    },
+    {
+      "codigo": "EF09CI03",
+      "descricao": "Identificar modelos que descrevem a estrutura da matéria (constituição do átomo e composição de moléculas simples) e reconhecer sua evolução histórica.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Matéria e Energia",
+      "objeto_conhecimento": "Estrutura da matéria"
+    },
+    {
+      "codigo": "EF09CI04",
+      "descricao": "Planejar e executar experimentos que evidenciem que todas as cores de luz podem ser formadas pela composição das três cores primárias da luz e que a cor de um objeto está relacionada também à cor da luz que o ilumina.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Matéria e Energia",
+      "objeto_conhecimento": "Radiações e suas aplicações na saúde"
+    },
+    {
+      "codigo": "EF09CI05",
+      "descricao": "Investigar os principais mecanismos envolvidos na transmissão e recepção de imagem e som que revolucionaram os sistemas de comunicação humana.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Matéria e Energia",
+      "objeto_conhecimento": "Radiações e suas aplicações na saúde"
+    },
+    {
+      "codigo": "EF09CI06",
+      "descricao": "Classificar as radiações eletromagnéticas por suas frequências, fontes e aplicações, discutindo e avaliando as implicações de seu uso em controle remoto, telefone celular, raio X, forno de micro-ondas, fotocélulas etc.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Matéria e Energia",
+      "objeto_conhecimento": "Radiações e suas aplicações na saúde"
+    },
+    {
+      "codigo": "EF09CI07",
+      "descricao": "Discutir o papel do avanço tecnológico na aplicação das radiações na medicina diagnóstica (raio X, ultrassom, ressonância nuclear magnética) e no tratamento de doenças (radioterapia, cirurgia ótica a laser, infravermelho, ultravioleta etc.).",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Matéria e Energia",
+      "objeto_conhecimento": "Radiações e suas aplicações na saúde"
+    },
+    {
+      "codigo": "EF09CI08",
+      "descricao": "Associar os gametas à transmissão das características hereditárias, estabelecendo relações entre ancestrais e descendentes.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Vida e Evolução",
+      "objeto_conhecimento": "Hereditariedade"
+    },
+    {
+      "codigo": "EF09CI09",
+      "descricao": "Discutir as ideias de Mendel sobre hereditariedade (fatores hereditários, dominância, segregação), reconhecendo a importância de seus experimentos para a Genética.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Vida e Evolução",
+      "objeto_conhecimento": "Hereditariedade"
+    },
+    {
+      "codigo": "EF09CI10",
+      "descricao": "Comparar as ideias evolucionistas de Lamarck e Darwin apresentadas em textos científicos e históricos, identificando semelhanças e diferenças entre essas ideias e sua importância para explicar a diversidade biológica.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Vida e Evolução",
+      "objeto_conhecimento": "Ideias evolucionistas"
+    },
+    {
+      "codigo": "EF09CI11",
+      "descricao": "Discutir a evolução e a diversidade das espécies com base em diferentes evidências (fósseis, anatomia comparada, embriologia).",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Vida e Evolução",
+      "objeto_conhecimento": "Ideias evolucionistas"
+    },
+    {
+      "codigo": "EF09CI12",
+      "descricao": "Justificar a importância das unidades de conservação para a preservação da biodiversidade e do patrimônio nacional, considerando os diferentes tipos de unidades (parques, reservas e florestas nacionais), as populações humanas e as atividades a eles relacionados.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Vida e Evolução",
+      "objeto_conhecimento": "Preservação da biodiversidade"
+    },
+    {
+      "codigo": "EF09CI13",
+      "descricao": "Propor iniciativas individuais e coletivas para a solução de problemas ambientais da cidade ou da comunidade, com base na análise de ações de consumo consciente e de sustentabilidade bem-sucedidas.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Vida e Evolução",
+      "objeto_conhecimento": "Preservação da biodiversidade"
+    },
+    {
+      "codigo": "EF09CI14",
+      "descricao": "Descrever a composição e a estrutura do Sistema Solar (Sol, planetas rochosos, planetas gigantes gasosos e corpos menores), assim como a localização do Sistema Solar na nossa Galáxia (a Via Láctea) e dela no Universo (apenas uma galáxia dentre bilhões).",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Terra e Universo",
+      "objeto_conhecimento": "Composição, estrutura e localização do Sistema Solar no Universo"
+    },
+    {
+      "codigo": "EF09CI15",
+      "descricao": "Relacionar diferentes leituras do céu e explicações sobre a origem da Terra, do Sol ou do Sistema Solar às necessidades de distintas culturas (agricultura, navegação, entre outras).",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Terra e Universo",
+      "objeto_conhecimento": "Astronomia e cultura"
+    },
+    {
+      "codigo": "EF09CI16",
+      "descricao": "Selecionar argumentos sobre a viabilidade da sobrevivência humana fora da Terra, com base nas condições necessárias à vida, nas características dos planetas e nas distâncias e nos tempos envolvidos em viagens interplanetárias e interestelares.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Terra e Universo",
+      "objeto_conhecimento": "Vida humana fora da Terra"
+    },
+    {
+      "codigo": "EF09CI17",
+      "descricao": "Analisar o ciclo evolutivo do Sol (nascimento, vida e morte) baseado no conhecimento das etapas de evolução de estrelas de diferentes dimensões e nesse contexto situar o Sol.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Terra e Universo",
+      "objeto_conhecimento": "Ordem de grandeza astronômica"
+    }
+  ]
+}

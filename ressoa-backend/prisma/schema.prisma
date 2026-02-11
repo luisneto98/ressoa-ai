@@ -1,0 +1,127 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// Domínio Organizacional - Auth & Multi-tenancy
+// ============================================
+
+enum RoleUsuario {
+  PROFESSOR
+  COORDENADOR
+  DIRETOR
+}
+
+model Escola {
+  id         String   @id @default(uuid())
+  nome       String
+  cnpj       String?  @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // Relations
+  usuarios   Usuario[]
+
+  @@map("escola")
+}
+
+model Usuario {
+  id          String   @id @default(uuid())
+  nome        String
+  email       String
+  senha_hash  String
+  escola_id   String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  // Relations
+  escola          Escola         @relation(fields: [escola_id], references: [id], onDelete: Cascade)
+  perfil_usuario  PerfilUsuario?
+
+  @@unique([email, escola_id])
+  @@index([escola_id])
+  @@index([email])
+  @@map("usuario")
+}
+
+model PerfilUsuario {
+  id         String       @id @default(uuid())
+  usuario_id String       @unique
+  role       RoleUsuario  @default(PROFESSOR)
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+
+  // Relations
+  usuario    Usuario      @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+
+  @@index([usuario_id])
+  @@map("perfil_usuario")
+}
+
+// ============================================
+// Domínio Currículo - BNCC
+// ============================================
+
+model Disciplina {
+  id         String   @id @default(uuid())
+  codigo     String   @unique // MATEMATICA, LINGUA_PORTUGUESA, CIENCIAS
+  nome       String // Matemática, Língua Portuguesa, Ciências
+  area       String // Matemática, Linguagens, Ciências da Natureza
+  ordem      Int // 1, 2, 3
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("disciplinas")
+}
+
+model Ano {
+  id         String   @id @default(uuid())
+  codigo     String   @unique // 6_ANO, 7_ANO, 8_ANO, 9_ANO
+  nome       String // 6º Ano, 7º Ano, 8º Ano, 9º Ano
+  ordem      Int // 6, 7, 8, 9
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  habilidades HabilidadeAno[]
+
+  @@map("anos")
+}
+
+model Habilidade {
+  id                  String   @id @default(uuid())
+  codigo              String   @unique // EF06MA01, EF67LP03, EF69LP10, etc.
+  descricao           String   @db.Text
+  disciplina          String // MATEMATICA, LINGUA_PORTUGUESA, CIENCIAS
+  ano_inicio          Int // 6, 7, 8, 9
+  ano_fim             Int? // NULL para habilidades específicas, 7/9 para blocos compartilhados
+  unidade_tematica    String? // Números, Álgebra, Práticas de Linguagem, etc.
+  objeto_conhecimento String?  @db.Text
+  versao_bncc         String   @default("2018") // Versionamento (futuro: 2024?)
+  ativa               Boolean  @default(true) // Soft delete
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  anos HabilidadeAno[]
+
+  @@index([disciplina, ano_inicio])
+  @@index([codigo])
+  @@index([ativa])
+  @@map("habilidades")
+}
+
+model HabilidadeAno {
+  id            String     @id @default(uuid())
+  habilidade_id String
+  habilidade    Habilidade @relation(fields: [habilidade_id], references: [id], onDelete: Cascade)
+  ano_id        String
+  ano           Ano        @relation(fields: [ano_id], references: [id], onDelete: Cascade)
+  created_at    DateTime   @default(now())
+
+  @@unique([habilidade_id, ano_id])
+  @@index([ano_id])
+  @@map("habilidades_anos")
+}

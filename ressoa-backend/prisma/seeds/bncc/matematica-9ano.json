@@ -1,0 +1,190 @@
+{
+  "disciplina": "MATEMATICA",
+  "ano": 9,
+  "habilidades": [
+    {
+      "codigo": "EF09MA01",
+      "descricao": "Reconhecer que, uma vez fixada uma unidade de comprimento, existem segmentos de reta cujo comprimento não é expresso por número racional (como as medidas de diagonais de um polígono e alturas de um triângulo), e expressar essa medida usando radicais.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Números",
+      "objeto_conhecimento": "Necessidade dos números reais para medir qualquer segmento de reta; Números irracionais: reconhecimento e localização de alguns na reta numérica"
+    },
+    {
+      "codigo": "EF09MA02",
+      "descricao": "Reconhecer um número irracional como um número real cuja representação decimal é infinita e não periódica, e estimar a localização de alguns deles na reta numérica.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Números",
+      "objeto_conhecimento": "Números irracionais: reconhecimento e localização de alguns na reta numérica"
+    },
+    {
+      "codigo": "EF09MA03",
+      "descricao": "Efetuar cálculos com números reais, inclusive potências com expoentes fracionários.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Números",
+      "objeto_conhecimento": "Potências com expoentes negativos e fracionários"
+    },
+    {
+      "codigo": "EF09MA04",
+      "descricao": "Resolver e elaborar problemas com números reais, inclusive em notação científica, envolvendo diferentes operações.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Números",
+      "objeto_conhecimento": "Números reais: notação científica e problemas"
+    },
+    {
+      "codigo": "EF09MA05",
+      "descricao": "Resolver e elaborar problemas que envolvam porcentagens, com a ideia de aplicação de percentuais sucessivos e a determinação das taxas percentuais, preferencialmente com o uso de tecnologias digitais, no contexto da educação financeira.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Números",
+      "objeto_conhecimento": "Porcentagens: problemas que envolvem cálculo de percentuais sucessivos"
+    },
+    {
+      "codigo": "EF09MA06",
+      "descricao": "Compreender as funções como relações de dependência unívoca entre duas variáveis e suas representações numérica, algébrica e gráfica e utilizar esse conceito para analisar situações que envolvam relações funcionais entre duas variáveis.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Números",
+      "objeto_conhecimento": "Funções: representações numérica, algébrica e gráfica"
+    },
+    {
+      "codigo": "EF09MA07",
+      "descricao": "Resolver problemas que envolvam a razão entre duas grandezas de espécies diferentes, como velocidade e densidade demográfica.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Álgebra",
+      "objeto_conhecimento": "Razão entre grandezas de espécies diferentes"
+    },
+    {
+      "codigo": "EF09MA08",
+      "descricao": "Resolver e elaborar problemas que envolvam relações de proporcionalidade direta e inversa entre duas ou mais grandezas, inclusive escalas, divisão em partes proporcionais e taxa de variação, em contextos socioculturais, ambientais e de outras áreas.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Álgebra",
+      "objeto_conhecimento": "Grandezas diretamente proporcionais e grandezas inversamente proporcionais"
+    },
+    {
+      "codigo": "EF09MA09",
+      "descricao": "Compreender os processos de fatoração de expressões algébricas, com base em suas relações com os produtos notáveis, para resolver e elaborar problemas que possam ser representados por equações polinomiais do 2º grau.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Álgebra",
+      "objeto_conhecimento": "Expressões algébricas: fatoração e produtos notáveis; Resolução de equações polinomiais do 2º grau por meio de fatorações"
+    },
+    {
+      "codigo": "EF09MA10",
+      "descricao": "Demonstrar relações simples entre os ângulos formados por retas paralelas cortadas por uma transversal.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Geometria",
+      "objeto_conhecimento": "Demonstrações de relações entre os ângulos formados por retas paralelas intersectadas por uma transversal"
+    },
+    {
+      "codigo": "EF09MA11",
+      "descricao": "Resolver problemas por meio do estabelecimento de relações entre arcos, ângulos centrais e ângulos inscritos na circunferência, fazendo uso, inclusive, de softwares de geometria dinâmica.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Geometria",
+      "objeto_conhecimento": "Relações entre arcos e ângulos na circunferência de um círculo"
+    },
+    {
+      "codigo": "EF09MA12",
+      "descricao": "Reconhecer as condições necessárias e suficientes para que dois triângulos sejam semelhantes.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Geometria",
+      "objeto_conhecimento": "Semelhança de triângulos"
+    },
+    {
+      "codigo": "EF09MA13",
+      "descricao": "Demonstrar relações métricas do triângulo retângulo, entre elas o teorema de Pitágoras, utilizando, inclusive, a semelhança de triângulos.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Geometria",
+      "objeto_conhecimento": "Relações métricas no triângulo retângulo; Teorema de Pitágoras: verificações experimentais e demonstração"
+    },
+    {
+      "codigo": "EF09MA14",
+      "descricao": "Resolver e elaborar problemas de aplicação do teorema de Pitágoras ou das relações de proporcionalidade envolvendo retas paralelas cortadas por secantes.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Geometria",
+      "objeto_conhecimento": "Teorema de Pitágoras: verificações experimentais e demonstração; Retas paralelas cortadas por transversais: teoremas de proporcionalidade e verificações experimentais"
+    },
+    {
+      "codigo": "EF09MA15",
+      "descricao": "Descrever, por escrito e por meio de um fluxograma, um algoritmo para a construção de um polígono regular cuja medida do lado é conhecida, utilizando régua e compasso, como também softwares.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Geometria",
+      "objeto_conhecimento": "Polígonos regulares"
+    },
+    {
+      "codigo": "EF09MA16",
+      "descricao": "Determinar o ponto médio de um segmento de reta e o ponto de interseção de duas retas, de forma geométrica ou analítica.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Geometria",
+      "objeto_conhecimento": "Ponto médio de um segmento de reta e ponto de interseção de duas retas"
+    },
+    {
+      "codigo": "EF09MA17",
+      "descricao": "Reconhecer e empregar unidades usadas para expressar medidas muito grandes ou muito pequenas, tais como distância entre planetas e sistemas solares, tamanho de vírus ou de células, capacidade de armazenamento de computadores, entre outros.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Grandezas e medidas",
+      "objeto_conhecimento": "Unidades de medida para medir distâncias muito grandes e muito pequenas; Unidades de medida utilizadas na informática"
+    },
+    {
+      "codigo": "EF09MA18",
+      "descricao": "Resolver e elaborar problemas que envolvam medidas de volumes de prismas e de cilindros retos, inclusive com uso de expressões de cálculo, em situações cotidianas.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Grandezas e medidas",
+      "objeto_conhecimento": "Volume de prismas e de cilindros retos"
+    },
+    {
+      "codigo": "EF09MA19",
+      "descricao": "Resolver e elaborar problemas que envolvam medidas de áreas de figuras geométricas, utilizando expressões de cálculo de áreas (triângulos, retângulos, trapézios, paralelogramos e círculos), em situações como determinar medidas de terrenos.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Grandezas e medidas",
+      "objeto_conhecimento": "Área e perímetro de figuras planas; Área do círculo e comprimento de sua circunferência"
+    },
+    {
+      "codigo": "EF09MA20",
+      "descricao": "Reconhecer, em experimentos aleatórios, eventos independentes e dependentes e calcular a probabilidade de sua ocorrência, nos dois casos.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Probabilidade e estatística",
+      "objeto_conhecimento": "Análise de probabilidade de eventos aleatórios: eventos dependentes e independentes"
+    },
+    {
+      "codigo": "EF09MA21",
+      "descricao": "Analisar e identificar, em gráficos divulgados pela mídia, os elementos que podem induzir, às vezes propositalmente, erros de leitura, como escalas inapropriadas, legendas não fidedignas, omissão de informações importantes (fontes e datas), entre outros.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Probabilidade e estatística",
+      "objeto_conhecimento": "Leitura, interpretação e representação de dados de pesquisa expressos em tabelas de dupla entrada, gráficos de colunas simples e agrupadas, gráficos de barras e de setores e gráficos pictóricos"
+    },
+    {
+      "codigo": "EF09MA22",
+      "descricao": "Escolher e construir o gráfico mais adequado (colunas, setores, linhas), com ou sem uso de planilhas eletrônicas, para apresentar um determinado conjunto de dados, destacando aspectos como as medidas de tendência central.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Probabilidade e estatística",
+      "objeto_conhecimento": "Leitura, interpretação e representação de dados de pesquisa expressos em tabelas de dupla entrada, gráficos de colunas simples e agrupadas, gráficos de barras e de setores e gráficos pictóricos"
+    },
+    {
+      "codigo": "EF09MA23",
+      "descricao": "Planejar e executar pesquisa amostral envolvendo tema da realidade social e comunicar os resultados por meio de relatório contendo avaliação de medidas de tendência central e da amplitude, tabelas e gráficos adequados, construídos com o apoio de planilhas eletrônicas.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Probabilidade e estatística",
+      "objeto_conhecimento": "Planejamento e execução de pesquisa amostral e apresentação de relatório"
+    }
+  ]
+}

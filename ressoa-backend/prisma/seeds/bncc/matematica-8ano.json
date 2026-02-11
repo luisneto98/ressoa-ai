@@ -1,0 +1,222 @@
+{
+  "disciplina": "MATEMATICA",
+  "ano": 8,
+  "habilidades": [
+    {
+      "codigo": "EF08MA01",
+      "descricao": "Efetuar cálculos com potências de expoentes inteiros e aplicar esse conhecimento na representação de números em notação científica.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Números",
+      "objeto_conhecimento": "Notação científica; Potenciação e radiciação"
+    },
+    {
+      "codigo": "EF08MA02",
+      "descricao": "Resolver e elaborar problemas usando a relação entre potenciação e radiciação, para representar uma raiz como potência de expoente fracionário.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Números",
+      "objeto_conhecimento": "Potenciação e radiciação"
+    },
+    {
+      "codigo": "EF08MA03",
+      "descricao": "Resolver e elaborar problemas de contagem cuja resolução envolve a aplicação do princípio multiplicativo.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Números",
+      "objeto_conhecimento": "Princípio multiplicativo da contagem"
+    },
+    {
+      "codigo": "EF08MA04",
+      "descricao": "Resolver e elaborar problemas, envolvendo cálculo de porcentagens, incluindo o uso de tecnologias digitais.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Números",
+      "objeto_conhecimento": "Porcentagens"
+    },
+    {
+      "codigo": "EF08MA05",
+      "descricao": "Reconhecer e utilizar procedimentos para a obtenção de uma fração geratriz para uma dízima periódica.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Números",
+      "objeto_conhecimento": "Dízimas periódicas; Fração geratriz"
+    },
+    {
+      "codigo": "EF08MA06",
+      "descricao": "Resolver e elaborar problemas que envolvam cálculo do valor numérico de expressões algébricas, utilizando as propriedades das operações.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Álgebra",
+      "objeto_conhecimento": "Valor numérico de expressões algébricas"
+    },
+    {
+      "codigo": "EF08MA07",
+      "descricao": "Associar uma equação linear de 1º grau com duas incógnitas a uma reta no plano cartesiano.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Álgebra",
+      "objeto_conhecimento": "Equação do 1º grau; Plano cartesiano"
+    },
+    {
+      "codigo": "EF08MA08",
+      "descricao": "Resolver e elaborar problemas relacionados ao seu contexto próximo, que possam ser representados por sistemas de equações de 1º grau com duas incógnitas e interpretá-los, utilizando, inclusive, o plano cartesiano como recurso.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Álgebra",
+      "objeto_conhecimento": "Sistema de equações do 1º grau; Plano cartesiano"
+    },
+    {
+      "codigo": "EF08MA09",
+      "descricao": "Resolver e elaborar, com e sem uso de tecnologias, problemas que possam ser representados por equações polinomiais de 2º grau do tipo ax² = b.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Álgebra",
+      "objeto_conhecimento": "Equação polinomial de 2º grau do tipo ax² = b"
+    },
+    {
+      "codigo": "EF08MA10",
+      "descricao": "Identificar a regularidade de uma sequência numérica ou figural não recursiva e construir um algoritmo por meio de um fluxograma que permita indicar os números ou as figuras seguintes.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Álgebra",
+      "objeto_conhecimento": "Sequências recursivas e não recursivas"
+    },
+    {
+      "codigo": "EF08MA11",
+      "descricao": "Identificar a regularidade de uma sequência numérica recursiva e construir um algoritmo por meio de um fluxograma que permita indicar os números seguintes.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Álgebra",
+      "objeto_conhecimento": "Sequências recursivas e não recursivas"
+    },
+    {
+      "codigo": "EF08MA12",
+      "descricao": "Identificar a natureza da variação de duas grandezas, diretamente, inversamente proporcionais ou não proporcionais, expressando a relação existente por meio de sentença algébrica e representá-la no plano cartesiano.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Álgebra",
+      "objeto_conhecimento": "Variação de grandezas: diretamente proporcionais, inversamente proporcionais ou não proporcionais"
+    },
+    {
+      "codigo": "EF08MA13",
+      "descricao": "Resolver e elaborar problemas que envolvam grandezas diretamente ou inversamente proporcionais, por meio de estratégias variadas.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Álgebra",
+      "objeto_conhecimento": "Variação de grandezas: diretamente proporcionais, inversamente proporcionais ou não proporcionais"
+    },
+    {
+      "codigo": "EF08MA14",
+      "descricao": "Demonstrar propriedades de quadriláteros por meio da identificação da congruência de triângulos.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Geometria",
+      "objeto_conhecimento": "Congruência de triângulos e demonstrações de propriedades de quadriláteros"
+    },
+    {
+      "codigo": "EF08MA15",
+      "descricao": "Reconhecer e construir figuras obtidas por composições de transformações geométricas (translação, reflexão e rotação), com o uso de instrumentos de desenho ou de softwares de geometria dinâmica.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Geometria",
+      "objeto_conhecimento": "Transformações geométricas: simetrias de translação, reflexão e rotação"
+    },
+    {
+      "codigo": "EF08MA16",
+      "descricao": "Descrever, por escrito e por meio de um fluxograma, um algoritmo para a construção de um hexágono regular de qualquer área, a partir da medida do ângulo central e da utilização de esquadros e compasso.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Geometria",
+      "objeto_conhecimento": "Construções geométricas: ângulos de 90°, 60°, 45° e 30° e polígonos regulares"
+    },
+    {
+      "codigo": "EF08MA17",
+      "descricao": "Aplicar os conceitos de mediatriz e bissetriz como lugares geométricos na resolução de problemas.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Geometria",
+      "objeto_conhecimento": "Mediatriz e bissetriz como lugares geométricos: construção e problemas"
+    },
+    {
+      "codigo": "EF08MA18",
+      "descricao": "Reconhecer e construir figuras obtidas por simetrias de translação, reflexão e rotação no plano cartesiano e no plano em geral, com o uso de instrumentos de desenho ou de softwares de geometria dinâmica.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Geometria",
+      "objeto_conhecimento": "Transformações geométricas: simetrias de translação, reflexão e rotação"
+    },
+    {
+      "codigo": "EF08MA19",
+      "descricao": "Resolver e elaborar problemas que envolvam medidas de área de figuras geométricas, utilizando expressões de cálculo de área (quadriláteros, triângulos e círculos), em situações como determinar medida de terrenos.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Grandezas e medidas",
+      "objeto_conhecimento": "Área de figuras planas; Área do círculo e comprimento de sua circunferência"
+    },
+    {
+      "codigo": "EF08MA20",
+      "descricao": "Reconhecer a relação entre um litro e um decímetro cúbico e a relação entre litro e metro cúbico, para resolver problemas de cálculo de capacidade de recipientes.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Grandezas e medidas",
+      "objeto_conhecimento": "Volume de cilindro reto; Medidas de capacidade"
+    },
+    {
+      "codigo": "EF08MA21",
+      "descricao": "Resolver e elaborar problemas que envolvam o cálculo do volume de recipiente cujo formato é o de um bloco retangular.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Grandezas e medidas",
+      "objeto_conhecimento": "Volume de cilindro reto; Medidas de capacidade"
+    },
+    {
+      "codigo": "EF08MA22",
+      "descricao": "Calcular a probabilidade de eventos, com base na construção do espaço amostral, utilizando o princípio multiplicativo, e reconhecer que a soma das probabilidades de todos os elementos do espaço amostral é igual a 1.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Probabilidade e estatística",
+      "objeto_conhecimento": "Princípio multiplicativo da contagem; Soma das probabilidades de todos os elementos de um espaço amostral"
+    },
+    {
+      "codigo": "EF08MA23",
+      "descricao": "Avaliar a adequação de diferentes tipos de gráficos para representar um conjunto de dados de uma pesquisa.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Probabilidade e estatística",
+      "objeto_conhecimento": "Gráficos de barras, colunas, linhas ou setores e seus elementos constitutivos e adequação para determinado conjunto de dados"
+    },
+    {
+      "codigo": "EF08MA24",
+      "descricao": "Classificar as frequências de uma variável contínua de uma pesquisa em classes, de modo que resumam os dados de maneira adequada para a tomada de decisões.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Probabilidade e estatística",
+      "objeto_conhecimento": "Organização dos dados de uma variável contínua em classes"
+    },
+    {
+      "codigo": "EF08MA25",
+      "descricao": "Obter os valores de medidas de tendência central de uma pesquisa estatística (média, moda e mediana) com a compreensão de seus significados e relacioná-los com a dispersão de dados, indicada pela amplitude.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Probabilidade e estatística",
+      "objeto_conhecimento": "Medidas de tendência central e de dispersão"
+    },
+    {
+      "codigo": "EF08MA26",
+      "descricao": "Selecionar razões, de diferentes naturezas (física, ética ou econômica), que justificam a realização de pesquisas amostrais e não censitárias, e reconhecer que a seleção aleatória de membros de uma população garante que a amostra seja representativa.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Probabilidade e estatística",
+      "objeto_conhecimento": "Pesquisas censitária ou amostral; Planejamento de pesquisa, coleta e organização dos dados, construção de tabelas e gráficos e interpretação das informações"
+    },
+    {
+      "codigo": "EF08MA27",
+      "descricao": "Planejar e executar pesquisa amostral, selecionando uma técnica de amostragem adequada, e escrever relatório que contenha os gráficos apropriados para representar os conjuntos de dados, destacando aspectos como as medidas de tendência central, a amplitude e as conclusões.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Probabilidade e estatística",
+      "objeto_conhecimento": "Pesquisas censitária ou amostral; Planejamento de pesquisa, coleta e organização dos dados, construção de tabelas e gráficos e interpretação das informações"
+    }
+  ]
+}

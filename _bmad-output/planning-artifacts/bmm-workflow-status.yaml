@@ -1,0 +1,63 @@
+# BMM Workflow Status
+# Tracks completion of planning workflows for professor-analytics
+
+project_name: professor-analytics
+last_updated: 2026-02-09
+
+workflow_status:
+  product-brief:
+    status: complete
+    output_file: "_bmad-output/planning-artifacts/product-brief-professor-analytics-2026-02-05.md"
+    completed_at: 2026-02-05
+    steps_completed: [1, 2, 3, 4, 5, 6]
+
+  bncc-mapping:
+    status: complete
+    output_file: "_bmad-output/planning-artifacts/bncc-mapeamento-curricular-2026-02-06.md"
+    completed_at: 2026-02-06
+
+  business-rules:
+    status: complete
+    output_file: "_bmad-output/planning-artifacts/business-rules-pedagogical-analysis.md"
+    completed_at: 2026-02-06
+
+  external-integrations:
+    status: complete
+    output_file: "_bmad-output/planning-artifacts/external-integrations-api-contracts-2026-02-08.md"
+    completed_at: 2026-02-08
+    notes: "Documento de integrações externas (STT, LLM, Read.ai), contratos de API, custos, rate limits e estratégias anti vendor lock-in"
+
+  data-model:
+    status: complete
+    output_file: "_bmad-output/planning-artifacts/modelo-de-dados-entidades-2026-02-08.md"
+    completed_at: 2026-02-08
+    notes: "Modelo de dados completo: 32 entidades, relacionamentos, ciclos de vida, volumes estimados (135k registros/ano), decisões de design de BD (PostgreSQL, índices, particionamento)"
+
+  prompt-strategy:
+    status: complete
+    output_file: "_bmad-output/planning-artifacts/estrategia-prompts-ia-2026-02-08.md"
+    completed_at: 2026-02-08
+    notes: "Estratégia de engenharia de prompts e análise de IA: fundamentos pedagógicos (Bloom, didática), 5 prompts especializados, critérios de qualidade (90%+ aproveitável), métricas, feedback loop, exemplos práticos. Resolve Risco #67 e Mitigação #68 do brainstorming."
+
+  prd:
+    status: complete
+    output_file: "_bmad-output/planning-artifacts/prd.md"
+    completed_at: 2026-02-08
+    notes: "PRD completo: Resumo Executivo, Critérios de Sucesso, Escopo (MVP/Growth/Vision), 5 Jornadas de Usuário, Requisitos de Domínio, Inovação (4 áreas), SaaS B2B, 50 Requisitos Funcionais, NFRs (Performance, Segurança, Escalabilidade, Acessibilidade, Integração, Confiabilidade)"
+
+  ux-design:
+    status: complete
+    output_file: "_bmad-output/planning-artifacts/ux-design-specification.md"
+    completed_at: 2026-02-09
+    steps_completed: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+    notes: "UX Design Specification completa (1972 linhas): Personas, Experiência Central, Design Emocional, Padrões UX (6 produtos inspiradores), Design System (Tailwind+shadcn/ui), Visual Foundation, Defining Experience (interação central), User Journeys, Component Strategy, Patterns Library, Responsive & Accessibility. Produto: Ressoa AI (web responsivo, tom amigável-acessível)"
+
+  architecture:
+    status: complete
+    output_file: "_bmad-output/planning-artifacts/architecture.md"
+    completed_at: 2026-02-09
+    steps_completed: [1, 2, 3, 4]
+    notes: "Architecture Decision Document (1150+ linhas, 25 decisões): Tech Stack (React+Vite, NestJS, Prisma, PostgreSQL, Redis, Bull), Starter Templates, Core Decisions em 5 categorias (Auth & Security: Passport+JWT+bcrypt+RLS; API: REST+Swagger+class-validator; Frontend: Zustand+React Query+RHF+zod; Data: Prisma Migrate+BNCC seed+pg_dump+RLS; Infra MVP simplificada: Docker+GitHub Actions+Railway/Render+Sentry+Pino). Step 5 (Implementation Patterns) opcional, não completado."
+
+  # Next recommended workflows:
+  # epics-and-stories: pending (PRD + Architecture + UX Design completos - ready for breakdown)

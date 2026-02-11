@@ -26,7 +26,7 @@ export const Step2SelecaoHabilidades = () => {
   } = usePlanejamentoWizard();
 
   const [searchInput, setSearchInput] = useState('');
-  const [unidadeTematica, setUnidadeTematica] = useState<string>('');
+  const [unidadeTematica, setUnidadeTematica] = useState<string>('ALL');
   const debouncedSearch = useDebouncedValue(searchInput, 300);
 
   // Extract serie number from enum (e.g., "SEXTO_ANO" -> 6)
@@ -39,7 +39,7 @@ export const Step2SelecaoHabilidades = () => {
   const { data: habilidadesData, isLoading } = useHabilidades({
     disciplina: formData.turma?.disciplina,
     serie: serieNumber,
-    unidade_tematica: unidadeTematica || undefined,
+    unidade_tematica: unidadeTematica === 'ALL' ? undefined : unidadeTematica,
     search: debouncedSearch || undefined,
   });
 
@@ -97,7 +97,7 @@ export const Step2SelecaoHabilidades = () => {
                 <SelectValue placeholder="Todas" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todas</SelectItem>
+                <SelectItem value="ALL">Todas</SelectItem>
                 {unidadesTematicas.map((ut) => (
                   <SelectItem key={ut} value={ut}>
                     {ut}

@@ -16,6 +16,19 @@ export const PlanejamentoWizard = ({ mode = 'create' }: PlanejamentoWizardProps)
   const { id: planejamentoId } = useParams<{ id: string }>();
   const { currentStep, setCurrentStep, reset, setFormData, toggleHabilidade } = usePlanejamentoWizard();
 
+  // VALIDATION: Edit mode requires planejamentoId
+  if (mode === 'edit' && !planejamentoId) {
+    return (
+      <div className="container mx-auto max-w-6xl px-4 py-8">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Erro: ID do planejamento não encontrado</h1>
+          <p className="text-muted-foreground mb-4">Não foi possível carregar o planejamento para edição.</p>
+          <a href="/planejamentos" className="text-tech-blue hover:underline">Voltar para listagem</a>
+        </div>
+      </div>
+    );
+  }
+
   // Fetch planejamento data if in edit mode
   const { data: planejamento, isLoading } = usePlanejamento(mode === 'edit' ? planejamentoId : undefined);
 
@@ -53,7 +66,10 @@ export const PlanejamentoWizard = ({ mode = 'create' }: PlanejamentoWizardProps)
       reset();
       initializedRef.current = true;
     }
-  }, [mode, planejamento, setFormData, toggleHabilidade, reset]);
+    // ESLint disable: Zustand functions are stable but ESLint doesn't know that
+    // Only depend on data (mode, planejamento) to prevent infinite loops
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, planejamento]);
 
   const handleStepClick = (step: 1 | 2 | 3) => {
     // Only allow going back to previous steps

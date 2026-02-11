@@ -5,10 +5,15 @@ import { QueryHabilidadesDto } from './dto/query-habilidades.dto';
 import { Prisma, Habilidade } from '@prisma/client';
 
 /**
+ * Habilidade without tsvector field (Prisma can't deserialize tsvector)
+ */
+export type HabilidadeResponse = Omit<Habilidade, 'searchable'>;
+
+/**
  * Response format para endpoint GET /api/v1/habilidades
  */
 export interface HabilidadesResponse {
-  data: Habilidade[]; // Array de habilidades (type-safe)
+  data: HabilidadeResponse[]; // Array de habilidades (type-safe, sem searchable)
   total: number; // Total de registros (sem pagination)
   limit: number; // Limit aplicado
   offset: number; // Offset aplicado
@@ -289,7 +294,7 @@ export class HabilidadesService {
           updated_at: true,
           versao_bncc: true,
           ativa: true,
-          searchable: true,
+          // searchable: Excluded - tsvector type not supported by Prisma deserialization
         },
       }),
       this.prisma.habilidade.count({ where }), // Total sem pagination

@@ -62,12 +62,12 @@ development_status:
   2-1-backend-planejamento-crud-api: done
   2-2-backend-habilidades-bncc-query-api: done
   2-3-frontend-cadastro-de-planejamento-form-wizard: done
-  2-4-frontend-listagem-e-edicao-de-planejamentos: review
+  2-4-frontend-listagem-e-edicao-de-planejamentos: done
   epic-2-retrospective: optional
 
-  epic-3: backlog
-  3-1-backend-aula-entity-basic-crud: backlog
-  3-2-backend-tus-upload-server-resumable-upload: backlog
+  epic-3: in-progress
+  3-1-backend-aula-entity-basic-crud: done
+  3-2-backend-tus-upload-server-resumable-upload: ready-for-dev
   3-3-backend-multiple-input-methods-audio-texto-manual: backlog
   3-4-frontend-upload-page-with-drag-and-drop: backlog
   3-5-frontend-aulas-list-with-status-tracking: backlog

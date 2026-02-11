@@ -6,16 +6,18 @@ export const useDeletePlanejamento = () => {
 
   return useMutation({
     mutationFn: async (id: string) => {
-      await apiClient.delete(`/planejamentos/${id}`);
+      try {
+        await apiClient.delete(`/planejamentos/${id}`);
+      } catch (error: any) {
+        // Transform error message for better UX
+        if (error.response?.status === 400) {
+          throw new Error('Não é possível excluir planejamento com aulas vinculadas');
+        }
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['planejamentos'] });
-    },
-    onError: (error: any) => {
-      if (error.response?.status === 400) {
-        throw new Error('Não é possível excluir planejamento com aulas vinculadas');
-      }
-      throw error;
     },
   });
 };

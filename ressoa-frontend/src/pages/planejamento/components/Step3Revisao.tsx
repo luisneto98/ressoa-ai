@@ -36,10 +36,8 @@ export const Step3Revisao = ({ mode = 'create', planejamentoId }: Step3RevisaoPr
     string | null
   >(null);
 
-  // Check for duplicate on mount (only in create mode)
+  // Check for duplicate on mount (create mode AND edit mode)
   useEffect(() => {
-    if (mode === 'edit') return; // Skip duplicate check in edit mode
-
     const checkDuplicate = async () => {
       try {
         const { data } = await apiClient.get('/planejamentos', {
@@ -51,8 +49,15 @@ export const Step3Revisao = ({ mode = 'create', planejamentoId }: Step3RevisaoPr
         });
 
         if (Array.isArray(data) && data.length > 0) {
-          setExistingPlanejamentoId(data[0].id);
-          setShowDuplicateAlert(true);
+          // In edit mode, exclude current planejamento from duplicates check
+          const duplicates = mode === 'edit'
+            ? data.filter((p: any) => p.id !== planejamentoId)
+            : data;
+
+          if (duplicates.length > 0) {
+            setExistingPlanejamentoId(duplicates[0].id);
+            setShowDuplicateAlert(true);
+          }
         }
       } catch (error) {
         // Log error but don't block user (duplicate check is a UX enhancement, not critical)
@@ -63,7 +68,7 @@ export const Step3Revisao = ({ mode = 'create', planejamentoId }: Step3RevisaoPr
     };
 
     void checkDuplicate();
-  }, [formData, mode]);
+  }, [formData, mode, planejamentoId]);
 
   const handleSubmit = async () => {
     try {
@@ -100,8 +105,13 @@ export const Step3Revisao = ({ mode = 'create', planejamentoId }: Step3RevisaoPr
 
   const isLoading = mode === 'edit' ? updateMutation.isPending : createMutation.isPending;
 
-  const pesoAutomatico = (1 / selectedHabilidades.length) * 100;
-  const aulasEstimadas = Math.round(40 / selectedHabilidades.length);
+  // SAFEGUARD: Prevent division by zero if no habilidades selected
+  const pesoAutomatico = selectedHabilidades.length > 0
+    ? (1 / selectedHabilidades.length) * 100
+    : 0;
+  const aulasEstimadas = selectedHabilidades.length > 0
+    ? Math.round(40 / selectedHabilidades.length)
+    : 0;
 
   return (
     <>

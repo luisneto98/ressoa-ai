@@ -24,6 +24,24 @@ enum Serie {
   NONO_ANO
 }
 
+enum TipoEntrada {
+  AUDIO
+  TRANSCRICAO
+  MANUAL
+}
+
+enum StatusProcessamento {
+  CRIADA
+  UPLOAD_PROGRESSO
+  AGUARDANDO_TRANSCRICAO
+  TRANSCRITA
+  ANALISANDO
+  ANALISADA
+  APROVADA
+  REJEITADA
+  ERRO
+}
+
 model Escola {
   id             String   @id @default(uuid())
   nome           String
@@ -37,6 +55,7 @@ model Escola {
   usuarios       Usuario[]
   turmas         Turma[]
   planejamentos  Planejamento[]
+  aulas          Aula[]
 
   @@map("escola")
 }
@@ -55,6 +74,7 @@ model Usuario {
   perfil_usuario  PerfilUsuario?
   turmas          Turma[]
   planejamentos   Planejamento[]
+  aulas           Aula[]
 
   @@unique([email, escola_id])  // PostgreSQL permite múltiplos NULL sem violar unique
   @@index([escola_id])
@@ -161,6 +181,7 @@ model Turma {
   escola        Escola      @relation(fields: [escola_id], references: [id], onDelete: Cascade)
   professor     Usuario     @relation(fields: [professor_id], references: [id], onDelete: Cascade)
   planejamentos Planejamento[]
+  aulas         Aula[]
 
   @@index([escola_id])
   @@index([professor_id])
@@ -185,6 +206,7 @@ model Planejamento {
   professor              Usuario  @relation(fields: [professor_id], references: [id], onDelete: Cascade)
   turma                  Turma    @relation(fields: [turma_id], references: [id], onDelete: Cascade)
   habilidades            PlanejamentoHabilidade[]
+  aulas                  Aula[]
 
   @@unique([turma_id, bimestre, ano_letivo]) // RN-PLAN-04: Sem duplicatas
   @@index([escola_id])
@@ -211,4 +233,40 @@ model PlanejamentoHabilidade {
   @@index([planejamento_id])
   @@index([habilidade_id])
   @@map("planejamento_habilidade")
+}
+
+// ============================================
+// Domínio Execução - Aulas & Processamento
+// ============================================
+
+model Aula {
+  id                   String               @id @default(uuid())
+  escola_id            String
+  professor_id         String
+  turma_id             String
+  planejamento_id      String?
+  data                 DateTime
+  tipo_entrada         TipoEntrada
+  status_processamento StatusProcessamento  @default(CRIADA)
+  arquivo_url          String?              // S3/MinIO URL
+  arquivo_tamanho      Int?                 // bytes
+  transcricao_id       String?              // FK para Transcricao (future)
+  analise_id           String?              // FK para Analise (future)
+  created_at           DateTime             @default(now())
+  updated_at           DateTime             @updatedAt
+  deleted_at           DateTime?            // Soft delete (LGPD compliance)
+
+  // Relations
+  escola        Escola        @relation(fields: [escola_id], references: [id], onDelete: Cascade)
+  professor     Usuario       @relation(fields: [professor_id], references: [id], onDelete: Cascade)
+  turma         Turma         @relation(fields: [turma_id], references: [id], onDelete: Cascade)
+  planejamento  Planejamento? @relation(fields: [planejamento_id], references: [id], onDelete: SetNull)
+  // transcricao   Transcricao?  @relation(fields: [transcricao_id], references: [id]) // Future: Epic 4
+  // analise       Analise?      @relation(fields: [analise_id], references: [id])      // Future: Epic 5
+
+  @@index([escola_id, professor_id, data])
+  @@index([status_processamento])
+  @@index([turma_id, data])
+  @@index([deleted_at])
+  @@map("aula")
 }

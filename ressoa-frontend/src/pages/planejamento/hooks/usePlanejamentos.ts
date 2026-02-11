@@ -53,6 +53,10 @@ export const usePlanejamentos = (params: UsePlanejamentosParams) => {
         params: cleanParams
       });
 
+      // TODO: Move sorting to backend for better performance and proper DB index usage
+      // Backend should accept query params: ?sort=ano_letivo:desc,bimestre:desc,turma.nome:asc
+      // For now, sorting on client side (acceptable for MVP scale)
+
       // Sort: ano_letivo DESC, bimestre DESC, turma.nome ASC
       return data.sort((a: Planejamento, b: Planejamento) => {
         if (a.ano_letivo !== b.ano_letivo) {

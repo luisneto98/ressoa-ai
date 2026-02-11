@@ -29,18 +29,55 @@ export const Step2SelecaoHabilidades = () => {
   const [unidadeTematica, setUnidadeTematica] = useState<string>('ALL');
   const debouncedSearch = useDebouncedValue(searchInput, 300);
 
-  // Extract serie number from enum (e.g., "SEXTO_ANO" -> 6)
+  // Extract serie number from turma (handles both number and enum string formats)
   const serieNumber = useMemo(() => {
     if (!formData.turma?.serie) return undefined;
-    const match = formData.turma.serie.match(/\d+/);
-    return match ? parseInt(match[0]) : undefined;
-  }, [formData.turma?.serie]);
 
-  const { data: habilidadesData, isLoading } = useHabilidades({
+    // If serie is already a number (e.g., 6, 7, 8, 9), return it directly
+    if (typeof formData.turma.serie === 'number') {
+      return formData.turma.serie;
+    }
+
+    // Map BNCC enum strings to numbers
+    const serieMap: Record<string, number> = {
+      'SEXTO_ANO': 6,
+      'SETIMO_ANO': 7,
+      'OITAVO_ANO': 8,
+      'NONO_ANO': 9,
+    };
+
+    const serieStr = String(formData.turma.serie);
+    const mapped = serieMap[serieStr];
+
+    console.log('🔧 Serie mapping:', {
+      original: serieStr,
+      mapped: mapped,
+      isQueryEnabled: !!formData.turma?.disciplina && !!mapped,
+    });
+
+    return mapped;
+  }, [formData.turma?.serie, formData.turma?.disciplina]);
+
+  const { data: habilidadesData, isLoading, error } = useHabilidades({
     disciplina: formData.turma?.disciplina,
     serie: serieNumber,
     unidade_tematica: unidadeTematica === 'ALL' ? undefined : unidadeTematica,
     search: debouncedSearch || undefined,
+  });
+
+  // DEBUG: Log query params for troubleshooting
+  console.log('🔍 Step2 Debug - Full State:', {
+    'formData.turma_id': formData.turma_id,
+    'formData.turma': formData.turma,
+    'formData.bimestre': formData.bimestre,
+    'formData.ano_letivo': formData.ano_letivo,
+    disciplina: formData.turma?.disciplina,
+    serieOriginal: formData.turma?.serie,
+    serieNumber,
+    isQueryEnabled: !!formData.turma?.disciplina && !!serieNumber,
+    habilidadesCount: habilidadesData?.length ?? 0,
+    isLoading,
+    error: error?.message,
   });
 
   // Extract unique unidades tematicas

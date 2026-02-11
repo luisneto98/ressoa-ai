@@ -51,6 +51,15 @@ export const Step1DadosGerais = ({ mode = 'create' }: Step1DadosGeraisProps) => 
 
   const onSubmit = (data: Step1FormData) => {
     const selectedTurma = turmas?.find((t) => t.id === data.turma_id);
+
+    // DEBUG: Log para verificar o que está sendo salvo
+    console.log('🔍 Step1 - Setting formData:', {
+      turma_id: data.turma_id,
+      selectedTurma,
+      bimestre: data.bimestre,
+      ano_letivo: data.ano_letivo,
+    });
+
     setFormData({
       ...data,
       turma: selectedTurma,

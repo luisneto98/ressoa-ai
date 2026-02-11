@@ -1,5 +1,6 @@
 import { usePlanejamentoWizard } from '../hooks/usePlanejamentoWizard';
 import { useCreatePlanejamento } from '../hooks/useCreatePlanejamento';
+import { useUpdatePlanejamento } from '../hooks/useUpdatePlanejamento';
 import { Button } from '../../../components/ui/button';
 import { Card } from '../../../components/ui/card';
 import { Badge } from '../../../components/ui/badge';
@@ -18,10 +19,16 @@ import {
   AlertDialogTitle,
 } from '../../../components/ui/alert-dialog';
 
-export const Step3Revisao = () => {
+interface Step3RevisaoProps {
+  mode?: 'create' | 'edit';
+  planejamentoId?: string;
+}
+
+export const Step3Revisao = ({ mode = 'create', planejamentoId }: Step3RevisaoProps) => {
   const { formData, selectedHabilidades, prevStep, reset } =
     usePlanejamentoWizard();
   const createMutation = useCreatePlanejamento();
+  const updateMutation = useUpdatePlanejamento();
   const navigate = useNavigate();
 
   const [showDuplicateAlert, setShowDuplicateAlert] = useState(false);
@@ -29,8 +36,10 @@ export const Step3Revisao = () => {
     string | null
   >(null);
 
-  // Check for duplicate on mount
+  // Check for duplicate on mount (only in create mode)
   useEffect(() => {
+    if (mode === 'edit') return; // Skip duplicate check in edit mode
+
     const checkDuplicate = async () => {
       try {
         const { data } = await apiClient.get('/planejamentos', {
@@ -54,7 +63,7 @@ export const Step3Revisao = () => {
     };
 
     void checkDuplicate();
-  }, [formData]);
+  }, [formData, mode]);
 
   const handleSubmit = async () => {
     try {
@@ -67,9 +76,16 @@ export const Step3Revisao = () => {
         })),
       };
 
-      await createMutation.mutateAsync(payload);
+      if (mode === 'edit' && planejamentoId) {
+        // Update existing planejamento
+        await updateMutation.mutateAsync({ id: planejamentoId, payload });
+        toast.success('Planejamento atualizado com sucesso!');
+      } else {
+        // Create new planejamento
+        await createMutation.mutateAsync(payload);
+        toast.success('Planejamento criado com sucesso!');
+      }
 
-      toast.success('Planejamento criado com sucesso!');
       reset();
       navigate('/planejamentos');
     } catch (error) {
@@ -81,6 +97,8 @@ export const Step3Revisao = () => {
       }
     }
   };
+
+  const isLoading = mode === 'edit' ? updateMutation.isPending : createMutation.isPending;
 
   const pesoAutomatico = (1 / selectedHabilidades.length) * 100;
   const aulasEstimadas = Math.round(40 / selectedHabilidades.length);
@@ -159,7 +177,7 @@ export const Step3Revisao = () => {
             type="button"
             variant="outline"
             onClick={prevStep}
-            disabled={createMutation.isPending}
+            disabled={isLoading}
             aria-label="Voltar para seleção de habilidades"
           >
             Voltar
@@ -167,11 +185,11 @@ export const Step3Revisao = () => {
           <Button
             type="button"
             onClick={handleSubmit}
-            disabled={createMutation.isPending}
+            disabled={isLoading}
             className="bg-focus-orange hover:bg-focus-orange/90"
             aria-label="Salvar planejamento"
           >
-            {createMutation.isPending ? 'Salvando...' : 'Salvar Planejamento'}
+            {isLoading ? 'Salvando...' : mode === 'edit' ? 'Atualizar Planejamento' : 'Salvar Planejamento'}
           </Button>
         </div>
       </div>

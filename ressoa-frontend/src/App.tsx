@@ -5,6 +5,7 @@ import { Toaster } from 'sonner';
 import { LoginPage } from '@/pages/LoginPage';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { PlanejamentoWizard } from '@/pages/planejamento/PlanejamentoWizard';
+import { PlanejamentosListPage } from '@/pages/planejamento/PlanejamentosListPage';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 // Create Query Client
@@ -120,12 +121,20 @@ function App() {
           }
         />
 
-        {/* Planejamento Routes - Story 2.3 */}
+        {/* Planejamento Routes - Story 2.3 & 2.4 */}
         <Route
           path="/planejamentos/novo"
           element={
             <ProtectedRoute>
-              <PlanejamentoWizard />
+              <PlanejamentoWizard mode="create" />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/planejamentos/:id/editar"
+          element={
+            <ProtectedRoute>
+              <PlanejamentoWizard mode="edit" />
             </ProtectedRoute>
           }
         />
@@ -133,14 +142,7 @@ function App() {
           path="/planejamentos"
           element={
             <ProtectedRoute>
-              <div className="min-h-screen flex items-center justify-center bg-ghost-white">
-                <div className="text-center">
-                  <h1 className="text-3xl font-montserrat font-bold text-deep-navy mb-4">
-                    Meus Planejamentos
-                  </h1>
-                  <p className="text-muted-foreground">(Listagem - Story 2.4)</p>
-                </div>
-              </div>
+              <PlanejamentosListPage />
             </ProtectedRoute>
           }
         />

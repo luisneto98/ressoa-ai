@@ -23,7 +23,12 @@ const step1Schema = z.object({
 
 type Step1FormData = z.infer<typeof step1Schema>;
 
-export const Step1DadosGerais = () => {
+interface Step1DadosGeraisProps {
+  mode?: 'create' | 'edit';
+  planejamentoId?: string;
+}
+
+export const Step1DadosGerais = ({ mode = 'create' }: Step1DadosGeraisProps) => {
   const { data: turmas, isLoading } = useTurmas();
   const { formData, setFormData, nextStep } = usePlanejamentoWizard();
 
@@ -68,7 +73,7 @@ export const Step1DadosGerais = () => {
           <Select
             value={turmaId}
             onValueChange={(value) => setValue('turma_id', value)}
-            disabled={isLoading}
+            disabled={isLoading || mode === 'edit'}
           >
             <SelectTrigger
               id="turma-select"

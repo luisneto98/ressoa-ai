@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { PrismaClient, RoleUsuario } from '@prisma/client';
+import { PrismaClient, RoleUsuario, Serie } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
@@ -252,6 +252,87 @@ async function seedDemoSchool() {
   }
 }
 
+async function seedTurmas() {
+  console.log('🌱 Seeding Turmas...');
+
+  const demoCNPJ = '12.345.678/0001-90';
+
+  // Buscar escola demo
+  const escola = await prisma.escola.findUnique({
+    where: { cnpj: demoCNPJ },
+  });
+
+  if (!escola) {
+    console.log('⚠️ Escola demo não encontrada, pulando seed de turmas');
+    return;
+  }
+
+  // Buscar professor demo
+  const professor = await prisma.usuario.findFirst({
+    where: {
+      email: 'professor@escolademo.com',
+      escola_id: escola.id,
+    },
+  });
+
+  if (!professor) {
+    console.log('⚠️ Professor demo não encontrado, pulando seed de turmas');
+    return;
+  }
+
+  // Criar turmas realistas: 3 disciplinas x 4 séries = 12 turmas
+  const turmas = [
+    // Matemática
+    { nome: '6A', disciplina: 'MATEMATICA', serie: Serie.SEXTO_ANO, ano_letivo: 2026 },
+    { nome: '7A', disciplina: 'MATEMATICA', serie: Serie.SETIMO_ANO, ano_letivo: 2026 },
+    { nome: '8A', disciplina: 'MATEMATICA', serie: Serie.OITAVO_ANO, ano_letivo: 2026 },
+    { nome: '9A', disciplina: 'MATEMATICA', serie: Serie.NONO_ANO, ano_letivo: 2026 },
+
+    // Língua Portuguesa
+    { nome: '6B', disciplina: 'LINGUA_PORTUGUESA', serie: Serie.SEXTO_ANO, ano_letivo: 2026 },
+    { nome: '7B', disciplina: 'LINGUA_PORTUGUESA', serie: Serie.SETIMO_ANO, ano_letivo: 2026 },
+    { nome: '8B', disciplina: 'LINGUA_PORTUGUESA', serie: Serie.OITAVO_ANO, ano_letivo: 2026 },
+    { nome: '9B', disciplina: 'LINGUA_PORTUGUESA', serie: Serie.NONO_ANO, ano_letivo: 2026 },
+
+    // Ciências
+    { nome: '6C', disciplina: 'CIENCIAS', serie: Serie.SEXTO_ANO, ano_letivo: 2026 },
+    { nome: '7C', disciplina: 'CIENCIAS', serie: Serie.SETIMO_ANO, ano_letivo: 2026 },
+    { nome: '8C', disciplina: 'CIENCIAS', serie: Serie.OITAVO_ANO, ano_letivo: 2026 },
+    { nome: '9C', disciplina: 'CIENCIAS', serie: Serie.NONO_ANO, ano_letivo: 2026 },
+  ];
+
+  let created = 0;
+  let skipped = 0;
+
+  for (const turmaData of turmas) {
+    // Check if turma already exists (idempotência)
+    const existingTurma = await prisma.turma.findFirst({
+      where: {
+        nome: turmaData.nome,
+        disciplina: turmaData.disciplina,
+        serie: turmaData.serie,
+        ano_letivo: turmaData.ano_letivo,
+        escola_id: escola.id,
+      },
+    });
+
+    if (!existingTurma) {
+      await prisma.turma.create({
+        data: {
+          ...turmaData,
+          escola_id: escola.id,
+          professor_id: professor.id,
+        },
+      });
+      created++;
+    } else {
+      skipped++;
+    }
+  }
+
+  console.log(`✅ Turmas criadas: ${created}, puladas: ${skipped}`);
+}
+
 async function main() {
   console.log('🚀 Starting seed...');
   console.log(`📦 Database: ${process.env['DATABASE_URL']?.split('@')[1] || 'configured'}`);
@@ -264,6 +345,9 @@ async function main() {
   // Seed Admin & Demo School (Story 1.6)
   await seedAdmin();
   await seedDemoSchool();
+
+  // Seed Turmas (Story 2.3 - blocker resolution)
+  await seedTurmas();
 
   console.log('🎉 Seed completed successfully!');
 }

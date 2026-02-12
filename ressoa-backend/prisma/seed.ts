@@ -275,6 +275,22 @@ async function seedPrompts() {
   for (const filePath of promptFiles) {
     const promptData = JSON.parse(readFileSync(filePath, 'utf-8'));
 
+    // Validate required fields (Issue #8 fix - Code Review 2026-02-12)
+    if (!promptData.nome || !promptData.versao || !promptData.conteudo) {
+      console.error(`⚠️  Skipping invalid prompt file: ${filePath}`);
+      console.error(`    Missing required fields: nome, versao, or conteudo`);
+      continue;
+    }
+
+    // Validate temperature range (Issue #5 fix - Code Review 2026-02-12)
+    if (promptData.variaveis?.temperature != null) {
+      const temp = promptData.variaveis.temperature;
+      if (temp < 0.0 || temp > 1.0) {
+        console.error(`⚠️  Skipping prompt ${promptData.nome}: invalid temperature ${temp} (must be 0.0-1.0)`);
+        continue;
+      }
+    }
+
     await prisma.prompt.upsert({
       where: {
         nome_versao: {

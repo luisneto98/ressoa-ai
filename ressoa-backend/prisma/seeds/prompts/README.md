@@ -95,13 +95,14 @@ At runtime, `PromptService.renderPrompt()` replaces placeholders with actual val
    - Define `variaveis` schema (include `temperature` and `max_tokens`)
    - Write prompt `conteudo` with clear instructions and examples
 
-3. **Add to seed script** (`prisma/seed.ts`):
+3. **Seed script auto-discovers prompts** (`prisma/seed.ts`):
+   - All `.json` files in `prisma/seeds/prompts/` are automatically loaded
+   - No manual array update needed (Story 5.4 improvement)
    ```typescript
-   const promptFiles = [
-     'prisma/seeds/prompts/prompt-cobertura-v1.0.0.json',
-     'prisma/seeds/prompts/prompt-qualitativa-v1.0.0.json',
-     'prisma/seeds/prompts/prompt-new-v1.0.0.json', // ← Add here
-   ];
+   // Auto-discovery (current implementation)
+   const promptFiles = readdirSync(promptsDir)
+     .filter(f => f.endsWith('.json'))
+     .map(f => join(promptsDir, f));
    ```
 
 4. **Run seed**:
@@ -204,6 +205,8 @@ Stored in `variaveis.temperature`:
 | Prompt 4 (Exercícios) | 0.6 | Higher creativity → diverse exercise generation, creative examples |
 | Prompt 5 (Alertas) | 0.3 | Low creativity → accurate pattern detection, no false positives |
 
+**Note:** Prompts 3-4 use GPT-4 mini for cost optimization (~95% cheaper than Claude Sonnet) while maintaining quality.
+
 ### Max Tokens Settings
 
 Stored in `variaveis.max_tokens`:
@@ -212,8 +215,8 @@ Stored in `variaveis.max_tokens`:
 |--------|------------|-----------|
 | Prompt 1 (Cobertura) | 2000 | Enough for 3-5 habilidades with evidences (conservative estimate) |
 | Prompt 2 (Qualitativa) | 2500 | 6 dimensions require more output space for detailed analysis |
-| Prompt 3 (Relatório) | 3000 | Full narrative report with recommendations |
-| Prompt 4 (Exercícios) | 2000 | 3-5 contextualized exercises with solutions |
+| Prompt 3 (Relatório) | 1500 | Concise narrative report (800-1200 words) with 5 sections |
+| Prompt 4 (Exercícios) | 2000 | 5 contextualized exercises with complete answer keys |
 | Prompt 5 (Alertas) | 1500 | Compact alerts with justifications |
 
 ## Quality Criteria (90% Usable Target)
@@ -235,10 +238,10 @@ All prompts must meet these criteria:
 |------|--------|--------|------|------------|-------|-----------|
 | `prompt-cobertura` | v1.0.0 | CLAUDE_SONNET | 0.3 | 2000 | ✅ | Classifies BNCC habilidades coverage (Levels 0-3), extracts literal evidences |
 | `prompt-qualitativa` | v1.0.0 | CLAUDE_SONNET | 0.4 | 2500 | ✅ | Analyzes 6 pedagogical dimensions (Bloom, coherence, language, methodology, engagement, clarity) |
+| `prompt-relatorio` | v1.0.0 | GPT4_MINI | 0.5 | 1500 | ✅ | Generates teacher-friendly markdown report with 5 sections (coverage, pedagogy, engagement, next steps) |
+| `prompt-exercicios` | v1.0.0 | GPT4_MINI | 0.6 | 2000 | ✅ | Creates 5 contextual exercises using lesson examples (Bloom distribution: 2-2-1, progressive difficulty) |
 
 **Planned (Future Stories):**
-- `prompt-relatorio` (v1.0.0) - Generates narrative pedagogical report
-- `prompt-exercicios` (v1.0.0) - Generates contextualized exercises
 - `prompt-alertas` (v1.0.0) - Detects pedagogical red flags
 
 ## References

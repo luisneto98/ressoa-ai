@@ -59,11 +59,11 @@ contexto.analise_qualitativa = outputPrompt2;
 |--------|----------|---------------------|-------|
 | 1 - Cobertura BNCC | Claude Sonnet | $3/$15 por 1M tokens | Raciocínio pedagógico superior |
 | 2 - Análise Qualitativa | Claude Sonnet | $3/$15 por 1M tokens | Análise profunda de metodologias |
-| 3 - Geração de Relatório | Claude Sonnet | $3/$15 por 1M tokens | Síntese narrativa coerente |
-| 4 - Geração de Exercícios | GPT-4 mini | $0.15/$0.60 por 1M tokens | Tarefa formulaica, 20x mais barato |
-| 5 - Detecção de Alertas | Claude Sonnet | $3/$15 por 1M tokens | Detecção de gaps pedagógicos |
+| 3 - Geração de Relatório | GPT-4 mini | $0.15/$0.60 por 1M tokens | Template-based, ~95% cheaper |
+| 4 - Geração de Exercícios | GPT-4 mini | $0.15/$0.60 por 1M tokens | Structured output, cost optimization |
+| 5 - Detecção de Alertas | Claude Haiku (planned) | $0.25/$1.25 por 1M tokens | Pattern detection |
 
-**Custo Total por Aula (50min):** ~$0.08-0.12
+**Custo Total por Aula (50min):** ~$0.20 (within $0.30 target, 50% margin on R$1.20/aula revenue)
 
 ## Arquitetura
 
@@ -292,6 +292,137 @@ npm run test:e2e -- analise-pipeline.e2e-spec.ts
 6. **Clareza e Comunicação:** Clareza, exemplos, reformulações
 
 **Temperature:** 0.4 (ligeiramente mais criativa que Prompt 1 → insights pedagógicos nuançados)
+
+---
+
+### Prompt 3 - Geração de Relatório (Story 5.4)
+
+**Objetivo:** Gerar relatório narrativo markdown teacher-friendly com 5 seções obrigatórias.
+
+**Formato de Saída:** Markdown (NÃO JSON)
+
+**Estrutura (5 Seções Obrigatórias):**
+```markdown
+# Relatório da Aula - [Turma] - [Data]
+
+## Resumo Executivo
+[2-3 frases: O que foi ensinado + Como foi ensinado]
+
+## Cobertura Curricular
+### Habilidades Completamente Abordadas
+✅ **EF06MA01** - Descrição breve
+### Habilidades Parcialmente Abordadas
+⚠️ **EF06MA02** - Descrição breve
+### Habilidades Não Cobertas do Planejamento
+❌ **EF06MA03** - Descrição breve
+
+## Análise Pedagógica
+**Níveis de Bloom predominantes:** [...]
+**Metodologias usadas:** [...]
+**Adequação cognitiva:** [...]
+**Coerência narrativa:** Score X/10 [...]
+
+## Sinais de Engajamento
+**Nível geral:** Alto/Médio/Baixo
+**Evidências positivas:** [...]
+**Sinais de dificuldade:** [...]
+
+## Próximos Passos
+1. **Sugestão 1** (framing positivo: "Oportunidade de...")
+2. **Sugestão 2**
+```
+
+**Inputs (do contexto acumulativo):**
+- `{{cobertura}}` - Output do Prompt 1
+- `{{analise_qualitativa}}` - Output do Prompt 2
+- `{{turma}}` - Contexto da turma
+- `{{data}}` - Data da aula
+
+**Quality Criteria:**
+- **Fidelidade:** Informações rastreáveis às análises anteriores (NÃO inventar dados)
+- **Tom Construtivo:** Framing positivo ("oportunidade de reforçar X" vs "faltou X")
+- **Completude:** Todas as 5 seções presentes
+- **Extensão:** 800-1200 palavras
+- **Emojis:** ✅ (completa), ⚠️ (parcial), ❌ (não coberta), 📝 (mencionada)
+
+**Temperature:** 0.5 (balanceado → factual mas narrativo)
+
+**Provider:** GPT-4 mini (cost optimization: ~$0.004/aula vs $0.02 com Claude)
+
+---
+
+### Prompt 4 - Geração de Exercícios (Story 5.4)
+
+**Objetivo:** Criar 3-5 exercícios contextuais baseados em exemplos REAIS da aula.
+
+**Formato de Saída:** JSON
+
+**Schema de Saída:**
+```json
+{
+  "exercicios": [
+    {
+      "numero": 1,
+      "enunciado": "Durante a aula, o professor usou pizza com 8 fatias...",
+      "contexto_aula": "Professor usou pizza como exemplo (minuto 12)",
+      "nivel_bloom": 2,
+      "nivel_bloom_descricao": "Compreender",
+      "dificuldade": "facil" | "medio" | "dificil",
+      "habilidade_relacionada": "EF06MA07",
+      "gabarito": {
+        "resposta_curta": "3/8 (três oitavos)",
+        "resolucao_passo_a_passo": ["Passo 1...", "Passo 2..."],
+        "criterios_correcao": ["Aceitar: ...", "Não aceitar: ..."],
+        "dica_professor": "Erro comum: alunos confundem numerador e denominador"
+      }
+    }
+  ],
+  "metadados": {
+    "total_exercicios": 5,
+    "distribuicao_bloom": { "nivel_2": 2, "nivel_3": 1, "nivel_4": 1, "nivel_5": 1 },
+    "distribuicao_dificuldade": { "facil": 2, "medio": 2, "dificil": 1 },
+    "tempo_estimado_resolucao_minutos": 30,
+    "contexto_fidelidade": "Descrição da contextualização"
+  }
+}
+```
+
+**Inputs:**
+- `{{transcricao}}` - Transcrição COMPLETA (para extrair exemplos literais)
+- `{{cobertura}}` - Output do Prompt 1 (para saber quais habilidades abordar)
+- `{{turma}}` - Contexto da turma (série → adequação linguística)
+
+**Distribuição Bloom Obrigatória (2-2-1):**
+- **2 exercícios Nível 2 (Compreender):** Fáceis, conceituais
+- **2 exercícios Nível 3-4 (Aplicar/Analisar):** Intermediários
+- **1 exercício Nível 4-5 (Analisar/Avaliar):** Desafiador, pensamento crítico
+
+**Dificuldade Progressiva:**
+- Exercícios 1-2: Fácil
+- Exercícios 3-4: Médio
+- Exercício 5: Difícil
+
+**Contexto Fidelidade (CRÍTICO):**
+- Exercícios devem usar EXEMPLOS da transcrição (pizza, balas, números específicos)
+- Professor deve reconhecer: "Esses exercícios são da MINHA aula" (não genéricos)
+- `contexto_aula` preenchido em TODOS os exercícios
+
+**Adequação Série:**
+- **6º ano:** Linguagem simples, exemplos concretos, enunciados curtos (2-3 frases)
+- **7º ano:** Mistura concreto-abstrato, enunciados médios (3-4 frases)
+- **8º-9º ano:** Abstrações permitidas, enunciados complexos ok
+
+**Gabarito Completo:**
+- `resposta_curta`: Resposta em 1 frase
+- `resolucao_passo_a_passo`: Mínimo 2-3 passos
+- `criterios_correcao`: O que aceitar/rejeitar
+- `dica_professor`: Erros comuns, feedback strategies
+
+**Temperature:** 0.6 (mais criativa → variedade de exercícios, mas estruturada)
+
+**Provider:** GPT-4 mini (cost optimization: ~$0.006/aula)
+
+**Quality Target:** >80% exercises usable sem edits, >70% use actual lesson examples
 
 ---
 

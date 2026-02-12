@@ -99,5 +99,13 @@ development_status:
     8-1-dashboard-de-monitoramento-de-stt: done # Code review complete - 7 issues auto-fixed (3 HIGH, 4 MEDIUM) + 1 test added - 23/23 tests passing
     8-2-dashboard-de-monitoramento-de-analise-pedagogica: done # Code review complete - 1 HIGH fix (Bull Board global prefix exclusion) + 1 LOW fix (React keys) - 27/27 tests passing
     8-3-dashboard-de-custos-por-escola: done # Code review complete - APPROVED - 0 CRITICAL, 1 MEDIUM (projection comment), 2 LOW (prettier fix, unused components noted) - 58/58 monitoramento tests passing
-    8-4-dashboard-de-qualidade-de-prompts-a-b-testing: backlog
+    8-4-dashboard-de-qualidade-de-prompts-a-b-testing: done # Code review complete - 6 issues auto-fixed (2 HIGH: SQL column names + DiffViewer placement, 4 MEDIUM: input validation, file list, tests) - 17/17 tests passing
     epic-8-retrospective: optional
+    epic-9: backlog
+    9-1-layout-shell-sidebar-header-breadcrumbs: backlog
+    9-2-sidebar-responsiva-mobile-drawer-tablet-collapse: backlog
+    9-3-fix-de-rotas-quebradas-e-redirecionamentos: backlog
+    9-4-navegacao-cta-botao-nova-aula-destacado: backlog
+    9-5-polimento-visual-pages-do-professor: backlog
+    9-6-polimento-visual-dashboards-de-gestao-e-admin: backlog
+    epic-9-retrospective: optional

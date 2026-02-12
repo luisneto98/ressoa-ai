@@ -5,6 +5,7 @@ import { MonitoramentoSTTService } from './monitoramento-stt.service';
 import { MonitoramentoAnaliseService } from './monitoramento-analise.service';
 import { MonitoramentoAlertasService } from './monitoramento-alertas.service';
 import { MonitoramentoCustosService } from './monitoramento-custos.service';
+import { MonitoramentoPromptsService } from './monitoramento-prompts.service';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { MonitoramentoCustosService } from './monitoramento-custos.service';
     MonitoramentoAnaliseService,
     MonitoramentoAlertasService,
     MonitoramentoCustosService,
+    MonitoramentoPromptsService,
   ],
-  exports: [MonitoramentoSTTService, MonitoramentoAnaliseService, MonitoramentoCustosService],
+  exports: [MonitoramentoSTTService, MonitoramentoAnaliseService, MonitoramentoCustosService, MonitoramentoPromptsService],
 })
 export class MonitoramentoModule {}

@@ -19,6 +19,8 @@ import { DashboardDiretorPage } from '@/pages/dashboard/DashboardDiretorPage';
 import { MonitoramentoSTTPage } from '@/pages/admin/MonitoramentoSTTPage';
 import { MonitoramentoAnalisePage } from '@/pages/admin/MonitoramentoAnalisePage';
 import { CustosEscolasPage } from '@/pages/admin/CustosEscolasPage';
+import { QualidadePromptsPage } from '@/pages/admin/QualidadePromptsPage';
+import { PromptDiffsPage } from '@/pages/admin/PromptDiffsPage';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 // Create Query Client
@@ -145,6 +147,24 @@ function App() {
           element={
             <ProtectedRoute roles={['ADMIN']}>
               <CustosEscolasPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Admin Prompts Quality Routes - Story 8.4 */}
+        <Route
+          path="/admin/prompts/qualidade"
+          element={
+            <ProtectedRoute roles={['ADMIN']}>
+              <QualidadePromptsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/prompts/:nome/:versao/diffs"
+          element={
+            <ProtectedRoute roles={['ADMIN']}>
+              <PromptDiffsPage />
             </ProtectedRoute>
           }
         />

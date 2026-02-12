@@ -2,6 +2,7 @@ import {
   Controller,
   Post,
   Get,
+  Param,
   Body,
   Query,
   HttpCode,
@@ -14,6 +15,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
+  ApiParam,
 } from '@nestjs/swagger';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { RoleUsuario } from '@prisma/client';
@@ -31,8 +33,14 @@ import {
   MonitoramentoCustosService,
   MonitoramentoCustosResponse,
 } from '../monitoramento/monitoramento-custos.service';
+import {
+  MonitoramentoPromptsService,
+  QualidadePromptsResponse,
+  DiffsResponse,
+} from '../monitoramento/monitoramento-prompts.service';
 import { FiltrosMonitoramentoDto } from '../monitoramento/dto/filtros-monitoramento.dto';
 import { FiltrosCustosDto } from '../monitoramento/dto/filtros-custos.dto';
+import { FiltrosPromptsQualidadeDto } from '../monitoramento/dto/filtros-prompts-qualidade.dto';
 import {
   CreateEscolaDto,
   CreateUsuarioDto,
@@ -51,6 +59,7 @@ export class AdminController {
     private readonly monitoramentoSTTService: MonitoramentoSTTService,
     private readonly monitoramentoAnaliseService: MonitoramentoAnaliseService,
     private readonly monitoramentoCustosService: MonitoramentoCustosService,
+    private readonly monitoramentoPromptsService: MonitoramentoPromptsService,
   ) {}
 
   @Post('schools')
@@ -273,5 +282,94 @@ export class AdminController {
     @Query() filtros: FiltrosCustosDto,
   ): Promise<MonitoramentoCustosResponse> {
     return this.monitoramentoCustosService.getMetricas(filtros.mes);
+  }
+
+  @Get('prompts/qualidade')
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(3600000) // 1 hora em ms
+  @ApiOperation({
+    summary: 'Métricas de qualidade de prompts por versão (admin only)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Métricas de qualidade de prompts retornadas',
+    schema: {
+      example: {
+        metricas: [
+          {
+            nome: 'prompt-cobertura',
+            versao: 'v1.0.0',
+            ab_testing: false,
+            total_analises: 100,
+            aprovadas: 92,
+            rejeitadas: 8,
+            taxa_aprovacao: 92.0,
+            tempo_medio_revisao: 120,
+            status: 'Excelente',
+          },
+        ],
+        resumo: {
+          total_versoes: 5,
+          low_performers: 1,
+          taxa_aprovacao_geral: 85.5,
+        },
+        periodo: '30d',
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Usuário não é ADMIN' })
+  async getPromptsQualidade(
+    @Query() filtros: FiltrosPromptsQualidadeDto,
+  ): Promise<QualidadePromptsResponse> {
+    return this.monitoramentoPromptsService.getQualidadePrompts(
+      filtros.periodo ?? '30d',
+    );
+  }
+
+  @Get('prompts/:nome/:versao/diffs')
+  @ApiOperation({
+    summary: 'Top 20 análises mais editadas por versão de prompt (admin only)',
+  })
+  @ApiParam({
+    name: 'nome',
+    description: 'Nome do prompt',
+    example: 'prompt-relatorio',
+  })
+  @ApiParam({
+    name: 'versao',
+    description: 'Versão do prompt',
+    example: 'v1.0.0',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Diffs por versão de prompt retornados',
+    schema: {
+      example: {
+        nome: 'prompt-relatorio',
+        versao: 'v1.0.0',
+        diffs: [
+          {
+            analise_id: 'uuid',
+            aula_titulo: 'Aula de Frações',
+            data_aula: '2026-02-10T00:00:00.000Z',
+            change_count: 500,
+            original_length: 2000,
+            edited_length: 2500,
+            original: 'texto original...',
+            editado: 'texto editado...',
+          },
+        ],
+        total: 1,
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Usuário não é ADMIN' })
+  async getPromptDiffs(
+    @Param('nome') nome: string,
+    @Param('versao') versao: string,
+  ): Promise<DiffsResponse> {
+    return this.monitoramentoPromptsService.getDiffsPorVersao(nome, versao);
   }
 }

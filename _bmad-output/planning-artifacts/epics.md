@@ -9438,9 +9438,190 @@ export function AdminPromptsQualidadePage() {
 
 ---
 
-## 🎉 TODOS OS ÉPICOS COMPLETADOS! 🎉
+## Epic 9: Layout de Navegação & Polimento Visual
 
-**Status Final:**
+**Goal:** Transformar a aplicação de páginas isoladas sem navegação em um produto coeso com sidebar, header e design consistente, garantindo que todas as telas implementadas sejam acessíveis via UI.
+
+**User Outcome:** Todos os usuários (Professor, Coordenador, Diretor, Admin) conseguem navegar naturalmente entre todas as funcionalidades da aplicação sem precisar saber URLs, e a experiência visual reflete a identidade profissional do Ressoa AI.
+
+**FRs covered:** Transversal — melhora usabilidade de FR11, FR29, FR31-FR37, FR46-FR50
+
+**Key Deliverables:**
+- Sidebar persistente adaptativa por role (Deep Navy, com ícones e labels)
+- Header com breadcrumbs auto-gerados + user dropdown (perfil, logout)
+- Sidebar responsiva (mobile drawer, tablet collapsa pra ícones)
+- Rotas quebradas corrigidas (DIRETOR redirect, placeholders, forgot-password)
+- Design system aplicado consistentemente em todas as pages existentes (tipografia, cores, espaçamento)
+
+**Technical Notes:**
+- Frontend-only — zero mudanças no backend
+- Novos componentes shadcn/ui necessários: `sheet` (mobile drawer), `avatar`, `separator`, `collapsible`
+- AppLayout wrapa todas as rotas protegidas via React Router `<Outlet />`
+- Navegação definida como config por role (fácil de estender quando novos módulos surgirem)
+- Sidebar state persistido em localStorage (collapsed/expanded)
+
+**NFRs addressed:**
+- NFR-UX-01: Máximo 2 cliques para qualquer funcionalidade principal
+- NFR-ACCESS-01: WCAG AAA (contrast 14.8:1, touch targets 44px)
+
+---
+
+### Story 9.1: Layout Shell — Sidebar + Header + Breadcrumbs
+
+As a **usuário autenticado (qualquer role)**,
+I want **uma interface com sidebar de navegação e header persistentes**,
+So that **posso acessar qualquer funcionalidade sem precisar memorizar URLs ou usar o botão voltar do navegador**.
+
+**Acceptance Criteria:**
+
+**Given** o usuário está autenticado
+**When** acessa qualquer rota protegida
+**Then** vê layout com 3 áreas: sidebar (esquerda), header (topo), conteúdo (centro-direita)
+
+**Given** o layout renderiza em viewport >= 1024px
+**When** a sidebar está visível
+**Then**:
+- Background Deep Navy (#0A2647)
+- Logo "Ressoa AI" no topo com ícone gradiente (Tech Blue → Cyan AI)
+- Items de navegação com ícones Lucide + labels
+- Item ativo destacado com bg Tech Blue (#2563EB) + sombra
+- Largura: 240px expanded, 68px collapsed
+- Botão "Recolher/Expandir" no rodapé
+
+**Given** qualquer página protegida carrega
+**When** o header renderiza
+**Then** exibe breadcrumbs auto-gerados + avatar/nome do usuário + dropdown com logout
+
+**Given** App.tsx define as rotas
+**When** rotas protegidas são renderizadas
+**Then** todas usam `<AppLayout>` como wrapper via nested routes com `<Outlet />`
+
+---
+
+### Story 9.2: Sidebar Responsiva — Mobile Drawer + Tablet Collapse
+
+As a **usuário em dispositivo móvel ou tablet**,
+I want **acessar a navegação através de um menu hambúrguer**,
+So that **posso navegar pela aplicação em qualquer tamanho de tela**.
+
+**Acceptance Criteria:**
+
+**Given** viewport < 768px
+**When** página carrega
+**Then** sidebar fica oculta, header mostra botão hambúrguer, clique abre sidebar como Sheet drawer
+
+**Given** drawer aberto no mobile
+**When** clica em item de navegação
+**Then** drawer fecha automaticamente e navega para a rota
+
+**Given** viewport entre 768px e 1024px
+**When** página carrega
+**Then** sidebar inicia colapsada (apenas ícones, 68px)
+
+**Given** qualquer viewport
+**When** items de navegação renderizam
+**Then** todos têm área de toque mínima de 44x44px
+
+---
+
+### Story 9.3: Fix de Rotas Quebradas e Redirecionamentos
+
+As a **usuário de qualquer role**,
+I want **que o login me leve para a página correta e que todas as rotas funcionem**,
+So that **não encontro páginas 404 ou "em desenvolvimento" desnecessárias**.
+
+**Acceptance Criteria:**
+
+**Given** DIRETOR faz login
+**When** LoginPage redireciona
+**Then** navega para `/dashboard/diretor` (NÃO `/dashboard-diretor`)
+
+**Given** COORDENADOR faz login
+**When** LoginPage redireciona
+**Then** navega para `/dashboard/coordenador/professores` (NÃO `/dashboard-coordenador`)
+
+**Given** rotas placeholder existem (`/dashboard`, `/dashboard-coordenador`, `/admin`)
+**When** qualquer uma é acessada
+**Then** redirecionam para a página funcional correspondente ao role
+
+**Given** rota `/` é acessada por usuário autenticado
+**When** React Router resolve
+**Then** redireciona para `getHomeRoute(user.role)` em vez de `/login`
+
+**Given** link "Esqueceu sua senha?" na LoginPage
+**When** clicado
+**Then** navega para rota válida (placeholder com mensagem ou link desabilitado)
+
+---
+
+### Story 9.4: Navegação CTA — Botão "Nova Aula" Destacado
+
+As a **Professor**,
+I want **um botão de "Nova Aula" sempre visível e destacado na sidebar**,
+So that **posso iniciar um upload rapidamente de qualquer página da aplicação**.
+
+**Acceptance Criteria:**
+
+**Given** o usuário é PROFESSOR
+**When** sidebar renderiza
+**Then** item "Nova Aula" tem estilo CTA: Background Focus Orange (#F97316), texto branco, sombra sutil
+
+**Given** sidebar colapsada
+**When** CTA renderiza
+**Then** mostra ícone Upload com background Focus Orange e tooltip
+
+---
+
+### Story 9.5: Polimento Visual — Pages do Professor
+
+As a **Professor**,
+I want **que as páginas de Aulas, Upload, Planejamentos e Cobertura tenham visual profissional e consistente**,
+So that **a experiência parece um produto completo, não um protótipo**.
+
+**Acceptance Criteria:**
+
+**Given** qualquer page do Professor carrega
+**When** renderiza headers
+**Then** usa `font-montserrat font-bold text-deep-navy` (não `text-gray-900`)
+
+**Given** qualquer page do Professor carrega
+**When** content renderiza
+**Then** container `max-w-7xl`, padding consistente `p-6`, margin entre seções `mb-6`
+
+**Given** dados estão sendo carregados
+**When** page mostra loading
+**Then** usa Skeleton components em vez de spinners genéricos
+
+**Given** pages tinham headers internos
+**When** layout global agora fornece navegação + breadcrumbs
+**Then** pages removem padding-top excessivo e headers redundantes
+
+---
+
+### Story 9.6: Polimento Visual — Dashboards de Gestão e Admin
+
+As a **Coordenador, Diretor ou Admin**,
+I want **dashboards com visual consistente, profissional e alinhado ao design system**,
+So that **a experiência de análise de dados é clara e agradável**.
+
+**Acceptance Criteria:**
+
+**Given** qualquer dashboard carrega
+**When** renderiza
+**Then** `text-gray-900` → `text-deep-navy`, cores do design system nos StatCards e gráficos
+
+**Given** StatCard é usado em múltiplos dashboards
+**When** renderiza
+**Then** ícone com fundo circular sutil, valor com `font-montserrat font-bold text-2xl`, hover com elevação
+
+**Given** qualquer dashboard sem dados carrega
+**When** renderiza empty state
+**Then** ícone centralizado + mensagem acionável + CTA quando aplicável
+
+---
+
+## Status Geral dos Épicos
+
 - ✅ **Epic 0:** Project Setup & Infrastructure Foundation (5 stories)
 - ✅ **Epic 1:** Authentication & Multi-Tenant User Management (7 stories)
 - ✅ **Epic 2:** Planejamento Bimestral (4 stories)
@@ -9450,24 +9631,8 @@ export function AdminPromptsQualidadePage() {
 - ✅ **Epic 6:** Relatórios & Exercícios para Professor (5 stories)
 - ✅ **Epic 7:** Dashboard de Gestão (Coordenador & Diretor) (5 stories)
 - ✅ **Epic 8:** Administração & Monitoramento Interno (4 stories)
+- 🆕 **Epic 9:** Layout de Navegação & Polimento Visual (6 stories)
 
-**Total:** 9 épicos, 44 stories, 47 FRs MVP cobertos
-
-**Cobertura de Requisitos:**
-- **Functional Requirements:** 47/50 FRs (94% - 3 post-MVP: FR5, FR22, FR30)
-- **Non-Functional Requirements:** 100% cobertos (performance, segurança, escalabilidade, acessibilidade, integração, confiabilidade)
-- **Architecture Requirements:** 100% integrados (tech stack, infra, data model, multi-tenancy)
-- **UX Design Requirements:** 100% integrados (Tailwind+shadcn/ui, WCAG AAA, upload resumível, responsividade)
-
-**Pronto para Implementação:** ✅
-- Todas as stories têm critérios de aceitação detalhados (Given/When/Then)
-- Código de exemplo incluído (TypeScript, React, Prisma, SQL)
-- Entidades de banco definidas com schemas Prisma
-- Endpoints REST API documentados
-- Componentes UI especificados (shadcn/ui)
-- Fluxos end-to-end testáveis
-
-**Próximo Passo Sugerido:**
-Execute `/bmad:bmm:workflows:check-implementation-readiness` para validação adversarial final antes de começar implementação! 🚀
+**Total:** 10 épicos, 50 stories
 
 ---

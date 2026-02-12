@@ -7,6 +7,7 @@ import {
   Param,
   BadRequestException,
   ParseUUIDPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -93,6 +94,71 @@ export class DashboardController {
       user.escolaId,
       professorId,
       filtros,
+    );
+  }
+
+  @Get('turmas')
+  @Roles(RoleUsuario.COORDENADOR, RoleUsuario.DIRETOR)
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(3600) // Cache 1 hora
+  @ApiOperation({
+    summary: 'Métricas de cobertura curricular por turma',
+    description:
+      'Retorna lista de turmas com métricas agregadas de cobertura BNCC. ' +
+      'Coordenador identifica turmas em atraso (< 50% crítico, 50-70% atenção).',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Métricas agregadas por turma com classificação de urgência',
+  })
+  async getMetricasPorTurma(
+    @CurrentUser() user: AuthenticatedUser,
+    @Query() filtros: FiltrosDashboardDto,
+  ) {
+    if (!user.escolaId) {
+      throw new BadRequestException(
+        'Dashboard coordenador não disponível para ADMIN',
+      );
+    }
+    return this.dashboardService.getMetricasPorTurma(user.escolaId, filtros);
+  }
+
+  @Get('turmas/:turmaId/detalhes')
+  @Roles(RoleUsuario.COORDENADOR, RoleUsuario.DIRETOR)
+  @ApiOperation({
+    summary: 'Detalhes de habilidades da turma (drill-down)',
+    description:
+      'Retorna status de cada habilidade planejada para a turma: COMPLETE/PARTIAL/MENTIONED/NOT_COVERED. ' +
+      'Coordenador identifica quais habilidades específicas não foram trabalhadas.',
+  })
+  @ApiParam({
+    name: 'turmaId',
+    description: 'UUID da turma',
+    type: 'string',
+    format: 'uuid',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de habilidades com status de cobertura',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'turmaId inválido (deve ser UUID)',
+  })
+  async getDetalhesTurma(
+    @Param('turmaId', new ParseUUIDPipe({ version: '4' })) turmaId: string,
+    @CurrentUser() user: AuthenticatedUser,
+    @Query('bimestre', new ParseIntPipe({ optional: true })) bimestre?: number,
+  ) {
+    if (!user.escolaId) {
+      throw new BadRequestException(
+        'Dashboard coordenador não disponível para ADMIN',
+      );
+    }
+    return this.dashboardService.getDetalhesTurma(
+      user.escolaId,
+      turmaId,
+      bimestre,
     );
   }
 }

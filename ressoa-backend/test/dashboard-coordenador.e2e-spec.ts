@@ -353,4 +353,210 @@ describe('Dashboard Coordenador (E2E)', () => {
       }
     });
   });
+
+  // Story 7.3: Dashboard por Turma
+  describe('GET /api/v1/dashboard/coordenador/turmas', () => {
+    it('should return 401 if no auth token', async () => {
+      const response = await request(app.getHttpServer()).get(
+        '/api/v1/dashboard/coordenador/turmas',
+      );
+
+      expect(response.status).toBe(401);
+    });
+
+    it('should return 403 if user is PROFESSOR', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/api/v1/dashboard/coordenador/turmas')
+        .set('Authorization', `Bearer ${professorToken}`);
+
+      expect(response.status).toBe(403);
+    });
+
+    it('should return metricas + classificacao for COORDENADOR', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/api/v1/dashboard/coordenador/turmas')
+        .set('Authorization', `Bearer ${coordenadorToken}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('metricas');
+      expect(response.body).toHaveProperty('classificacao');
+      expect(response.body).toHaveProperty('turmas_priorizadas');
+      expect(response.body.classificacao).toHaveProperty('criticas');
+      expect(response.body.classificacao).toHaveProperty('atencao');
+      expect(response.body.classificacao).toHaveProperty('no_ritmo');
+      expect(Array.isArray(response.body.metricas)).toBe(true);
+      expect(Array.isArray(response.body.turmas_priorizadas)).toBe(true);
+    });
+
+    it('should return metricas for DIRETOR', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/api/v1/dashboard/coordenador/turmas')
+        .set('Authorization', `Bearer ${directorToken}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('metricas');
+    });
+
+    it('should filter by bimestre', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/api/v1/dashboard/coordenador/turmas')
+        .query({ bimestre: 1 })
+        .set('Authorization', `Bearer ${coordenadorToken}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('metricas');
+    });
+
+    it('should filter by disciplina', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/api/v1/dashboard/coordenador/turmas')
+        .query({ disciplina: 'MATEMATICA' })
+        .set('Authorization', `Bearer ${coordenadorToken}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('metricas');
+    });
+
+    it('should classify turmas (criticas < 50%, atencao 50-70%, no_ritmo >= 70%)', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/api/v1/dashboard/coordenador/turmas')
+        .set('Authorization', `Bearer ${coordenadorToken}`);
+
+      expect(response.status).toBe(200);
+
+      const { metricas, classificacao } = response.body;
+
+      // Count manually from metricas
+      const criticas = metricas.filter(
+        (t: any) => Number(t.percentual_cobertura) < 50,
+      ).length;
+      const atencao = metricas.filter(
+        (t: any) =>
+          Number(t.percentual_cobertura) >= 50 &&
+          Number(t.percentual_cobertura) < 70,
+      ).length;
+      const no_ritmo = metricas.filter(
+        (t: any) => Number(t.percentual_cobertura) >= 70,
+      ).length;
+
+      expect(classificacao.criticas).toBe(criticas);
+      expect(classificacao.atencao).toBe(atencao);
+      expect(classificacao.no_ritmo).toBe(no_ritmo);
+    });
+
+    it('should return max 5 turmas_priorizadas (critical classes)', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/api/v1/dashboard/coordenador/turmas')
+        .set('Authorization', `Bearer ${coordenadorToken}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.turmas_priorizadas.length).toBeLessThanOrEqual(5);
+    });
+
+    it('should execute query in < 500ms (performance SLA)', async () => {
+      const start = Date.now();
+
+      const response = await request(app.getHttpServer())
+        .get('/api/v1/dashboard/coordenador/turmas')
+        .set('Authorization', `Bearer ${coordenadorToken}`);
+
+      const duration = Date.now() - start;
+
+      expect(response.status).toBe(200);
+      expect(duration).toBeLessThan(500);
+    });
+  });
+
+  describe('GET /api/v1/dashboard/coordenador/turmas/:turmaId/detalhes', () => {
+    let testTurmaId: string;
+
+    beforeAll(async () => {
+      // Get a turma ID from the materialized view
+      const result = await prisma.$queryRaw<{ turma_id: string }[]>`
+        SELECT DISTINCT turma_id FROM cobertura_bimestral LIMIT 1;
+      `;
+
+      if (result.length > 0) {
+        testTurmaId = result[0].turma_id;
+      } else {
+        // Use a dummy ID if no data exists
+        testTurmaId = '00000000-0000-0000-0000-000000000000';
+      }
+    });
+
+    it('should return 401 if no auth token', async () => {
+      const response = await request(app.getHttpServer()).get(
+        `/api/v1/dashboard/coordenador/turmas/${testTurmaId}/detalhes`,
+      );
+
+      expect(response.status).toBe(401);
+    });
+
+    it('should return 403 if user is PROFESSOR', async () => {
+      const response = await request(app.getHttpServer())
+        .get(`/api/v1/dashboard/coordenador/turmas/${testTurmaId}/detalhes`)
+        .set('Authorization', `Bearer ${professorToken}`);
+
+      expect(response.status).toBe(403);
+    });
+
+    it('should return habilidades with status for COORDENADOR', async () => {
+      const response = await request(app.getHttpServer())
+        .get(`/api/v1/dashboard/coordenador/turmas/${testTurmaId}/detalhes`)
+        .set('Authorization', `Bearer ${coordenadorToken}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('detalhes');
+      expect(Array.isArray(response.body.detalhes)).toBe(true);
+
+      // Verify status_cobertura values are valid
+      if (response.body.detalhes.length > 0) {
+        response.body.detalhes.forEach((hab: any) => {
+          expect(hab).toHaveProperty('habilidade_codigo');
+          expect(hab).toHaveProperty('habilidade_descricao');
+          expect(hab).toHaveProperty('status_cobertura');
+          expect(hab).toHaveProperty('aulas_relacionadas');
+          expect([
+            'COMPLETE',
+            'PARTIAL',
+            'MENTIONED',
+            'NOT_COVERED',
+          ]).toContain(hab.status_cobertura);
+        });
+      }
+    });
+
+    it('should filter by bimestre', async () => {
+      const response = await request(app.getHttpServer())
+        .get(`/api/v1/dashboard/coordenador/turmas/${testTurmaId}/detalhes`)
+        .query({ bimestre: 1 })
+        .set('Authorization', `Bearer ${coordenadorToken}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('detalhes');
+    });
+
+    it('should return 400 for invalid turmaId (not UUID)', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/api/v1/dashboard/coordenador/turmas/invalid-uuid/detalhes')
+        .set('Authorization', `Bearer ${coordenadorToken}`);
+
+      expect(response.status).toBe(400);
+    });
+
+    it('should enforce multi-tenancy (cross-school turma)', async () => {
+      // Try to access a different school's turma
+      const fakeSchoolTurmaId = '00000000-0000-0000-0000-000000000001';
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/api/v1/dashboard/coordenador/turmas/${fakeSchoolTurmaId}/detalhes`,
+        )
+        .set('Authorization', `Bearer ${coordenadorToken}`);
+
+      expect(response.status).toBe(200);
+      // Should return EMPTY array (WHERE p.turma_id = X AND p.escola_id = Y blocks cross-school)
+      expect(response.body.detalhes).toHaveLength(0);
+    });
+  });
 });

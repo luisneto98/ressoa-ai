@@ -1,7 +1,6 @@
-import { IsOptional, IsInt, Min, Max, IsEnum } from 'class-validator';
+import { IsOptional, IsInt, Min, Max, IsString, IsIn } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { Disciplina } from '@prisma/client';
 
 export class FiltrosDashboardDto {
   @ApiProperty({
@@ -21,10 +20,13 @@ export class FiltrosDashboardDto {
   @ApiProperty({
     description: 'Disciplina (MATEMATICA, LINGUA_PORTUGUESA, CIENCIAS)',
     required: false,
-    enum: Disciplina,
+    enum: ['MATEMATICA', 'LINGUA_PORTUGUESA', 'CIENCIAS'],
     example: 'MATEMATICA',
   })
   @IsOptional()
-  @IsEnum(Disciplina, { message: 'Disciplina inválida' })
-  disciplina?: Disciplina;
+  @IsString()
+  @IsIn(['MATEMATICA', 'LINGUA_PORTUGUESA', 'CIENCIAS'], {
+    message: 'Disciplina deve ser MATEMATICA, LINGUA_PORTUGUESA ou CIENCIAS',
+  })
+  disciplina?: 'MATEMATICA' | 'LINGUA_PORTUGUESA' | 'CIENCIAS';
 }

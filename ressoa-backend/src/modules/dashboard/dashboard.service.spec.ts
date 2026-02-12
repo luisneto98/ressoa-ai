@@ -200,4 +200,240 @@ describe('DashboardService', () => {
     });
 
   });
+
+  describe('getMetricasPorTurma', () => {
+    it('should return metricas grouped by turma with classification', async () => {
+      const mockMetricas = [
+        {
+          turma_id: 'turma-1',
+          turma_nome: '6º Ano A',
+          turma_serie: '6_ANO',
+          disciplina: 'MATEMATICA',
+          bimestre: 1,
+          percentual_cobertura: 85.5,
+          habilidades_planejadas: 15,
+          habilidades_trabalhadas: 13,
+          total_aulas: 10,
+          professores: 'Maria Silva',
+        },
+        {
+          turma_id: 'turma-2',
+          turma_nome: '6º Ano B',
+          turma_serie: '6_ANO',
+          disciplina: 'MATEMATICA',
+          bimestre: 1,
+          percentual_cobertura: 45.0,
+          habilidades_planejadas: 15,
+          habilidades_trabalhadas: 7,
+          total_aulas: 5,
+          professores: 'João Santos',
+        },
+        {
+          turma_id: 'turma-3',
+          turma_nome: '7º Ano A',
+          turma_serie: '7_ANO',
+          disciplina: 'MATEMATICA',
+          bimestre: 1,
+          percentual_cobertura: 65.0,
+          habilidades_planejadas: 18,
+          habilidades_trabalhadas: 12,
+          total_aulas: 8,
+          professores: 'Maria Silva, Carlos Souza',
+        },
+      ];
+
+      mockPrismaService.$queryRaw.mockResolvedValue(mockMetricas);
+
+      const result = await service.getMetricasPorTurma('escola-1', { bimestre: 1 });
+
+      expect(result.metricas).toHaveLength(3);
+      expect(result.classificacao).toEqual({
+        criticas: 1, // turma-2 (45%)
+        atencao: 1, // turma-3 (65%)
+        no_ritmo: 1, // turma-1 (85.5%)
+      });
+      expect(result.turmas_priorizadas).toHaveLength(1);
+      expect(result.turmas_priorizadas[0].turma_id).toBe('turma-2');
+    });
+
+    it('should apply bimestre filter', async () => {
+      mockPrismaService.$queryRaw.mockResolvedValue([]);
+
+      await service.getMetricasPorTurma('escola-1', { bimestre: 2 });
+
+      expect(prismaService.$queryRaw).toHaveBeenCalledTimes(1);
+    });
+
+    it('should apply disciplina filter', async () => {
+      mockPrismaService.$queryRaw.mockResolvedValue([]);
+
+      await service.getMetricasPorTurma('escola-1', {
+        disciplina: 'MATEMATICA',
+      });
+
+      expect(prismaService.$queryRaw).toHaveBeenCalledTimes(1);
+    });
+
+    it('should enforce multi-tenancy (escola_id)', async () => {
+      mockPrismaService.$queryRaw.mockResolvedValue([]);
+
+      await service.getMetricasPorTurma('escola-1', {});
+
+      // Verify that escola_id is enforced in query
+      expect(prismaService.$queryRaw).toHaveBeenCalledTimes(1);
+      const callArgs = mockPrismaService.$queryRaw.mock.calls[0];
+      expect(callArgs[1]).toBe('escola-1');
+    });
+
+    it('should classify turmas correctly by thresholds', async () => {
+      const mockMetricas = [
+        {
+          turma_id: 'turma-1',
+          turma_nome: 'Turma Crítica 1',
+          turma_serie: '6_ANO',
+          disciplina: 'MATEMATICA',
+          bimestre: 1,
+          percentual_cobertura: 30.0, // < 50% crítico
+          habilidades_planejadas: 10,
+          habilidades_trabalhadas: 3,
+          total_aulas: 2,
+          professores: 'Prof A',
+        },
+        {
+          turma_id: 'turma-2',
+          turma_nome: 'Turma Crítica 2',
+          turma_serie: '6_ANO',
+          disciplina: 'MATEMATICA',
+          bimestre: 1,
+          percentual_cobertura: 49.0, // < 50% crítico
+          habilidades_planejadas: 10,
+          habilidades_trabalhadas: 5,
+          total_aulas: 3,
+          professores: 'Prof B',
+        },
+        {
+          turma_id: 'turma-3',
+          turma_nome: 'Turma Atenção',
+          turma_serie: '6_ANO',
+          disciplina: 'MATEMATICA',
+          bimestre: 1,
+          percentual_cobertura: 60.0, // 50-70% atenção
+          habilidades_planejadas: 10,
+          habilidades_trabalhadas: 6,
+          total_aulas: 5,
+          professores: 'Prof C',
+        },
+        {
+          turma_id: 'turma-4',
+          turma_nome: 'Turma No Ritmo',
+          turma_serie: '6_ANO',
+          disciplina: 'MATEMATICA',
+          bimestre: 1,
+          percentual_cobertura: 80.0, // >= 70% no ritmo
+          habilidades_planejadas: 10,
+          habilidades_trabalhadas: 8,
+          total_aulas: 8,
+          professores: 'Prof D',
+        },
+      ];
+
+      mockPrismaService.$queryRaw.mockResolvedValue(mockMetricas);
+
+      const result = await service.getMetricasPorTurma('escola-1', {});
+
+      expect(result.classificacao.criticas).toBe(2);
+      expect(result.classificacao.atencao).toBe(1);
+      expect(result.classificacao.no_ritmo).toBe(1);
+    });
+
+    it('should return top 5 prioritized classes', async () => {
+      const mockMetricas = Array.from({ length: 10 }, (_, i) => ({
+        turma_id: `turma-${i}`,
+        turma_nome: `Turma ${i}`,
+        turma_serie: '6_ANO',
+        disciplina: 'MATEMATICA',
+        bimestre: 1,
+        percentual_cobertura: 40.0, // All critical
+        habilidades_planejadas: 10,
+        habilidades_trabalhadas: 4,
+        total_aulas: 3,
+        professores: 'Prof',
+      }));
+
+      mockPrismaService.$queryRaw.mockResolvedValue(mockMetricas);
+
+      const result = await service.getMetricasPorTurma('escola-1', {});
+
+      expect(result.turmas_priorizadas).toHaveLength(5); // Top 5 only
+    });
+  });
+
+  describe('getDetalhesTurma', () => {
+    it('should return habilidades with status', async () => {
+      const mockDetalhes = [
+        {
+          habilidade_codigo: 'EF06MA01',
+          habilidade_descricao: 'Sistema de numeração decimal',
+          status_cobertura: 'COMPLETE',
+          aulas_relacionadas: 3,
+        },
+        {
+          habilidade_codigo: 'EF06MA02',
+          habilidade_descricao: 'Números naturais',
+          status_cobertura: 'NOT_COVERED',
+          aulas_relacionadas: 0,
+        },
+        {
+          habilidade_codigo: 'EF06MA03',
+          habilidade_descricao: 'Operações básicas',
+          status_cobertura: 'PARTIAL',
+          aulas_relacionadas: 1,
+        },
+        {
+          habilidade_codigo: 'EF06MA04',
+          habilidade_descricao: 'Frações',
+          status_cobertura: 'MENTIONED',
+          aulas_relacionadas: 1,
+        },
+      ];
+
+      mockPrismaService.$queryRaw.mockResolvedValue(mockDetalhes);
+
+      const result = await service.getDetalhesTurma('escola-1', 'turma-1', 1);
+
+      expect(result.detalhes).toHaveLength(4);
+      expect(result.detalhes[0].status_cobertura).toBe('COMPLETE');
+      expect(result.detalhes[1].status_cobertura).toBe('NOT_COVERED');
+      expect(result.detalhes[2].status_cobertura).toBe('PARTIAL');
+      expect(result.detalhes[3].status_cobertura).toBe('MENTIONED');
+    });
+
+    it('should enforce multi-tenancy (escola_id + turma_id)', async () => {
+      mockPrismaService.$queryRaw.mockResolvedValue([]);
+
+      await service.getDetalhesTurma('escola-1', 'turma-1', 1);
+
+      // Verify that both escola_id and turma_id are enforced
+      expect(prismaService.$queryRaw).toHaveBeenCalledTimes(1);
+      const callArgs = mockPrismaService.$queryRaw.mock.calls[0];
+      expect(callArgs[1]).toBe('turma-1');
+      expect(callArgs[2]).toBe('escola-1');
+    });
+
+    it('should work without bimestre filter', async () => {
+      mockPrismaService.$queryRaw.mockResolvedValue([]);
+
+      await service.getDetalhesTurma('escola-1', 'turma-1');
+
+      expect(prismaService.$queryRaw).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return empty array when no habilidades planejadas', async () => {
+      mockPrismaService.$queryRaw.mockResolvedValue([]);
+
+      const result = await service.getDetalhesTurma('escola-1', 'turma-1', 1);
+
+      expect(result.detalhes).toHaveLength(0);
+    });
+  });
 });

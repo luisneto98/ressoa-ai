@@ -20,3 +20,12 @@ export const TEMPO_REVISAO_THRESHOLDS = {
   MEDIUM: 600, // 5-10min = yellow
   // > 10min = red
 };
+
+/**
+ * Class coverage classification thresholds
+ * Used for visual classification in coordinator dashboards (Story 7.2, 7.3)
+ */
+export const COBERTURA_TURMA_THRESHOLDS = {
+  CRITICA: 50, // < 50% = critical (red)
+  ATENCAO: 70, // 50-70% = attention (yellow), >= 70% = on track (green)
+};

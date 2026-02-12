@@ -1,6 +1,6 @@
 # Story 5.5: Backend - Prompt 5 + Analysis Worker (Alertas + Integração)
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 

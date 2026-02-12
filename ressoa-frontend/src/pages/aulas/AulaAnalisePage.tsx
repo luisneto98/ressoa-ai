@@ -61,6 +61,7 @@ interface AnaliseResponse {
   exercicios_original?: any; // ✅ Story 6.3
   tem_edicao_exercicios?: boolean; // ✅ Story 6.3
   status?: string; // ✅ Story 6.2: For readOnly check
+  planejamento_id?: string; // ✅ Story 6.4: For navigation to planejamento
   alertas: {
     alertas?: Array<{
       tipo: string;
@@ -69,7 +70,28 @@ interface AnaliseResponse {
       mensagem: string;
       acoes_sugeridas: string[];
     }>;
-    sugestoes_proxima_aula?: string[];
+    sugestoes_proxima?: {
+      prioridades: Array<{
+        tipo: 'gap_curricular' | 'reforco' | 'avanco';
+        habilidade_bncc: string;
+        descricao: string;
+        justificativa: string;
+        recursos_sugeridos: string[];
+      }>;
+      pacing_sugerido: {
+        tempo_estimado: string;
+        distribuicao: {
+          revisao: string;
+          novo_conteudo: string;
+          exercicios: string;
+        };
+      };
+      proxima_aula_planejada?: {
+        titulo: string;
+        habilidades: string[];
+        data_prevista: string;
+      };
+    };
   };
   metadata: {
     tempo_processamento_ms: number;
@@ -162,8 +184,8 @@ export function AulaAnalisePage() {
 
         <TabsContent value="sugestoes">
           <SugestoesTab
-            sugestoes={analise.alertas?.sugestoes_proxima_aula || []}
-            planejamento={analise.aula.planejamento}
+            sugestoes={analise.alertas?.sugestoes_proxima || { prioridades: [], pacing_sugerido: { tempo_estimado: '', distribuicao: { revisao: '', novo_conteudo: '', exercicios: '' } } }}
+            planejamentoId={analise.planejamento_id}
           />
         </TabsContent>
       </Tabs>

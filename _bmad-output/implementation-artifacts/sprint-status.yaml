@@ -85,7 +85,7 @@ development_status:
     6-1-visualizacao-de-analise-completa: done # Code review complete - 2 CRITICAL + 5 MEDIUM + 3 LOW issues found & fixed - 5/5 unit tests passing
     6-2-edicao-e-aprovacao-de-relatorio: done # Code review complete - 10 issues found & auto-fixed (2 CRITICAL, 4 HIGH, 4 MEDIUM) - all fixes applied
     6-3-visualizacao-e-edicao-de-exercicios-contextuais: done # Code review complete - 10 issues found & auto-fixed (3 HIGH, 5 MEDIUM, 2 LOW) - 14/14 backend tests passing - all validations enhanced
-    6-4-sugestoes-para-proxima-aula: backlog
+    6-4-sugestoes-para-proxima-aula: review
     6-5-dashboard-pessoal-do-professor-cobertura-propria: backlog
     epic-6-retrospective: optional
     epic-7: backlog

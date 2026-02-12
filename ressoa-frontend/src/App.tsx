@@ -10,6 +10,7 @@ import UploadAulaPage from '@/pages/aulas/UploadAulaPage';
 import AulasListPage from '@/pages/aulas/AulasListPage';
 import { AulaAnalisePage } from '@/pages/aulas/AulaAnalisePage';
 import { AulaAnaliseEditPage } from '@/pages/aulas/AulaAnaliseEditPage';
+import { CoberturaPessoalPage } from '@/pages/dashboard/CoberturaPessoalPage';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 // Create Query Client
@@ -114,6 +115,16 @@ function App() {
                   <p className="text-muted-foreground">(Página em desenvolvimento - Story 1.6)</p>
                 </div>
               </div>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Dashboard Routes - Story 6.5 */}
+        <Route
+          path="/dashboard/cobertura-pessoal"
+          element={
+            <ProtectedRoute>
+              <CoberturaPessoalPage />
             </ProtectedRoute>
           }
         />

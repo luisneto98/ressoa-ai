@@ -17,6 +17,7 @@ import { SttModule } from './modules/stt/stt.module';
 import { LLMModule } from './modules/llm/llm.module';
 import { AnaliseModule } from './modules/analise/analise.module';
 import { NotificacoesModule } from './modules/notificacoes/notificacoes.module';
+import { ProfessoresModule } from './modules/professores/professores.module';
 import { TestModule } from './modules/test/test.module';
 import { ContextModule } from './common/context/context.module';
 import { EmailModule } from './common/email/email.module';
@@ -77,6 +78,7 @@ if (process.env.NODE_ENV !== 'test') {
     LLMModule, // LLM Service Abstraction & Prompt Versioning (Story 5.1)
     AnaliseModule, // Pipeline Serial de 5 Prompts (Story 5.2)
     NotificacoesModule, // Notification System (Story 4.4)
+    ProfessoresModule, // Professores API - Dashboard de Cobertura (Story 6.5)
     // TUS Upload Server (Story 3.2) - dynamically loaded in non-test environments
     ...conditionalImports,
     // RBAC test endpoints - only load in non-production environments

@@ -62,9 +62,9 @@ export class AnalysisProcessorWorker {
         return { analiseId: existingAnalise.id };
       }
 
-      if (aula.status_processamento !== 'TRANSCRITA') {
+      if (!['TRANSCRITA', 'ANALISANDO'].includes(aula.status_processamento)) {
         this.logger.warn({
-          message: `Aula ${aulaId} não está transcrita (status: ${aula.status_processamento})`,
+          message: `Aula ${aulaId} não está pronta para análise (status: ${aula.status_processamento})`,
           aulaId,
           currentStatus: aula.status_processamento,
         });

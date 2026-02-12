@@ -48,7 +48,14 @@ export function LoginPage() {
       const { accessToken, refreshToken, user } = response.data;
 
       // Save to store (persists to localStorage)
-      login({ accessToken, refreshToken }, user);
+      // Map backend response (escola: {id, nome}) to flat escola_id
+      login({ accessToken, refreshToken }, {
+        id: user.id,
+        email: user.email,
+        nome: user.nome,
+        role: user.role,
+        escola_id: user.escola?.id,
+      });
 
       // Show success toast
       toast.success(`Bem-vindo, ${user.nome}!`);

@@ -111,7 +111,7 @@ export class TranscriptionProcessor {
         `[Job ${job.id}] Iniciando download e transcrição via TranscricaoService...`,
       );
 
-      const transcricao = await this.transcricaoService.transcribeAula(aulaId);
+      const transcricao = await this.transcricaoService.transcribeAula(aulaId, aula.escola_id);
 
       // Progress: 90% - Transcription complete, saving to database
       await job.progress(90);

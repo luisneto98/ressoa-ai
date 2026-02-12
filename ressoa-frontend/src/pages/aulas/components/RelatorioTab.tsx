@@ -64,15 +64,19 @@ export function RelatorioTab({ analise }: RelatorioTabProps) {
           <CardTitle>Cobertura BNCC</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          {analise.cobertura_bncc.habilidades.map((hab) => (
-            <CoberturaBadge
-              key={hab.codigo}
-              codigo={hab.codigo}
-              descricao={hab.descricao}
-              nivel={hab.nivel_cobertura}
-              evidencias={hab.evidencias}
-            />
-          ))}
+          {analise.cobertura_bncc?.habilidades?.length > 0 ? (
+            analise.cobertura_bncc.habilidades.map((hab) => (
+              <CoberturaBadge
+                key={hab.codigo}
+                codigo={hab.codigo}
+                descricao={hab.descricao}
+                nivel={hab.nivel_cobertura}
+                evidencias={hab.evidencias}
+              />
+            ))
+          ) : (
+            <p className="text-sm text-muted-foreground">Nenhuma habilidade identificada na análise.</p>
+          )}
         </CardContent>
       </Card>
 

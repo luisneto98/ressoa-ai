@@ -36,6 +36,11 @@ export function AlertasSection({ alertas }: AlertasSectionProps) {
     }
   };
 
+  // Safety check for alertas array
+  if (!alertas || !Array.isArray(alertas) || alertas.length === 0) {
+    return null;
+  }
+
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-bold text-gray-900">Alertas Pedagógicos</h2>

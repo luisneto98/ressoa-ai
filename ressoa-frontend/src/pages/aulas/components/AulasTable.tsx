@@ -1,7 +1,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, Eye, FileText, RotateCw, Trash2 } from 'lucide-react';
+import { MoreHorizontal, Eye, FileText, RotateCw, Trash2, Sparkles } from 'lucide-react';
 import { StatusBadge } from './StatusBadge';
 import { TipoBadge } from './TipoBadge';
 import { formatDate } from '@/lib/utils';
@@ -13,6 +13,7 @@ interface AulasTableProps {
   onReview: (id: string) => void;
   onReprocess: (id: string) => void;
   onDelete: (id: string) => void;
+  onStartAnalise: (id: string) => void;
 }
 
 export const AulasTable = ({
@@ -21,6 +22,7 @@ export const AulasTable = ({
   onReview,
   onReprocess,
   onDelete,
+  onStartAnalise,
 }: AulasTableProps) => {
   return (
     <div className="hidden md:block">
@@ -63,6 +65,13 @@ export const AulasTable = ({
                       <Eye className="h-4 w-4 mr-2" />
                       Ver Detalhes
                     </DropdownMenuItem>
+
+                    {aula.status_processamento === 'TRANSCRITA' && (
+                      <DropdownMenuItem onClick={() => onStartAnalise(aula.id)}>
+                        <Sparkles className="h-4 w-4 mr-2" />
+                        Iniciar Análise
+                      </DropdownMenuItem>
+                    )}
 
                     {['ANALISADA', 'APROVADA'].includes(aula.status_processamento) && (
                       <DropdownMenuItem onClick={() => onReview(aula.id)}>

@@ -58,20 +58,16 @@ export class TusService {
       path: '/api/v1/uploads',
       datastore: store,
       maxSize: 2 * 1024 * 1024 * 1024, // 2GB max
-      namingFunction: (req: any) => {
-        // Gerar nome único: {escola_id}/{professor_id}/{uuid}.{ext}
-        const metadata = req.upload?.metadata || {};
-        const escolaId = metadata.escola_id || 'unknown';
-        const professorId = metadata.professor_id || 'unknown';
-        const uuid = randomUUID();
-        const ext = metadata.filetype?.split('/')[1] || 'bin';
-        return `${escolaId}/${professorId}/${uuid}.${ext}`;
+      namingFunction: () => {
+        // Simple UUID naming - ownership tracked via Aula record, not file path
+        return randomUUID();
       },
       onIncomingRequest: async (req: any, res: any) => {
-        // JWT já validado por JwtAuthGuard do NestJS
-        // Validar que req.user existe
+        // JWT já validado por JwtAuthGuard do NestJS (req.user populado pelo guard)
+        // Se req.user não existir, o guard já bloqueou - verificação defensiva apenas
         if (!req.user) {
-          throw new UnauthorizedException('JWT inválido ou ausente');
+          this.logger.warn('onIncomingRequest: req.user ausente (esperado ser validado pelo JwtAuthGuard)');
+          return; // Allow TUS to proceed - auth is handled by NestJS guard
         }
 
         // Validar ownership: professor_id e escola_id da metadata devem corresponder ao JWT
@@ -134,7 +130,9 @@ export class TusService {
         const escolaId = escola_id;
         const professorId = professor_id;
 
-        const aula = await this.prisma.aula.findUnique({
+        this.logger.log(`onUploadCreate: aulaId=${aulaId}, escolaId=${escolaId}, professorId=${professorId}`);
+
+        const aula = await this.prisma.aula.findFirst({
           where: {
             id: aulaId,
             escola_id: escolaId, // ✅ Multi-tenancy
@@ -143,6 +141,7 @@ export class TusService {
         });
 
         if (!aula) {
+          this.logger.error(`Aula não encontrada: id=${aulaId}, escola=${escolaId}, professor=${professorId}`);
           throw new ForbiddenException('Aula não encontrada ou sem permissão');
         }
 

@@ -5,6 +5,14 @@ import { STTService } from './stt.service';
 import { Transcricao } from '@prisma/client';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { Readable } from 'stream';
+import { execFile } from 'child_process';
+import { promisify } from 'util';
+import { writeFile, unlink, readFile } from 'fs/promises';
+import { tmpdir } from 'os';
+import { join } from 'path';
+import { randomUUID } from 'crypto';
+
+const execFileAsync = promisify(execFile);
 
 /**
  * Service for transcription persistence and audio processing.
@@ -31,21 +39,18 @@ export class TranscricaoService {
     private sttService: STTService,
     private configService: ConfigService,
   ) {
-    // Initialize AWS S3 client
-    const accessKeyId = this.configService.get<string>('AWS_ACCESS_KEY_ID');
-    const secretAccessKey = this.configService.get<string>(
-      'AWS_SECRET_ACCESS_KEY',
-    );
+    // Initialize S3 client (compatible with MinIO)
+    const accessKeyId = this.configService.get<string>('S3_ACCESS_KEY');
+    const secretAccessKey = this.configService.get<string>('S3_SECRET_KEY');
 
     this.s3Client = new S3Client({
-      region: this.configService.get<string>('AWS_REGION') || 'us-east-1',
+      region: this.configService.get<string>('S3_REGION') || 'us-east-1',
+      endpoint: this.configService.get<string>('S3_ENDPOINT'),
       credentials:
         accessKeyId && secretAccessKey
-          ? {
-              accessKeyId,
-              secretAccessKey,
-            }
+          ? { accessKeyId, secretAccessKey }
           : undefined,
+      forcePathStyle: true, // Required for MinIO
     });
   }
 
@@ -65,10 +70,10 @@ export class TranscricaoService {
    * @throws NotFoundException if Aula not found or has no audio file
    * @throws Error if transcription or S3 download fails
    */
-  async transcribeAula(aulaId: string): Promise<Transcricao> {
+  async transcribeAula(aulaId: string, escolaIdOverride?: string): Promise<Transcricao> {
     // Fetch aula with multi-tenancy validation
-    // Note: escola_id filtering is enforced at Aula level, Transcricao inherits via FK
-    const escolaId = this.prisma.getEscolaIdOrThrow();
+    // escolaIdOverride: used by Bull workers that run outside HTTP context
+    const escolaId = escolaIdOverride || this.prisma.getEscolaIdOrThrow();
     const aula = await this.prisma.aula.findUnique({
       where: {
         id: aulaId,
@@ -86,11 +91,19 @@ export class TranscricaoService {
     this.logger.log(`Iniciando transcrição para aulaId=${aulaId}`);
 
     // Download audio from S3
-    const audioBuffer = await this.downloadFromS3(aula.arquivo_url);
+    let audioBuffer = await this.downloadFromS3(aula.arquivo_url);
 
     this.logger.log(
-      `Áudio baixado: ${audioBuffer.length} bytes, iniciando transcrição...`,
+      `Áudio baixado: ${audioBuffer.length} bytes`,
     );
+
+    // Compress if over Whisper 25MB limit
+    const WHISPER_LIMIT = 25 * 1024 * 1024;
+    if (audioBuffer.length > WHISPER_LIMIT) {
+      this.logger.log(`Áudio excede 25MB (${(audioBuffer.length / 1024 / 1024).toFixed(1)}MB). Comprimindo...`);
+      audioBuffer = await this.compressAudio(audioBuffer);
+      this.logger.log(`Áudio comprimido: ${(audioBuffer.length / 1024 / 1024).toFixed(1)}MB`);
+    }
 
     // Transcribe using STTService (handles failover automatically)
     const result = await this.sttService.transcribe(audioBuffer, {
@@ -130,6 +143,37 @@ export class TranscricaoService {
     );
 
     return transcricao;
+  }
+
+  /**
+   * Compress audio to mp3 64kbps mono using ffmpeg-static.
+   * Reduces file size to fit within Whisper's 25MB limit.
+   */
+  private async compressAudio(audioBuffer: Buffer): Promise<Buffer> {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const ffmpegPath = require('ffmpeg-static') as string;
+    const id = randomUUID();
+    const inputPath = join(tmpdir(), `${id}-input`);
+    const outputPath = join(tmpdir(), `${id}-output.mp3`);
+
+    try {
+      await writeFile(inputPath, audioBuffer);
+
+      await execFileAsync(ffmpegPath, [
+        '-i', inputPath,
+        '-ac', '1',           // mono
+        '-ar', '16000',       // 16kHz (optimal for speech)
+        '-b:a', '64k',        // 64kbps bitrate
+        '-y',                 // overwrite
+        outputPath,
+      ], { timeout: 120000 }); // 2 min timeout
+
+      return await readFile(outputPath);
+    } finally {
+      // Cleanup temp files
+      await unlink(inputPath).catch(() => {});
+      await unlink(outputPath).catch(() => {});
+    }
   }
 
   /**

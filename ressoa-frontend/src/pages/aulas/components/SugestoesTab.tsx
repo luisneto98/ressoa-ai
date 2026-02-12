@@ -106,18 +106,20 @@ export function SugestoesTab({ sugestoes, planejamentoId }: SugestoesTabProps) {
       </div>
 
       {/* Seção 1: Prioridades de Conteúdo */}
-      <section className="mb-8">
-        <h3 className="text-lg font-semibold mb-4 text-gray-800">Prioridades de Conteúdo</h3>
-        <div className="space-y-4">
-          {/* FIX MEDIUM #1: Use proper keys instead of index */}
-          {prioridades.map((prioridade) => (
-            <PrioridadeCard
-              key={`${prioridade.tipo}-${prioridade.habilidade_bncc}`}
-              prioridade={prioridade}
-            />
-          ))}
-        </div>
-      </section>
+      {prioridades && prioridades.length > 0 && (
+        <section className="mb-8">
+          <h3 className="text-lg font-semibold mb-4 text-gray-800">Prioridades de Conteúdo</h3>
+          <div className="space-y-4">
+            {/* FIX MEDIUM #1: Use proper keys instead of index */}
+            {prioridades.map((prioridade) => (
+              <PrioridadeCard
+                key={`${prioridade.tipo}-${prioridade.habilidade_bncc}`}
+                prioridade={prioridade}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Seção 2: Pacing Sugerido */}
       {pacing_sugerido && (

@@ -11,7 +11,7 @@ export const useAulas = (params: FetchAulasParams) => {
       try {
         const data = query.state.data;
         if (!data || !Array.isArray(data)) return false;
-        
+
         const hasProcessing = data.some((aula: AulaListItem) =>
           ['UPLOAD_PROGRESSO', 'AGUARDANDO_TRANSCRICAO', 'ANALISANDO'].includes(
             aula.status_processamento

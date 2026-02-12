@@ -1,6 +1,6 @@
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Eye, FileText, RotateCw, Trash2 } from 'lucide-react';
+import { Eye, FileText, RotateCw, Trash2, Sparkles } from 'lucide-react';
 import { StatusBadge } from './StatusBadge';
 import { TipoBadge } from './TipoBadge';
 import { formatDate } from '@/lib/utils';
@@ -12,6 +12,7 @@ interface AulasCardsProps {
   onReview: (id: string) => void;
   onReprocess: (id: string) => void;
   onDelete: (id: string) => void;
+  onStartAnalise: (id: string) => void;
 }
 
 export const AulasCards = ({
@@ -20,6 +21,7 @@ export const AulasCards = ({
   onReview,
   onReprocess,
   onDelete,
+  onStartAnalise,
 }: AulasCardsProps) => {
   return (
     <div className="block md:hidden space-y-4">
@@ -49,6 +51,18 @@ export const AulasCards = ({
               <Eye className="h-4 w-4 mr-2" />
               Detalhes
             </Button>
+
+            {aula.status_processamento === 'TRANSCRITA' && (
+              <Button
+                variant="default"
+                size="default"
+                onClick={() => onStartAnalise(aula.id)}
+                className="flex-1 min-h-[44px]"
+              >
+                <Sparkles className="h-4 w-4 mr-2" />
+                Analisar
+              </Button>
+            )}
 
             {['ANALISADA', 'APROVADA'].includes(aula.status_processamento) && (
               <Button

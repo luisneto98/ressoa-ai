@@ -68,11 +68,10 @@ if (process.env.NODE_ENV !== 'test') {
       redis: {
         host: process.env.REDIS_HOST || 'localhost',
         port: parseInt(process.env.REDIS_PORT || '6379', 10),
-        // Bull compatibility: disable enableReadyCheck/maxRetriesPerRequest for bclient/subscriber
+        // Bull compatibility: do NOT use enableReadyCheck/maxRetriesPerRequest
         // See: https://github.com/OptimalBits/bull/issues/1873
-        ...(process.env.NODE_ENV === 'test'
-          ? {}
-          : { maxRetriesPerRequest: 3, enableReadyCheck: true }),
+        maxRetriesPerRequest: null, // Required for Bull compatibility
+        enableReadyCheck: false, // Required for Bull compatibility
         enableOfflineQueue: true,
       },
       defaultJobOptions: {

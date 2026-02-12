@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAulas } from '@/hooks/useAulas';
 import { useReprocessAula } from '@/hooks/useReprocessAula';
 import { useDeleteAula } from '@/hooks/useDeleteAula';
+import { useStartAnalise } from '@/hooks/useStartAnalise';
 import { AulasFilters } from './components/AulasFilters';
 import { AulasTable } from './components/AulasTable';
 import { AulasCards } from './components/AulasCards';
@@ -58,6 +59,7 @@ export default function AulasListPage() {
   const { data: aulas = [], isLoading } = useAulas(filters);
   const { mutate: reprocessAula } = useReprocessAula();
   const { mutate: deleteAula } = useDeleteAula();
+  const { mutate: startAnalise } = useStartAnalise();
 
   const handleFilterChange = (key: string, value: string | null) => {
     const newParams = new URLSearchParams(searchParams);
@@ -98,7 +100,11 @@ export default function AulasListPage() {
   };
 
   const handleReview = (id: string) => {
-    navigate(`/aulas/${id}/relatorio`); // Epic 6 - future implementation
+    navigate(`/aulas/${id}/analise`);
+  };
+
+  const handleStartAnalise = (id: string) => {
+    startAnalise(id);
   };
 
   const handleReprocess = (id: string) => {
@@ -163,6 +169,7 @@ export default function AulasListPage() {
             onReview={handleReview}
             onReprocess={handleReprocess}
             onDelete={handleDelete}
+            onStartAnalise={handleStartAnalise}
           />
           <AulasCards
             aulas={aulas}
@@ -170,6 +177,7 @@ export default function AulasListPage() {
             onReview={handleReview}
             onReprocess={handleReprocess}
             onDelete={handleDelete}
+            onStartAnalise={handleStartAnalise}
           />
 
           {/* Pagination */}

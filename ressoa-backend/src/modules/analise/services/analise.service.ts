@@ -37,6 +37,35 @@ export class AnaliseService {
   ) {}
 
   /**
+   * Extrai e parseia JSON de markdown code fences.
+   *
+   * **Input examples:**
+   * - "```json\n{\"key\": \"value\"}\n```" → {key: "value"}
+   * - "{\"key\": \"value\"}" → {key: "value"}
+   * - "Some text\n```json\n{\"key\": \"value\"}\n```\nMore text" → {key: "value"}
+   *
+   * @param output Raw LLM output (pode conter markdown)
+   * @returns Parsed JSON object
+   * @throws Error se JSON inválido
+   */
+  private parseMarkdownJSON(output: string): any {
+    try {
+      // Remove markdown code fences if present
+      const jsonMatch = output.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
+      const jsonString = jsonMatch ? jsonMatch[1].trim() : output.trim();
+
+      return JSON.parse(jsonString);
+    } catch (error) {
+      this.logger.error({
+        message: 'Failed to parse LLM JSON output',
+        output: output.substring(0, 500), // Log first 500 chars
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
+      throw new Error(`Invalid JSON from LLM: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  /**
    * Executa pipeline completo de análise pedagógica em uma aula.
    *
    * **Pipeline Flow:**
@@ -179,17 +208,17 @@ export class AnaliseService {
 
       // 8. CRITICAL FIX: Wrap Analise creation + Aula update in transaction
       const analise = await this.prisma.$transaction(async (tx) => {
-        // 8a. Salvar análise completa
+        // 8a. Salvar análise completa (parse markdown-wrapped JSON before saving)
         const novaAnalise = await tx.analise.create({
           data: {
             aula_id: aulaId,
             transcricao_id: aula.transcricao!.id,
             planejamento_id: aula.planejamento?.id,
-            cobertura_json: coberturaOutput,
-            analise_qualitativa_json: qualitativaOutput,
-            relatorio_texto: relatorioOutput,
-            exercicios_json: exerciciosOutput,
-            alertas_json: alertasOutput,
+            cobertura_json: this.parseMarkdownJSON(coberturaOutput),
+            analise_qualitativa_json: this.parseMarkdownJSON(qualitativaOutput),
+            relatorio_texto: relatorioOutput, // Keep as string (markdown text)
+            exercicios_json: this.parseMarkdownJSON(exerciciosOutput),
+            alertas_json: this.parseMarkdownJSON(alertasOutput),
             prompt_versoes_json: promptVersoes,
             custo_total_usd: custoTotal,
             tempo_processamento_ms: Date.now() - startTime,

@@ -156,22 +156,32 @@ export function ExerciciosTab({
 
       {/* Lista de questões */}
       <div className="space-y-6">
-        {exercicios.questoes.map((questao, idx) => (
-          <QuestaoCard key={idx} questao={questao} showGabarito />
-        ))}
+        {exercicios?.questoes?.length > 0 ? (
+          exercicios.questoes.map((questao, idx) => (
+            <QuestaoCard key={idx} questao={questao} showGabarito />
+          ))
+        ) : (
+          <Alert>
+            <AlertDescription>
+              Nenhum exercício foi gerado para esta análise.
+            </AlertDescription>
+          </Alert>
+        )}
       </div>
 
       {/* Metadados */}
-      <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-        <div className="flex items-center justify-between text-sm text-gray-600">
-          <div>
-            <strong>{exercicios.questoes.length}</strong> questões geradas
-          </div>
-          <div>
-            Baseado em: {[...new Set(exercicios.questoes.map(q => q.habilidade_bncc))].join(', ')}
+      {exercicios?.questoes?.length > 0 && (
+        <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+          <div className="flex items-center justify-between text-sm text-gray-600">
+            <div>
+              <strong>{exercicios.questoes.length}</strong> questões geradas
+            </div>
+            <div>
+              Baseado em: {[...new Set(exercicios.questoes.map(q => q.habilidade_bncc))].join(', ')}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </Card>
   );
 }

@@ -177,7 +177,7 @@ export function UploadAudioTab() {
 
       // Step 2: Initialize TUS upload
       const upload = new tus.Upload(selectedFile, {
-        endpoint: `${import.meta.env.VITE_API_URL}/api/v1/uploads`,
+        endpoint: `${import.meta.env.VITE_API_URL}/uploads`,
         metadata: {
           filename: selectedFile.name,
           filetype: selectedFile.type,

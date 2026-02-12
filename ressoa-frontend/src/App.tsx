@@ -11,6 +11,8 @@ import AulasListPage from '@/pages/aulas/AulasListPage';
 import { AulaAnalisePage } from '@/pages/aulas/AulaAnalisePage';
 import { AulaAnaliseEditPage } from '@/pages/aulas/AulaAnaliseEditPage';
 import { CoberturaPessoalPage } from '@/pages/dashboard/CoberturaPessoalPage';
+import { DashboardCoordenadorProfessoresPage } from '@/pages/dashboard/DashboardCoordenadorProfessoresPage';
+import { DashboardCoordenadorProfessorTurmasPage } from '@/pages/dashboard/DashboardCoordenadorProfessorTurmasPage';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 // Create Query Client
@@ -125,6 +127,24 @@ function App() {
           element={
             <ProtectedRoute>
               <CoberturaPessoalPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Dashboard Coordenador Routes - Story 7.2 */}
+        <Route
+          path="/dashboard/coordenador/professores"
+          element={
+            <ProtectedRoute roles={['COORDENADOR', 'DIRETOR']}>
+              <DashboardCoordenadorProfessoresPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/coordenador/professores/:professorId/turmas"
+          element={
+            <ProtectedRoute roles={['COORDENADOR', 'DIRETOR']}>
+              <DashboardCoordenadorProfessorTurmasPage />
             </ProtectedRoute>
           }
         />

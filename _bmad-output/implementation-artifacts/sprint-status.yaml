@@ -90,7 +90,7 @@ development_status:
     epic-6-retrospective: optional
     epic-7: in-progress
     7-1-materialized-view-de-cobertura-bimestral: done # Code review complete - 10 issues found & auto-fixed (3 HIGH, 5 MEDIUM, 2 LOW) - 12/12 unit tests passing
-    7-2-dashboard-do-coordenador-visao-por-professor: backlog
+    7-2-dashboard-do-coordenador-visao-por-professor: review
     7-3-dashboard-do-coordenador-visao-por-turma: backlog
     7-4-dashboard-do-diretor-metricas-agregadas-da-escola: backlog
     7-5-rbac-guards-privacy-enforcement: backlog

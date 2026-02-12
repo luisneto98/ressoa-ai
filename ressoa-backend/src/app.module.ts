@@ -2,6 +2,8 @@ import { Module, DynamicModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { BullModule } from '@nestjs/bull';
+import { CacheModule } from '@nestjs/cache-manager';
+import { redisStore } from 'cache-manager-ioredis-yet';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -20,6 +22,7 @@ import { NotificacoesModule } from './modules/notificacoes/notificacoes.module';
 import { ProfessoresModule } from './modules/professores/professores.module';
 import { TestModule } from './modules/test/test.module';
 import { CoberturaModule } from './cobertura/cobertura.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { ContextModule } from './common/context/context.module';
 import { EmailModule } from './common/email/email.module';
 import { TenantInterceptor } from './common/interceptors/tenant.interceptor';
@@ -43,6 +46,16 @@ if (process.env.NODE_ENV !== 'test') {
     ConfigModule.forRoot({
       isGlobal: true,
       validate: (config) => envSchema.parse(config),
+    }),
+    CacheModule.registerAsync({
+      isGlobal: true,
+      useFactory: async () => ({
+        store: await redisStore({
+          host: process.env.REDIS_HOST || 'localhost',
+          port: parseInt(process.env.REDIS_PORT || '6379', 10),
+          ttl: 3600 * 1000, // Default TTL 1 hour in milliseconds
+        }),
+      }),
     }),
     ThrottlerModule.forRoot([
       {
@@ -84,6 +97,7 @@ if (process.env.NODE_ENV !== 'test') {
     NotificacoesModule, // Notification System (Story 4.4)
     ProfessoresModule, // Professores API - Dashboard de Cobertura (Story 6.5)
     CoberturaModule, // Cobertura Bimestral Materialized View Management (Story 7.1)
+    DashboardModule, // Dashboard Coordenador - Métricas por Professor (Story 7.2)
     // TUS Upload Server (Story 3.2) - dynamically loaded in non-test environments
     ...conditionalImports,
     // RBAC test endpoints - only load in non-production environments

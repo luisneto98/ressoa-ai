@@ -4,6 +4,7 @@ import { useAuthStore } from '@/stores/auth.store';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
+  roles?: string[]; // Optional role restriction
 }
 
 interface JwtPayload {
@@ -22,7 +23,7 @@ function isTokenExpired(token: string): boolean {
   }
 }
 
-export function ProtectedRoute({ children }: ProtectedRouteProps) {
+export function ProtectedRoute({ children, roles }: ProtectedRouteProps) {
   const { user, accessToken, logout } = useAuthStore();
 
   // If not authenticated or token expired, logout and redirect
@@ -34,6 +35,24 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     return <Navigate to="/login" replace />;
   }
 
-  // If authenticated and token valid, render children
+  // If roles specified, check if user has required role
+  if (roles && roles.length > 0) {
+    const userHasRole = roles.includes(user.role);
+    if (!userHasRole) {
+      // User authenticated but doesn't have required role
+      return (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-2">Acesso Negado</h1>
+            <p className="text-muted-foreground">
+              Você não tem permissão para acessar esta página.
+            </p>
+          </div>
+        </div>
+      );
+    }
+  }
+
+  // If authenticated and token valid (and role matches if specified), render children
   return <>{children}</>;
 }

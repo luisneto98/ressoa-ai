@@ -183,8 +183,9 @@ export function AulaAnalisePage() {
         </TabsContent>
 
         <TabsContent value="sugestoes">
+          {/* FIX LOW #1: Improved fallback - let component handle missing data */}
           <SugestoesTab
-            sugestoes={analise.alertas?.sugestoes_proxima || { prioridades: [], pacing_sugerido: { tempo_estimado: '', distribuicao: { revisao: '', novo_conteudo: '', exercicios: '' } } }}
+            sugestoes={analise.alertas?.sugestoes_proxima || { prioridades: [] }}
             planejamentoId={analise.planejamento_id}
           />
         </TabsContent>

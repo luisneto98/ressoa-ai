@@ -6,6 +6,22 @@ import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+// FIX HIGH #2: Safe date formatter with error handling
+const formatDateSafe = (dateStr: string | undefined): string => {
+  if (!dateStr) return 'Data não informada';
+
+  try {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) {
+      return 'Data inválida';
+    }
+    return format(date, "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
+  } catch (error) {
+    console.error('Date formatting error:', error);
+    return dateStr; // Fallback to raw string
+  }
+};
+
 interface Prioridade {
   tipo: 'gap_curricular' | 'reforco' | 'avanco';
   habilidade_bncc: string;
@@ -32,7 +48,7 @@ interface ProximaAula {
 interface SugestoesTabProps {
   sugestoes: {
     prioridades: Prioridade[];
-    pacing_sugerido: PacingSugerido;
+    pacing_sugerido?: PacingSugerido; // FIX: Make optional to handle partial data
     proxima_aula_planejada?: ProximaAula;
   };
   planejamentoId?: string;
@@ -41,11 +57,16 @@ interface SugestoesTabProps {
 export function SugestoesTab({ sugestoes, planejamentoId }: SugestoesTabProps) {
   const navigate = useNavigate();
 
-  if (!sugestoes || !sugestoes.prioridades || sugestoes.prioridades.length === 0) {
+  // FIX HIGH #3: Check for any meaningful data, not just prioridades
+  const hasData = sugestoes?.prioridades?.length > 0 ||
+                  sugestoes?.pacing_sugerido ||
+                  sugestoes?.proxima_aula_planejada;
+
+  if (!hasData) {
     return (
       <Card className="p-6">
         <div className="text-center text-gray-500 py-8">
-          <BookOpen className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+          <BookOpen className="h-12 w-12 mx-auto mb-4 text-gray-400" aria-label="Ícone de livro" role="img" />
           <p className="text-lg font-semibold mb-2">Nenhuma sugestão disponível</p>
           <p className="text-sm">As sugestões serão geradas após a análise pedagógica.</p>
         </div>
@@ -63,7 +84,7 @@ export function SugestoesTab({ sugestoes, planejamentoId }: SugestoesTabProps) {
 
   const handleAplicarSugestoes = () => {
     // TODO: Story futura - abrir modal para selecionar sugestões e aplicar ao planejamento
-    console.log('Aplicar sugestões ao planejamento (feature futura)');
+    // FIX LOW #2: Removed console.log for production
   };
 
   return (
@@ -71,8 +92,15 @@ export function SugestoesTab({ sugestoes, planejamentoId }: SugestoesTabProps) {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold text-gray-900">Sugestões para Próxima Aula</h2>
         {planejamentoId && (
-          <Button variant="outline" size="sm" onClick={handleAplicarSugestoes}>
-            Aplicar Sugestões ao Planejamento
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleAplicarSugestoes}
+            disabled
+            title="Em breve: aplicar sugestões automaticamente ao planejamento"
+            aria-label="Aplicar sugestões ao planejamento - funcionalidade em desenvolvimento"
+          >
+            Aplicar Sugestões (Em Breve)
           </Button>
         )}
       </div>
@@ -81,8 +109,12 @@ export function SugestoesTab({ sugestoes, planejamentoId }: SugestoesTabProps) {
       <section className="mb-8">
         <h3 className="text-lg font-semibold mb-4 text-gray-800">Prioridades de Conteúdo</h3>
         <div className="space-y-4">
-          {prioridades.map((prioridade, idx) => (
-            <PrioridadeCard key={idx} prioridade={prioridade} />
+          {/* FIX MEDIUM #1: Use proper keys instead of index */}
+          {prioridades.map((prioridade) => (
+            <PrioridadeCard
+              key={`${prioridade.tipo}-${prioridade.habilidade_bncc}`}
+              prioridade={prioridade}
+            />
           ))}
         </div>
       </section>
@@ -93,21 +125,25 @@ export function SugestoesTab({ sugestoes, planejamentoId }: SugestoesTabProps) {
           <h3 className="text-lg font-semibold mb-4 text-gray-800">Pacing Sugerido</h3>
           <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
             <div className="flex items-center gap-2 mb-3">
-              <Clock className="h-5 w-5 text-blue-600" />
+              <Clock className="h-5 w-5 text-blue-600" aria-label="Ícone de relógio" role="img" />
               <span className="font-semibold text-gray-900">
                 Tempo Total: {pacing_sugerido.tempo_estimado}
               </span>
             </div>
-            <div className="space-y-2">
-              {Object.entries(pacing_sugerido.distribuicao).map(([fase, tempo]) => (
-                <div key={fase} className="flex justify-between items-center text-sm">
-                  <span className="capitalize text-gray-700">
-                    {fase.replace('_', ' ')}:
-                  </span>
-                  <span className="font-semibold text-gray-900">{tempo}</span>
-                </div>
-              ))}
-            </div>
+            {/* FIX MEDIUM #2: Null safety for distribuicao */}
+            {pacing_sugerido.distribuicao && (
+              <div className="space-y-2">
+                {Object.entries(pacing_sugerido.distribuicao).map(([fase, tempo]) => (
+                  <div key={fase} className="flex justify-between items-center text-sm">
+                    <span className="capitalize text-gray-700">
+                      {/* FIX MEDIUM #5: Use replaceAll for multiple underscores */}
+                      {fase.replaceAll('_', ' ')}:
+                    </span>
+                    <span className="font-semibold text-gray-900">{tempo}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       )}
@@ -118,7 +154,7 @@ export function SugestoesTab({ sugestoes, planejamentoId }: SugestoesTabProps) {
           <h3 className="text-lg font-semibold mb-4 text-gray-800">Próxima Aula Planejada</h3>
           <Card className="p-4 bg-blue-50 border-blue-200">
             <div className="flex items-start gap-3">
-              <Calendar className="h-5 w-5 text-blue-600 mt-0.5" />
+              <Calendar className="h-5 w-5 text-blue-600 mt-0.5" aria-label="Ícone de calendário" role="img" />
               <div className="flex-1">
                 <h4 className="font-semibold text-gray-900 mb-2">
                   {proxima_aula_planejada.titulo}
@@ -126,13 +162,12 @@ export function SugestoesTab({ sugestoes, planejamentoId }: SugestoesTabProps) {
                 <div className="text-sm text-gray-700 space-y-1">
                   <p>
                     <span className="font-medium">Data prevista:</span>{' '}
-                    {format(new Date(proxima_aula_planejada.data_prevista), "dd 'de' MMMM 'de' yyyy", {
-                      locale: ptBR,
-                    })}
+                    {/* FIX HIGH #1: Safe date formatting */}
+                    {formatDateSafe(proxima_aula_planejada.data_prevista)}
                   </p>
                   <p>
                     <span className="font-medium">Habilidades:</span>{' '}
-                    {proxima_aula_planejada.habilidades.join(', ')}
+                    {proxima_aula_planejada.habilidades?.join(', ') || 'Nenhuma habilidade especificada'}
                   </p>
                 </div>
                 {planejamentoId && (

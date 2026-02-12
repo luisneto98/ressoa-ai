@@ -16,25 +16,25 @@ export function PrioridadeCard({ prioridade }: PrioridadeCardProps) {
     switch (tipo) {
       case 'gap_curricular':
         return {
-          icon: <AlertTriangle className="h-5 w-5 text-orange-500" />,
+          icon: <AlertTriangle className="h-5 w-5 text-orange-500" aria-label="Gap Curricular" role="img" />,
           badge: { variant: 'destructive' as const, label: 'Gap Curricular' },
           borderColor: 'border-orange-300',
         };
       case 'reforco':
         return {
-          icon: <RefreshCw className="h-5 w-5 text-blue-500" />,
+          icon: <RefreshCw className="h-5 w-5 text-blue-500" aria-label="Reforço necessário" role="img" />,
           badge: { variant: 'default' as const, label: 'Reforço' },
           borderColor: 'border-blue-300',
         };
       case 'avanco':
         return {
-          icon: <TrendingUp className="h-5 w-5 text-green-500" />,
+          icon: <TrendingUp className="h-5 w-5 text-green-500" aria-label="Pronto para avançar" role="img" />,
           badge: { variant: 'secondary' as const, label: 'Avançar' },
           borderColor: 'border-green-300',
         };
       default:
         return {
-          icon: <AlertTriangle className="h-5 w-5 text-gray-500" />,
+          icon: <AlertTriangle className="h-5 w-5 text-gray-500" aria-label="Tipo desconhecido" role="img" />,
           badge: { variant: 'outline' as const, label: 'Outro' },
           borderColor: 'border-gray-300',
         };
@@ -63,9 +63,11 @@ export function PrioridadeCard({ prioridade }: PrioridadeCardProps) {
         <div className="bg-gray-50 p-3 rounded border border-gray-200">
           <p className="text-xs font-semibold text-gray-700 mb-2">Recursos Sugeridos:</p>
           <ul className="text-sm space-y-1">
-            {prioridade.recursos_sugeridos.map((recurso, idx) => (
-              <li key={idx} className="flex items-start gap-2">
-                <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+            {/* FIX MEDIUM #1: Use content-based key instead of index */}
+            {/* FIX MEDIUM #4: Add aria-label for accessibility */}
+            {prioridade.recursos_sugeridos.map((recurso) => (
+              <li key={recurso} className="flex items-start gap-2">
+                <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" aria-label="Recurso disponível" role="img" />
                 <span className="text-gray-700">{recurso}</span>
               </li>
             ))}

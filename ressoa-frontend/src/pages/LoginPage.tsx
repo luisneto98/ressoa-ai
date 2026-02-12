@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/form';
 import { useAuthStore } from '@/stores/auth.store';
 import { apiClient } from '@/api/axios';
+import { getHomeRoute } from '@/utils/routing';
 
 // Zod schema for login validation
 const loginSchema = z.object({
@@ -60,18 +61,8 @@ export function LoginPage() {
       // Show success toast
       toast.success(`Bem-vindo, ${user.nome}!`);
 
-      // Redirect based on role
-      if (user.role === 'PROFESSOR') {
-        navigate('/minhas-aulas');
-      } else if (user.role === 'COORDENADOR') {
-        navigate('/dashboard-coordenador');
-      } else if (user.role === 'DIRETOR') {
-        navigate('/dashboard-diretor');
-      } else if (user.role === 'ADMIN') {
-        navigate('/admin');
-      } else {
-        navigate('/dashboard');
-      }
+      // Redirect based on role (centralized logic)
+      navigate(getHomeRoute(user.role));
     } catch (error) {
       if (error instanceof AxiosError) {
         if (error.response?.status === 401) {

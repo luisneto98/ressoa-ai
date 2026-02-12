@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-route
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { LoginPage } from '@/pages/LoginPage';
-import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { ProtectedRoute, RoleBasedRedirect, RootRedirect } from '@/components';
 import { AppLayout } from '@/components/layout';
 import { PlanejamentoWizard } from '@/pages/planejamento/PlanejamentoWizard';
 import { PlanejamentosListPage } from '@/pages/planejamento/PlanejamentosListPage';
@@ -23,6 +23,7 @@ import { CustosEscolasPage } from '@/pages/admin/CustosEscolasPage';
 import { QualidadePromptsPage } from '@/pages/admin/QualidadePromptsPage';
 import { PromptDiffsPage } from '@/pages/admin/PromptDiffsPage';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
 
 // Create Query Client
 const queryClient = new QueryClient({
@@ -57,8 +58,9 @@ function App() {
         <BrowserRouter>
           <AuthEventListener />
           <Routes>
-        {/* Public route: Login */}
+        {/* Public routes */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
         {/* Protected routes: All use AppLayout with Sidebar + Header */}
         <Route element={<AppLayout />}>
@@ -70,18 +72,10 @@ function App() {
               </ProtectedRoute>
             }
           />
+          {/* Legacy route redirect: /dashboard-coordenador → /dashboard/coordenador/professores */}
           <Route
             path="/dashboard-coordenador"
-            element={
-              <ProtectedRoute>
-                <div className="text-center py-12">
-                  <h1 className="text-3xl font-montserrat font-bold text-deep-navy mb-4">
-                    Dashboard Coordenador
-                  </h1>
-                  <p className="text-muted-foreground">(Página em desenvolvimento - Epic 7)</p>
-                </div>
-              </ProtectedRoute>
-            }
+            element={<Navigate to="/dashboard/coordenador/professores" replace />}
           />
           {/* Dashboard Diretor Route - Story 7.4 */}
           <Route
@@ -92,31 +86,19 @@ function App() {
               </ProtectedRoute>
             }
           />
+          {/* Generic dashboard route - redirect to user's home based on role */}
           <Route
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <div className="text-center py-12">
-                  <h1 className="text-3xl font-montserrat font-bold text-deep-navy mb-4">
-                    Dashboard
-                  </h1>
-                  <p className="text-muted-foreground">(Página em desenvolvimento)</p>
-                </div>
+                <RoleBasedRedirect />
               </ProtectedRoute>
             }
           />
+          {/* Legacy admin route redirect: /admin → /admin/monitoramento/stt */}
           <Route
             path="/admin"
-            element={
-              <ProtectedRoute>
-                <div className="text-center py-12">
-                  <h1 className="text-3xl font-montserrat font-bold text-deep-navy mb-4">
-                    Admin Dashboard
-                  </h1>
-                  <p className="text-muted-foreground">(Página em desenvolvimento - Story 1.6)</p>
-                </div>
-              </ProtectedRoute>
-            }
+            element={<Navigate to="/admin/monitoramento/stt" replace />}
           />
 
           {/* Admin Monitoramento Routes - Story 8.1, 8.2 */}
@@ -264,8 +246,8 @@ function App() {
           />
         </Route>
 
-        {/* Default route: Redirect to login */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        {/* Root route: Smart redirect based on authentication */}
+        <Route path="/" element={<RootRedirect />} />
         {/* 404 catch-all: Redirect to login */}
         <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>

@@ -56,23 +56,8 @@ export function HabilidadesTable({ habilidades }: Props) {
     }
   };
 
-  const getStatusPriority = (status: string) => {
-    // For sorting: NOT_COVERED first (highest priority for intervention)
-    const priorities: Record<string, number> = {
-      NOT_COVERED: 0,
-      MENTIONED: 1,
-      PARTIAL: 2,
-      COMPLETE: 3,
-    };
-    return priorities[status] || 999;
-  };
-
-  // Sort: NOT_COVERED first, then MENTIONED, PARTIAL, COMPLETE
-  const sortedHabilidades = [...habilidades].sort(
-    (a, b) =>
-      getStatusPriority(a.status_cobertura) -
-      getStatusPriority(b.status_cobertura),
-  );
+  // Backend já ordena (NOT_COVERED first, MENTIONED, PARTIAL, COMPLETE)
+  // Não precisamos re-ordenar no frontend
 
   return (
     <Table>
@@ -85,7 +70,7 @@ export function HabilidadesTable({ habilidades }: Props) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {sortedHabilidades.map((hab) => (
+        {habilidades.map((hab) => (
           <TableRow key={hab.habilidade_codigo}>
             <TableCell className="font-mono text-sm">
               {hab.habilidade_codigo}

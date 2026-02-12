@@ -29,7 +29,7 @@ export class DashboardController {
   @Get('professores')
   @Roles(RoleUsuario.COORDENADOR, RoleUsuario.DIRETOR)
   @UseInterceptors(CacheInterceptor)
-  @CacheTTL(3600) // Cache 1 hora (3600 segundos)
+  @CacheTTL(3600) // 1 hour
   @ApiOperation({
     summary: 'Métricas de cobertura curricular por professor',
     description:
@@ -125,6 +125,8 @@ export class DashboardController {
 
   @Get('turmas/:turmaId/detalhes')
   @Roles(RoleUsuario.COORDENADOR, RoleUsuario.DIRETOR)
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(3600) // 1 hour
   @ApiOperation({
     summary: 'Detalhes de habilidades da turma (drill-down)',
     description:

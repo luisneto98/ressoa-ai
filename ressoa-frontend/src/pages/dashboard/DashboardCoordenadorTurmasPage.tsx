@@ -20,10 +20,21 @@ interface FiltrosCobertura {
   bimestre?: number;
 }
 
+/**
+ * Calcula o bimestre atual com base no mês (contexto adaptativo - UX Spec princípio #4)
+ */
+const getCurrentBimestre = (): number => {
+  const month = new Date().getMonth() + 1; // 1-12
+  if (month <= 3) return 1;
+  if (month <= 6) return 2;
+  if (month <= 9) return 3;
+  return 4;
+};
+
 export function DashboardCoordenadorTurmasPage() {
   const [filtros, setFiltros] = useState<FiltrosCobertura>({
-    bimestre: 1,
-    disciplina: 'MATEMATICA',
+    bimestre: getCurrentBimestre(),
+    disciplina: undefined, // Mostrar todas por padrão
   });
 
   const { data, isLoading, isError, error } = useQuery({
@@ -35,13 +46,16 @@ export function DashboardCoordenadorTurmasPage() {
   });
 
   const handleLimparFiltros = () => {
-    setFiltros({ bimestre: 1, disciplina: 'MATEMATICA' });
+    setFiltros({ bimestre: undefined, disciplina: undefined });
   };
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">Carregando...</div>
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-tech-blue" />
+          <p className="text-muted-foreground">Carregando...</p>
+        </div>
       </div>
     );
   }

@@ -35,7 +35,7 @@ export function TurmaCard({ turma }: Props) {
       return <Badge variant="destructive">Crítico</Badge>;
     if (percentual < 70)
       return (
-        <Badge className="bg-yellow-100 text-yellow-800">Atenção</Badge>
+        <Badge className="bg-orange-100 text-orange-800">Atenção</Badge>
       );
     return <Badge className="bg-green-100 text-green-800">No Ritmo</Badge>;
   };

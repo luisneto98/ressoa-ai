@@ -203,7 +203,14 @@ export class DashboardService {
         AND p.escola_id = ${escolaId}::uuid
         ${bimestre ? Prisma.sql`AND p.bimestre = ${bimestre}` : Prisma.empty}
       GROUP BY h.codigo, h.descricao
-      ORDER BY status_cobertura DESC, h.codigo ASC;
+      ORDER BY
+        CASE status_cobertura
+          WHEN 'NOT_COVERED' THEN 0
+          WHEN 'MENTIONED' THEN 1
+          WHEN 'PARTIAL' THEN 2
+          WHEN 'COMPLETE' THEN 3
+        END ASC,
+        h.codigo ASC;
     `;
 
     return { detalhes };

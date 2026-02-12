@@ -32,7 +32,10 @@ export function DashboardCoordenadorTurmaDetalhesPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">Carregando...</div>
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-tech-blue" />
+          <p className="text-muted-foreground">Carregando...</p>
+        </div>
       </div>
     );
   }
@@ -86,12 +89,12 @@ export function DashboardCoordenadorTurmaDetalhesPage() {
       {/* Tabela de Habilidades */}
       <Card className="p-6">
         <h2 className="text-lg font-semibold mb-4">Status de Habilidades BNCC</h2>
-        {data?.detalhes?.length === 0 ? (
+        {!data?.detalhes || data.detalhes.length === 0 ? (
           <p className="text-gray-600 text-center py-8">
             Nenhuma habilidade planejada para esta turma no bimestre selecionado.
           </p>
         ) : (
-          <HabilidadesTable habilidades={data?.detalhes || []} />
+          <HabilidadesTable habilidades={data.detalhes} />
         )}
       </Card>
     </div>

@@ -51,6 +51,26 @@ export interface HabilidadeStatus {
   aulas_relacionadas: number;
 }
 
+export interface KPIsEscola {
+  cobertura_geral: number;
+  total_professores_ativos: number;
+  total_turmas: number;
+  total_aulas: number;
+  tempo_medio_revisao_geral: number;
+}
+
+export interface DistribuicaoDisciplina {
+  disciplina: string;
+  cobertura_media: number;
+  total_turmas: number;
+  total_aulas: number;
+}
+
+export interface EvolucaoTemporal {
+  bimestre: number;
+  cobertura_media: number;
+}
+
 @Injectable()
 export class DashboardService {
   constructor(private prisma: PrismaService) {}
@@ -214,5 +234,106 @@ export class DashboardService {
     `;
 
     return { detalhes };
+  }
+
+  async getMetricasEscola(escolaId: string, bimestre?: number) {
+    // === QUERY 1: KPIs Consolidados ===
+    const kpisRaw = await this.prisma.$queryRaw<
+      Array<{
+        cobertura_geral: number;
+        total_professores_ativos: bigint;
+        total_turmas: bigint;
+        total_aulas: bigint;
+        tempo_medio_revisao_geral: number;
+      }>
+    >`
+      SELECT
+        AVG(percentual_cobertura) as cobertura_geral,
+        COUNT(DISTINCT professor_id) as total_professores_ativos,
+        COUNT(DISTINCT turma_id) as total_turmas,
+        SUM(total_aulas_aprovadas) as total_aulas,
+        AVG(tempo_medio_revisao) as tempo_medio_revisao_geral
+      FROM cobertura_bimestral
+      WHERE escola_id = ${escolaId}::uuid
+        ${bimestre ? Prisma.sql`AND bimestre = ${bimestre}` : Prisma.empty}
+    `;
+
+    // Transformar bigint → number
+    const kpis = kpisRaw[0]
+      ? {
+          cobertura_geral: Number(kpisRaw[0].cobertura_geral) || 0,
+          total_professores_ativos: Number(kpisRaw[0].total_professores_ativos),
+          total_turmas: Number(kpisRaw[0].total_turmas),
+          total_aulas: Number(kpisRaw[0].total_aulas),
+          tempo_medio_revisao_geral: Number(kpisRaw[0].tempo_medio_revisao_geral) || 0,
+        }
+      : {
+          cobertura_geral: 0,
+          total_professores_ativos: 0,
+          total_turmas: 0,
+          total_aulas: 0,
+          tempo_medio_revisao_geral: 0,
+        };
+
+    // === QUERY 2: Distribuição por Disciplina ===
+    const porDisciplina = await this.prisma.$queryRaw<
+      Array<{
+        disciplina: string;
+        cobertura_media: number;
+        total_turmas: bigint;
+        total_aulas: bigint;
+      }>
+    >`
+      SELECT
+        disciplina,
+        AVG(percentual_cobertura) as cobertura_media,
+        COUNT(DISTINCT turma_id) as total_turmas,
+        SUM(total_aulas_aprovadas) as total_aulas
+      FROM cobertura_bimestral
+      WHERE escola_id = ${escolaId}::uuid
+        ${bimestre ? Prisma.sql`AND bimestre = ${bimestre}` : Prisma.empty}
+      GROUP BY disciplina
+      ORDER BY cobertura_media DESC
+    `;
+
+    // Transformar bigint → number
+    const porDisciplinaFormatted = porDisciplina.map((d) => ({
+      disciplina: d.disciplina,
+      cobertura_media: Number(d.cobertura_media) || 0,
+      total_turmas: Number(d.total_turmas),
+      total_aulas: Number(d.total_aulas),
+    }));
+
+    // === QUERY 3: Evolução Temporal (últimos 4 bimestres) ===
+    const evolucao = await this.prisma.$queryRaw<
+      Array<{
+        bimestre: number;
+        cobertura_media: number;
+      }>
+    >`
+      SELECT
+        bimestre,
+        AVG(percentual_cobertura) as cobertura_media
+      FROM cobertura_bimestral
+      WHERE escola_id = ${escolaId}::uuid
+        AND ano_letivo = EXTRACT(YEAR FROM CURRENT_DATE)::integer
+      GROUP BY bimestre
+      ORDER BY bimestre ASC
+    `;
+
+    // Garantir que todos os 4 bimestres aparecem (mesmo com 0)
+    const evolucaoCompleta = [1, 2, 3, 4].map((bim) => {
+      const existente = evolucao.find((e) => e.bimestre === bim);
+      return {
+        bimestre: bim,
+        cobertura_media: existente ? Number(existente.cobertura_media) || 0 : 0,
+      };
+    });
+
+    return {
+      kpis,
+      por_disciplina: porDisciplinaFormatted,
+      evolucao_temporal: evolucaoCompleta,
+    };
   }
 }

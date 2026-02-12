@@ -436,4 +436,235 @@ describe('DashboardService', () => {
       expect(result.detalhes).toHaveLength(0);
     });
   });
+
+  describe('getMetricasEscola', () => {
+    it('should return KPIs, por_disciplina, and evolucao_temporal', async () => {
+      // Mock Query 1: KPIs
+      const mockKPIs = [
+        {
+          cobertura_geral: 72.5,
+          total_professores_ativos: BigInt(15),
+          total_turmas: BigInt(40),
+          total_aulas: BigInt(320),
+          tempo_medio_revisao_geral: 210.0,
+        },
+      ];
+
+      // Mock Query 2: Por Disciplina
+      const mockPorDisciplina = [
+        {
+          disciplina: 'MATEMATICA',
+          cobertura_media: 75.8,
+          total_turmas: BigInt(15),
+          total_aulas: BigInt(120),
+        },
+        {
+          disciplina: 'CIENCIAS',
+          cobertura_media: 71.2,
+          total_turmas: BigInt(15),
+          total_aulas: BigInt(105),
+        },
+        {
+          disciplina: 'LINGUA_PORTUGUESA',
+          cobertura_media: 70.5,
+          total_turmas: BigInt(10),
+          total_aulas: BigInt(95),
+        },
+      ];
+
+      // Mock Query 3: Evolução Temporal
+      const mockEvolucao = [
+        { bimestre: 1, cobertura_media: 72.5 },
+        { bimestre: 3, cobertura_media: 68.0 },
+      ];
+
+      mockPrismaService.$queryRaw
+        .mockResolvedValueOnce(mockKPIs) // Query 1
+        .mockResolvedValueOnce(mockPorDisciplina) // Query 2
+        .mockResolvedValueOnce(mockEvolucao); // Query 3
+
+      const result = await service.getMetricasEscola('escola-123');
+
+      // Validate KPIs
+      expect(result.kpis.cobertura_geral).toBe(72.5);
+      expect(result.kpis.total_professores_ativos).toBe(15);
+      expect(result.kpis.total_turmas).toBe(40);
+      expect(result.kpis.total_aulas).toBe(320);
+      expect(result.kpis.tempo_medio_revisao_geral).toBe(210);
+
+      // Validate por_disciplina (BigInt converted to Number)
+      expect(result.por_disciplina).toHaveLength(3);
+      expect(result.por_disciplina[0].disciplina).toBe('MATEMATICA');
+      expect(result.por_disciplina[0].cobertura_media).toBe(75.8);
+      expect(result.por_disciplina[0].total_turmas).toBe(15);
+      expect(result.por_disciplina[0].total_aulas).toBe(120);
+
+      // Validate evolucao_temporal (all 4 bimestres present)
+      expect(result.evolucao_temporal).toHaveLength(4);
+      expect(result.evolucao_temporal[0]).toEqual({ bimestre: 1, cobertura_media: 72.5 });
+      expect(result.evolucao_temporal[1]).toEqual({ bimestre: 2, cobertura_media: 0 }); // Missing data
+      expect(result.evolucao_temporal[2]).toEqual({ bimestre: 3, cobertura_media: 68.0 });
+      expect(result.evolucao_temporal[3]).toEqual({ bimestre: 4, cobertura_media: 0 }); // Missing data
+
+      expect(prismaService.$queryRaw).toHaveBeenCalledTimes(3);
+    });
+
+    it('should filter KPIs and por_disciplina by bimestre', async () => {
+      const mockKPIs = [
+        {
+          cobertura_geral: 75.0,
+          total_professores_ativos: BigInt(12),
+          total_turmas: BigInt(35),
+          total_aulas: BigInt(280),
+          tempo_medio_revisao_geral: 200.0,
+        },
+      ];
+
+      const mockPorDisciplina = [
+        {
+          disciplina: 'MATEMATICA',
+          cobertura_media: 78.0,
+          total_turmas: BigInt(12),
+          total_aulas: BigInt(100),
+        },
+      ];
+
+      const mockEvolucao = [
+        { bimestre: 1, cobertura_media: 75.0 },
+      ];
+
+      mockPrismaService.$queryRaw
+        .mockResolvedValueOnce(mockKPIs)
+        .mockResolvedValueOnce(mockPorDisciplina)
+        .mockResolvedValueOnce(mockEvolucao);
+
+      const result = await service.getMetricasEscola('escola-123', 1);
+
+      expect(result.kpis.cobertura_geral).toBe(75.0);
+      expect(result.por_disciplina).toHaveLength(1);
+      expect(prismaService.$queryRaw).toHaveBeenCalledTimes(3);
+    });
+
+    it('should handle empty results with default values', async () => {
+      mockPrismaService.$queryRaw
+        .mockResolvedValueOnce([]) // Empty KPIs
+        .mockResolvedValueOnce([]) // Empty por_disciplina
+        .mockResolvedValueOnce([]); // Empty evolucao
+
+      const result = await service.getMetricasEscola('escola-123');
+
+      // Default KPIs when no data
+      expect(result.kpis.cobertura_geral).toBe(0);
+      expect(result.kpis.total_professores_ativos).toBe(0);
+      expect(result.kpis.total_turmas).toBe(0);
+      expect(result.kpis.total_aulas).toBe(0);
+      expect(result.kpis.tempo_medio_revisao_geral).toBe(0);
+
+      // Empty por_disciplina
+      expect(result.por_disciplina).toHaveLength(0);
+
+      // All 4 bimestres with 0 coverage
+      expect(result.evolucao_temporal).toHaveLength(4);
+      expect(result.evolucao_temporal.every((e) => e.cobertura_media === 0)).toBe(true);
+    });
+
+    it('should enforce multi-tenancy (escola_id in all queries)', async () => {
+      const mockKPIs = [{
+        cobertura_geral: 70.0,
+        total_professores_ativos: BigInt(10),
+        total_turmas: BigInt(30),
+        total_aulas: BigInt(250),
+        tempo_medio_revisao_geral: 180.0,
+      }];
+
+      mockPrismaService.$queryRaw
+        .mockResolvedValueOnce(mockKPIs)
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([]);
+
+      await service.getMetricasEscola('escola-456');
+
+      // Verify escola_id is passed to all 3 queries
+      expect(prismaService.$queryRaw).toHaveBeenCalledTimes(3);
+      const callArgs1 = mockPrismaService.$queryRaw.mock.calls[0];
+      const callArgs2 = mockPrismaService.$queryRaw.mock.calls[1];
+      const callArgs3 = mockPrismaService.$queryRaw.mock.calls[2];
+
+      expect(callArgs1[1]).toBe('escola-456'); // Query 1: KPIs
+      expect(callArgs2[1]).toBe('escola-456'); // Query 2: por_disciplina
+      expect(callArgs3[1]).toBe('escola-456'); // Query 3: evolucao_temporal
+    });
+
+    it('should convert BigInt to Number for all count fields', async () => {
+      const mockKPIs = [
+        {
+          cobertura_geral: 72.5,
+          total_professores_ativos: BigInt(999),
+          total_turmas: BigInt(888),
+          total_aulas: BigInt(777),
+          tempo_medio_revisao_geral: 210.0,
+        },
+      ];
+
+      const mockPorDisciplina = [
+        {
+          disciplina: 'MATEMATICA',
+          cobertura_media: 75.0,
+          total_turmas: BigInt(555),
+          total_aulas: BigInt(444),
+        },
+      ];
+
+      mockPrismaService.$queryRaw
+        .mockResolvedValueOnce(mockKPIs)
+        .mockResolvedValueOnce(mockPorDisciplina)
+        .mockResolvedValueOnce([]);
+
+      const result = await service.getMetricasEscola('escola-123');
+
+      // Verify BigInt → Number conversion
+      expect(typeof result.kpis.total_professores_ativos).toBe('number');
+      expect(typeof result.kpis.total_turmas).toBe('number');
+      expect(typeof result.kpis.total_aulas).toBe('number');
+      expect(result.kpis.total_professores_ativos).toBe(999);
+      expect(result.kpis.total_turmas).toBe(888);
+      expect(result.kpis.total_aulas).toBe(777);
+
+      expect(typeof result.por_disciplina[0].total_turmas).toBe('number');
+      expect(typeof result.por_disciplina[0].total_aulas).toBe('number');
+      expect(result.por_disciplina[0].total_turmas).toBe(555);
+      expect(result.por_disciplina[0].total_aulas).toBe(444);
+    });
+
+    it('should order por_disciplina by cobertura DESC', async () => {
+      const mockKPIs = [{
+        cobertura_geral: 70.0,
+        total_professores_ativos: BigInt(10),
+        total_turmas: BigInt(30),
+        total_aulas: BigInt(250),
+        tempo_medio_revisao_geral: 180.0,
+      }];
+
+      const mockPorDisciplina = [
+        { disciplina: 'MATEMATICA', cobertura_media: 80.0, total_turmas: BigInt(10), total_aulas: BigInt(100) },
+        { disciplina: 'LINGUA_PORTUGUESA', cobertura_media: 65.0, total_turmas: BigInt(10), total_aulas: BigInt(90) },
+        { disciplina: 'CIENCIAS', cobertura_media: 70.0, total_turmas: BigInt(10), total_aulas: BigInt(95) },
+      ];
+
+      mockPrismaService.$queryRaw
+        .mockResolvedValueOnce(mockKPIs)
+        .mockResolvedValueOnce(mockPorDisciplina)
+        .mockResolvedValueOnce([]);
+
+      const result = await service.getMetricasEscola('escola-123');
+
+      // Mock data is already ordered DESC, verify order is preserved
+      expect(result.por_disciplina[0].disciplina).toBe('MATEMATICA');
+      expect(result.por_disciplina[0].cobertura_media).toBe(80.0);
+      expect(result.por_disciplina[1].disciplina).toBe('LINGUA_PORTUGUESA');
+      expect(result.por_disciplina[1].cobertura_media).toBe(65.0);
+      expect(result.por_disciplina[2].disciplina).toBe('CIENCIAS');
+      expect(result.por_disciplina[2].cobertura_media).toBe(70.0);
+    });
+  });
 });

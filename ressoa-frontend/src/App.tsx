@@ -15,6 +15,7 @@ import { DashboardCoordenadorProfessoresPage } from '@/pages/dashboard/Dashboard
 import { DashboardCoordenadorProfessorTurmasPage } from '@/pages/dashboard/DashboardCoordenadorProfessorTurmasPage';
 import { DashboardCoordenadorTurmasPage } from '@/pages/dashboard/DashboardCoordenadorTurmasPage';
 import { DashboardCoordenadorTurmaDetalhesPage } from '@/pages/dashboard/DashboardCoordenadorTurmaDetalhesPage';
+import { DashboardDiretorPage } from '@/pages/dashboard/DashboardDiretorPage';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 // Create Query Client
@@ -77,18 +78,12 @@ function App() {
             </ProtectedRoute>
           }
         />
+        {/* Dashboard Diretor Route - Story 7.4 */}
         <Route
-          path="/dashboard-diretor"
+          path="/dashboard/diretor"
           element={
-            <ProtectedRoute>
-              <div className="min-h-screen flex items-center justify-center bg-ghost-white">
-                <div className="text-center">
-                  <h1 className="text-3xl font-montserrat font-bold text-deep-navy mb-4">
-                    Dashboard Diretor
-                  </h1>
-                  <p className="text-muted-foreground">(Página em desenvolvimento - Epic 7)</p>
-                </div>
-              </div>
+            <ProtectedRoute roles={['DIRETOR']}>
+              <DashboardDiretorPage />
             </ProtectedRoute>
           }
         />

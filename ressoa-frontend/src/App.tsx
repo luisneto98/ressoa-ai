@@ -6,6 +6,7 @@ import { LoginPage } from '@/pages/LoginPage';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { PlanejamentoWizard } from '@/pages/planejamento/PlanejamentoWizard';
 import { PlanejamentosListPage } from '@/pages/planejamento/PlanejamentosListPage';
+import UploadAulaPage from '@/pages/aulas/UploadAulaPage';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 // Create Query Client
@@ -117,6 +118,16 @@ function App() {
                   <p className="text-muted-foreground">(Página em desenvolvimento - Story 1.6)</p>
                 </div>
               </div>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Aula Routes - Story 3.4 */}
+        <Route
+          path="/aulas/upload"
+          element={
+            <ProtectedRoute>
+              <UploadAulaPage />
             </ProtectedRoute>
           }
         />

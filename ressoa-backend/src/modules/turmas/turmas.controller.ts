@@ -6,18 +6,21 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import type { AuthenticatedUser } from '../auth/decorators/current-user.decorator';
 import { TurmasService } from './turmas.service';
 
 @ApiTags('turmas')
 @Controller('turmas')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class TurmasController {
   constructor(private readonly turmasService: TurmasService) {}
 
   @Get()
+  @Roles('PROFESSOR', 'COORDENADOR', 'DIRETOR')
   @ApiOperation({
     summary: 'Listar turmas do professor',
     description:

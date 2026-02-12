@@ -205,3 +205,44 @@ Veja `.env.example` para a lista completa. Variáveis importantes:
 | `S3_ENDPOINT` | MinIO/S3 endpoint | `http://localhost:9000` |
 | `JWT_SECRET` | JWT signing key (32+ chars) | Gerar com `openssl rand -base64 32` |
 | `CORS_ORIGIN` | Frontend URL | `http://localhost:5173` |
+
+## RBAC - Permissões por Role
+
+O Ressoa AI implementa controle de acesso baseado em roles (RBAC) para garantir que cada tipo de usuário veja apenas as informações apropriadas ao seu perfil.
+
+### Tabela de Permissões
+
+| Recurso                          | Professor | Coordenador | Diretor |
+|----------------------------------|-----------|-------------|---------|
+| Ver própria transcrição/análise  | ✅        | ❌          | ❌      |
+| Ver transcrição de outro prof    | ❌        | ❌          | ❌      |
+| Dashboard pessoal cobertura      | ✅        | ❌          | ❌      |
+| Dashboard métricas por professor | ❌        | ✅          | ✅      |
+| Dashboard métricas por turma     | ❌        | ✅          | ✅      |
+| Dashboard executivo escola       | ❌        | ❌          | ✅      |
+| Editar/aprovar relatórios        | ✅        | ❌          | ❌      |
+| Cadastrar planejamento           | ✅        | ❌          | ❌      |
+| Upload de áudio                  | ✅        | ❌          | ❌      |
+
+### Princípio de Privacidade
+
+**Transcrições brutas são SEMPRE privadas ao professor.**
+
+Coordenadores e Diretores têm acesso apenas a:
+- Métricas agregadas (% cobertura, quantidade de aulas)
+- Habilidades BNCC trabalhadas (códigos, não evidências literais)
+- Tempo médio de revisão
+
+Coordenadores e Diretores NÃO podem ver:
+- Texto da transcrição
+- Evidências literais
+- Relatórios completos
+- Observações do professor
+
+### Implementação Técnica
+
+- **Guards:** `JwtAuthGuard` + `RolesGuard` aplicados globalmente
+- **Decorators:** `@Roles('PROFESSOR', 'COORDENADOR', 'DIRETOR')` nos controllers
+- **Multi-tenancy:** Isolamento por `escola_id` em todas as queries
+- **Validação de Ownership:** Professor só acessa suas próprias aulas
+- **Documentação completa:** Ver [project-context.md](./project-context.md) e [Architecture Decision Record 1.4](./project-context.md#AD-1.4)

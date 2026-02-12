@@ -200,6 +200,13 @@ describe('Aulas CRUD API (E2E) - Story 3.1', () => {
   });
 
   afterAll(async () => {
+    // Cleanup: delete transcricoes first (FK dependency)
+    await prisma.transcricao.deleteMany({
+      where: {
+        escola_id: { in: [escola1Id, escola2Id] },
+      },
+    });
+
     // Cleanup: delete test aulas
     await prisma.aula.deleteMany({
       where: {
@@ -737,6 +744,426 @@ describe('Aulas CRUD API (E2E) - Story 3.1', () => {
       expect(response.status).toBe(200);
       const foundAula = response.body.find((a: any) => a.id === aula.id);
       expect(foundAula).toBeUndefined();
+    });
+  });
+
+  // ============================================
+  // TEST SUITE: Story 3.3 - Multiple Input Methods
+  // ============================================
+
+  describe('Story 3.3: Upload Transcrição (AC: Método 2)', () => {
+    it('should create aula with complete transcription upload', async () => {
+      const dto = {
+        turma_id: turma1Id,
+        data: '2026-02-11T10:00:00Z',
+        planejamento_id: planejamento1Id,
+        transcricao_texto: 'A'.repeat(100), // 100 chars (min valid)
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/aulas/upload-transcricao')
+        .set('Authorization', `Bearer ${professor1Token}`)
+        .send(dto);
+
+      expect(response.status).toBe(201);
+      expect(response.body.tipo_entrada).toBe('TRANSCRICAO');
+      expect(response.body.status_processamento).toBe('TRANSCRITA');
+      expect(response.body.transcricao).toBeDefined();
+      expect(response.body.transcricao.provider).toBe('MANUAL');
+      expect(response.body.transcricao.confianca).toBe(1.0);
+      expect(response.body.transcricao.duracao_segundos).toBeNull();
+      expect(response.body.transcricao.texto).toHaveLength(100);
+    });
+
+    it('should reject transcription with less than 100 chars', async () => {
+      const dto = {
+        turma_id: turma1Id,
+        data: '2026-02-11T10:00:00Z',
+        transcricao_texto: 'Muito curto', // < 100 chars
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/aulas/upload-transcricao')
+        .set('Authorization', `Bearer ${professor1Token}`)
+        .send(dto);
+
+      expect(response.status).toBe(400);
+      expect(JSON.stringify(response.body.message)).toContain(
+        'no mínimo 100 caracteres',
+      );
+    });
+
+    it('should reject transcription exceeding 50k chars', async () => {
+      const dto = {
+        turma_id: turma1Id,
+        data: '2026-02-11T10:00:00Z',
+        transcricao_texto: 'A'.repeat(50001), // > 50k
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/aulas/upload-transcricao')
+        .set('Authorization', `Bearer ${professor1Token}`)
+        .send(dto);
+
+      expect(response.status).toBe(400);
+      expect(JSON.stringify(response.body.message)).toContain(
+        '50.000 caracteres',
+      );
+    });
+
+    it('should reject future date (upload-transcricao)', async () => {
+      const futureDate = new Date();
+      futureDate.setDate(futureDate.getDate() + 1);
+
+      const dto = {
+        turma_id: turma1Id,
+        data: futureDate.toISOString(),
+        transcricao_texto: 'A'.repeat(100),
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/aulas/upload-transcricao')
+        .set('Authorization', `Bearer ${professor1Token}`)
+        .send(dto);
+
+      expect(response.status).toBe(400);
+      expect(JSON.stringify(response.body.message)).toContain(
+        'não pode estar no futuro',
+      );
+    });
+
+    it('should block upload-transcricao for turma from different escola', async () => {
+      // Professor1 tries to create aula for turma2 (escola2)
+      const dto = {
+        turma_id: turma2Id,
+        data: '2026-02-11T10:00:00Z',
+        transcricao_texto: 'A'.repeat(100),
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/aulas/upload-transcricao')
+        .set('Authorization', `Bearer ${professor1Token}`)
+        .send(dto);
+
+      expect(response.status).toBe(403); // Blocked by escola_id + professor_id filter
+      expect(response.body.message).toContain('não pertence ao professor');
+    });
+
+    it('should reject planejamento from different turma (upload-transcricao)', async () => {
+      // Create another turma and planejamento for professor1
+      const turma3 = await prisma.turma.create({
+        data: {
+          nome: '7D Aulas',
+          disciplina: 'MATEMATICA',
+          serie: Serie.SETIMO_ANO,
+          ano_letivo: 2026,
+          escola_id: escola1Id,
+          professor_id: (
+            await prisma.usuario.findFirstOrThrow({
+              where: { email: 'professor@escolademo.com' },
+            })
+          ).id,
+        },
+      });
+
+      const habilidade7 = await prisma.habilidade.findFirstOrThrow({
+        where: { disciplina: 'MATEMATICA', ano_inicio: 7 },
+      });
+
+      const planejamento3 = await prisma.planejamento.create({
+        data: {
+          turma_id: turma3.id,
+          bimestre: 1,
+          ano_letivo: 2026,
+          escola_id: escola1Id,
+          professor_id: (
+            await prisma.usuario.findFirstOrThrow({
+              where: { email: 'professor@escolademo.com' },
+            })
+          ).id,
+          habilidades: {
+            create: [{ habilidade_id: habilidade7.id, peso: 1.0 }],
+          },
+        },
+      });
+
+      const dto = {
+        turma_id: turma1Id, // Turma 1
+        planejamento_id: planejamento3.id, // Planejamento for Turma 3
+        data: '2026-02-11T10:00:00Z',
+        transcricao_texto: 'A'.repeat(100),
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/aulas/upload-transcricao')
+        .set('Authorization', `Bearer ${professor1Token}`)
+        .send(dto);
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toContain('não pertence à turma');
+
+      // Cleanup
+      await prisma.planejamentoHabilidade.deleteMany({
+        where: { planejamento_id: planejamento3.id },
+      });
+      await prisma.planejamento.delete({ where: { id: planejamento3.id } });
+      await prisma.turma.delete({ where: { id: turma3.id } });
+    });
+
+    it('should reject soft-deleted planejamento (upload-transcricao)', async () => {
+      // Create a planejamento and soft-delete it
+      const habilidade = await prisma.habilidade.findFirstOrThrow({
+        where: { disciplina: 'MATEMATICA', ano_inicio: 6 },
+      });
+
+      const planejamentoDeleted = await prisma.planejamento.create({
+        data: {
+          turma_id: turma1Id,
+          bimestre: 3,
+          ano_letivo: 2026,
+          escola_id: escola1Id,
+          professor_id: (
+            await prisma.usuario.findFirstOrThrow({
+              where: { email: 'professor@escolademo.com' },
+            })
+          ).id,
+          deleted_at: new Date(), // Soft-deleted
+          habilidades: {
+            create: [{ habilidade_id: habilidade.id, peso: 1.0 }],
+          },
+        },
+      });
+
+      const dto = {
+        turma_id: turma1Id,
+        planejamento_id: planejamentoDeleted.id,
+        data: '2026-02-11T10:00:00Z',
+        transcricao_texto: 'A'.repeat(100),
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/aulas/upload-transcricao')
+        .set('Authorization', `Bearer ${professor1Token}`)
+        .send(dto);
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toContain('não encontrado');
+
+      // Cleanup
+      await prisma.planejamentoHabilidade.deleteMany({
+        where: { planejamento_id: planejamentoDeleted.id },
+      });
+      await prisma.planejamento.delete({
+        where: { id: planejamentoDeleted.id },
+      });
+    });
+  });
+
+  describe('Story 3.3: Entrada Manual (AC: Método 3)', () => {
+    it('should create aula with manual entry', async () => {
+      const dto = {
+        turma_id: turma1Id,
+        data: '2026-02-11T10:00:00Z',
+        planejamento_id: planejamento1Id,
+        resumo: 'A'.repeat(200), // 200 chars (min valid)
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/aulas/entrada-manual')
+        .set('Authorization', `Bearer ${professor1Token}`)
+        .send(dto);
+
+      expect(response.status).toBe(201);
+      expect(response.body.tipo_entrada).toBe('MANUAL');
+      expect(response.body.status_processamento).toBe('TRANSCRITA');
+      expect(response.body.transcricao).toBeDefined();
+      expect(response.body.transcricao.provider).toBe('MANUAL');
+      expect(response.body.transcricao.confianca).toBe(0.5); // Lower confidence for resume
+      expect(response.body.transcricao.duracao_segundos).toBeNull();
+      expect(response.body.transcricao.texto).toHaveLength(200);
+    });
+
+    it('should reject manual entry with less than 200 chars', async () => {
+      const dto = {
+        turma_id: turma1Id,
+        data: '2026-02-11T10:00:00Z',
+        resumo: 'Resumo muito curto', // < 200 chars
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/aulas/entrada-manual')
+        .set('Authorization', `Bearer ${professor1Token}`)
+        .send(dto);
+
+      expect(response.status).toBe(400);
+      expect(JSON.stringify(response.body.message)).toContain(
+        'no mínimo 200 caracteres',
+      );
+    });
+
+    it('should reject manual entry exceeding 5k chars', async () => {
+      const dto = {
+        turma_id: turma1Id,
+        data: '2026-02-11T10:00:00Z',
+        resumo: 'A'.repeat(5001), // > 5k
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/aulas/entrada-manual')
+        .set('Authorization', `Bearer ${professor1Token}`)
+        .send(dto);
+
+      expect(response.status).toBe(400);
+      expect(JSON.stringify(response.body.message)).toContain(
+        '5.000 caracteres',
+      );
+    });
+
+    it('should reject future date (entrada-manual)', async () => {
+      const futureDate = new Date();
+      futureDate.setDate(futureDate.getDate() + 1);
+
+      const dto = {
+        turma_id: turma1Id,
+        data: futureDate.toISOString(),
+        resumo: 'A'.repeat(200),
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/aulas/entrada-manual')
+        .set('Authorization', `Bearer ${professor1Token}`)
+        .send(dto);
+
+      expect(response.status).toBe(400);
+      expect(JSON.stringify(response.body.message)).toContain(
+        'não pode estar no futuro',
+      );
+    });
+
+    it('should block entrada-manual for turma from different escola', async () => {
+      // Professor1 tries to create aula for turma2 (escola2)
+      const dto = {
+        turma_id: turma2Id,
+        data: '2026-02-11T10:00:00Z',
+        resumo: 'A'.repeat(200),
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/aulas/entrada-manual')
+        .set('Authorization', `Bearer ${professor1Token}`)
+        .send(dto);
+
+      expect(response.status).toBe(403); // Blocked by escola_id + professor_id filter
+      expect(response.body.message).toContain('não pertence ao professor');
+    });
+
+    it('should reject soft-deleted planejamento (entrada-manual)', async () => {
+      // Create a planejamento and soft-delete it
+      const habilidade = await prisma.habilidade.findFirstOrThrow({
+        where: { disciplina: 'MATEMATICA', ano_inicio: 6 },
+      });
+
+      const planejamentoDeleted = await prisma.planejamento.create({
+        data: {
+          turma_id: turma1Id,
+          bimestre: 4,
+          ano_letivo: 2026,
+          escola_id: escola1Id,
+          professor_id: (
+            await prisma.usuario.findFirstOrThrow({
+              where: { email: 'professor@escolademo.com' },
+            })
+          ).id,
+          deleted_at: new Date(), // Soft-deleted
+          habilidades: {
+            create: [{ habilidade_id: habilidade.id, peso: 1.0 }],
+          },
+        },
+      });
+
+      const dto = {
+        turma_id: turma1Id,
+        planejamento_id: planejamentoDeleted.id,
+        data: '2026-02-11T10:00:00Z',
+        resumo: 'A'.repeat(200),
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/aulas/entrada-manual')
+        .set('Authorization', `Bearer ${professor1Token}`)
+        .send(dto);
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toContain('não encontrado');
+
+      // Cleanup
+      await prisma.planejamentoHabilidade.deleteMany({
+        where: { planejamento_id: planejamentoDeleted.id },
+      });
+      await prisma.planejamento.delete({
+        where: { id: planejamentoDeleted.id },
+      });
+    });
+
+    it('should reject planejamento from different turma (entrada-manual)', async () => {
+      // Create another turma and planejamento for professor1
+      const turma3 = await prisma.turma.create({
+        data: {
+          nome: '7E Aulas',
+          disciplina: 'MATEMATICA',
+          serie: Serie.SETIMO_ANO,
+          ano_letivo: 2026,
+          escola_id: escola1Id,
+          professor_id: (
+            await prisma.usuario.findFirstOrThrow({
+              where: { email: 'professor@escolademo.com' },
+            })
+          ).id,
+        },
+      });
+
+      const habilidade7 = await prisma.habilidade.findFirstOrThrow({
+        where: { disciplina: 'MATEMATICA', ano_inicio: 7 },
+      });
+
+      const planejamento3 = await prisma.planejamento.create({
+        data: {
+          turma_id: turma3.id,
+          bimestre: 1,
+          ano_letivo: 2026,
+          escola_id: escola1Id,
+          professor_id: (
+            await prisma.usuario.findFirstOrThrow({
+              where: { email: 'professor@escolademo.com' },
+            })
+          ).id,
+          habilidades: {
+            create: [{ habilidade_id: habilidade7.id, peso: 1.0 }],
+          },
+        },
+      });
+
+      const dto = {
+        turma_id: turma1Id, // Turma 1
+        planejamento_id: planejamento3.id, // Planejamento for Turma 3
+        data: '2026-02-11T10:00:00Z',
+        resumo: 'A'.repeat(200),
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/aulas/entrada-manual')
+        .set('Authorization', `Bearer ${professor1Token}`)
+        .send(dto);
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toContain('não pertence à turma');
+
+      // Cleanup
+      await prisma.planejamentoHabilidade.deleteMany({
+        where: { planejamento_id: planejamento3.id },
+      });
+      await prisma.planejamento.delete({ where: { id: planejamento3.id } });
+      await prisma.turma.delete({ where: { id: turma3.id } });
     });
   });
 });

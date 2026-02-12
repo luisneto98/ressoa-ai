@@ -14,6 +14,8 @@ import { AulasService } from './aulas.service';
 import { CreateAulaDto } from './dto/create-aula.dto';
 import { UpdateAulaDto } from './dto/update-aula.dto';
 import { QueryAulasDto } from './dto/query-aulas.dto';
+import { UploadTranscricaoDto } from './dto/upload-transcricao.dto';
+import { EntradaManualDto } from './dto/entrada-manual.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -33,6 +35,26 @@ export class AulasController {
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.aulasService.create(createAulaDto, user);
+  }
+
+  @Post('upload-transcricao')
+  @Roles('PROFESSOR')
+  @HttpCode(HttpStatus.CREATED)
+  uploadTranscricao(
+    @Body() dto: UploadTranscricaoDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.aulasService.uploadTranscricao(dto, user);
+  }
+
+  @Post('entrada-manual')
+  @Roles('PROFESSOR')
+  @HttpCode(HttpStatus.CREATED)
+  entradaManual(
+    @Body() dto: EntradaManualDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.aulasService.entradaManual(dto, user);
   }
 
   @Get()

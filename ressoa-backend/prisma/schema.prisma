@@ -56,6 +56,7 @@ model Escola {
   turmas         Turma[]
   planejamentos  Planejamento[]
   aulas          Aula[]
+  transcricoes   Transcricao[]
 
   @@map("escola")
 }
@@ -239,6 +240,26 @@ model PlanejamentoHabilidade {
 // Domínio Execução - Aulas & Processamento
 // ============================================
 
+model Transcricao {
+  id                String   @id @default(uuid())
+  escola_id         String   // Multi-tenancy
+  aula_id           String?  @unique // FK para Aula (one-to-one bidirectional)
+  texto             String   @db.Text // Transcrição completa
+  provider          String   // 'MANUAL', 'WHISPER', 'GOOGLE_SPEECH'
+  confianca         Float?   // 0.0-1.0 (null para manual completa, 0.5 para resumo manual)
+  duracao_segundos  Int?     // Null para entrada manual
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  // Relations
+  escola Escola @relation(fields: [escola_id], references: [id], onDelete: Cascade)
+  aula   Aula?  @relation(fields: [aula_id], references: [id], onDelete: SetNull, "AulaTranscricao")
+
+  @@index([escola_id, aula_id])
+  @@index([provider])
+  @@map("transcricao")
+}
+
 model Aula {
   id                   String               @id @default(uuid())
   escola_id            String
@@ -250,7 +271,7 @@ model Aula {
   status_processamento StatusProcessamento  @default(CRIADA)
   arquivo_url          String?              // S3/MinIO URL
   arquivo_tamanho      Int?                 // bytes
-  transcricao_id       String?              // FK para Transcricao (future)
+  transcricao_id       String?   @unique    // FK para Transcricao (one-to-one)
   analise_id           String?              // FK para Analise (future)
   created_at           DateTime             @default(now())
   updated_at           DateTime             @updatedAt
@@ -261,7 +282,7 @@ model Aula {
   professor     Usuario       @relation(fields: [professor_id], references: [id], onDelete: Cascade)
   turma         Turma         @relation(fields: [turma_id], references: [id], onDelete: Cascade)
   planejamento  Planejamento? @relation(fields: [planejamento_id], references: [id], onDelete: SetNull)
-  // transcricao   Transcricao?  @relation(fields: [transcricao_id], references: [id]) // Future: Epic 4
+  transcricao   Transcricao?  @relation("AulaTranscricao")
   // analise       Analise?      @relation(fields: [analise_id], references: [id])      // Future: Epic 5
 
   @@index([escola_id, professor_id, data])

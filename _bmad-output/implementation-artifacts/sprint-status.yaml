@@ -64,7 +64,7 @@ development_status:
     epic-3: in-progress
     3-1-backend-aula-entity-basic-crud: done
     3-2-backend-tus-upload-server-resumable-upload: done
-    3-3-backend-multiple-input-methods-audio-texto-manual: backlog
+    3-3-backend-multiple-input-methods-audio-texto-manual: done
     3-4-frontend-upload-page-with-drag-and-drop: backlog
     3-5-frontend-aulas-list-with-status-tracking: backlog
     epic-3-retrospective: optional

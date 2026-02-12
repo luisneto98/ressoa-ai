@@ -3,16 +3,22 @@ import {
   NotFoundException,
   BadRequestException,
   ForbiddenException,
+  InternalServerErrorException,
+  ConflictException,
+  Logger,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Prisma, StatusProcessamento } from '@prisma/client';
+import { Prisma, StatusProcessamento, TipoEntrada } from '@prisma/client';
 import { CreateAulaDto } from './dto/create-aula.dto';
 import { UpdateAulaDto } from './dto/update-aula.dto';
 import { QueryAulasDto } from './dto/query-aulas.dto';
+import { UploadTranscricaoDto } from './dto/upload-transcricao.dto';
+import { EntradaManualDto } from './dto/entrada-manual.dto';
 import { AuthenticatedUser } from '../auth/decorators/current-user.decorator';
 
 @Injectable()
 export class AulasService {
+  private readonly logger = new Logger(AulasService.name);
   // State transition rules for professor
   private readonly PROFESSOR_ALLOWED_TRANSITIONS: Record<
     StatusProcessamento,
@@ -217,6 +223,219 @@ export class AulasService {
     if (!allowedTransitions.includes(newStatus)) {
       throw new BadRequestException(
         `Transição de ${currentStatus} para ${newStatus} não permitida para professor`,
+      );
+    }
+  }
+
+  /**
+   * Upload Transcrição: Create aula with complete transcription text
+   *
+   * @description Skips CRIADA state, goes directly to TRANSCRITA.
+   *              Creates bi-directional link: Aula ↔ Transcricao (one-to-one).
+   *              Uses atomic transaction to ensure data consistency.
+   *
+   * @param dto - Transcription upload payload (turma_id, data, transcricao_texto)
+   * @param user - Authenticated professor
+   * @returns Created Aula with transcricao relation
+   * @throws ForbiddenException - If turma doesn't belong to professor
+   * @throws BadRequestException - If planejamento is invalid/soft-deleted/cross-turma
+   */
+  async uploadTranscricao(dto: UploadTranscricaoDto, user: AuthenticatedUser) {
+    return this.createAulaFromText({
+      escolaId: this.prisma.getEscolaIdOrThrow(),
+      user,
+      turmaId: dto.turma_id,
+      planejamentoId: dto.planejamento_id,
+      data: dto.data,
+      texto: dto.transcricao_texto,
+      tipoEntrada: TipoEntrada.TRANSCRICAO,
+      confianca: 1.0, // Complete transcription = high confidence
+    });
+  }
+
+  /**
+   * Entrada Manual: Create aula with manual summary/resume
+   *
+   * @description Skips CRIADA state, goes directly to TRANSCRITA.
+   *              Creates bi-directional link: Aula ↔ Transcricao (one-to-one).
+   *              Uses atomic transaction to ensure data consistency.
+   *
+   * @param dto - Manual entry payload (turma_id, data, resumo)
+   * @param user - Authenticated professor
+   * @returns Created Aula with transcricao relation
+   * @throws ForbiddenException - If turma doesn't belong to professor
+   * @throws BadRequestException - If planejamento is invalid/soft-deleted/cross-turma
+   */
+  async entradaManual(dto: EntradaManualDto, user: AuthenticatedUser) {
+    return this.createAulaFromText({
+      escolaId: this.prisma.getEscolaIdOrThrow(),
+      user,
+      turmaId: dto.turma_id,
+      planejamentoId: dto.planejamento_id,
+      data: dto.data,
+      texto: dto.resumo,
+      tipoEntrada: TipoEntrada.MANUAL,
+      confianca: 0.5, // Manual resume = lower confidence than full transcription
+    });
+  }
+
+  /**
+   * DRY Helper: Create aula from text (transcription or manual resume)
+   *
+   * @description Atomic transaction that creates Transcricao + Aula + bidirectional link.
+   *              Validates turma ownership and planejamento constraints.
+   *              Handles all Prisma errors gracefully with user-friendly messages.
+   *
+   * @private
+   */
+  private async createAulaFromText(params: {
+    escolaId: string;
+    user: AuthenticatedUser;
+    turmaId: string;
+    planejamentoId: string | undefined;
+    data: string;
+    texto: string;
+    tipoEntrada: TipoEntrada;
+    confianca: number;
+  }) {
+    const { escolaId, user, turmaId, planejamentoId, data, texto, tipoEntrada, confianca } = params;
+
+    try {
+      // Step 1: Validate turma ownership (outside transaction for early fail)
+      await this.validateTurmaOwnership(escolaId, user.userId, turmaId);
+
+      // Step 2: Validate planejamento constraints (if provided)
+      if (planejamentoId) {
+        await this.validatePlanejamento(escolaId, turmaId, planejamentoId);
+      }
+
+      // Step 3: Create Aula + Transcricao in atomic transaction
+      const aula = await this.prisma.$transaction(async (tx) => {
+        // Create transcricao first
+        const transcricao = await tx.transcricao.create({
+          data: {
+            escola_id: escolaId,
+            texto,
+            provider: 'MANUAL', // MANUAL provider for both TRANSCRICAO and MANUAL entry types
+            confianca,
+            duracao_segundos: null, // Not applicable for manual text
+          },
+        });
+
+        // Create aula with TRANSCRITA status
+        const createdAula = await tx.aula.create({
+          data: {
+            escola_id: escolaId,
+            professor_id: user.userId,
+            turma_id: turmaId,
+            planejamento_id: planejamentoId,
+            data: this.parseDate(data),
+            tipo_entrada: tipoEntrada,
+            status_processamento: StatusProcessamento.TRANSCRITA,
+            transcricao_id: transcricao.id,
+          },
+          include: {
+            turma: true,
+            planejamento: true,
+            transcricao: true,
+          },
+        });
+
+        // Update transcricao with aula_id (bidirectional link)
+        await tx.transcricao.update({
+          where: { id: transcricao.id },
+          data: { aula_id: createdAula.id },
+        });
+
+        return createdAula;
+      });
+
+      // Log successful creation (audit trail)
+      this.logger.log(
+        `[${tipoEntrada}] Professor ${user.userId} (escola: ${escolaId}) criou transcrição para aula ${aula.id} | ` +
+        `Turma: ${turmaId} | Tamanho: ${texto.length} chars | Confiança: ${confianca}`,
+      );
+
+      // TODO (Epic 5): Enqueue analysis job
+      // await this.bullQueue.add('analyze-aula', { aulaId: aula.id });
+
+      return aula;
+    } catch (error) {
+      // Handle Prisma-specific errors
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          // Unique constraint violation
+          throw new ConflictException('Transcrição já existe para esta aula');
+        }
+        if (error.code === 'P2003') {
+          // Foreign key constraint violation
+          throw new BadRequestException('Relação inválida (escola/turma não existem)');
+        }
+      }
+
+      // Re-throw known business exceptions
+      if (
+        error instanceof ForbiddenException ||
+        error instanceof BadRequestException ||
+        error instanceof NotFoundException
+      ) {
+        throw error;
+      }
+
+      // Log and wrap unexpected errors
+      this.logger.error(
+        `Erro ao criar aula com transcrição (tipo: ${tipoEntrada}): ${error.message}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException('Erro ao processar transcrição');
+    }
+  }
+
+  /**
+   * Validate turma ownership (multi-tenancy + RBAC)
+   * @throws ForbiddenException if turma doesn't belong to professor
+   */
+  private async validateTurmaOwnership(
+    escolaId: string,
+    professorId: string,
+    turmaId: string,
+  ): Promise<void> {
+    const turma = await this.prisma.turma.findUnique({
+      where: {
+        id: turmaId,
+        escola_id: escolaId,
+        professor_id: professorId,
+      },
+    });
+
+    if (!turma) {
+      throw new ForbiddenException(
+        'Turma não encontrada ou não pertence ao professor',
+      );
+    }
+  }
+
+  /**
+   * Validate planejamento constraints (cross-turma protection + soft-delete)
+   * @throws BadRequestException if planejamento is invalid/soft-deleted/cross-turma
+   */
+  private async validatePlanejamento(
+    escolaId: string,
+    turmaId: string,
+    planejamentoId: string,
+  ): Promise<void> {
+    const planejamento = await this.prisma.planejamento.findUnique({
+      where: {
+        id: planejamentoId,
+        escola_id: escolaId,
+        turma_id: turmaId, // Cross-turma protection
+        deleted_at: null, // Soft-delete protection (Code review learning from Story 3.1)
+      },
+    });
+
+    if (!planejamento) {
+      throw new BadRequestException(
+        'Planejamento não encontrado ou não pertence à turma',
       );
     }
   }

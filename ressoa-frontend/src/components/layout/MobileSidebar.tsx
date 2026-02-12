@@ -11,7 +11,13 @@ export function MobileSidebar() {
   const setMobileMenuOpen = useUIStore((s) => s.setMobileMenuOpen);
   const closeMobileMenu = useUIStore((s) => s.closeMobileMenu);
 
+  // Handle missing user gracefully (initial load) or unknown roles
   const navItems = getNavigationForRole(user?.role ?? '');
+
+  // If user exists but no nav items found, warn about unknown role
+  if (user && navItems.length === 0) {
+    console.warn(`[MobileSidebar] No navigation items found for role: ${user.role}`);
+  }
 
   return (
     <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>

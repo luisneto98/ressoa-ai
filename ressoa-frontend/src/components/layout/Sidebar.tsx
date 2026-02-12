@@ -20,7 +20,9 @@ export function Sidebar() {
     if (isTablet && !sidebarCollapsed && !manuallyToggled) {
       autoCollapseSidebar();
     }
-  }, [isTablet, sidebarCollapsed, manuallyToggled, autoCollapseSidebar]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Note: autoCollapseSidebar is a stable Zustand action (doesn't change), excluded from deps
+  }, [isTablet, sidebarCollapsed, manuallyToggled]);
 
   // Handle missing user gracefully (initial load) or unknown roles
   const navItems = getNavigationForRole(user?.role ?? '');

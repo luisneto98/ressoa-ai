@@ -1,5 +1,11 @@
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import type { NavItem } from './navigation-config';
 
 interface SidebarNavItemProps {
@@ -13,22 +19,39 @@ export function SidebarNavItem({ item, collapsed, onNavigate }: SidebarNavItemPr
   const isActive = pathname.startsWith(item.path);
   const Icon = item.icon;
 
-  return (
-    <li>
-      <Link
-        to={item.path}
-        onClick={onNavigate}
-        aria-current={isActive ? 'page' : undefined}
-        className={cn(
-          'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 min-h-[44px]',
-          isActive
-            ? 'bg-tech-blue text-white shadow-md'
-            : 'text-white/80 hover:bg-white/10 hover:text-white'
-        )}
-      >
-        <Icon className="size-5 shrink-0" />
-        {!collapsed && <span className="truncate">{item.label}</span>}
-      </Link>
-    </li>
+  const linkContent = (
+    <Link
+      to={item.path}
+      onClick={onNavigate}
+      aria-current={isActive ? 'page' : undefined}
+      aria-label={collapsed ? item.label : undefined}
+      className={cn(
+        'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 min-h-[44px]',
+        isActive
+          ? 'bg-tech-blue text-white shadow-md'
+          : 'text-white/80 hover:bg-white/10 hover:text-white'
+      )}
+    >
+      <Icon className="size-5 shrink-0" />
+      {!collapsed && <span className="truncate">{item.label}</span>}
+    </Link>
   );
+
+  // When collapsed, wrap in tooltip for accessibility (WCAG AAA + AC#4)
+  if (collapsed) {
+    return (
+      <li>
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger asChild>{linkContent}</TooltipTrigger>
+            <TooltipContent side="right" className="bg-deep-navy text-white border-white/10">
+              <p>{item.label}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </li>
+    );
+  }
+
+  return <li>{linkContent}</li>;
 }

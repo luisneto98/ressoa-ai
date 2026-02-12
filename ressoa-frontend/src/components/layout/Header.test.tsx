@@ -25,6 +25,7 @@ describe('Header', () => {
     vi.mocked(useUIStore).mockImplementation((selector: any) => {
       const state = {
         setMobileMenuOpen: mockSetMobileMenuOpen,
+        mobileMenuOpen: false,
       };
       return selector ? selector(state) : state;
     });
@@ -135,5 +136,47 @@ describe('Header', () => {
       'items-center',
       'justify-between'
     );
+  });
+
+  it('should restore focus to hamburger button when mobile menu closes (WCAG 2.4.3)', () => {
+    let mobileMenuOpenState = true;
+
+    vi.mocked(useUIStore).mockImplementation((selector: any) => {
+      const state = {
+        setMobileMenuOpen: mockSetMobileMenuOpen,
+        mobileMenuOpen: mobileMenuOpenState,
+      };
+      return selector ? selector(state) : state;
+    });
+
+    const { rerender } = render(
+      <BrowserRouter>
+        <Header showMenuButton={true} />
+      </BrowserRouter>
+    );
+
+    const menuButton = screen.getByRole('button', { name: /abrir menu/i });
+
+    // Menu is open initially (mobileMenuOpen = true)
+    expect(menuButton).toBeInTheDocument();
+
+    // Simulate menu closing
+    mobileMenuOpenState = false;
+    vi.mocked(useUIStore).mockImplementation((selector: any) => {
+      const state = {
+        setMobileMenuOpen: mockSetMobileMenuOpen,
+        mobileMenuOpen: mobileMenuOpenState,
+      };
+      return selector ? selector(state) : state;
+    });
+
+    rerender(
+      <BrowserRouter>
+        <Header showMenuButton={true} />
+      </BrowserRouter>
+    );
+
+    // Focus should be restored to menu button (WCAG AAA compliance)
+    expect(document.activeElement).toBe(menuButton);
   });
 });

@@ -27,7 +27,12 @@ import {
   MonitoramentoAnaliseService,
   MonitoramentoAnaliseResponse,
 } from '../monitoramento/monitoramento-analise.service';
+import {
+  MonitoramentoCustosService,
+  MonitoramentoCustosResponse,
+} from '../monitoramento/monitoramento-custos.service';
 import { FiltrosMonitoramentoDto } from '../monitoramento/dto/filtros-monitoramento.dto';
+import { FiltrosCustosDto } from '../monitoramento/dto/filtros-custos.dto';
 import {
   CreateEscolaDto,
   CreateUsuarioDto,
@@ -45,6 +50,7 @@ export class AdminController {
     private readonly coberturaService: CoberturaService,
     private readonly monitoramentoSTTService: MonitoramentoSTTService,
     private readonly monitoramentoAnaliseService: MonitoramentoAnaliseService,
+    private readonly monitoramentoCustosService: MonitoramentoCustosService,
   ) {}
 
   @Post('schools')
@@ -110,7 +116,8 @@ export class AdminController {
   @Post('refresh-cobertura')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Trigger manual refresh da materialized view cobertura_bimestral (admin only)',
+    summary:
+      'Trigger manual refresh da materialized view cobertura_bimestral (admin only)',
   })
   @ApiResponse({
     status: 200,
@@ -140,10 +147,42 @@ export class AdminController {
     description: 'Métricas STT retornadas',
     schema: {
       example: {
-        kpis: { total_transcricoes: 100, erros_stt: 3, taxa_sucesso: 97.09, taxa_erro: 2.91, fallback_count: 5, tempo_medio_ms: 15000, confianca_media: 0.92, custo_total_usd: 1.5 },
-        por_provider: [{ provider: 'WHISPER', count: 80, avg_tempo_ms: 14000, avg_confianca: 0.93, avg_custo_usd: 0.012 }],
-        erros_timeline: [{ hora: '2026-02-12T10:00:00.000Z', erros_stt: 1, transcricoes_ok: 25 }],
-        erros_recentes: [{ aula_id: 'uuid', escola_id: 'uuid', data: '2026-02-12', updated_at: '2026-02-12T10:30:00Z', arquivo_tamanho: 5242880, tipo_entrada: 'AUDIO' }],
+        kpis: {
+          total_transcricoes: 100,
+          erros_stt: 3,
+          taxa_sucesso: 97.09,
+          taxa_erro: 2.91,
+          fallback_count: 5,
+          tempo_medio_ms: 15000,
+          confianca_media: 0.92,
+          custo_total_usd: 1.5,
+        },
+        por_provider: [
+          {
+            provider: 'WHISPER',
+            count: 80,
+            avg_tempo_ms: 14000,
+            avg_confianca: 0.93,
+            avg_custo_usd: 0.012,
+          },
+        ],
+        erros_timeline: [
+          {
+            hora: '2026-02-12T10:00:00.000Z',
+            erros_stt: 1,
+            transcricoes_ok: 25,
+          },
+        ],
+        erros_recentes: [
+          {
+            aula_id: 'uuid',
+            escola_id: 'uuid',
+            data: '2026-02-12',
+            updated_at: '2026-02-12T10:30:00Z',
+            arquivo_tamanho: 5242880,
+            tipo_entrada: 'AUDIO',
+          },
+        ],
       },
     },
   })
@@ -158,15 +197,32 @@ export class AdminController {
   @Get('monitoramento/analise')
   @UseInterceptors(CacheInterceptor)
   @CacheTTL(300000) // 5 minutos em ms
-  @ApiOperation({ summary: 'Métricas de monitoramento de análise pedagógica (admin only)' })
+  @ApiOperation({
+    summary: 'Métricas de monitoramento de análise pedagógica (admin only)',
+  })
   @ApiResponse({
     status: 200,
     description: 'Métricas de análise retornadas',
     schema: {
       example: {
-        kpis: { total: 50, tempo_medio_s: 45.2, custo_medio_usd: 0.12, tempo_revisao_medio_s: 180 },
-        por_status: [{ status: 'AGUARDANDO_REVISAO', count: 20 }, { status: 'APROVADO', count: 25 }, { status: 'REJEITADO', count: 5 }],
-        queue_stats: { waiting: 3, active: 1, completed: 100, failed: 2, delayed: 0 },
+        kpis: {
+          total: 50,
+          tempo_medio_s: 45.2,
+          custo_medio_usd: 0.12,
+          tempo_revisao_medio_s: 180,
+        },
+        por_status: [
+          { status: 'AGUARDANDO_REVISAO', count: 20 },
+          { status: 'APROVADO', count: 25 },
+          { status: 'REJEITADO', count: 5 },
+        ],
+        queue_stats: {
+          waiting: 3,
+          active: 1,
+          completed: 100,
+          failed: 2,
+          delayed: 0,
+        },
       },
     },
   })
@@ -175,6 +231,47 @@ export class AdminController {
   async getMonitoramentoAnalise(
     @Query() filtros: FiltrosMonitoramentoDto,
   ): Promise<MonitoramentoAnaliseResponse> {
-    return this.monitoramentoAnaliseService.getMetricas(filtros.periodo ?? '24h');
+    return this.monitoramentoAnaliseService.getMetricas(
+      filtros.periodo ?? '24h',
+    );
+  }
+
+  @Get('custos/escolas')
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(3600000) // 1 hora em ms
+  @ApiOperation({ summary: 'Custos de API por escola (admin only)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Custos por escola retornados',
+    schema: {
+      example: {
+        escolas: [
+          {
+            escola_id: 'uuid',
+            escola_nome: 'Escola Municipal ABC',
+            custo_stt: 12.5,
+            custo_llm: 35.0,
+            custo_total: 47.5,
+            total_aulas: 120,
+            professores_ativos: 8,
+            custo_por_aula: 0.3958,
+          },
+        ],
+        totais: {
+          custo_total: 150.0,
+          total_aulas: 500,
+          total_escolas: 5,
+          projecao_mensal: 280.0,
+        },
+        mes: '2026-02',
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Usuário não é ADMIN' })
+  async getCustosEscolas(
+    @Query() filtros: FiltrosCustosDto,
+  ): Promise<MonitoramentoCustosResponse> {
+    return this.monitoramentoCustosService.getMetricas(filtros.mes);
   }
 }

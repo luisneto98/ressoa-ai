@@ -18,6 +18,7 @@ import { DashboardCoordenadorTurmaDetalhesPage } from '@/pages/dashboard/Dashboa
 import { DashboardDiretorPage } from '@/pages/dashboard/DashboardDiretorPage';
 import { MonitoramentoSTTPage } from '@/pages/admin/MonitoramentoSTTPage';
 import { MonitoramentoAnalisePage } from '@/pages/admin/MonitoramentoAnalisePage';
+import { CustosEscolasPage } from '@/pages/admin/CustosEscolasPage';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 // Create Query Client
@@ -134,6 +135,16 @@ function App() {
           element={
             <ProtectedRoute roles={['ADMIN']}>
               <MonitoramentoAnalisePage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Admin Custos Route - Story 8.3 */}
+        <Route
+          path="/admin/custos/escolas"
+          element={
+            <ProtectedRoute roles={['ADMIN']}>
+              <CustosEscolasPage />
             </ProtectedRoute>
           }
         />

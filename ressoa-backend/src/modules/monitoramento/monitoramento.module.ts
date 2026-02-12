@@ -4,6 +4,7 @@ import { PrismaModule } from '../../prisma/prisma.module';
 import { MonitoramentoSTTService } from './monitoramento-stt.service';
 import { MonitoramentoAnaliseService } from './monitoramento-analise.service';
 import { MonitoramentoAlertasService } from './monitoramento-alertas.service';
+import { MonitoramentoCustosService } from './monitoramento-custos.service';
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { MonitoramentoAlertasService } from './monitoramento-alertas.service';
     MonitoramentoSTTService,
     MonitoramentoAnaliseService,
     MonitoramentoAlertasService,
+    MonitoramentoCustosService,
   ],
-  exports: [MonitoramentoSTTService, MonitoramentoAnaliseService],
+  exports: [MonitoramentoSTTService, MonitoramentoAnaliseService, MonitoramentoCustosService],
 })
 export class MonitoramentoModule {}

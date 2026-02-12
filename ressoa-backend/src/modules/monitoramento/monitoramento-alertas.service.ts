@@ -2,6 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { MonitoramentoSTTService } from './monitoramento-stt.service';
 import { MonitoramentoAnaliseService } from './monitoramento-analise.service';
+import {
+  MonitoramentoCustosService,
+  CUSTO_ALTO_THRESHOLD_USD,
+} from './monitoramento-custos.service';
 
 @Injectable()
 export class MonitoramentoAlertasService {
@@ -10,6 +14,7 @@ export class MonitoramentoAlertasService {
   constructor(
     private readonly monitoramentoSTTService: MonitoramentoSTTService,
     private readonly monitoramentoAnaliseService: MonitoramentoAnaliseService,
+    private readonly monitoramentoCustosService: MonitoramentoCustosService,
   ) {}
 
   @Cron('*/15 * * * *')
@@ -47,6 +52,33 @@ export class MonitoramentoAlertasService {
     } catch (error) {
       this.logger.error(
         'Falha ao verificar fila de análise',
+        error instanceof Error ? error.stack : String(error),
+      );
+    }
+  }
+
+  @Cron('0 9 * * *') // Diariamente às 9h UTC
+  async verificarCustosAltos(): Promise<void> {
+    try {
+      const { escolas } = await this.monitoramentoCustosService.getMetricas();
+      const escolasAltas = escolas.filter(
+        (e) => e.custo_total > CUSTO_ALTO_THRESHOLD_USD,
+      );
+
+      if (escolasAltas.length > 0) {
+        this.logger.warn(
+          `ALERTA CUSTOS: ${escolasAltas.length} escola(s) com custo acima de $${CUSTO_ALTO_THRESHOLD_USD}/mês`,
+          {
+            escolas: escolasAltas.map((e) => ({
+              nome: e.escola_nome,
+              custo: e.custo_total,
+            })),
+          },
+        );
+      }
+    } catch (error) {
+      this.logger.error(
+        'Falha ao verificar custos altos',
         error instanceof Error ? error.stack : String(error),
       );
     }

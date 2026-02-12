@@ -2,12 +2,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MonitoramentoAlertasService } from './monitoramento-alertas.service';
 import { MonitoramentoSTTService } from './monitoramento-stt.service';
 import { MonitoramentoAnaliseService } from './monitoramento-analise.service';
+import { MonitoramentoCustosService } from './monitoramento-custos.service';
 import { Logger } from '@nestjs/common';
 
 describe('MonitoramentoAlertasService', () => {
   let service: MonitoramentoAlertasService;
   let mockSTTService: jest.Mocked<Pick<MonitoramentoSTTService, 'getTaxaErroUltimaHora'>>;
   let mockAnaliseService: jest.Mocked<Pick<MonitoramentoAnaliseService, 'getQueueWaitingCount'>>;
+  let mockCustosService: jest.Mocked<Pick<MonitoramentoCustosService, 'getMetricas'>>;
   let loggerWarnSpy: jest.SpyInstance;
   let loggerErrorSpy: jest.SpyInstance;
 
@@ -20,6 +22,10 @@ describe('MonitoramentoAlertasService', () => {
       getQueueWaitingCount: jest.fn(),
     };
 
+    mockCustosService = {
+      getMetricas: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MonitoramentoAlertasService,
@@ -30,6 +36,10 @@ describe('MonitoramentoAlertasService', () => {
         {
           provide: MonitoramentoAnaliseService,
           useValue: mockAnaliseService,
+        },
+        {
+          provide: MonitoramentoCustosService,
+          useValue: mockCustosService,
         },
       ],
     }).compile();
@@ -196,6 +206,84 @@ describe('MonitoramentoAlertasService', () => {
       expect(loggerErrorSpy).toHaveBeenCalledWith(
         'Falha ao verificar fila de análise',
         expect.stringContaining('Redis connection failed'),
+      );
+      expect(loggerWarnSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('verificarCustosAltos', () => {
+    const makeResponse = (escolas: Array<{ escola_nome: string; custo_total: number }>) => ({
+      escolas: escolas.map((e, i) => ({
+        escola_id: `uuid-${i}`,
+        escola_nome: e.escola_nome,
+        custo_stt: e.custo_total * 0.3,
+        custo_llm: e.custo_total * 0.7,
+        custo_total: e.custo_total,
+        total_aulas: 100,
+        professores_ativos: 5,
+        custo_por_aula: e.custo_total / 100,
+      })),
+      totais: {
+        custo_total: escolas.reduce((sum, e) => sum + e.custo_total, 0),
+        total_aulas: escolas.length * 100,
+        total_escolas: escolas.length,
+        projecao_mensal: escolas.reduce((sum, e) => sum + e.custo_total, 0),
+      },
+      mes: '2026-02',
+    });
+
+    it('should log warning when escola has custo > $50', async () => {
+      mockCustosService.getMetricas.mockResolvedValueOnce(
+        makeResponse([{ escola_nome: 'Escola Cara', custo_total: 75 }]),
+      );
+
+      await service.verificarCustosAltos();
+
+      expect(loggerWarnSpy).toHaveBeenCalledTimes(1);
+      expect(loggerWarnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('ALERTA CUSTOS'),
+        expect.objectContaining({
+          escolas: expect.arrayContaining([
+            expect.objectContaining({ nome: 'Escola Cara', custo: 75 }),
+          ]),
+        }),
+      );
+    });
+
+    it('should NOT log when all escolas have custo <= $50', async () => {
+      mockCustosService.getMetricas.mockResolvedValueOnce(
+        makeResponse([
+          { escola_nome: 'Escola A', custo_total: 30 },
+          { escola_nome: 'Escola B', custo_total: 50 },
+        ]),
+      );
+
+      await service.verificarCustosAltos();
+
+      expect(loggerWarnSpy).not.toHaveBeenCalled();
+    });
+
+    it('should NOT log when custo is exactly $50 (threshold)', async () => {
+      mockCustosService.getMetricas.mockResolvedValueOnce(
+        makeResponse([{ escola_nome: 'Escola Limite', custo_total: 50 }]),
+      );
+
+      await service.verificarCustosAltos();
+
+      expect(loggerWarnSpy).not.toHaveBeenCalled();
+    });
+
+    it('should log error and not crash when service throws', async () => {
+      mockCustosService.getMetricas.mockRejectedValueOnce(
+        new Error('Database connection failed'),
+      );
+
+      await expect(service.verificarCustosAltos()).resolves.not.toThrow();
+
+      expect(loggerErrorSpy).toHaveBeenCalledTimes(1);
+      expect(loggerErrorSpy).toHaveBeenCalledWith(
+        'Falha ao verificar custos altos',
+        expect.stringContaining('Database connection failed'),
       );
       expect(loggerWarnSpy).not.toHaveBeenCalled();
     });

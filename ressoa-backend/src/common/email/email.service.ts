@@ -3,6 +3,18 @@ import { ConfigService } from '@nestjs/config';
 import * as sgMail from '@sendgrid/mail';
 import { Env } from '../../config/env';
 
+/**
+ * Data structure for transcription ready email
+ * Story 4.4 - AC2: EmailService with sendTranscricaoProntaEmail
+ */
+export interface TranscricaoProntaEmailData {
+  to: string;
+  professorNome: string;
+  turmaNome: string;
+  aulaData: Date;
+  link: string;
+}
+
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
@@ -14,17 +26,23 @@ export class EmailService {
     this.isDevelopment = nodeEnv === 'development' || nodeEnv === 'test';
 
     // Initialize SendGrid only in production with valid API key
+    // Code Review MEDIUM-2: Improve API key validation
     const provider = this.configService.get('EMAIL_PROVIDER');
     const apiKey = this.configService.get('EMAIL_API_KEY');
 
-    this.emailEnabled = !!apiKey && apiKey !== 'SG.your_sendgrid_api_key_here';
+    // Validate SendGrid API key format (SG. prefix + reasonable length)
+    const isSendGridFormat =
+      apiKey?.startsWith('SG.') &&
+      apiKey.length > 20 &&
+      apiKey !== 'SG.your_sendgrid_api_key_here';
+    this.emailEnabled = nodeEnv === 'production' && isSendGridFormat;
 
     if (provider === 'sendgrid' && this.emailEnabled) {
       sgMail.setApiKey(apiKey);
-      this.logger.log('SendGrid email service initialized');
+      this.logger.log('SendGrid email service initialized (production mode)');
     } else {
       this.logger.warn(
-        'Email service running in mock mode (development or no API key)',
+        `Email service running in mock mode (env: ${nodeEnv}, valid key: ${isSendGridFormat})`,
       );
     }
   }
@@ -70,6 +88,50 @@ export class EmailService {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(`Failed to send password reset email: ${errorMessage}`);
+    }
+  }
+
+  /**
+   * Send transcription ready email to professor
+   * Story 4.4 - AC2: EmailService with Email Integration
+   *
+   * @param data - Email data (professor info, turma, link)
+   * @returns Promise<void>
+   */
+  async sendTranscricaoProntaEmail(
+    data: TranscricaoProntaEmailData,
+  ): Promise<void> {
+    const from = this.configService.get('EMAIL_FROM') || 'noreply@ressoa.ai';
+    const formattedDate = new Date(data.aulaData).toLocaleDateString('pt-BR');
+
+    const msg = {
+      to: data.to,
+      from,
+      subject: 'Transcrição Pronta - Ressoa AI',
+      html: this.getTranscricaoProntaTemplate(data, formattedDate),
+    };
+
+    // PRODUCTION SAFETY: Mock emails in development (Story 1.5 learning)
+    if (this.isDevelopment || !this.emailEnabled) {
+      this.logger.log(
+        `[MOCK EMAIL] Transcription ready email to ${data.to}\nProfessor: ${data.professorNome}\nTurma: ${data.turmaNome}\nData: ${formattedDate}\nLink: ${data.link}`,
+      );
+      return;
+    }
+
+    try {
+      await sgMail.send(msg);
+      // Add audit logging for notification events
+      this.logger.log(
+        `Transcription ready email sent successfully to ${data.to} (professor: ${data.professorNome})`,
+      );
+    } catch (error: unknown) {
+      // Don't throw - this prevents blocking notification creation (Story 4.4 requirement)
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(
+        `Failed to send transcription ready email to ${data.to}: ${errorMessage}`,
+      );
     }
   }
 
@@ -135,6 +197,67 @@ export class EmailService {
 
           <p style="color: #94A3B8; font-size: 12px; text-align: center; margin: 0;">
             © ${new Date().getFullYear()} Ressoa AI. Todos os direitos reservados.
+          </p>
+        </div>
+      </body>
+      </html>
+    `;
+  }
+
+  /**
+   * Generate HTML template for transcription ready email
+   * Story 4.4 - Task 2: Email Template
+   *
+   * @param data - Email data
+   * @param formattedDate - Formatted date string (DD/MM/YYYY)
+   * @returns HTML string
+   */
+  private getTranscricaoProntaTemplate(
+    data: TranscricaoProntaEmailData,
+    formattedDate: string,
+  ): string {
+    const currentYear = new Date().getFullYear();
+    return `
+      <!DOCTYPE html>
+      <html lang="pt-BR">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Transcrição Pronta - Ressoa AI</title>
+      </head>
+      <body style="font-family: 'Inter', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #F8FAFC;">
+        <div style="background-color: white; border-radius: 8px; padding: 40px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="color: #0A2647; font-size: 28px; margin: 0; font-weight: 600;">Ressoa AI</h1>
+            <p style="color: #64748B; font-size: 14px; margin-top: 5px;">Inteligência de Aula, Análise e Previsão de Conteúdo</p>
+          </div>
+
+          <h2 style="color: #0A2647; font-size: 20px; margin-bottom: 20px;">Transcrição Pronta! 🎉</h2>
+
+          <p style="color: #334155; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+            Olá, <strong>${data.professorNome}</strong>!
+          </p>
+
+          <p style="color: #334155; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+            Sua aula de <strong>${data.turmaNome}</strong> (${formattedDate}) foi transcrita e está pronta para análise.
+          </p>
+
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${data.link}" style="display: inline-block; background-color: #2563EB; color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: 500;">
+              Ver Transcrição
+            </a>
+          </div>
+
+          <div style="background-color: #EFF6FF; border-left: 4px solid #2563EB; padding: 15px; margin: 30px 0; border-radius: 4px;">
+            <p style="color: #1E40AF; font-size: 14px; margin: 0; line-height: 1.5;">
+              💡 <strong>Próximos passos:</strong> Revise a transcrição e aguarde a análise pedagógica automática.
+            </p>
+          </div>
+
+          <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 40px 0;">
+
+          <p style="color: #94A3B8; font-size: 12px; text-align: center; margin: 0;">
+            © ${currentYear} Ressoa AI. Todos os direitos reservados.
           </p>
         </div>
       </body>

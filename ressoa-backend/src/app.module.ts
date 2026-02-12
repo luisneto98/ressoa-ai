@@ -14,6 +14,7 @@ import { HabilidadesModule } from './modules/habilidades/habilidades.module';
 import { TurmasModule } from './modules/turmas/turmas.module';
 import { AulasModule } from './modules/aulas/aulas.module';
 import { SttModule } from './modules/stt/stt.module';
+import { NotificacoesModule } from './modules/notificacoes/notificacoes.module';
 import { TestModule } from './modules/test/test.module';
 import { ContextModule } from './common/context/context.module';
 import { EmailModule } from './common/email/email.module';
@@ -71,6 +72,7 @@ if (process.env.NODE_ENV !== 'test') {
     TurmasModule, // Turmas Query API (Story 2.3 - blocker resolution)
     AulasModule, // Aula Entity & Basic CRUD (Story 3.1)
     SttModule, // STT Service Abstraction Layer (Story 4.1)
+    NotificacoesModule, // Notification System (Story 4.4)
     // TUS Upload Server (Story 3.2) - dynamically loaded in non-test environments
     ...conditionalImports,
     // RBAC test endpoints - only load in non-production environments

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { BullModule } from '@nestjs/bull';
 import { PrismaModule } from '../../prisma/prisma.module';
+import { NotificacoesModule } from '../notificacoes/notificacoes.module';
 import { STTService } from './stt.service';
 import { TranscricaoService } from './transcricao.service';
 import { WhisperProvider } from './providers/whisper.provider';
@@ -37,6 +38,7 @@ import { TranscriptionProcessor } from './workers/transcription.processor';
   imports: [
     ConfigModule,
     PrismaModule,
+    NotificacoesModule, // Story 4.4: Import to access NotificacoesService
     // Bull Queue for Transcription Worker (Story 4.3)
     BullModule.registerQueue({
       name: 'transcription',

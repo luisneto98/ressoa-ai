@@ -49,6 +49,13 @@ enum ProviderSTT {
   MANUAL
 }
 
+enum TipoNotificacao {
+  TRANSCRICAO_PRONTA
+  ANALISE_PRONTA
+  ERRO_PROCESSAMENTO
+  SISTEMA
+}
+
 model Escola {
   id             String   @id @default(uuid())
   nome           String
@@ -82,6 +89,7 @@ model Usuario {
   turmas          Turma[]
   planejamentos   Planejamento[]
   aulas           Aula[]
+  notificacoes    Notificacao[]
 
   @@unique([email, escola_id])  // PostgreSQL permite múltiplos NULL sem violar unique
   @@index([escola_id])
@@ -90,14 +98,15 @@ model Usuario {
 }
 
 model PerfilUsuario {
-  id         String       @id @default(uuid())
-  usuario_id String       @unique
-  role       RoleUsuario  @default(PROFESSOR)
-  created_at DateTime     @default(now())
-  updated_at DateTime     @updatedAt
+  id                  String       @id @default(uuid())
+  usuario_id          String       @unique
+  role                RoleUsuario  @default(PROFESSOR)
+  notificacoes_email  Boolean      @default(true)
+  created_at          DateTime     @default(now())
+  updated_at          DateTime     @updatedAt
 
   // Relations
-  usuario    Usuario      @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  usuario             Usuario      @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
 
   @@index([usuario_id])
   @@map("perfil_usuario")
@@ -297,4 +306,26 @@ model Aula {
   @@index([turma_id, data])
   @@index([deleted_at])
   @@map("aula")
+}
+
+// ============================================
+// Domínio Notificações
+// ============================================
+
+model Notificacao {
+  id            String           @id @default(uuid())
+  usuario_id    String
+  tipo          TipoNotificacao
+  titulo        String
+  mensagem      String
+  lida          Boolean          @default(false)
+  link          String?          // Deep link para ação relevante
+  metadata_json Json?
+  created_at    DateTime         @default(now())
+
+  // Relations
+  usuario       Usuario          @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+
+  @@index([usuario_id, lida, created_at])
+  @@map("notificacao")
 }

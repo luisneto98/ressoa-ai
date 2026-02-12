@@ -3,6 +3,7 @@ import type { Job, Queue } from 'bull';
 import { Logger, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { TranscricaoService } from '../transcricao.service';
+import { NotificacoesService } from '../../notificacoes/notificacoes.service';
 import { ProviderSTT } from '@prisma/client';
 
 /**
@@ -30,6 +31,7 @@ export class TranscriptionProcessor {
 
   constructor(
     private readonly transcricaoService: TranscricaoService,
+    private readonly notificacoesService: NotificacoesService,
     private readonly prisma: PrismaService,
     @InjectQueue('transcription') private readonly transcriptionQueue: Queue,
   ) {}
@@ -105,9 +107,10 @@ export class TranscriptionProcessor {
       // Progress: 90% - Transcription complete, saving to database
       await job.progress(90);
 
-      const custoFormatted = transcricao.custo_usd !== null
-        ? `$${transcricao.custo_usd.toFixed(4)}`
-        : 'N/A';
+      const custoFormatted =
+        transcricao.custo_usd !== null
+          ? `$${transcricao.custo_usd.toFixed(4)}`
+          : 'N/A';
 
       this.logger.log(
         `[Job ${job.id}] Transcrição concluída: transcricaoId=${transcricao.id}, provider=${transcricao.provider}, custo=${custoFormatted}`,
@@ -115,6 +118,23 @@ export class TranscriptionProcessor {
 
       // Progress: 100% - Complete
       await job.progress(100);
+
+      // Story 4.4: Notify professor that transcription is complete
+      try {
+        await this.notificacoesService.notifyTranscricaoPronta(aulaId);
+        this.logger.log(
+          `[Job ${job.id}] Notificação enviada para professor (aula: ${aulaId})`,
+        );
+      } catch (notificationError) {
+        // Log but don't throw - transcription is complete, notification is best-effort
+        const notifErrorMsg =
+          notificationError instanceof Error
+            ? notificationError.message
+            : 'Unknown';
+        this.logger.error(
+          `[Job ${job.id}] Falha ao enviar notificação: ${notifErrorMsg}`,
+        );
+      }
 
       // TODO Epic 5: Uncomment when analysis worker is ready
       // Note: For MVP, this is commented to avoid enqueueing jobs for non-existent worker
@@ -150,6 +170,26 @@ export class TranscriptionProcessor {
             where: { id: aulaId },
             data: { status_processamento: 'ERRO' },
           });
+
+          // Code Review HIGH-4: Notify professor of transcription failure
+          try {
+            await this.notificacoesService.notifyTranscricaoErro(
+              aulaId,
+              errorMessage,
+            );
+            this.logger.log(
+              `[Job ${job.id}] Notificação de erro enviada para professor (aula: ${aulaId})`,
+            );
+          } catch (notificationError) {
+            // Log but don't throw - error status already saved
+            const notifErrorMsg =
+              notificationError instanceof Error
+                ? notificationError.message
+                : 'Unknown';
+            this.logger.error(
+              `[Job ${job.id}] Falha ao enviar notificação de erro: ${notifErrorMsg}`,
+            );
+          }
         } catch (updateError) {
           // Log but don't fail - job already failed, status update is best-effort
           this.logger.error(

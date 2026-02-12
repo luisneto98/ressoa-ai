@@ -34,11 +34,11 @@ import { GoogleProvider } from './providers/google.provider';
     TranscricaoService,
     {
       provide: 'WHISPER_PROVIDER',
-      useClass: WhisperProvider, // Stub in Story 4.1, real impl in Story 4.2
+      useClass: WhisperProvider, // Real implementation (Story 4.2) - OpenAI Whisper API
     },
     {
       provide: 'GOOGLE_PROVIDER',
-      useClass: GoogleProvider, // Stub in Story 4.1, real impl in Story 4.2
+      useClass: GoogleProvider, // Real implementation (Story 4.2) - Google Cloud Speech API
     },
   ],
   exports: [STTService, TranscricaoService],

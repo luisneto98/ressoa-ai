@@ -1,0 +1,4 @@
+Este é um teste de transcrição de áudio para o sistema Ressoa AI.
+Vamos verificar se o serviço de transcrição está funcionando corretamente.
+O professor está ensinando matemática para alunos do sexto ano.
+Hoje vamos aprender sobre frações e números decimais.

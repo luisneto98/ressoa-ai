@@ -19,9 +19,14 @@ export const envSchema = z.object({
   S3_SECRET_KEY: z.string().optional(),
   S3_BUCKET: z.string().optional(),
   S3_REGION: z.string().optional(),
-  // External APIs - optional until Stories 4.x/5.x (STT/LLM)
+  // External APIs - STT & LLM (Stories 4.2, 5.x)
+  // OpenAI Whisper API key (Story 4.2 - required for STT primary provider)
   OPENAI_API_KEY: z.string().optional(),
+  // Anthropic Claude API key (Epic 5 - required for pedagogical analysis)
   ANTHROPIC_API_KEY: z.string().optional(),
+  // Google Cloud Service Account JSON (Story 4.2 - required for STT fallback)
+  // Format: stringified JSON of service account credentials
+  GOOGLE_CLOUD_CREDENTIALS: z.string().optional(),
   // STT Provider Configuration (Story 4.1)
   STT_PRIMARY_PROVIDER: z
     .enum(['WHISPER', 'GOOGLE', 'AZURE'])

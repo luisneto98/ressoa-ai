@@ -79,12 +79,8 @@ export class STTService {
       return result;
     } catch (primaryError) {
       const primaryErrorMessage =
-        primaryError instanceof Error
-          ? primaryError.message
-          : 'Unknown error';
-      this.logger.warn(
-        `Falha no provider primário: ${primaryErrorMessage}`,
-      );
+        primaryError instanceof Error ? primaryError.message : 'Unknown error';
+      this.logger.warn(`Falha no provider primário: ${primaryErrorMessage}`);
 
       // Attempt fallback provider
       try {

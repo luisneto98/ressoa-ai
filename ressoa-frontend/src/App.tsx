@@ -8,6 +8,7 @@ import { PlanejamentoWizard } from '@/pages/planejamento/PlanejamentoWizard';
 import { PlanejamentosListPage } from '@/pages/planejamento/PlanejamentosListPage';
 import UploadAulaPage from '@/pages/aulas/UploadAulaPage';
 import AulasListPage from '@/pages/aulas/AulasListPage';
+import { AulaAnalisePage } from '@/pages/aulas/AulaAnalisePage';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 // Create Query Client
@@ -116,12 +117,20 @@ function App() {
           }
         />
 
-        {/* Aula Routes - Story 3.4 */}
+        {/* Aula Routes - Story 3.4, 6.1 */}
         <Route
           path="/aulas/upload"
           element={
             <ProtectedRoute>
               <UploadAulaPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/aulas/:aulaId/analise"
+          element={
+            <ProtectedRoute>
+              <AulaAnalisePage />
             </ProtectedRoute>
           }
         />

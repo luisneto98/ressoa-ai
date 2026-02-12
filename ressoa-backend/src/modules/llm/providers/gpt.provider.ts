@@ -82,6 +82,10 @@ export class GPTProvider implements LLMProvider {
       // Cálculo de custos GPT-4.6 mini
       // Pricing: $0.15 per 1M input tokens, $0.60 per 1M output tokens
       // Fórmula: (tokens / 1_000_000) * preço_por_milhao
+      if (!response.usage) {
+        throw new Error('GPTProvider: response.usage é undefined');
+      }
+
       const custoInput = (response.usage.prompt_tokens / 1_000_000) * 0.15; // Input: $0.15/1M tokens
       const custoOutput = (response.usage.completion_tokens / 1_000_000) * 0.6; // Output: $0.60/1M tokens
       const custoTotal = custoInput + custoOutput;
@@ -113,10 +117,10 @@ export class GPTProvider implements LLMProvider {
       this.logger.error({
         message: 'Erro ao chamar OpenAI API',
         provider: 'GPT4_MINI',
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
         tempo_ms: Date.now() - startTime,
       });
-      throw new Error(`GPTProvider: Falha ao gerar texto - ${error.message}`);
+      throw new Error(`GPTProvider: Falha ao gerar texto - ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -135,7 +139,7 @@ export class GPTProvider implements LLMProvider {
     } catch (error) {
       this.logger.warn({
         message: 'GPT health check falhou',
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       });
       return false;
     }

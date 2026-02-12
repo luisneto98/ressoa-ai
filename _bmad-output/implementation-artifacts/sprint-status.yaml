@@ -81,8 +81,8 @@ development_status:
     5-4-backend-prompts-3-4-relatorio-exercicios: done # Code review complete - 10 issues found & auto-fixed - 41/41 unit tests passing - E2E tests have circular dependency (deferred Story 5.5)
     5-5-backend-prompt-5-analysis-worker-alertas-integracao: done # Code review complete - 9 issues fixed (2 CRITICAL, 1 HIGH, 6 MEDIUM) - pipeline end-to-end working
     epic-5-retrospective: optional
-    epic-6: backlog
-    6-1-visualizacao-de-analise-completa: backlog
+    epic-6: in-progress
+    6-1-visualizacao-de-analise-completa: done # Code review complete - 2 CRITICAL + 5 MEDIUM + 3 LOW issues found & fixed - 5/5 unit tests passing
     6-2-edicao-e-aprovacao-de-relatorio: backlog
     6-3-visualizacao-e-edicao-de-exercicios-contextuais: backlog
     6-4-sugestoes-para-proxima-aula: backlog

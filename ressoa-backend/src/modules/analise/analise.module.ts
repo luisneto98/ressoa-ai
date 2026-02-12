@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bull';
 import { PrismaModule } from '../../prisma/prisma.module';
-import { LlmModule } from '../llm/llm.module';
+import { LLMModule } from '../llm/llm.module';
 import { NotificacoesModule } from '../notificacoes/notificacoes.module';
+import { AulasModule } from '../aulas/aulas.module';
 import { AnaliseService } from './services/analise.service';
+import { AnaliseController } from './analise.controller';
 import { AnalysisProcessorWorker } from '../../workers/analysis-processor.worker';
 
 /**
@@ -25,12 +27,17 @@ import { AnalysisProcessorWorker } from '../../workers/analysis-processor.worker
  * **Story 5.5 Additions:**
  * - AnalysisProcessorWorker: Bull queue worker que orquestra pipeline assíncrono
  * - Queue 'analysis-pipeline': Processa análises de aulas com retry exponencial
+ *
+ * **Story 6.1 Additions:**
+ * - AnaliseController: GET /api/v1/aulas/:id/analise endpoint
+ * - AulasModule import: Para validar permissões de acesso (professor ownership)
  */
 @Module({
   imports: [
     PrismaModule,
-    LlmModule, // Provides PromptService, ClaudeProvider, GPTProvider
+    LLMModule, // Provides PromptService, ClaudeProvider, GPTProvider
     NotificacoesModule, // Provides NotificacaoService for completion notifications
+    AulasModule, // Provides AulasService for permission validation (Story 6.1)
     BullModule.registerQueue({
       name: 'analysis-pipeline',
       defaultJobOptions: {
@@ -45,6 +52,7 @@ import { AnalysisProcessorWorker } from '../../workers/analysis-processor.worker
       },
     }),
   ],
+  controllers: [AnaliseController],
   providers: [AnaliseService, AnalysisProcessorWorker],
   exports: [AnaliseService, BullModule],
 })

@@ -180,7 +180,7 @@ export class AnaliseService {
         const novaAnalise = await tx.analise.create({
           data: {
             aula_id: aulaId,
-            transcricao_id: aula.transcricao.id,
+            transcricao_id: aula.transcricao!.id,
             planejamento_id: aula.planejamento?.id,
             cobertura_json: coberturaOutput,
             analise_qualitativa_json: qualitativaOutput,
@@ -211,7 +211,7 @@ export class AnaliseService {
 
       return analise;
     } catch (error) {
-      this.logger.error(`Erro ao analisar aula: aulaId=${aulaId}`, error.stack);
+      this.logger.error(`Erro ao analisar aula: aulaId=${aulaId}`, error instanceof Error ? error.stack : String(error));
       throw error;
     }
   }
@@ -270,7 +270,7 @@ export class AnaliseService {
       // MEDIUM FIX: Log individual prompt metrics for debugging and cost monitoring
       this.logger.log(
         `Prompt ${nomePrompt} concluído: versao=${prompt.versao}, custo=$${result.custo_usd.toFixed(4)}, ` +
-        `tokens_in=${result.tokens_entrada}, tokens_out=${result.tokens_saida}`,
+        `tokens_in=${result.tokens_input}, tokens_out=${result.tokens_output}`,
       );
 
       return {
@@ -281,9 +281,52 @@ export class AnaliseService {
     } catch (error) {
       this.logger.error(
         `Erro em executePrompt: prompt=${nomePrompt}, provider=${provider.getName()}`,
-        error.stack,
+        error instanceof Error ? error.stack : String(error),
       );
       throw error;
     }
+  }
+
+  /**
+   * Busca análise completa de uma aula por aula_id.
+   *
+   * Carrega análise com todas as relações necessárias para visualização:
+   * - Aula (com turma e professor)
+   * - Transcrição
+   * - Planejamento (se existir)
+   *
+   * **Story 6.1:** Endpoint GET /api/v1/aulas/:id/analise
+   *
+   * @param aulaId ID da aula
+   * @returns Analise com relações carregadas ou null se não existir
+   */
+  async findByAulaId(aulaId: string) {
+    const escolaId = this.prisma.getEscolaIdOrThrow();
+
+
+    return this.prisma.analise.findFirst({
+      where: {
+        aula_id: aulaId,
+        aula: {
+          escola_id: escolaId, // ✅ CRITICAL FIX: Multi-tenancy enforcement
+        },
+      },
+      include: {
+        aula: {
+          include: {
+            turma: true,
+            professor: {
+              select: { id: true, nome: true, email: true },
+            },
+          },
+        },
+        transcricao: {
+          select: { id: true, texto: true },
+        },
+        planejamento: {
+          select: { id: true, titulo: true },
+        },
+      },
+    });
   }
 }

@@ -99,11 +99,11 @@ export class ClaudeProvider implements LLMProvider {
       this.logger.error({
         message: 'Erro ao chamar Claude API',
         provider: 'CLAUDE_SONNET',
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
         tempo_ms: Date.now() - startTime,
       });
       throw new Error(
-        `ClaudeProvider: Falha ao gerar texto - ${error.message}`,
+        `ClaudeProvider: Falha ao gerar texto - ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
@@ -123,7 +123,7 @@ export class ClaudeProvider implements LLMProvider {
     } catch (error) {
       this.logger.warn({
         message: 'Claude health check falhou',
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       });
       return false;
     }

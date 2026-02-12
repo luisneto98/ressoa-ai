@@ -89,7 +89,7 @@ development_status:
     6-5-dashboard-pessoal-do-professor-cobertura-propria: done # Code review complete - 10 issues found & auto-fixed (3 CRITICAL, 5 HIGH, 2 MEDIUM) - Backend/Frontend builds passing - Timeline query refactored (CTE+LATERAL) - Error handling + validation added
     epic-6-retrospective: optional
     epic-7: in-progress
-    7-1-materialized-view-de-cobertura-bimestral: review
+    7-1-materialized-view-de-cobertura-bimestral: done # Code review complete - 10 issues found & auto-fixed (3 HIGH, 5 MEDIUM, 2 LOW) - 12/12 unit tests passing
     7-2-dashboard-do-coordenador-visao-por-professor: backlog
     7-3-dashboard-do-coordenador-visao-por-turma: backlog
     7-4-dashboard-do-diretor-metricas-agregadas-da-escola: backlog

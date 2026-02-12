@@ -17,7 +17,7 @@ export class RefreshCoberturaProcessor {
     const startTime = Date.now();
 
     try {
-      this.logger.log('Starting materialized view refresh...');
+      this.logger.log(`Starting materialized view refresh for job ${job.id}...`);
 
       // Refresh CONCURRENTLY (não bloqueia leituras - queries retornam dados stale durante refresh)
       await this.prisma.$executeRaw`
@@ -25,13 +25,13 @@ export class RefreshCoberturaProcessor {
       `;
 
       const duration = Date.now() - startTime;
-      this.logger.log(`Materialized view refreshed successfully in ${duration}ms`);
+      this.logger.log(`Job ${job.id} completed in ${duration}ms`);
 
       return { success: true, duration };
     } catch (error) {
       const duration = Date.now() - startTime;
       this.logger.error(
-        `Failed to refresh materialized view after ${duration}ms`,
+        `Failed to refresh materialized view for job ${job.id} after ${duration}ms`,
         error instanceof Error ? error.stack : String(error),
       );
 

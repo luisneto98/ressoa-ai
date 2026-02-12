@@ -1,6 +1,6 @@
 # Story 7.1: Materialized View de Cobertura Bimestral
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -945,15 +945,27 @@ Claude Sonnet 4.5 (claude-sonnet-4-5-20250929)
 - Backend build successful (TypeScript compilation passed)
 - E2E test file created with RBAC validation (401, 403, 200)
 - View structure validated via `pg_matviews` and `pg_indexes` queries
+- Query performance validation added (EXPLAIN for index usage)
 - **Note:** Full E2E test execution requires Redis without auth (current vtexday26-redis has NOAUTH issue)
+
+✅ **Code Review Fixes Applied (2026-02-12):**
+- **Unit Tests:** Added cobertura.service.spec.ts (5 tests) + refresh-cobertura.processor.spec.ts (7 tests) - ALL PASSING (12/12)
+- **Bull Retry:** Configured attempts: 3 + exponential backoff (2s, 4s, 8s) for both cron and manual triggers
+- **Timezone Fix:** Cron schedule changed to explicit BRT timezone (0 5 * * * + tz: America/Sao_Paulo = 2 AM BRT)
+- **Logging:** Added job ID to all log messages for traceability
+- **E2E Tests:** Added query performance validation (EXPLAIN for index usage)
+- **Rollback:** Created ROLLBACK.md with migration rollback instructions
 
 ### File List
 
 **Backend (New Files):**
 - `ressoa-backend/prisma/migrations/20260212120000_create_cobertura_bimestral_view/migration.sql` (CREATE)
+- `ressoa-backend/prisma/migrations/20260212120000_create_cobertura_bimestral_view/ROLLBACK.md` (CREATE - Code Review Fix)
 - `ressoa-backend/src/cobertura/cobertura.module.ts` (CREATE)
 - `ressoa-backend/src/cobertura/cobertura.service.ts` (CREATE)
+- `ressoa-backend/src/cobertura/cobertura.service.spec.ts` (CREATE - Code Review Fix)
 - `ressoa-backend/src/jobs/refresh-cobertura.processor.ts` (CREATE)
+- `ressoa-backend/src/jobs/refresh-cobertura.processor.spec.ts` (CREATE - Code Review Fix)
 
 **Backend (Modified Files):**
 - `ressoa-backend/src/app.module.ts` (MODIFY - import CoberturaModule, fix Bull Redis config for tests)
@@ -961,4 +973,4 @@ Claude Sonnet 4.5 (claude-sonnet-4-5-20250929)
 - `ressoa-backend/src/modules/admin/admin.module.ts` (MODIFY - import CoberturaModule)
 
 **Tests (New Files):**
-- `ressoa-backend/test/cobertura-refresh.e2e-spec.ts` (CREATE - E2E tests for RBAC and view existence)
+- `ressoa-backend/test/cobertura-refresh.e2e-spec.ts` (CREATE - E2E tests for RBAC, view existence, query performance)

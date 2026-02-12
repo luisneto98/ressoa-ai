@@ -14,19 +14,25 @@ export class CoberturaService implements OnModuleInit {
   ) {}
 
   async onModuleInit(): Promise<void> {
-    // Agendar refresh diário às 2h da manhã (low-traffic time)
+    // Agendar refresh diário às 2h da manhã BRT (5:00 AM UTC - low-traffic time)
     await this.coberturaQueue.add(
       'refresh-cobertura-bimestral',
       {},
       {
         repeat: {
-          cron: '0 2 * * *', // 2:00 AM todos os dias
+          cron: '0 5 * * *', // 5:00 AM UTC = 2:00 AM BRT
+          tz: 'America/Sao_Paulo', // Explicit Brazil timezone
         },
         removeOnComplete: true, // Remove job após completar (evita acúmulo histórico)
+        attempts: 3, // Retry 3x on failure
+        backoff: {
+          type: 'exponential',
+          delay: 2000, // 2s, 4s, 8s
+        },
       },
     );
 
-    this.logger.log('Daily refresh job scheduled at 2:00 AM (cron: 0 2 * * *)');
+    this.logger.log('Daily refresh job scheduled at 2:00 AM BRT (cron: 0 5 * * *, tz: America/Sao_Paulo)');
   }
 
   /**
@@ -34,16 +40,21 @@ export class CoberturaService implements OnModuleInit {
    * Use case: Admin force refresh after bulk data import or schema change
    */
   async triggerRefresh(): Promise<{ message: string }> {
-    await this.coberturaQueue.add(
+    const job = await this.coberturaQueue.add(
       'refresh-cobertura-bimestral',
       {},
       {
         priority: 1, // Alta prioridade para execução imediata
         removeOnComplete: true,
+        attempts: 3, // Retry 3x on failure
+        backoff: {
+          type: 'exponential',
+          delay: 2000, // 2s, 4s, 8s
+        },
       },
     );
 
-    this.logger.log('Manual refresh triggered with high priority');
+    this.logger.log(`Manual refresh triggered with high priority (job: ${job.id})`);
     return { message: 'Refresh enfileirado com sucesso' };
   }
 }

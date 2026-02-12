@@ -143,5 +143,31 @@ describe('Cobertura Refresh (E2E)', () => {
       expect(indexNames).toContain('idx_cobertura_bimestral_professor');
       expect(indexNames).toContain('idx_cobertura_bimestral_cobertura');
     });
+
+    it('should query view successfully using escola_id index', async () => {
+      // Verify query executes without errors (even if empty result)
+      const result = await prisma.$queryRaw<Array<any>>`
+        SELECT * FROM cobertura_bimestral
+        WHERE escola_id = ${escolaId}
+        LIMIT 1
+      `;
+
+      // Should return empty array (no data seeded) but query should work
+      expect(Array.isArray(result)).toBe(true);
+    });
+  });
+
+  describe('Query Performance Validation', () => {
+    it('should use index for escola_id + bimestre query', async () => {
+      const result = await prisma.$queryRaw<Array<{ 'QUERY PLAN': string }>>`
+        EXPLAIN
+        SELECT * FROM cobertura_bimestral
+        WHERE escola_id = ${escolaId} AND bimestre = 1
+      `;
+
+      // Should contain "Index Scan" or "Bitmap Index Scan"
+      const queryPlan = result.map((r) => r['QUERY PLAN']).join(' ');
+      expect(queryPlan).toMatch(/Index Scan|Bitmap Index Scan/);
+    });
   });
 });

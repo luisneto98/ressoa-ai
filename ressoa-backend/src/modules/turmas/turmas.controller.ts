@@ -24,7 +24,9 @@ export class TurmasController {
   @ApiOperation({
     summary: 'Listar turmas do professor',
     description:
-      'Retorna todas as turmas do professor autenticado com isolamento de tenant (escola_id)',
+      'Retorna todas as turmas do professor autenticado com isolamento de tenant (escola_id). ' +
+      'NOTA: Coordenador/Diretor receberão array vazio pois service filtra por professor_id. ' +
+      'Use endpoints de dashboard para visualização por roles administrativos.',
   })
   @ApiResponse({
     status: 200,
@@ -47,6 +49,7 @@ export class TurmasController {
     },
   })
   @ApiResponse({ status: 401, description: 'Não autenticado' })
+  @ApiResponse({ status: 403, description: 'Permissões insuficientes' })
   async findAll(@CurrentUser() user: AuthenticatedUser) {
     return this.turmasService.findAllByProfessor(user.userId);
   }

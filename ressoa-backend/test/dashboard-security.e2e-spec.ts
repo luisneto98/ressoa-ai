@@ -17,6 +17,7 @@ process.env.JWT_REFRESH_SECRET =
   'test-refresh-secret-at-least-32-characters-long';
 process.env.REDIS_HOST = process.env.REDIS_HOST || 'localhost';
 process.env.REDIS_PORT = process.env.REDIS_PORT || '6379';
+process.env.REDIS_PASSWORD = process.env.REDIS_PASSWORD || ''; // Empty password for local dev Redis
 
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -294,41 +295,45 @@ describe('Dashboard Security (E2E)', () => {
   });
 
   afterAll(async () => {
-    // Cleanup: Delete test data
-    await prisma.analise.deleteMany({
-      where: {
-        aula_id: { in: testAulaIds },
-      },
-    });
-
-    await prisma.aula.deleteMany({
-      where: {
-        id: { in: testAulaIds },
-      },
-    });
-
-    await prisma.turma.deleteMany({
-      where: {
-        id: { in: testTurmaIds },
-      },
-    });
-
-    await prisma.usuario.deleteMany({
-      where: {
-        id: { in: testUserIds },
-      },
-    });
-
-    const remainingUsers = await prisma.usuario.count({
-      where: { escola_id: testEscolaId },
-    });
-    if (remainingUsers === 0) {
-      await prisma.escola.delete({
-        where: { id: testEscolaId },
+    // Cleanup: Delete test data (only if prisma is initialized)
+    if (prisma) {
+      await prisma.analise.deleteMany({
+        where: {
+          aula_id: { in: testAulaIds },
+        },
       });
+
+      await prisma.aula.deleteMany({
+        where: {
+          id: { in: testAulaIds },
+        },
+      });
+
+      await prisma.turma.deleteMany({
+        where: {
+          id: { in: testTurmaIds },
+        },
+      });
+
+      await prisma.usuario.deleteMany({
+        where: {
+          id: { in: testUserIds },
+        },
+      });
+
+      const remainingUsers = await prisma.usuario.count({
+        where: { escola_id: testEscolaId },
+      });
+      if (remainingUsers === 0) {
+        await prisma.escola.delete({
+          where: { id: testEscolaId },
+        });
+      }
     }
 
-    await app.close();
+    if (app) {
+      await app.close();
+    }
   });
 
   describe('Coordenador Permissions', () => {
@@ -356,6 +361,7 @@ describe('Dashboard Security (E2E)', () => {
         .set('Authorization', `Bearer ${coordenadorToken}`);
 
       expect(response.status).toBe(403);
+      expect(response.body).toHaveProperty('message');
       expect(response.body.message).toContain('Insufficient permissions');
     });
 
@@ -365,6 +371,7 @@ describe('Dashboard Security (E2E)', () => {
         .set('Authorization', `Bearer ${coordenadorToken}`);
 
       expect(response.status).toBe(403);
+      expect(response.body).toHaveProperty('message');
       expect(response.body.message).toContain('Insufficient permissions');
     });
   });
@@ -394,6 +401,7 @@ describe('Dashboard Security (E2E)', () => {
         .set('Authorization', `Bearer ${diretorToken}`);
 
       expect(response.status).toBe(403);
+      expect(response.body).toHaveProperty('message');
       expect(response.body.message).toContain('Insufficient permissions');
     });
   });

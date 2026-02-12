@@ -1,6 +1,6 @@
 # Story 7.5: RBAC Guards & Privacy Enforcement
 
-Status: review
+Status: in-progress
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -702,10 +702,103 @@ N/A - No debugging required
 
 ### File List
 
-**Modified:**
+**Modified (Development):**
 - `ressoa-backend/src/modules/turmas/turmas.controller.ts` - Adicionado RolesGuard + @Roles decorator
 - `ressoa-backend/src/modules/tus/tus.controller.ts` - Adicionado RolesGuard + @Roles('PROFESSOR')
 - `README.md` - Adicionada seção "RBAC - Permissões por Role"
 
+**Modified (Code Review Fixes - 2026-02-12):**
+- `ressoa-backend/src/modules/turmas/turmas.controller.ts` - Added ApiResponse 403 + documented Coordenador/Diretor behavior
+- `README.md` - Fixed broken architecture.md link, expanded Multi-tenancy documentation with examples
+- `ressoa-backend/test/dashboard-security.e2e-spec.ts` - Fixed Redis auth env var, prisma null check in afterAll(), enhanced error message validation
+
 **Created:**
 - `ressoa-backend/test/dashboard-security.e2e-spec.ts` - Suite de testes E2E de segurança (10 testes)
+- `ressoa-backend/src/modules/tus/SECURITY-NOTE.md` - Technical note on TUS ownership validation (future enhancement recommendation)
+
+---
+
+## Code Review (2026-02-12)
+
+**Reviewer:** Claude Sonnet 4.5 (Adversarial Code Review Agent)
+**Review Mode:** Auto-fix enabled (all issues corrected immediately)
+
+### Issues Found & Fixed
+
+**🔴 HIGH (3 issues - all fixed):**
+
+1. **E2E tests failing due to missing Redis password env var**
+   - Fixed: Added `process.env.REDIS_PASSWORD = ''` for local dev Redis compatibility
+   - File: `test/dashboard-security.e2e-spec.ts:20`
+
+2. **Cleanup afterAll() crashes if beforeAll() fails**
+   - Fixed: Added `if (prisma)` and `if (app)` null checks before cleanup
+   - File: `test/dashboard-security.e2e-spec.ts:296-332`
+
+3. **README.md has broken link to architecture.md**
+   - Fixed: Updated link from `./project-context.md#AD-1.4` to `./_bmad-output/planning-artifacts/architecture.md#decision-category-1-authentication--security`
+   - File: `README.md:248`
+
+**🟡 MEDIUM (4 issues - 3 fixed, 1 documented):**
+
+1. **TurmasController accepts COORDENADOR/DIRETOR but service returns empty array**
+   - Fixed: Added ApiOperation description warning about behavior
+   - File: `turmas.controller.ts:24-27`
+
+2. **TusController lacks ownership validation (potential security issue)**
+   - Documented: Created `SECURITY-NOTE.md` with analysis and future fix recommendations
+   - File: `src/modules/tus/SECURITY-NOTE.md` (new file)
+
+3. **E2E tests don't validate error message structure in all 403 cases**
+   - Fixed: Added `.toHaveProperty('message')` before `.toContain()` assertions
+   - Files: `test/dashboard-security.e2e-spec.ts:357,366,395`
+
+4. **README.md RBAC section lacks multi-tenancy context**
+   - Fixed: Expanded Multi-tenancy bullet with "(CRÍTICO)" emphasis and real example
+   - File: `README.md:246-247`
+
+**🟢 LOW (3 issues - all fixed):**
+
+1. **Missing ApiResponse 403 in TurmasController Swagger docs**
+   - Fixed: Added `@ApiResponse({ status: 403, description: 'Permissões insuficientes' })`
+   - File: `turmas.controller.ts:50`
+
+2. **README uses "Validação de Ownership" without definition**
+   - Fixed: Added inline example "(professor_id check). Exemplo: Professor A não pode ver..."
+   - File: `README.md:247`
+
+3. **Story File List incomplete**
+   - Fixed: Updated with all code review modifications
+   - File: This story file
+
+### Summary
+
+- **Total Issues:** 10 (3 HIGH, 4 MEDIUM, 3 LOW)
+- **Auto-fixed:** 9
+- **Documented for future:** 1 (TUS ownership - requires service layer audit)
+- **Tests Status:** E2E tests now runnable (Redis config fixed), but require running services to pass
+- **Story Status:** Marking as **in-progress** (testes E2E precisam rodar com sucesso antes de "done")
+
+### Recommendations for Next Steps
+
+1. **Execute testes E2E:**
+   ```bash
+   cd ressoa-backend
+   docker compose up -d  # Start Redis/PostgreSQL
+   npm run test:e2e -- dashboard-security.e2e-spec.ts
+   ```
+
+2. **Audit TusService ownership validation:**
+   - Ver `src/modules/tus/SECURITY-NOTE.md` para detalhes
+   - Adicionar testes E2E de cross-ownership em TUS uploads
+
+3. **Consider fixing TurmasController service logic:**
+   - Opção 1: Remover COORDENADOR/DIRETOR do @Roles (endpoint só funciona para PROFESSOR)
+   - Opção 2: Implementar `TurmasService.findAllByRole()` que retorna todas turmas da escola para admin roles
+
+### Files Modified by Code Review
+
+- `ressoa-backend/test/dashboard-security.e2e-spec.ts` (3 fixes)
+- `ressoa-backend/src/modules/turmas/turmas.controller.ts` (2 fixes)
+- `README.md` (2 fixes)
+- `ressoa-backend/src/modules/tus/SECURITY-NOTE.md` (new file - technical debt documentation)

@@ -243,6 +243,6 @@ Coordenadores e Diretores NÃO podem ver:
 
 - **Guards:** `JwtAuthGuard` + `RolesGuard` aplicados globalmente
 - **Decorators:** `@Roles('PROFESSOR', 'COORDENADOR', 'DIRETOR')` nos controllers
-- **Multi-tenancy:** Isolamento por `escola_id` em todas as queries
-- **Validação de Ownership:** Professor só acessa suas próprias aulas
-- **Documentação completa:** Ver [project-context.md](./project-context.md) e [Architecture Decision Record 1.4](./project-context.md#AD-1.4)
+- **Multi-tenancy (CRÍTICO):** Isolamento por `escola_id` em TODAS as queries - cada escola vê apenas seus dados, bloqueando acesso cross-tenant
+- **Validação de Ownership:** Professor só acessa suas próprias aulas (professor_id check). Exemplo: Professor A não pode ver transcrições do Professor B, mesmo na mesma escola
+- **Documentação completa:** Ver [project-context.md](./project-context.md) e [Architecture Decision AD-1.4](./_bmad-output/planning-artifacts/architecture.md#decision-category-1-authentication--security) para estratégia RBAC completa

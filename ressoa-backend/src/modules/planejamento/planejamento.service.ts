@@ -139,7 +139,18 @@ export class PlanejamentoService {
           turma: true,
           habilidades: {
             include: {
-              habilidade: { select: { id: true, codigo: true, descricao: true, disciplina: true, ano_inicio: true, ano_fim: true, unidade_tematica: true, objeto_conhecimento: true } },
+              habilidade: {
+                select: {
+                  id: true,
+                  codigo: true,
+                  descricao: true,
+                  disciplina: true,
+                  ano_inicio: true,
+                  ano_fim: true,
+                  unidade_tematica: true,
+                  objeto_conhecimento: true,
+                },
+              },
             },
           },
         },
@@ -239,7 +250,18 @@ export class PlanejamentoService {
         turma: true,
         habilidades: {
           include: {
-            habilidade: { select: { id: true, codigo: true, descricao: true, disciplina: true, ano_inicio: true, ano_fim: true, unidade_tematica: true, objeto_conhecimento: true } },
+            habilidade: {
+              select: {
+                id: true,
+                codigo: true,
+                descricao: true,
+                disciplina: true,
+                ano_inicio: true,
+                ano_fim: true,
+                unidade_tematica: true,
+                objeto_conhecimento: true,
+              },
+            },
           },
         },
         professor: {

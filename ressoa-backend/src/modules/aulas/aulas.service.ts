@@ -119,9 +119,9 @@ export class AulasService {
       where.turma_id = query.turma_id;
     }
 
-    // Filter by status
-    if (query.status_processamento) {
-      where.status_processamento = query.status_processamento;
+    // Filter by status (supports multiple statuses)
+    if (query.status && query.status.length > 0) {
+      where.status_processamento = { in: query.status };
     }
 
     // Filter by date range
@@ -135,6 +135,11 @@ export class AulasService {
       }
     }
 
+    // Pagination
+    const page = query.page || 1;
+    const limit = query.limit || 20;
+    const skip = (page - 1) * limit;
+
     return this.prisma.aula.findMany({
       where,
       include: {
@@ -142,6 +147,8 @@ export class AulasService {
         planejamento: true,
       },
       orderBy: [{ data: 'desc' }, { created_at: 'desc' }],
+      skip,
+      take: limit,
     });
   }
 
@@ -298,7 +305,16 @@ export class AulasService {
     tipoEntrada: TipoEntrada;
     confianca: number;
   }) {
-    const { escolaId, user, turmaId, planejamentoId, data, texto, tipoEntrada, confianca } = params;
+    const {
+      escolaId,
+      user,
+      turmaId,
+      planejamentoId,
+      data,
+      texto,
+      tipoEntrada,
+      confianca,
+    } = params;
 
     try {
       // Step 1: Validate turma ownership (outside transaction for early fail)
@@ -311,18 +327,7 @@ export class AulasService {
 
       // Step 3: Create Aula + Transcricao in atomic transaction
       const aula = await this.prisma.$transaction(async (tx) => {
-        // Create transcricao first
-        const transcricao = await tx.transcricao.create({
-          data: {
-            escola_id: escolaId,
-            texto,
-            provider: 'MANUAL', // MANUAL provider for both TRANSCRICAO and MANUAL entry types
-            confianca,
-            duracao_segundos: null, // Not applicable for manual text
-          },
-        });
-
-        // Create aula with TRANSCRITA status
+        // Create aula first with TRANSCRITA status
         const createdAula = await tx.aula.create({
           data: {
             escola_id: escolaId,
@@ -332,7 +337,6 @@ export class AulasService {
             data: this.parseDate(data),
             tipo_entrada: tipoEntrada,
             status_processamento: StatusProcessamento.TRANSCRITA,
-            transcricao_id: transcricao.id,
           },
           include: {
             turma: true,
@@ -341,10 +345,15 @@ export class AulasService {
           },
         });
 
-        // Update transcricao with aula_id (bidirectional link)
-        await tx.transcricao.update({
-          where: { id: transcricao.id },
-          data: { aula_id: createdAula.id },
+        // Create transcricao linked to aula
+        await tx.transcricao.create({
+          data: {
+            aula_id: createdAula.id,
+            texto,
+            provider: 'MANUAL', // MANUAL provider for both TRANSCRICAO and MANUAL entry types
+            confianca,
+            duracao_segundos: null, // Not applicable for manual text
+          },
         });
 
         return createdAula;
@@ -353,7 +362,7 @@ export class AulasService {
       // Log successful creation (audit trail)
       this.logger.log(
         `[${tipoEntrada}] Professor ${user.userId} (escola: ${escolaId}) criou transcrição para aula ${aula.id} | ` +
-        `Turma: ${turmaId} | Tamanho: ${texto.length} chars | Confiança: ${confianca}`,
+          `Turma: ${turmaId} | Tamanho: ${texto.length} chars | Confiança: ${confianca}`,
       );
 
       // TODO (Epic 5): Enqueue analysis job
@@ -369,7 +378,9 @@ export class AulasService {
         }
         if (error.code === 'P2003') {
           // Foreign key constraint violation
-          throw new BadRequestException('Relação inválida (escola/turma não existem)');
+          throw new BadRequestException(
+            'Relação inválida (escola/turma não existem)',
+          );
         }
       }
 
@@ -383,9 +394,12 @@ export class AulasService {
       }
 
       // Log and wrap unexpected errors
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
       this.logger.error(
-        `Erro ao criar aula com transcrição (tipo: ${tipoEntrada}): ${error.message}`,
-        error.stack,
+        `Erro ao criar aula com transcrição (tipo: ${tipoEntrada}): ${errorMessage}`,
+        errorStack,
       );
       throw new InternalServerErrorException('Erro ao processar transcrição');
     }

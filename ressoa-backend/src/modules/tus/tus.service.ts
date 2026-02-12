@@ -1,4 +1,9 @@
-import { Injectable, BadRequestException, ForbiddenException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  ForbiddenException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Server, Upload } from '@tus/server';
 import { S3Store } from '@tus/s3-store';
@@ -75,7 +80,9 @@ export class TusService {
         }
 
         if (professor_id !== req.user.userId) {
-          throw new ForbiddenException('Upload só permitido para aulas próprias');
+          throw new ForbiddenException(
+            'Upload só permitido para aulas próprias',
+          );
         }
 
         if (escola_id !== req.user.escolaId) {
@@ -84,18 +91,28 @@ export class TusService {
       },
       onUploadCreate: async (req: any, upload: Upload) => {
         // Validar metadata obrigatória
-        const { escola_id, professor_id, turma_id, data, aula_id } = upload.metadata || {};
+        const { escola_id, professor_id, turma_id, data, aula_id } =
+          upload.metadata || {};
 
         if (!escola_id || !professor_id || !turma_id || !data || !aula_id) {
-          throw new BadRequestException('Metadata obrigatória faltando: escola_id, professor_id, turma_id, data, aula_id');
+          throw new BadRequestException(
+            'Metadata obrigatória faltando: escola_id, professor_id, turma_id, data, aula_id',
+          );
         }
 
         // Validar formato de áudio
         const { filetype } = upload.metadata || {};
-        const allowedTypes = ['audio/mpeg', 'audio/wav', 'audio/x-m4a', 'audio/webm'];
+        const allowedTypes = [
+          'audio/mpeg',
+          'audio/wav',
+          'audio/x-m4a',
+          'audio/webm',
+        ];
 
         if (!filetype || !allowedTypes.includes(filetype)) {
-          throw new BadRequestException(`Formato não suportado. Use: mp3, wav, m4a, webm`);
+          throw new BadRequestException(
+            `Formato não suportado. Use: mp3, wav, m4a, webm`,
+          );
         }
 
         // Validação: arquivo não vazio
@@ -109,9 +126,9 @@ export class TusService {
         }
 
         // ✅ CRITICAL FIX: Validar que aula pertence ao professor E escola (ownership validation)
-        const aulaId = aula_id as string;
-        const escolaId = escola_id as string;
-        const professorId = professor_id as string;
+        const aulaId = aula_id;
+        const escolaId = escola_id;
+        const professorId = professor_id;
 
         const aula = await this.prisma.aula.findUnique({
           where: {

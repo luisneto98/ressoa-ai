@@ -127,8 +127,8 @@ export function AulaFormFields({ form }: AulaFormFieldsProps) {
           <FormItem>
             <FormLabel className="text-deep-navy">Planejamento (opcional)</FormLabel>
             <Select
-              onValueChange={field.onChange}
-              value={field.value || ''}
+              onValueChange={(value) => field.onChange(value === '__none__' ? '' : value)}
+              value={field.value || '__none__'}
               disabled={!turmaId || isLoadingPlanejamentos}
             >
               <FormControl>
@@ -145,7 +145,7 @@ export function AulaFormFields({ form }: AulaFormFieldsProps) {
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                <SelectItem value="">Nenhum planejamento</SelectItem>
+                <SelectItem value="__none__">Nenhum planejamento</SelectItem>
                 {planejamentos?.map((planejamento) => (
                   <SelectItem key={planejamento.id} value={planejamento.id}>
                     {planejamento.titulo} ({planejamento.periodo})

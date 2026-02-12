@@ -15,7 +15,6 @@ import type { AulaListItem } from '@/api/aulas';
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,

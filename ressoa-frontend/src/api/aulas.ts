@@ -80,31 +80,31 @@ export interface FetchAulasParams {
 
 // GET turmas do professor autenticado
 export const fetchProfessorTurmas = async (): Promise<Turma[]> => {
-  const response = await apiClient.get('/api/v1/turmas');
+  const response = await apiClient.get('/turmas');
   return response.data;
 };
 
 // GET planejamentos filtrados por turma
 export const fetchTurmaPlanejamentos = async (turmaId: string): Promise<Planejamento[]> => {
-  const response = await apiClient.get(`/api/v1/planejamentos?turma_id=${turmaId}`);
+  const response = await apiClient.get(`/planejamentos?turma_id=${turmaId}`);
   return response.data;
 };
 
 // POST criar aula (AUDIO tipo_entrada)
 export const createAula = async (data: CreateAulaDto): Promise<Aula> => {
-  const response = await apiClient.post('/api/v1/aulas', data);
+  const response = await apiClient.post('/aulas', data);
   return response.data;
 };
 
 // POST upload transcricao
 export const uploadTranscricao = async (data: UploadTranscricaoDto): Promise<Aula> => {
-  const response = await apiClient.post('/api/v1/aulas/upload-transcricao', data);
+  const response = await apiClient.post('/aulas/upload-transcricao', data);
   return response.data;
 };
 
 // POST entrada manual
 export const entradaManual = async (data: EntradaManualDto): Promise<Aula> => {
-  const response = await apiClient.post('/api/v1/aulas/entrada-manual', data);
+  const response = await apiClient.post('/aulas/entrada-manual', data);
   return response.data;
 };
 
@@ -120,16 +120,16 @@ export const fetchAulas = async (params: FetchAulasParams): Promise<AulaListItem
   queryParams.append('page', String(params.page || 1));
   queryParams.append('limit', String(params.limit || 20));
 
-  const response = await apiClient.get(`/api/v1/aulas?${queryParams}`);
+  const response = await apiClient.get(`/aulas?${queryParams}`);
   return response.data;
 };
 
 // POST reprocessar aula com erro
 export const reprocessAula = async (aulaId: string): Promise<void> => {
-  await apiClient.post(`/api/v1/aulas/${aulaId}/reprocessar`);
+  await apiClient.post(`/aulas/${aulaId}/reprocessar`);
 };
 
 // DELETE aula
 export const deleteAula = async (aulaId: string): Promise<void> => {
-  await apiClient.delete(`/api/v1/aulas/${aulaId}`);
+  await apiClient.delete(`/aulas/${aulaId}`);
 };

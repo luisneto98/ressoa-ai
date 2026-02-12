@@ -60,15 +60,15 @@ export const AulasFilters = ({ filters, onFilterChange, onStatusChange, onClearF
         <div className="space-y-2">
           <Label htmlFor="turma-filter">Turma</Label>
           <Select
-            value={filters.turma_id || ''}
-            onValueChange={(value) => onFilterChange('turma_id', value || null)}
+            value={filters.turma_id || '__all__'}
+            onValueChange={(value) => onFilterChange('turma_id', value === '__all__' ? null : value)}
             disabled={turmasLoading}
           >
             <SelectTrigger id="turma-filter">
               <SelectValue placeholder={turmasLoading ? "Carregando..." : "Todas as turmas"} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Todas as turmas</SelectItem>
+              <SelectItem value="__all__">Todas as turmas</SelectItem>
               {turmas.map((turma) => (
                 <SelectItem key={turma.id} value={turma.id}>
                   {turma.nome}

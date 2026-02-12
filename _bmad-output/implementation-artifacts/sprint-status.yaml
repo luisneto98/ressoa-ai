@@ -68,8 +68,8 @@ development_status:
     3-4-frontend-upload-page-with-drag-and-drop: done
     3-5-frontend-aulas-list-with-status-tracking: done
     epic-3-retrospective: optional
-    epic-4: backlog
-    4-1-backend-stt-service-abstraction-layer: backlog
+    epic-4: in-progress
+    4-1-backend-stt-service-abstraction-layer: done
     4-2-backend-whisper-google-speech-integration: backlog
     4-3-backend-transcription-worker-bull-queue: backlog
     4-4-backend-notification-system-email-in-app: backlog

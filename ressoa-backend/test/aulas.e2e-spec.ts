@@ -201,9 +201,12 @@ describe('Aulas CRUD API (E2E) - Story 3.1', () => {
 
   afterAll(async () => {
     // Cleanup: delete transcricoes first (FK dependency)
+    // Note: Transcricao no longer has escola_id, filter via Aula relation
     await prisma.transcricao.deleteMany({
       where: {
-        escola_id: { in: [escola1Id, escola2Id] },
+        aula: {
+          escola_id: { in: [escola1Id, escola2Id] },
+        },
       },
     });
 

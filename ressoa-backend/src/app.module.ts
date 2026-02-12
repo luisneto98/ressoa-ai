@@ -12,6 +12,7 @@ import { PlanejamentoModule } from './modules/planejamento/planejamento.module';
 import { HabilidadesModule } from './modules/habilidades/habilidades.module';
 import { TurmasModule } from './modules/turmas/turmas.module';
 import { AulasModule } from './modules/aulas/aulas.module';
+import { SttModule } from './modules/stt/stt.module';
 import { TestModule } from './modules/test/test.module';
 import { ContextModule } from './common/context/context.module';
 import { EmailModule } from './common/email/email.module';
@@ -26,7 +27,7 @@ const conditionalImports: DynamicModule[] = [];
 
 if (process.env.NODE_ENV !== 'test') {
   // Dynamic import to avoid loading TUS dependencies in test environment
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+
   const { TusModule } = require('./modules/tus/tus.module');
   conditionalImports.push(TusModule);
 }
@@ -53,6 +54,7 @@ if (process.env.NODE_ENV !== 'test') {
     HabilidadesModule, // Habilidades BNCC Query API (Story 2.2)
     TurmasModule, // Turmas Query API (Story 2.3 - blocker resolution)
     AulasModule, // Aula Entity & Basic CRUD (Story 3.1)
+    SttModule, // STT Service Abstraction Layer (Story 4.1)
     // TUS Upload Server (Story 3.2) - dynamically loaded in non-test environments
     ...conditionalImports,
     // RBAC test endpoints - only load in non-production environments

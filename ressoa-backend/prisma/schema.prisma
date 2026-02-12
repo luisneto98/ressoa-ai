@@ -42,6 +42,13 @@ enum StatusProcessamento {
   ERRO
 }
 
+enum ProviderSTT {
+  WHISPER
+  GOOGLE
+  AZURE
+  MANUAL
+}
+
 model Escola {
   id             String   @id @default(uuid())
   nome           String
@@ -56,7 +63,6 @@ model Escola {
   turmas         Turma[]
   planejamentos  Planejamento[]
   aulas          Aula[]
-  transcricoes   Transcricao[]
 
   @@map("escola")
 }
@@ -137,7 +143,7 @@ model Habilidade {
   objeto_conhecimento String?  @db.Text
   versao_bncc         String   @default("2018") // Versionamento (futuro: 2024?)
   ativa               Boolean  @default(true) // Soft delete
-  searchable          String?  @db.Text // tsvector GENERATED ALWAYS (full-text search) - unsupported type in Prisma
+  searchable          Unsupported("tsvector")? @default(dbgenerated("(setweight(to_tsvector('portuguese'::regconfig, COALESCE(codigo, ''::text)), 'A'::\"char\") || setweight(to_tsvector('portuguese'::regconfig, COALESCE(descricao, ''::text)), 'B'::\"char\"))"))
   created_at          DateTime @default(now())
   updated_at          DateTime @updatedAt
 
@@ -147,6 +153,7 @@ model Habilidade {
   @@index([disciplina, ano_inicio])
   @@index([codigo])
   @@index([ativa])
+  @@index([searchable], map: "idx_habilidade_searchable", type: Gin)
   @@map("habilidades")
 }
 
@@ -241,22 +248,23 @@ model PlanejamentoHabilidade {
 // ============================================
 
 model Transcricao {
-  id                String   @id @default(uuid())
-  escola_id         String   // Multi-tenancy
-  aula_id           String?  @unique // FK para Aula (one-to-one bidirectional)
-  texto             String   @db.Text // Transcrição completa
-  provider          String   // 'MANUAL', 'WHISPER', 'GOOGLE_SPEECH'
-  confianca         Float?   // 0.0-1.0 (null para manual completa, 0.5 para resumo manual)
-  duracao_segundos  Int?     // Null para entrada manual
-  created_at        DateTime @default(now())
-  updated_at        DateTime @updatedAt
+  id                       String      @id @default(uuid())
+  aula_id                  String      @unique
+  texto                    String      @db.Text
+  provider                 ProviderSTT
+  idioma                   String      @default("pt-BR")
+  duracao_segundos         Int?
+  confianca                Float?      // 0.0-1.0
+  custo_usd                Float?      // Cost tracking
+  tempo_processamento_ms   Int?
+  metadata_json            Json?       // Provider-specific data
+  created_at               DateTime    @default(now())
+  updated_at               DateTime    @updatedAt
 
-  // Relations
-  escola Escola @relation(fields: [escola_id], references: [id], onDelete: Cascade)
-  aula   Aula?  @relation(fields: [aula_id], references: [id], onDelete: SetNull, "AulaTranscricao")
+  aula Aula @relation(fields: [aula_id], references: [id], onDelete: Cascade)
 
-  @@index([escola_id, aula_id])
-  @@index([provider])
+  @@index([aula_id])
+  @@index([provider, created_at])
   @@map("transcricao")
 }
 
@@ -271,7 +279,6 @@ model Aula {
   status_processamento StatusProcessamento  @default(CRIADA)
   arquivo_url          String?              // S3/MinIO URL
   arquivo_tamanho      Int?                 // bytes
-  transcricao_id       String?   @unique    // FK para Transcricao (one-to-one)
   analise_id           String?              // FK para Analise (future)
   created_at           DateTime             @default(now())
   updated_at           DateTime             @updatedAt
@@ -282,7 +289,7 @@ model Aula {
   professor     Usuario       @relation(fields: [professor_id], references: [id], onDelete: Cascade)
   turma         Turma         @relation(fields: [turma_id], references: [id], onDelete: Cascade)
   planejamento  Planejamento? @relation(fields: [planejamento_id], references: [id], onDelete: SetNull)
-  transcricao   Transcricao?  @relation("AulaTranscricao")
+  transcricao   Transcricao?
   // analise       Analise?      @relation(fields: [analise_id], references: [id])      // Future: Epic 5
 
   @@index([escola_id, professor_id, data])

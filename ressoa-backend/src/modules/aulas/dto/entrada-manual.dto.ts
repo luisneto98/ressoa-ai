@@ -1,4 +1,12 @@
-import { IsUUID, IsDateString, IsOptional, IsString, MinLength, MaxLength, Matches } from 'class-validator';
+import {
+  IsUUID,
+  IsDateString,
+  IsOptional,
+  IsString,
+  MinLength,
+  MaxLength,
+  Matches,
+} from 'class-validator';
 import { IsNotFutureDate } from '../validators/is-not-future-date.validator';
 
 export class EntradaManualDto {
@@ -16,6 +24,8 @@ export class EntradaManualDto {
   @IsString({ message: 'resumo deve ser uma string' })
   @MinLength(200, { message: 'Resumo deve ter no mínimo 200 caracteres' })
   @MaxLength(5000, { message: 'Resumo não pode exceder 5.000 caracteres' })
-  @Matches(/\S{100,}/, { message: 'Resumo deve conter pelo menos 100 caracteres não-brancos' })
+  @Matches(/\S{100,}/, {
+    message: 'Resumo deve conter pelo menos 100 caracteres não-brancos',
+  })
   resumo!: string;
 }

@@ -5,7 +5,7 @@ import {
 } from 'class-validator';
 
 export function IsNotFutureDate(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (object: object, propertyName: string) {
     registerDecorator({
       name: 'isNotFutureDate',
       target: object.constructor,

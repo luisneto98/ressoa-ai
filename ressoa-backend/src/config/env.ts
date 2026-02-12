@@ -22,6 +22,18 @@ export const envSchema = z.object({
   // External APIs - optional until Stories 4.x/5.x (STT/LLM)
   OPENAI_API_KEY: z.string().optional(),
   ANTHROPIC_API_KEY: z.string().optional(),
+  // STT Provider Configuration (Story 4.1)
+  STT_PRIMARY_PROVIDER: z
+    .enum(['WHISPER', 'GOOGLE', 'AZURE'])
+    .default('WHISPER'),
+  STT_FALLBACK_PROVIDER: z
+    .enum(['WHISPER', 'GOOGLE', 'AZURE'])
+    .default('GOOGLE'),
+  // AWS S3 for audio downloads (Story 4.1)
+  AWS_ACCESS_KEY_ID: z.string().optional(),
+  AWS_SECRET_ACCESS_KEY: z.string().optional(),
+  AWS_BUCKET_NAME: z.string().optional(),
+  AWS_REGION: z.string().default('us-east-1'),
   // Email Service - Story 1.5 (Password Recovery)
   EMAIL_PROVIDER: z.enum(['sendgrid', 'ses']).default('sendgrid'),
   EMAIL_API_KEY: z.string().optional(),

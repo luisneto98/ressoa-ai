@@ -340,7 +340,9 @@ describe('TUS Upload Server (E2E) - Story 3.2', () => {
         .send(Buffer.alloc(chunkSize));
 
       expect(chunk1Response.status).toBe(204);
-      expect(chunk1Response.headers['upload-offset']).toBe(chunkSize.toString());
+      expect(chunk1Response.headers['upload-offset']).toBe(
+        chunkSize.toString(),
+      );
 
       // 5. Check progress with HEAD request
       const headResponse = await request(app.getHttpServer())
@@ -361,7 +363,9 @@ describe('TUS Upload Server (E2E) - Story 3.2', () => {
         .send(Buffer.alloc(chunkSize));
 
       expect(chunk2Response.status).toBe(204);
-      expect(chunk2Response.headers['upload-offset']).toBe((chunkSize * 2).toString());
+      expect(chunk2Response.headers['upload-offset']).toBe(
+        (chunkSize * 2).toString(),
+      );
 
       // 7. Final chunk (16MB-25MB)
       const remainingSize = fileSize - chunkSize * 2;

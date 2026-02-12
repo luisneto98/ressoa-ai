@@ -139,7 +139,10 @@ export class HabilidadesService {
       const serieCondition = where.AND.find((cond: any) => cond.ano_inicio);
       if (serieCondition && serieCondition.ano_inicio && serieCondition.OR) {
         const anoInicio = serieCondition.ano_inicio;
-        const serie = typeof anoInicio === 'object' && 'lte' in anoInicio ? anoInicio.lte : anoInicio;
+        const serie =
+          typeof anoInicio === 'object' && 'lte' in anoInicio
+            ? anoInicio.lte
+            : anoInicio;
         whereParams.push(serie);
         conditions.push(
           `(ano_inicio <= $${whereParams.length} AND (ano_fim >= $${whereParams.length} OR ano_fim IS NULL))`,

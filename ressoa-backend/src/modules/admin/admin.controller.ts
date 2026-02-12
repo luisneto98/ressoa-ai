@@ -8,6 +8,7 @@ import {
 import { Roles } from '../../common/decorators/roles.decorator';
 import { RoleUsuario } from '@prisma/client';
 import { AdminService } from './admin.service';
+import { CoberturaService } from '../../cobertura/cobertura.service';
 import {
   CreateEscolaDto,
   CreateUsuarioDto,
@@ -20,7 +21,10 @@ import {
 @Controller('api/v1/admin')
 @Roles(RoleUsuario.ADMIN) // Protege TODOS endpoints deste controller
 export class AdminController {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(
+    private readonly adminService: AdminService,
+    private readonly coberturaService: CoberturaService,
+  ) {}
 
   @Post('schools')
   @HttpCode(HttpStatus.CREATED)
@@ -80,5 +84,29 @@ export class AdminController {
   })
   async createUser(@Body() dto: CreateUsuarioDto): Promise<UsuarioResponseDto> {
     return this.adminService.createUsuario(dto);
+  }
+
+  @Post('refresh-cobertura')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Trigger manual refresh da materialized view cobertura_bimestral (admin only)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Refresh enfileirado com sucesso',
+    schema: {
+      example: { message: 'Refresh enfileirado com sucesso' },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - Token ausente ou inválido',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Usuário não é ADMIN',
+  })
+  async triggerRefreshCobertura(): Promise<{ message: string }> {
+    return this.coberturaService.triggerRefresh();
   }
 }

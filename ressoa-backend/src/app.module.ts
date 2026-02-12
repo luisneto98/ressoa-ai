@@ -19,6 +19,7 @@ import { AnaliseModule } from './modules/analise/analise.module';
 import { NotificacoesModule } from './modules/notificacoes/notificacoes.module';
 import { ProfessoresModule } from './modules/professores/professores.module';
 import { TestModule } from './modules/test/test.module';
+import { CoberturaModule } from './cobertura/cobertura.module';
 import { ContextModule } from './common/context/context.module';
 import { EmailModule } from './common/email/email.module';
 import { TenantInterceptor } from './common/interceptors/tenant.interceptor';
@@ -54,8 +55,11 @@ if (process.env.NODE_ENV !== 'test') {
       redis: {
         host: process.env.REDIS_HOST || 'localhost',
         port: parseInt(process.env.REDIS_PORT || '6379', 10),
-        maxRetriesPerRequest: 3,
-        enableReadyCheck: true,
+        // Bull compatibility: disable enableReadyCheck/maxRetriesPerRequest for bclient/subscriber
+        // See: https://github.com/OptimalBits/bull/issues/1873
+        ...(process.env.NODE_ENV === 'test'
+          ? {}
+          : { maxRetriesPerRequest: 3, enableReadyCheck: true }),
         enableOfflineQueue: true,
       },
       defaultJobOptions: {
@@ -79,6 +83,7 @@ if (process.env.NODE_ENV !== 'test') {
     AnaliseModule, // Pipeline Serial de 5 Prompts (Story 5.2)
     NotificacoesModule, // Notification System (Story 4.4)
     ProfessoresModule, // Professores API - Dashboard de Cobertura (Story 6.5)
+    CoberturaModule, // Cobertura Bimestral Materialized View Management (Story 7.1)
     // TUS Upload Server (Story 3.2) - dynamically loaded in non-test environments
     ...conditionalImports,
     // RBAC test endpoints - only load in non-production environments

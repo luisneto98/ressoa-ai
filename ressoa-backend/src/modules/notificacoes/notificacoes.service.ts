@@ -279,6 +279,126 @@ export class NotificacoesService {
   }
 
   /**
+   * Notify professor when pedagogical analysis is complete
+   * Story 5.5 - Integration Point
+   *
+   * CRITICAL: This method NEVER throws - graceful degradation
+   * - In-app notification MUST be created
+   * - Email failure is logged but doesn't block notification
+   *
+   * @param aulaId - Aula ID that was analyzed
+   */
+  async notifyAnalisePronta(aulaId: string): Promise<void> {
+    try {
+      // 1. Load aula with relations (same pattern as notifyTranscricaoPronta)
+      const aula = await this.prisma.aula.findUnique({
+        where: { id: aulaId },
+        include: {
+          turma: true,
+          professor: {
+            include: {
+              escola: true,
+              perfil_usuario: true,
+            },
+          },
+        },
+      });
+
+      if (!aula) {
+        this.logger.error(
+          `Aula ${aulaId} not found for analysis notification - skipping`,
+        );
+        return;
+      }
+
+      // Validate FK integrity
+      if (aula.professor.escola_id !== aula.escola_id) {
+        this.logger.error(
+          `Data integrity violation: Aula ${aulaId} escola mismatch - skipping analysis notification`,
+        );
+        return;
+      }
+
+      const formattedDate = new Date(aula.data).toLocaleDateString('pt-BR');
+
+      // 2. Create in-app notification (idempotent)
+      const existingNotification = await this.prisma.notificacao.findFirst({
+        where: {
+          usuario_id: aula.professor_id,
+          tipo: TipoNotificacao.ANALISE_PRONTA,
+          metadata_json: {
+            path: ['aulaId'],
+            equals: aulaId,
+          },
+        },
+      });
+
+      if (existingNotification) {
+        this.logger.log(
+          `Analysis notification already exists for aula ${aulaId} - skipping duplicate (idempotent)`,
+        );
+        return;
+      }
+
+      await this.prisma.notificacao.create({
+        data: {
+          usuario_id: aula.professor_id,
+          tipo: TipoNotificacao.ANALISE_PRONTA,
+          titulo: 'Análise pedagógica pronta!',
+          mensagem: `Sua aula de ${aula.turma.nome} (${formattedDate}) foi analisada e está pronta para revisão. Relatório, exercícios e alertas estão disponíveis.`,
+          link: `/aulas/${aulaId}`,
+          metadata_json: {
+            aulaId,
+            turmaId: aula.turma_id,
+            turmaNome: aula.turma.nome,
+          },
+        },
+      });
+
+      this.logger.log(
+        `Analysis notification created for professor ${aula.professor_id} (aula: ${aulaId}, escola: ${aula.escola_id})`,
+      );
+
+      // 3. Send email if preference enabled
+      try {
+        const perfilUsuario = aula.professor.perfil_usuario;
+
+        if (perfilUsuario?.notificacoes_email) {
+          const frontendUrl =
+            process.env.FRONTEND_URL || 'http://localhost:5173';
+          // NOTE: Reusing transcription email template for MVP
+          // Future: Create dedicated analysis completion email template
+          await this.emailService.sendTranscricaoProntaEmail({
+            to: aula.professor.email,
+            professorNome: aula.professor.nome,
+            turmaNome: aula.turma.nome,
+            aulaData: aula.data,
+            link: `${frontendUrl}/aulas/${aulaId}`,
+          });
+        } else {
+          this.logger.log(
+            `Email notification skipped for professor ${aula.professor_id} (preference disabled)`,
+          );
+        }
+      } catch (emailError) {
+        const errorMessage =
+          emailError instanceof Error
+            ? emailError.message
+            : 'Unknown email error';
+        this.logger.error(
+          `Failed to send analysis email for aula ${aulaId}: ${errorMessage}`,
+        );
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(
+        `Failed to create analysis notification for aula ${aulaId}: ${errorMessage}`,
+      );
+    }
+  }
+
+  /**
    * Get count of unread notifications for a user
    * Story 4.4 - AC4: REST API
    *

@@ -79,7 +79,7 @@ development_status:
     5-2-backend-pipeline-serial-de-5-prompts-orquestrador: done # Code review complete - 10 issues found, 6 CRITICAL/MEDIUM fixed, 4 deferred/manual - 14/14 tests passing
     5-3-backend-prompts-1-2-cobertura-bncc-analise-qualitativa: done
     5-4-backend-prompts-3-4-relatorio-exercicios: done # Code review complete - 10 issues found & auto-fixed - 41/41 unit tests passing - E2E tests have circular dependency (deferred Story 5.5)
-    5-5-backend-prompt-5-analysis-worker-alertas-integracao: backlog
+    5-5-backend-prompt-5-analysis-worker-alertas-integracao: review
     epic-5-retrospective: optional
     epic-6: backlog
     6-1-visualizacao-de-analise-completa: backlog

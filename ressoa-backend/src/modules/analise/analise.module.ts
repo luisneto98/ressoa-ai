@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
+import { BullModule } from '@nestjs/bull';
 import { PrismaModule } from '../../prisma/prisma.module';
 import { LlmModule } from '../llm/llm.module';
+import { NotificacoesModule } from '../notificacoes/notificacoes.module';
 import { AnaliseService } from './services/analise.service';
+import { AnalysisProcessorWorker } from '../../workers/analysis-processor.worker';
 
 /**
  * Módulo responsável pela análise pedagógica de aulas usando pipeline de 5 prompts LLM.
@@ -11,20 +14,38 @@ import { AnaliseService } from './services/analise.service';
  * ferramentas genéricas de IA.
  *
  * Pipeline:
- * 1. Cobertura BNCC (Claude)
- * 2. Análise Qualitativa (Claude)
- * 3. Geração de Relatório (Claude)
+ * 1. Cobertura BNCC (Claude Sonnet)
+ * 2. Análise Qualitativa (Claude Sonnet)
+ * 3. Geração de Relatório (Claude Sonnet)
  * 4. Geração de Exercícios (GPT-4 mini - cost optimization)
- * 5. Detecção de Alertas (Claude)
+ * 5. Detecção de Alertas (Claude Haiku - cost optimization)
  *
  * Cada prompt vê outputs dos prompts anteriores (contexto acumulativo).
+ *
+ * **Story 5.5 Additions:**
+ * - AnalysisProcessorWorker: Bull queue worker que orquestra pipeline assíncrono
+ * - Queue 'analysis-pipeline': Processa análises de aulas com retry exponencial
  */
 @Module({
   imports: [
     PrismaModule,
     LlmModule, // Provides PromptService, ClaudeProvider, GPTProvider
+    NotificacoesModule, // Provides NotificacaoService for completion notifications
+    BullModule.registerQueue({
+      name: 'analysis-pipeline',
+      defaultJobOptions: {
+        attempts: 3, // Retry 3x on failure
+        backoff: {
+          type: 'exponential',
+          delay: 5000, // 5s, 25s, 125s
+        },
+        timeout: 120000, // 2 minutes max (5 prompts serial)
+        removeOnComplete: 100, // Keep last 100 for debugging
+        removeOnFail: 1000, // Keep failed jobs for DLQ inspection
+      },
+    }),
   ],
-  providers: [AnaliseService],
-  exports: [AnaliseService],
+  providers: [AnaliseService, AnalysisProcessorWorker],
+  exports: [AnaliseService, BullModule],
 })
 export class AnaliseModule {}

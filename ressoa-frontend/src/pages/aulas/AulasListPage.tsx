@@ -135,12 +135,13 @@ export default function AulasListPage() {
   const hasPrevPage = page > 1;
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="min-h-screen bg-ghost-white">
+      <div className="container mx-auto py-8 px-4">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
         <div>
           <h1 className="text-3xl font-montserrat font-bold text-deep-navy mb-2">Minhas Aulas</h1>
-          <p className="text-gray-600">Visualize e gerencie suas aulas</p>
+          <p className="text-deep-navy/80">Visualize e gerencie suas aulas</p>
         </div>
         <Button onClick={() => navigate('/aulas/upload')}>
           <Plus className="h-4 w-4 mr-2" />
@@ -278,6 +279,7 @@ export default function AulasListPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      </div>
     </div>
   );
 }

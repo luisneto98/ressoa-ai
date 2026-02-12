@@ -158,7 +158,8 @@ export function AulaAnalisePage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6">
+    <div className="min-h-screen bg-ghost-white">
+      <div className="max-w-7xl mx-auto p-6 space-y-6">
       {/* Header com info da aula */}
       <AulaHeader aula={analise.aula} metadata={analise.metadata} />
 
@@ -199,6 +200,7 @@ export function AulaAnalisePage() {
       {analise.alertas?.alertas && analise.alertas.alertas.length > 0 && (
         <AlertasSection alertas={analise.alertas.alertas} />
       )}
+      </div>
     </div>
   );
 }

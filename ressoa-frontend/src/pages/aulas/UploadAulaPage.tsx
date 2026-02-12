@@ -5,7 +5,8 @@ import { ManualEntryTab } from './components/ManualEntryTab';
 
 export default function UploadAulaPage() {
   return (
-    <div className="container mx-auto py-8 px-4 max-w-4xl">
+    <div className="min-h-screen bg-ghost-white">
+      <div className="container mx-auto py-8 px-4 max-w-4xl">
       <h1 className="text-3xl font-montserrat font-bold text-deep-navy mb-6">Nova Aula</h1>
 
       <Tabs defaultValue="audio" className="w-full">
@@ -27,6 +28,7 @@ export default function UploadAulaPage() {
           <ManualEntryTab />
         </TabsContent>
       </Tabs>
+      </div>
     </div>
   );
 }

@@ -160,22 +160,23 @@ export function AulaAnaliseEditPage() {
   const hasChanges = conteudo !== original;
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6">
+    <div className="min-h-screen bg-ghost-white">
+      <div className="max-w-7xl mx-auto p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Editar Relatório</h1>
-          <p className="text-sm text-gray-600 mt-1">
+          <h1 className="text-3xl font-montserrat font-bold text-deep-navy">Editar Relatório</h1>
+          <p className="text-sm text-deep-navy/80 mt-1">
             {/* ✅ HIGH FIX #1: Remove titulo field (doesn't exist in schema) */}
             {analise.aula.turma.nome} - {new Date(analise.aula.data).toLocaleDateString('pt-BR')}
           </p>
         </div>
         <div className="flex items-center gap-2">
           {isSaving && (
-            <span className="text-xs text-gray-500">Salvando...</span>
+            <span className="text-xs text-deep-navy/60">Salvando...</span>
           )}
           {lastSaved && !isSaving && (
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-deep-navy/60">
               Salvo às {lastSaved.toLocaleTimeString('pt-BR')}
             </span>
           )}
@@ -233,9 +234,9 @@ export function AulaAnaliseEditPage() {
           Rejeitar Relatório
         </Button>
         <Button
-          variant="default"
           onClick={() => aprovarMutation.mutate()}
           disabled={aprovarMutation.isPending}
+          className="bg-tech-blue hover:bg-tech-blue/90 text-white"
         >
           {aprovarMutation.isPending ? 'Aprovando...' : 'Aprovar Relatório'}
         </Button>
@@ -248,6 +249,7 @@ export function AulaAnaliseEditPage() {
         onConfirm={(motivo) => rejeitarMutation.mutate(motivo)}
         isPending={rejeitarMutation.isPending}
       />
+      </div>
     </div>
   );
 }

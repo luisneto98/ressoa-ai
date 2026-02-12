@@ -11,7 +11,7 @@ export const PlanejamentoCard = ({ planejamento }: PlanejamentoCardProps) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">{planejamento.turma.nome}</CardTitle>
+        <CardTitle className="text-lg text-deep-navy">{planejamento.turma.nome}</CardTitle>
         <CardDescription>
           {planejamento.turma.disciplina} - {planejamento.turma.serie}º ano
         </CardDescription>

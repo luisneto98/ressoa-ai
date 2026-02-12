@@ -38,8 +38,8 @@ export function AulaHeader({ aula, metadata }: AulaHeaderProps) {
       <CardContent className="pt-6">
         <div className="flex items-start justify-between">
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-gray-900">{aula.titulo}</h1>
-            <div className="flex items-center gap-4 text-sm text-gray-600">
+            <h1 className="text-3xl font-montserrat font-bold text-deep-navy">{aula.titulo}</h1>
+            <div className="flex items-center gap-4 text-sm text-deep-navy/80">
               <div className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />
                 <span>{formatDate(aula.data_aula)}</span>
@@ -60,11 +60,11 @@ export function AulaHeader({ aula, metadata }: AulaHeaderProps) {
             >
               {aula.status}
             </Badge>
-            <div className="flex items-center gap-2 text-xs text-gray-500">
+            <div className="flex items-center gap-2 text-xs text-deep-navy/60">
               <Clock className="h-3 w-3" />
               <span>Processado em {formatDuration(metadata.tempo_processamento_ms)}</span>
             </div>
-            <div className="flex items-center gap-2 text-xs text-gray-500">
+            <div className="flex items-center gap-2 text-xs text-deep-navy/60">
               <TrendingUp className="h-3 w-3" />
               <span>Custo: ${metadata.custo_total_usd.toFixed(3)}</span>
             </div>

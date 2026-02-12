@@ -36,7 +36,7 @@ export function CoberturaPessoalPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-gray-500">Carregando...</div>
+        <div className="text-deep-navy/60">Carregando...</div>
       </div>
     );
   }
@@ -48,7 +48,7 @@ export function CoberturaPessoalPage() {
           <p className="text-red-600 font-semibold mb-2">
             Erro ao carregar dados de cobertura
           </p>
-          <p className="text-gray-500 text-sm">
+          <p className="text-deep-navy/60 text-sm">
             {error instanceof Error ? error.message : 'Erro desconhecido'}
           </p>
         </div>
@@ -60,7 +60,7 @@ export function CoberturaPessoalPage() {
   if (!data || !data.stats || !Array.isArray(data.cobertura)) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-center text-gray-500">
+        <div className="text-center text-deep-navy/60">
           <p>Dados inválidos recebidos do servidor.</p>
         </div>
       </div>
@@ -68,8 +68,9 @@ export function CoberturaPessoalPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">
+    <div className="min-h-screen bg-ghost-white">
+      <div className="max-w-7xl mx-auto p-6">
+      <h1 className="text-3xl font-montserrat font-bold text-deep-navy mb-6">
         Minha Cobertura Curricular
       </h1>
 
@@ -137,15 +138,15 @@ export function CoberturaPessoalPage() {
 
       {/* Tabela de Cobertura por Turma */}
       <Card className="p-6 mb-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <h2 className="text-xl font-semibold text-deep-navy mb-4">
           Cobertura por Turma
         </h2>
         {data.cobertura.length > 0 ? (
           <CoberturaTable cobertura={data.cobertura} />
         ) : (
-          <div className="text-center text-gray-500 py-8">
+          <div className="text-center text-deep-navy/80 py-8">
             <p>Nenhuma turma encontrada para os filtros selecionados.</p>
-            <p className="text-sm mt-2">
+            <p className="text-sm text-deep-navy/60 mt-2">
               Cadastre um planejamento e envie aulas para começar.
             </p>
           </div>
@@ -155,7 +156,7 @@ export function CoberturaPessoalPage() {
       {/* Gráfico de Progresso Temporal */}
       {data.cobertura.length > 0 && (
         <Card className="p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <h2 className="text-xl font-semibold text-deep-navy mb-4">
             Progresso ao Longo do Bimestre
           </h2>
           <CoberturaChart
@@ -164,6 +165,7 @@ export function CoberturaPessoalPage() {
           />
         </Card>
       )}
+      </div>
     </div>
   );
 }

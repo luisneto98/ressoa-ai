@@ -42,11 +42,25 @@ interface AnaliseResponse {
     sinais_engajamento: any;
   };
   relatorio: string;
-  exercicios: Array<{
-    enunciado: string;
-    gabarito: string;
-    nivel_bloom: number;
-  }>;
+  relatorio_original?: string; // ✅ Story 6.2
+  tem_edicao_relatorio?: boolean; // ✅ Story 6.2
+  exercicios: {
+    questoes: Array<{
+      numero: number;
+      enunciado: string;
+      alternativas: Array<{
+        letra: string;
+        texto: string;
+        correta: boolean;
+      }>;
+      habilidade_bncc: string;
+      nivel_bloom: string;
+      explicacao: string;
+    }>;
+  }; // ✅ Story 6.3: Updated structure
+  exercicios_original?: any; // ✅ Story 6.3
+  tem_edicao_exercicios?: boolean; // ✅ Story 6.3
+  status?: string; // ✅ Story 6.2: For readOnly check
   alertas: {
     alertas?: Array<{
       tipo: string;
@@ -127,7 +141,7 @@ export function AulaAnalisePage() {
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="relatorio">Relatório Pedagógico</TabsTrigger>
           <TabsTrigger value="exercicios">
-            Exercícios ({analise.exercicios?.length || 0})
+            Exercícios ({analise.exercicios?.questoes?.length || 0})
           </TabsTrigger>
           <TabsTrigger value="sugestoes">Sugestões</TabsTrigger>
         </TabsList>
@@ -137,7 +151,13 @@ export function AulaAnalisePage() {
         </TabsContent>
 
         <TabsContent value="exercicios">
-          <ExerciciosTab exercicios={analise.exercicios || []} />
+          <ExerciciosTab
+            analiseId={analise.id}
+            aulaId={aulaId!}
+            exercicios={analise.exercicios}
+            temEdicao={analise.tem_edicao_exercicios || false}
+            readOnly={analise.status !== 'AGUARDANDO_REVISAO'}
+          />
         </TabsContent>
 
         <TabsContent value="sugestoes">

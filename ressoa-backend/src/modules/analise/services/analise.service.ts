@@ -377,6 +377,7 @@ export class AnaliseService {
     analiseId: string,
     data: {
       relatorio_editado?: string;
+      exercicios_editado?: any; // ✅ Story 6.3: Support for editing exercises
       status?: StatusAnalise;
       aprovado_em?: Date;
       rejeitado_em?: Date;

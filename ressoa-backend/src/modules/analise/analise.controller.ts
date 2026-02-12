@@ -92,9 +92,17 @@ export class AnaliseController {
       },
       cobertura_bncc: analise.cobertura_json,
       analise_qualitativa: analise.analise_qualitativa_json,
-      relatorio: analise.relatorio_texto,
-      exercicios: analise.exercicios_json,
+      // ✅ Story 6.2: Priorizar versão editada sobre original
+      relatorio: analise.relatorio_editado || analise.relatorio_texto,
+      relatorio_original: analise.relatorio_texto,
+      tem_edicao_relatorio: !!analise.relatorio_editado,
+      // ✅ Story 6.3: Priorizar exercícios editados sobre originais
+      exercicios: analise.exercicios_editado || analise.exercicios_json,
+      exercicios_original: analise.exercicios_json,
+      tem_edicao_exercicios: !!analise.exercicios_editado,
       alertas: analise.alertas_json,
+      // ✅ Story 6.2: Adicionar status para controle de edição
+      status: analise.status,
       metadata: {
         tempo_processamento_ms: analise.tempo_processamento_ms,
         custo_total_usd: analise.custo_total_usd,

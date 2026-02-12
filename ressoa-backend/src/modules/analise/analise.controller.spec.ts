@@ -124,7 +124,7 @@ describe('AnaliseController', () => {
         id: 'analise-1',
         aula: {
           id: 'aula-1',
-          titulo: 'Matemática - Equações',
+          titulo: 'Aula - 6º A',
           data_aula: mockAula.data,
           turma: {
             nome: '6º A',
@@ -136,8 +136,13 @@ describe('AnaliseController', () => {
         cobertura_bncc: mockAnalise.cobertura_json,
         analise_qualitativa: mockAnalise.analise_qualitativa_json,
         relatorio: mockAnalise.relatorio_texto,
+        relatorio_original: mockAnalise.relatorio_texto, // ✅ Story 6.2
+        tem_edicao_relatorio: false, // ✅ Story 6.2
         exercicios: mockAnalise.exercicios_json,
+        exercicios_original: mockAnalise.exercicios_json, // ✅ Story 6.3
+        tem_edicao_exercicios: false, // ✅ Story 6.3
         alertas: mockAnalise.alertas_json,
+        status: mockAnalise.status, // ✅ Story 6.2
         metadata: {
           tempo_processamento_ms: 45000,
           custo_total_usd: 0.198,

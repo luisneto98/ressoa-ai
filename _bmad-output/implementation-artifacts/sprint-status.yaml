@@ -103,9 +103,10 @@ development_status:
     epic-8-retrospective: optional
     epic-9: in-progress
     9-1-layout-shell-sidebar-header-breadcrumbs: done # Code review complete - 4 issues auto-fixed (Slot import, @radix-ui/react-slot dependency, role warnings, root path handling) - 33/33 tests passing
-    9-2-sidebar-responsiva-mobile-drawer-tablet-collapse: backlog
+    9-2-sidebar-responsiva-mobile-drawer-tablet-collapse: review
     9-3-fix-de-rotas-quebradas-e-redirecionamentos: backlog
     9-4-navegacao-cta-botao-nova-aula-destacado: backlog
     9-5-polimento-visual-pages-do-professor: backlog
     9-6-polimento-visual-dashboards-de-gestao-e-admin: backlog
+    9-7-padronizacao-de-icones-substituir-emoticons-por-tabler-icons: backlog
     epic-9-retrospective: optional

@@ -5,9 +5,10 @@ import type { NavItem } from './navigation-config';
 interface SidebarNavItemProps {
   item: NavItem;
   collapsed: boolean;
+  onNavigate?: () => void;
 }
 
-export function SidebarNavItem({ item, collapsed }: SidebarNavItemProps) {
+export function SidebarNavItem({ item, collapsed, onNavigate }: SidebarNavItemProps) {
   const { pathname } = useLocation();
   const isActive = pathname.startsWith(item.path);
   const Icon = item.icon;
@@ -16,6 +17,7 @@ export function SidebarNavItem({ item, collapsed }: SidebarNavItemProps) {
     <li>
       <Link
         to={item.path}
+        onClick={onNavigate}
         aria-current={isActive ? 'page' : undefined}
         className={cn(
           'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 min-h-[44px]',

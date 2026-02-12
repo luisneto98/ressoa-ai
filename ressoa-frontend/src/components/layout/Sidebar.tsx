@@ -1,14 +1,26 @@
+import { useEffect } from 'react';
 import { ChevronsLeft, ChevronsRight, AudioWaveform } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth.store';
 import { useUIStore } from '@/stores/ui.store';
+import { useIsTablet } from '@/hooks/useMediaQuery';
 import { getNavigationForRole } from './navigation-config';
 import { SidebarNavItem } from './SidebarNavItem';
 import { cn } from '@/lib/utils';
 
 export function Sidebar() {
   const user = useAuthStore((s) => s.user);
+  const isTablet = useIsTablet();
   const sidebarCollapsed = useUIStore((s) => s.sidebarCollapsed);
+  const manuallyToggled = useUIStore((s) => s.manuallyToggled);
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
+  const autoCollapseSidebar = useUIStore((s) => s.autoCollapseSidebar);
+
+  // Auto-collapse on tablet if not manually expanded
+  useEffect(() => {
+    if (isTablet && !sidebarCollapsed && !manuallyToggled) {
+      autoCollapseSidebar();
+    }
+  }, [isTablet, sidebarCollapsed, manuallyToggled, autoCollapseSidebar]);
 
   // Handle missing user gracefully (initial load) or unknown roles
   const navItems = getNavigationForRole(user?.role ?? '');

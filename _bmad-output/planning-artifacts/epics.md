@@ -9452,6 +9452,7 @@ export function AdminPromptsQualidadePage() {
 - Sidebar responsiva (mobile drawer, tablet collapsa pra ícones)
 - Rotas quebradas corrigidas (DIRETOR redirect, placeholders, forgot-password)
 - Design system aplicado consistentemente em todas as pages existentes (tipografia, cores, espaçamento)
+- Padronização de ícones (substituição de emoticons por Tabler Icons)
 
 **Technical Notes:**
 - Frontend-only — zero mudanças no backend
@@ -9620,6 +9621,32 @@ So that **a experiência de análise de dados é clara e agradável**.
 
 ---
 
+### Story 9.7: Padronização de Ícones — Substituir Emoticons por Tabler Icons
+
+As a **desenvolvedor/usuário**,
+I want **todos os ícones da aplicação padronizados com uma biblioteca profissional como Tabler Icons**,
+So that **a interface tenha aparência consistente e profissional, sem emoticons misturados**.
+
+**Acceptance Criteria:**
+
+**Given** a aplicação atualmente usa emoticons (📤, 👁️, ✏️, ✅, etc.) em diversos lugares
+**When** substituo por ícones da biblioteca Tabler Icons
+**Then** todos os emoticons são substituídos por ícones vetoriais consistentes
+
+**Given** Tabler Icons está instalado no projeto
+**When** importo ícones
+**Then** uso import individual para otimizar bundle size (ex: `import { Upload } from '@tabler/icons-react'`)
+
+**Given** todos os ícones são substituídos
+**When** renderizam na UI
+**Then** mantêm o mesmo tamanho e cor do design system (classes Tailwind consistentes)
+
+**Given** ícones são usados em diferentes contextos (sidebar, buttons, cards, alerts)
+**When** aplico classes de estilo
+**Then** uso tamanho padrão `size-5` (20px) para inline, `size-6` (24px) para destaque, `size-4` (16px) para small
+
+---
+
 ## Status Geral dos Épicos
 
 - ✅ **Epic 0:** Project Setup & Infrastructure Foundation (5 stories)
@@ -9631,8 +9658,8 @@ So that **a experiência de análise de dados é clara e agradável**.
 - ✅ **Epic 6:** Relatórios & Exercícios para Professor (5 stories)
 - ✅ **Epic 7:** Dashboard de Gestão (Coordenador & Diretor) (5 stories)
 - ✅ **Epic 8:** Administração & Monitoramento Interno (4 stories)
-- 🆕 **Epic 9:** Layout de Navegação & Polimento Visual (6 stories)
+- 🆕 **Epic 9:** Layout de Navegação & Polimento Visual (7 stories)
 
-**Total:** 10 épicos, 50 stories
+**Total:** 10 épicos, 51 stories
 
 ---

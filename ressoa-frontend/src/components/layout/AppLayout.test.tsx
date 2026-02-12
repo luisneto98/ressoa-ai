@@ -1,8 +1,9 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { AppLayout } from './AppLayout';
 import { useAuthStore } from '@/stores/auth.store';
+import { useIsMobile } from '@/hooks/useMediaQuery';
 
 // Mock the child components
 vi.mock('./Sidebar', () => ({
@@ -10,7 +11,15 @@ vi.mock('./Sidebar', () => ({
 }));
 
 vi.mock('./Header', () => ({
-  Header: () => <div data-testid="header">Header Component</div>,
+  Header: ({ showMenuButton }: { showMenuButton?: boolean }) => (
+    <div data-testid="header">
+      Header Component {showMenuButton && '(with menu button)'}
+    </div>
+  ),
+}));
+
+vi.mock('./MobileSidebar', () => ({
+  MobileSidebar: () => <div data-testid="mobile-sidebar">Mobile Sidebar Component</div>,
 }));
 
 // Mock auth store
@@ -27,6 +36,11 @@ vi.mock('@/stores/ui.store', () => ({
     };
     return selector ? selector(state) : state;
   }),
+}));
+
+// Mock useMediaQuery hook
+vi.mock('@/hooks/useMediaQuery', () => ({
+  useIsMobile: vi.fn(() => false), // Default to desktop
 }));
 
 describe('AppLayout', () => {
@@ -88,5 +102,59 @@ describe('AppLayout', () => {
     // Check root div has flex layout
     const rootDiv = container.firstChild as HTMLElement;
     expect(rootDiv).toHaveClass('flex', 'h-screen', 'overflow-hidden');
+  });
+
+  describe('responsive rendering', () => {
+    it('should render desktop Sidebar when isMobile is false', () => {
+      vi.mocked(useIsMobile).mockReturnValue(false);
+
+      render(
+        <BrowserRouter>
+          <AppLayout />
+        </BrowserRouter>
+      );
+
+      expect(screen.getByTestId('sidebar')).toBeInTheDocument();
+      expect(screen.queryByTestId('mobile-sidebar')).not.toBeInTheDocument();
+    });
+
+    it('should render MobileSidebar when isMobile is true', () => {
+      vi.mocked(useIsMobile).mockReturnValue(true);
+
+      render(
+        <BrowserRouter>
+          <AppLayout />
+        </BrowserRouter>
+      );
+
+      expect(screen.getByTestId('mobile-sidebar')).toBeInTheDocument();
+      expect(screen.queryByTestId('sidebar')).not.toBeInTheDocument();
+    });
+
+    it('should pass showMenuButton=true to Header on mobile', () => {
+      vi.mocked(useIsMobile).mockReturnValue(true);
+
+      render(
+        <BrowserRouter>
+          <AppLayout />
+        </BrowserRouter>
+      );
+
+      const header = screen.getByTestId('header');
+      expect(header.textContent).toContain('(with menu button)');
+    });
+
+    it('should pass showMenuButton=false to Header on desktop', () => {
+      vi.mocked(useIsMobile).mockReturnValue(false);
+
+      render(
+        <BrowserRouter>
+          <AppLayout />
+        </BrowserRouter>
+      );
+
+      const header = screen.getByTestId('header');
+      expect(header.textContent).not.toContain('(with menu button)');
+    });
   });
 });

@@ -5,6 +5,7 @@ import { useUIStore } from '@/stores/ui.store';
 import { useIsTablet } from '@/hooks/useMediaQuery';
 import { getNavigationForRole } from './navigation-config';
 import { SidebarNavItem } from './SidebarNavItem';
+import { SidebarCTAItem } from './SidebarCTAItem';
 import { cn } from '@/lib/utils';
 
 export function Sidebar() {
@@ -56,9 +57,15 @@ export function Sidebar() {
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-3 py-4">
         <ul className="flex flex-col gap-1">
-          {navItems.map((item) => (
-            <SidebarNavItem key={item.path} item={item} collapsed={sidebarCollapsed} />
-          ))}
+          {navItems.map((item) =>
+            item.isCTA ? (
+              <li key={item.path}>
+                <SidebarCTAItem item={item} collapsed={sidebarCollapsed} />
+              </li>
+            ) : (
+              <SidebarNavItem key={item.path} item={item} collapsed={sidebarCollapsed} />
+            )
+          )}
         </ul>
       </nav>
 

@@ -11,8 +11,9 @@ describe('navigation-config', () => {
       path: '/minhas-aulas',
     });
     expect(navItems[1]).toMatchObject({
-      label: 'Upload',
+      label: 'Nova Aula',
       path: '/aulas/upload',
+      isCTA: true,
     });
     expect(navItems[2]).toMatchObject({
       label: 'Planejamentos',

@@ -14,12 +14,13 @@ export interface NavItem {
   label: string;
   path: string;
   icon: LucideIcon;
+  isCTA?: boolean; // Indica se item deve ser renderizado como CTA destacado (Focus Orange)
 }
 
 const NAVIGATION: Record<string, NavItem[]> = {
   PROFESSOR: [
     { label: 'Minhas Aulas', path: '/minhas-aulas', icon: Home },
-    { label: 'Upload', path: '/aulas/upload', icon: Upload },
+    { label: 'Nova Aula', path: '/aulas/upload', icon: Upload, isCTA: true },
     { label: 'Planejamentos', path: '/planejamentos', icon: BookOpen },
     { label: 'Minha Cobertura', path: '/dashboard/cobertura-pessoal', icon: BarChart3 },
   ],

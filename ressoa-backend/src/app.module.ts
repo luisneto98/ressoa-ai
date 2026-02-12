@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { BullModule } from '@nestjs/bull';
 import { CacheModule } from '@nestjs/cache-manager';
+import { ScheduleModule } from '@nestjs/schedule';
 import { redisStore } from 'cache-manager-ioredis-yet';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller';
@@ -80,6 +81,7 @@ if (process.env.NODE_ENV !== 'test') {
         timeout: 300000, // 5 minutes max per job
       },
     }),
+    ScheduleModule.forRoot(), // Cron jobs for monitoring alerts (Story 8.1)
     ContextModule, // Global module for multi-tenant context
     EmailModule, // Global module for email service (Story 1.5)
     PrismaModule,

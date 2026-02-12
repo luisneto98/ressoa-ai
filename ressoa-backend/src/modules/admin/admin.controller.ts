@@ -1,4 +1,14 @@
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  Query,
+  HttpCode,
+  HttpStatus,
+  UseInterceptors,
+} from '@nestjs/common';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import {
   ApiTags,
   ApiOperation,
@@ -9,6 +19,11 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { RoleUsuario } from '@prisma/client';
 import { AdminService } from './admin.service';
 import { CoberturaService } from '../../cobertura/cobertura.service';
+import {
+  MonitoramentoSTTService,
+  MonitoramentoSTTResponse,
+} from '../monitoramento/monitoramento-stt.service';
+import { FiltrosMonitoramentoDto } from '../monitoramento/dto/filtros-monitoramento.dto';
 import {
   CreateEscolaDto,
   CreateUsuarioDto,
@@ -24,6 +39,7 @@ export class AdminController {
   constructor(
     private readonly adminService: AdminService,
     private readonly coberturaService: CoberturaService,
+    private readonly monitoramentoSTTService: MonitoramentoSTTService,
   ) {}
 
   @Post('schools')
@@ -108,5 +124,29 @@ export class AdminController {
   })
   async triggerRefreshCobertura(): Promise<{ message: string }> {
     return this.coberturaService.triggerRefresh();
+  }
+
+  @Get('monitoramento/stt')
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(300000) // 5 minutos em ms
+  @ApiOperation({ summary: 'Métricas de monitoramento STT (admin only)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Métricas STT retornadas',
+    schema: {
+      example: {
+        kpis: { total_transcricoes: 100, erros_stt: 3, taxa_sucesso: 97.09, taxa_erro: 2.91, fallback_count: 5, tempo_medio_ms: 15000, confianca_media: 0.92, custo_total_usd: 1.5 },
+        por_provider: [{ provider: 'WHISPER', count: 80, avg_tempo_ms: 14000, avg_confianca: 0.93, avg_custo_usd: 0.012 }],
+        erros_timeline: [{ hora: '2026-02-12T10:00:00.000Z', erros_stt: 1, transcricoes_ok: 25 }],
+        erros_recentes: [{ aula_id: 'uuid', escola_id: 'uuid', data: '2026-02-12', updated_at: '2026-02-12T10:30:00Z', arquivo_tamanho: 5242880, tipo_entrada: 'AUDIO' }],
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Usuário não é ADMIN' })
+  async getMonitoramentoSTT(
+    @Query() filtros: FiltrosMonitoramentoDto,
+  ): Promise<MonitoramentoSTTResponse> {
+    return this.monitoramentoSTTService.getMetricas(filtros.periodo ?? '24h');
   }
 }

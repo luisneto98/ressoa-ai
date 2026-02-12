@@ -16,6 +16,7 @@ import { DashboardCoordenadorProfessorTurmasPage } from '@/pages/dashboard/Dashb
 import { DashboardCoordenadorTurmasPage } from '@/pages/dashboard/DashboardCoordenadorTurmasPage';
 import { DashboardCoordenadorTurmaDetalhesPage } from '@/pages/dashboard/DashboardCoordenadorTurmaDetalhesPage';
 import { DashboardDiretorPage } from '@/pages/dashboard/DashboardDiretorPage';
+import { MonitoramentoSTTPage } from '@/pages/admin/MonitoramentoSTTPage';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 // Create Query Client
@@ -114,6 +115,16 @@ function App() {
                   <p className="text-muted-foreground">(Página em desenvolvimento - Story 1.6)</p>
                 </div>
               </div>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Admin Monitoramento Routes - Story 8.1 */}
+        <Route
+          path="/admin/monitoramento/stt"
+          element={
+            <ProtectedRoute roles={['ADMIN']}>
+              <MonitoramentoSTTPage />
             </ProtectedRoute>
           }
         />

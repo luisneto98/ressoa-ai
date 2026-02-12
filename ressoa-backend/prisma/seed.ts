@@ -252,6 +252,60 @@ async function seedDemoSchool() {
   }
 }
 
+/**
+ * Seed prompts from JSON files in prisma/seeds/prompts
+ * Supports versioning and idempotent upserts
+ */
+async function seedPrompts() {
+  console.log('🧠 Seeding prompts...');
+
+  const promptsDir = join(__dirname, 'seeds', 'prompts');
+  const promptFiles = readdirSync(promptsDir)
+    .filter(f => f.endsWith('.json'))
+    .map(f => join(promptsDir, f));
+
+  if (promptFiles.length === 0) {
+    console.log('⚠️  No prompt JSON files found in', promptsDir);
+    return;
+  }
+
+  // Old hardcoded array replaced with auto-discovery:
+  // const promptFiles = [
+
+  for (const filePath of promptFiles) {
+    const promptData = JSON.parse(readFileSync(filePath, 'utf-8'));
+
+    await prisma.prompt.upsert({
+      where: {
+        nome_versao: {
+          nome: promptData.nome,
+          versao: promptData.versao,
+        },
+      },
+      update: {
+        conteudo: promptData.conteudo,
+        variaveis: promptData.variaveis,
+        modelo_sugerido: promptData.modelo_sugerido,
+        ativo: promptData.ativo,
+        ab_testing: promptData.ab_testing,
+      },
+      create: {
+        nome: promptData.nome,
+        versao: promptData.versao,
+        conteudo: promptData.conteudo,
+        variaveis: promptData.variaveis,
+        modelo_sugerido: promptData.modelo_sugerido,
+        ativo: promptData.ativo,
+        ab_testing: promptData.ab_testing,
+      },
+    });
+
+    console.log(`  ✓ ${promptData.nome} (${promptData.versao})`);
+  }
+
+  console.log('✅ Prompts seeded successfully');
+}
+
 async function seedTurmas() {
   console.log('🌱 Seeding Turmas...');
 
@@ -341,6 +395,9 @@ async function main() {
   await seedDisciplinas();
   await seedAnos();
   await seedHabilidades();
+
+  // Seed Prompts (Story 5.3)
+  await seedPrompts();
 
   // Seed Admin & Demo School (Story 1.6)
   await seedAdmin();

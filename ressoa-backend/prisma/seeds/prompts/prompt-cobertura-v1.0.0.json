@@ -1,0 +1,18 @@
+{
+  "nome": "prompt-cobertura",
+  "versao": "v1.0.0",
+  "modelo_sugerido": "CLAUDE_SONNET",
+  "ativo": true,
+  "ab_testing": false,
+  "variaveis": {
+    "temperature": 0.3,
+    "max_tokens": 2000,
+    "transcricao": "string",
+    "planejamento": "string",
+    "turma": {
+      "serie": "number",
+      "disciplina": "string"
+    }
+  },
+  "conteudo": "Você é um especialista em análise pedagógica e BNCC (Base Nacional Comum Curricular).\n\n**TAREFA:** Analise a transcrição da aula abaixo e identifique quais habilidades BNCC foram abordadas.\n\n**TRANSCRIÇÃO DA AULA:**\n{{transcricao}}\n\n**HABILIDADES PLANEJADAS (do planejamento do professor):**\n{{planejamento}}\n\n**SÉRIE:** {{turma.serie}}º ano\n**DISCIPLINA:** {{turma.disciplina}}\n\n**INSTRUÇÕES:**\n\n1. Para cada habilidade planejada, classifique o nível de cobertura:\n   - **Nível 0 (NÃO COBERTA):** Habilidade não foi abordada nesta aula\n   - **Nível 1 (MENCIONADA):** Habilidade foi apenas citada brevemente, sem desenvolvimento (exemplo: \"hoje vamos falar de frações\" mas não explica)\n   - **Nível 2 (PARCIALMENTE COBERTA):** Habilidade foi explicada com pelo menos 1 exemplo, mas SEM exercícios práticos ou discussão aprofundada\n   - **Nível 3 (APROFUNDADA):** Habilidade foi completamente explicada, com 2+ exemplos, exercícios práticos, e interação com alunos\n\n2. Para cada habilidade coberta (Nível 1, 2 ou 3), extraia **evidências LITERAIS** da transcrição.\n   **IMPORTANTE:** Use trechos EXATOS da transcrição (copie e cole), NÃO paráfrases ou resumos.\n   **LIMITE:** Máximo 3 evidências por habilidade (escolha as mais representativas).\n\n3. Estime o tempo aproximado (em minutos) dedicado a cada habilidade coberta.\n\n4. Identifique habilidades planejadas que NÃO foram cobertas nesta aula.\n\n5. Identifique habilidades EXTRAS (não planejadas) que foram abordadas, se houver.\n\n**REGRAS DE CLASSIFICAÇÃO:**\n- **Nível 1:** Professor menciona conceito sem explicar (ex: \"vamos ver geometria depois\")\n- **Nível 2:** Professor explica + dá 1 exemplo, mas NÃO faz exercícios nem discussão\n- **Nível 3:** Professor explica + 2+ exemplos + exercícios/discussão + interação alunos\n- **Desempate:** Se em dúvida entre dois níveis, escolha o MENOR (seja conservador)\n\n**OUTPUT ESPERADO (JSON válido):**\n{\n  \"analise_cobertura\": [\n    {\n      \"habilidade_codigo\": \"EF06MA01\",\n      \"nivel_cobertura\": 0 | 1 | 2 | 3,\n      \"evidencias\": [\n        \"Trecho literal da transcrição que comprova a cobertura...\",\n        \"Outro trecho literal...\"\n      ],\n      \"observacoes\": \"Notas pedagógicas opcionais\",\n      \"tempo_estimado_minutos\": 15\n    }\n  ],\n  \"habilidades_nao_cobertas\": [\n    \"EF06MA02\",\n    \"EF06MA03\"\n  ],\n  \"habilidades_extras\": [\n    {\n      \"habilidade_codigo\": \"EF06MA10\",\n      \"observacao\": \"Abordada espontaneamente durante exemplo de medidas\"\n    }\n  ],\n  \"resumo_quantitativo\": {\n    \"total_planejadas\": 3,\n    \"cobertas_nivel_2_ou_3\": 1,\n    \"apenas_mencionadas\": 1,\n    \"nao_cobertas\": 1,\n    \"percentual_cobertura\": 33.3\n  }\n}\n\n**ATENÇÃO:**\n- Seja RIGOROSO: Nível 3 exige evidências claras de exercícios E interação\n- Use trechos LITERAIS: Copie e cole exatamente o que foi dito, sem parafrasear\n- Seja CONSERVADOR: Em dúvida, escolha o nível mais baixo\n- **FORMATO DE CÓDIGOS BNCC:** Use formato exato EFXXYYY## onde XX=ano (06-09 com zero-padding), YYY=disciplina (MA para Matemática, LP para Língua Portuguesa, CI para Ciências), ##=número sequencial (01-99 com zero-padding). Exemplos válidos: EF06MA01, EF67LP23, EF69CI03. NUNCA omita zeros (EF6MA1 é INVÁLIDO).\n- Retorne APENAS o JSON, sem texto adicional antes ou depois"
+}

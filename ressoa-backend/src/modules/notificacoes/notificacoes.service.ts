@@ -360,15 +360,14 @@ export class NotificacoesService {
       );
 
       // 3. Send email if preference enabled
+      // MEDIUM FIX (Code Review Issue #8): Use dedicated analysis email template
       try {
         const perfilUsuario = aula.professor.perfil_usuario;
 
         if (perfilUsuario?.notificacoes_email) {
           const frontendUrl =
             process.env.FRONTEND_URL || 'http://localhost:5173';
-          // NOTE: Reusing transcription email template for MVP
-          // Future: Create dedicated analysis completion email template
-          await this.emailService.sendTranscricaoProntaEmail({
+          await this.emailService.sendAnaliseProntaEmail({
             to: aula.professor.email,
             professorNome: aula.professor.nome,
             turmaNome: aula.turma.nome,

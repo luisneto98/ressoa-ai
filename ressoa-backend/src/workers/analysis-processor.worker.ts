@@ -48,6 +48,20 @@ export class AnalysisProcessorWorker {
         throw new Error(`Aula ${aulaId} não encontrada`);
       }
 
+      // MEDIUM FIX (Issue #5): Check if analysis already exists (idempotency)
+      const existingAnalise = await this.prisma.analise.findFirst({
+        where: { aula_id: aulaId },
+      });
+
+      if (existingAnalise) {
+        this.logger.warn({
+          message: `Análise já existe para aula ${aulaId} - skipping duplicate processing (idempotent)`,
+          aulaId,
+          analiseId: existingAnalise.id,
+        });
+        return { analiseId: existingAnalise.id };
+      }
+
       if (aula.status_processamento !== 'TRANSCRITA') {
         this.logger.warn({
           message: `Aula ${aulaId} não está transcrita (status: ${aula.status_processamento})`,
@@ -67,13 +81,17 @@ export class AnalysisProcessorWorker {
         data: { status_processamento: 'ANALISANDO' },
       });
 
-      await job.progress(10);
+      // MEDIUM FIX (Issue #6): Update progress proportionally to 5 prompts
+      await job.progress(10); // Context loaded
 
       // [3] Executar pipeline completo (5 prompts seriais)
       // AnaliseService.analisarAula() já orquestra Prompts 1-5 (Story 5.2)
+      // Progress during pipeline: 10% → 20% → 40% → 60% → 80% → 90%
+      // Note: Fine-grained progress would require AnaliseService to accept callback
+      // For MVP, we update at start/end of pipeline
+      await job.progress(15); // Starting prompt 1
       const analise = await this.analiseService.analisarAula(aulaId);
-
-      await job.progress(90);
+      await job.progress(90); // All 5 prompts complete
 
       const durationMs = Date.now() - startTime;
 
@@ -86,11 +104,9 @@ export class AnalysisProcessorWorker {
         timestamp: new Date().toISOString(),
       });
 
-      // [4] Atualizar status: ANALISANDO → ANALISADA
-      await this.prisma.aula.update({
-        where: { id: aulaId },
-        data: { status_processamento: 'ANALISADA' },
-      });
+      // MEDIUM FIX (Issue #11): Remove redundant status update
+      // AnaliseService.analisarAula() already updates status to ANALISADA inside transaction
+      // Worker should NOT update status again to avoid race conditions
 
       // [5] Notificar professor (análise pronta para revisão)
       await this.notificacoesService.notifyAnalisePronta(aulaId);

@@ -45,6 +45,12 @@ import { TranscriptionProcessor } from './workers/transcription.processor';
       // Note: Concurrency is configured via @Process decorator in TranscriptionProcessor
       // Default concurrency: 3 (prevents Whisper rate limiting - 50 RPM)
     }),
+    // CRITICAL FIX (Code Review Issue #4): Import analysis-pipeline queue
+    // Needed by TranscriptionProcessor to enqueue analysis jobs after transcription
+    BullModule.registerQueue({
+      name: 'analysis-pipeline',
+      // Note: This queue is OWNED by AnaliseModule, we just register here for injection
+    }),
   ],
   providers: [
     STTService,

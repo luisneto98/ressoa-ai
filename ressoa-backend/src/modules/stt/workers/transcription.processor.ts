@@ -6,6 +6,8 @@ import { TranscricaoService } from '../transcricao.service';
 import { NotificacoesService } from '../../notificacoes/notificacoes.service';
 import { ProviderSTT } from '@prisma/client';
 
+// CRITICAL FIX (Code Review Issue #4): Import analysis queue to trigger Epic 5 pipeline
+
 /**
  * Transcription Worker - Processes audio transcription jobs asynchronously.
  *
@@ -34,6 +36,7 @@ export class TranscriptionProcessor {
     private readonly notificacoesService: NotificacoesService,
     private readonly prisma: PrismaService,
     @InjectQueue('transcription') private readonly transcriptionQueue: Queue,
+    @InjectQueue('analysis-pipeline') private readonly analysisQueue: Queue, // CRITICAL FIX (Issue #4)
   ) {}
 
   /**
@@ -72,8 +75,14 @@ export class TranscriptionProcessor {
       await job.progress(0);
 
       // Validate Aula state
+      // CRITICAL FIX (Issue #4): Include escola_id for analysis job payload
       const aula = await this.prisma.aula.findUnique({
         where: { id: aulaId },
+        select: {
+          id: true,
+          status_processamento: true,
+          escola_id: true, // Needed for analysis job
+        },
       });
 
       if (!aula) {
@@ -136,12 +145,26 @@ export class TranscriptionProcessor {
         );
       }
 
-      // TODO Epic 5: Uncomment when analysis worker is ready
-      // Note: For MVP, this is commented to avoid enqueueing jobs for non-existent worker
-      // await this.transcriptionQueue.add('analyze-aula', { aulaId });
-      this.logger.log(
-        `[Job ${job.id}] Transcrição completa. Análise (Epic 5) não implementada - job chaining desabilitado.`,
-      );
+      // CRITICAL FIX (Code Review Issue #4): Enqueue analysis job to trigger Epic 5 pipeline
+      // Story 5.5 COMPLETE - AnalysisProcessorWorker is ready and tested
+      try {
+        await this.analysisQueue.add('analyze-aula', {
+          aulaId,
+          escolaId: aula.escola_id,
+        });
+        this.logger.log(
+          `[Job ${job.id}] Analysis job enqueued successfully for aula ${aulaId}`,
+        );
+      } catch (enqueueError) {
+        const errorMsg =
+          enqueueError instanceof Error
+            ? enqueueError.message
+            : 'Unknown error';
+        this.logger.error(
+          `[Job ${job.id}] Failed to enqueue analysis job for aula ${aulaId}: ${errorMsg}`,
+        );
+        // Don't throw - transcription is complete, analysis can be triggered manually
+      }
 
       return {
         transcricaoId: transcricao.id,

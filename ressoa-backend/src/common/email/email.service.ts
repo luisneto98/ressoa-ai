@@ -15,6 +15,18 @@ export interface TranscricaoProntaEmailData {
   link: string;
 }
 
+/**
+ * Data structure for analysis ready email
+ * Story 5.5 - Code Review Fix #8: Dedicated email template for analysis completion
+ */
+export interface AnaliseProntaEmailData {
+  to: string;
+  professorNome: string;
+  turmaNome: string;
+  aulaData: Date;
+  link: string;
+}
+
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
@@ -136,6 +148,48 @@ export class EmailService {
   }
 
   /**
+   * Send analysis ready email to professor
+   * Story 5.5 - Code Review Fix #8: Dedicated email template
+   *
+   * MEDIUM FIX: Prevents confusion by using dedicated template instead of reusing transcription email
+   *
+   * @param data - Email data (professor info, turma, link)
+   * @returns Promise<void>
+   */
+  async sendAnaliseProntaEmail(data: AnaliseProntaEmailData): Promise<void> {
+    const from = this.configService.get('EMAIL_FROM') || 'noreply@ressoa.ai';
+    const formattedDate = new Date(data.aulaData).toLocaleDateString('pt-BR');
+
+    const msg = {
+      to: data.to,
+      from,
+      subject: 'Análise Pedagógica Pronta - Ressoa AI',
+      html: this.getAnaliseProntaTemplate(data, formattedDate),
+    };
+
+    // PRODUCTION SAFETY: Mock emails in development
+    if (this.isDevelopment || !this.emailEnabled) {
+      this.logger.log(
+        `[MOCK EMAIL] Analysis ready email to ${data.to}\nProfessor: ${data.professorNome}\nTurma: ${data.turmaNome}\nData: ${formattedDate}\nLink: ${data.link}`,
+      );
+      return;
+    }
+
+    try {
+      await sgMail.send(msg);
+      this.logger.log(
+        `Analysis ready email sent successfully to ${data.to} (professor: ${data.professorNome})`,
+      );
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(
+        `Failed to send analysis ready email to ${data.to}: ${errorMessage}`,
+      );
+    }
+  }
+
+  /**
    * Generate HTML template for password reset email
    * Story 1.5 - Task 5: Email Template
    *
@@ -251,6 +305,79 @@ export class EmailService {
           <div style="background-color: #EFF6FF; border-left: 4px solid #2563EB; padding: 15px; margin: 30px 0; border-radius: 4px;">
             <p style="color: #1E40AF; font-size: 14px; margin: 0; line-height: 1.5;">
               💡 <strong>Próximos passos:</strong> Revise a transcrição e aguarde a análise pedagógica automática.
+            </p>
+          </div>
+
+          <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 40px 0;">
+
+          <p style="color: #94A3B8; font-size: 12px; text-align: center; margin: 0;">
+            © ${currentYear} Ressoa AI. Todos os direitos reservados.
+          </p>
+        </div>
+      </body>
+      </html>
+    `;
+  }
+
+  /**
+   * Generate HTML template for analysis ready email
+   * Story 5.5 - Code Review Fix #8: Dedicated template
+   *
+   * @param data - Email data
+   * @param formattedDate - Formatted date string (DD/MM/YYYY)
+   * @returns HTML string
+   */
+  private getAnaliseProntaTemplate(
+    data: AnaliseProntaEmailData,
+    formattedDate: string,
+  ): string {
+    const currentYear = new Date().getFullYear();
+    return `
+      <!DOCTYPE html>
+      <html lang="pt-BR">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Análise Pronta - Ressoa AI</title>
+      </head>
+      <body style="font-family: 'Inter', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #F8FAFC;">
+        <div style="background-color: white; border-radius: 8px; padding: 40px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="color: #0A2647; font-size: 28px; margin: 0; font-weight: 600;">Ressoa AI</h1>
+            <p style="color: #64748B; font-size: 14px; margin-top: 5px;">Inteligência de Aula, Análise e Previsão de Conteúdo</p>
+          </div>
+
+          <h2 style="color: #0A2647; font-size: 20px; margin-bottom: 20px;">Análise Pedagógica Pronta! 🎓</h2>
+
+          <p style="color: #334155; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+            Olá, <strong>${data.professorNome}</strong>!
+          </p>
+
+          <p style="color: #334155; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+            Sua aula de <strong>${data.turmaNome}</strong> (${formattedDate}) foi analisada e está pronta para revisão.
+          </p>
+
+          <div style="background-color: #EFF6FF; border-left: 4px solid #2563EB; padding: 15px; margin: 20px 0; border-radius: 4px;">
+            <p style="color: #1E40AF; font-size: 14px; margin: 0 0 10px 0; line-height: 1.5;">
+              <strong>📊 O que você encontrará:</strong>
+            </p>
+            <ul style="color: #1E40AF; font-size: 14px; margin: 0; padding-left: 20px; line-height: 1.8;">
+              <li>Cobertura de habilidades da BNCC</li>
+              <li>Relatório pedagógico completo</li>
+              <li>Exercícios contextualizados</li>
+              <li>Alertas e sugestões para próxima aula</li>
+            </ul>
+          </div>
+
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${data.link}" style="display: inline-block; background-color: #2563EB; color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: 500;">
+              Ver Análise Completa
+            </a>
+          </div>
+
+          <div style="background-color: #FEF3C7; border-left: 4px solid #F59E0B; padding: 15px; margin: 30px 0; border-radius: 4px;">
+            <p style="color: #92400E; font-size: 14px; margin: 0; line-height: 1.5;">
+              💡 <strong>Lembre-se:</strong> Você pode editar o relatório e os exercícios antes de aprovar.
             </p>
           </div>
 

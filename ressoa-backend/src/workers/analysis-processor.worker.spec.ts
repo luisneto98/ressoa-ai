@@ -44,6 +44,9 @@ describe('AnalysisProcessorWorker', () => {
               findUnique: jest.fn(),
               update: jest.fn(),
             },
+            analise: {
+              findFirst: jest.fn().mockResolvedValue(null), // MEDIUM FIX (Issue #5): Default to no existing analysis
+            },
           },
         },
         {
@@ -96,7 +99,7 @@ describe('AnalysisProcessorWorker', () => {
     });
 
     // Status: TRANSCRITA → ANALISANDO
-    expect(prismaService.aula.update).toHaveBeenNthCalledWith(1, {
+    expect(prismaService.aula.update).toHaveBeenCalledWith({
       where: { id: 'aula-123' },
       data: { status_processamento: 'ANALISANDO' },
     });
@@ -104,11 +107,9 @@ describe('AnalysisProcessorWorker', () => {
     // Execute analysis
     expect(analiseService.analisarAula).toHaveBeenCalledWith('aula-123');
 
-    // Status: ANALISANDO → ANALISADA
-    expect(prismaService.aula.update).toHaveBeenNthCalledWith(2, {
-      where: { id: 'aula-123' },
-      data: { status_processamento: 'ANALISADA' },
-    });
+    // MEDIUM FIX (Issue #11): Worker NO LONGER updates status to ANALISADA
+    // AnaliseService.analisarAula() now does it inside transaction
+    expect(prismaService.aula.update).toHaveBeenCalledTimes(1); // Only ANALISANDO
 
     // Notify professor
     expect(notificacoesService.notifyAnalisePronta).toHaveBeenCalledWith('aula-123');

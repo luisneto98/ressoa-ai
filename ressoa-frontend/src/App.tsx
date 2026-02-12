@@ -9,6 +9,7 @@ import { PlanejamentosListPage } from '@/pages/planejamento/PlanejamentosListPag
 import UploadAulaPage from '@/pages/aulas/UploadAulaPage';
 import AulasListPage from '@/pages/aulas/AulasListPage';
 import { AulaAnalisePage } from '@/pages/aulas/AulaAnalisePage';
+import { AulaAnaliseEditPage } from '@/pages/aulas/AulaAnaliseEditPage';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 // Create Query Client
@@ -131,6 +132,14 @@ function App() {
           element={
             <ProtectedRoute>
               <AulaAnalisePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/aulas/:aulaId/analise/edit"
+          element={
+            <ProtectedRoute>
+              <AulaAnaliseEditPage />
             </ProtectedRoute>
           }
         />

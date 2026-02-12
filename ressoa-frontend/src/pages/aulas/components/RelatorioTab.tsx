@@ -1,12 +1,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import ReactMarkdown from 'react-markdown';
 import { CoberturaBadge } from './CoberturaBadge';
 import { QualitativaCard } from './QualitativaCard';
+import { useToast } from '@/hooks/use-toast';
+import api from '@/lib/api';
 
 interface RelatorioTabProps {
   analise: {
+    // ✅ HIGH FIX #3: Add id field to interface
+    id: string;
     cobertura_bncc: {
       habilidades: Array<{
         codigo: string;
@@ -27,6 +32,29 @@ interface RelatorioTabProps {
 
 export function RelatorioTab({ analise }: RelatorioTabProps) {
   const navigate = useNavigate();
+  const { aulaId } = useParams<{ aulaId: string }>();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  // ✅ HIGH FIX #2: Add approve mutation for direct approval
+  const aprovarMutation = useMutation({
+    mutationFn: () => api.post(`/analises/${analise.id}/aprovar`),
+    onSuccess: (res) => {
+      toast({
+        title: 'Relatório aprovado!',
+        description: `Tempo de revisão: ${res.data.tempo_revisao}s`,
+      });
+      queryClient.invalidateQueries({ queryKey: ['analise', aulaId] });
+      // Stay on same page - analysis tab will show approved status
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Erro ao aprovar',
+        description: error.response?.data?.message || 'Tente novamente',
+        variant: 'destructive',
+      });
+    },
+  });
 
   return (
     <div className="space-y-6">
@@ -87,18 +115,19 @@ export function RelatorioTab({ analise }: RelatorioTabProps) {
 
       {/* Ações: Editar | Aprovar (Story 6.2) */}
       <div className="flex gap-4">
-        <Button variant="outline" disabled
-          title="Funcionalidade será implementada na Story 6.2"
+        <Button
+          variant="outline"
+          onClick={() => navigate('edit')}
         >
           Editar Relatório
         </Button>
+        {/* ✅ HIGH FIX #2: Implement direct approval (não navega para edit) */}
         <Button
           variant="default"
-          disabled
-          title="Funcionalidade será implementada na Story 6.2"('edit')}>
-          Editar Relatório
-        </Button>
-          Aprovar
+          onClick={() => aprovarMutation.mutate()}
+          disabled={aprovarMutation.isPending}
+        >
+          {aprovarMutation.isPending ? 'Aprovando...' : 'Aprovar Sem Editar'}
         </Button>
       </div>
     </div>

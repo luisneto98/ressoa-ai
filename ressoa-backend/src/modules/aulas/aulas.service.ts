@@ -562,4 +562,45 @@ export class AulasService {
       message: 'Aula adicionada à fila de processamento',
     };
   }
+
+  /**
+   * Atualiza status de processamento de uma aula.
+   *
+   * **Story 6.2:** Usado para atualizar aula para APROVADA ou REJEITADA
+   * quando professor aprova/rejeita o relatório.
+   *
+   * **IMPORTANT:** Este método NÃO valida transições de estado.
+   * É usado internamente pelo sistema (analysis-processor, analise-approval).
+   *
+   * @param aulaId ID da aula
+   * @param novoStatus Novo status de processamento
+   * @returns Aula atualizada
+   * @throws NotFoundException se aula não existir
+   */
+  async updateStatus(
+    aulaId: string,
+    novoStatus: StatusProcessamento,
+  ) {
+    const escolaId = this.prisma.getEscolaIdOrThrow();
+
+    // Verify aula exists and belongs to school (multi-tenancy)
+    const aula = await this.prisma.aula.findUnique({
+      where: {
+        id: aulaId,
+        escola_id: escolaId,
+      },
+    });
+
+    if (!aula) {
+      throw new NotFoundException('Aula não encontrada');
+    }
+
+    // Update status
+    return this.prisma.aula.update({
+      where: { id: aulaId },
+      data: {
+        status_processamento: novoStatus,
+      },
+    });
+  }
 }

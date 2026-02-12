@@ -6,7 +6,9 @@ import { NotificacoesModule } from '../notificacoes/notificacoes.module';
 import { AulasModule } from '../aulas/aulas.module';
 import { AnaliseService } from './services/analise.service';
 import { AnaliseController } from './analise.controller';
+import { AnaliseApprovalController } from './analise-approval.controller';
 import { AnalysisProcessorWorker } from '../../workers/analysis-processor.worker';
+import { FeedbackProcessor } from './processors/feedback.processor';
 
 /**
  * Módulo responsável pela análise pedagógica de aulas usando pipeline de 5 prompts LLM.
@@ -31,6 +33,11 @@ import { AnalysisProcessorWorker } from '../../workers/analysis-processor.worker
  * **Story 6.1 Additions:**
  * - AnaliseController: GET /api/v1/aulas/:id/analise endpoint
  * - AulasModule import: Para validar permissões de acesso (professor ownership)
+ *
+ * **Story 6.2 Additions:**
+ * - AnaliseController: PATCH /analises/:id/relatorio, POST /analises/:id/aprovar, POST /analises/:id/rejeitar
+ * - FeedbackProcessor: Bull queue worker que processa feedback implícito (diffs) e explícito (rejeições)
+ * - Queue 'feedback-queue': Processa feedback para melhorar prompts continuamente
  */
 @Module({
   imports: [
@@ -51,9 +58,21 @@ import { AnalysisProcessorWorker } from '../../workers/analysis-processor.worker
         removeOnFail: 1000, // Keep failed jobs for DLQ inspection
       },
     }),
+    BullModule.registerQueue({
+      name: 'feedback-queue',
+      defaultJobOptions: {
+        attempts: 3,
+        backoff: {
+          type: 'exponential',
+          delay: 2000, // 2s, 10s, 50s
+        },
+        removeOnComplete: true, // Remove completed jobs to save memory
+        removeOnFail: false, // Keep failed jobs for inspection
+      },
+    }),
   ],
-  controllers: [AnaliseController],
-  providers: [AnaliseService, AnalysisProcessorWorker],
+  controllers: [AnaliseController, AnaliseApprovalController],
+  providers: [AnaliseService, AnalysisProcessorWorker, FeedbackProcessor],
   exports: [AnaliseService, BullModule],
 })
 export class AnaliseModule {}

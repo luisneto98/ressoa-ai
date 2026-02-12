@@ -1,10 +1,12 @@
 import { Injectable, Logger, NotFoundException, Inject } from '@nestjs/common';
+import { InjectQueue } from '@nestjs/bull';
+import type { Queue } from 'bull';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { PromptService } from '../../llm/services/prompt.service';
 import { ClaudeProvider } from '../../llm/providers/claude.provider';
 import { GPTProvider } from '../../llm/providers/gpt.provider';
 import { LLMProvider } from '../../llm/interfaces/llm-provider.interface';
-import { Analise } from '@prisma/client';
+import { Analise, StatusAnalise } from '@prisma/client';
 
 /**
  * Orquestrador do pipeline serial de 5 prompts para análise pedagógica.
@@ -31,6 +33,7 @@ export class AnaliseService {
     private readonly promptService: PromptService,
     @Inject('CLAUDE_PROVIDER') private readonly claudeProvider: ClaudeProvider,
     @Inject('GPT_PROVIDER') private readonly gptProvider: GPTProvider,
+    @InjectQueue('feedback-queue') private readonly feedbackQueue: Queue,
   ) {}
 
   /**
@@ -324,8 +327,131 @@ export class AnaliseService {
           select: { id: true, texto: true },
         },
         planejamento: {
-          select: { id: true, titulo: true },
+          select: { id: true, bimestre: true },
         },
+      },
+    });
+  }
+
+  /**
+   * Busca análise por ID com validação de multi-tenancy.
+   *
+   * **Story 6.2:** Usado para validar permissões antes de editar/aprovar
+   *
+   * @param analiseId ID da análise
+   * @returns Analise com relações carregadas ou null se não existir
+   */
+  async findOne(analiseId: string) {
+    const escolaId = this.prisma.getEscolaIdOrThrow();
+
+    return this.prisma.analise.findFirst({
+      where: {
+        id: analiseId,
+        aula: {
+          escola_id: escolaId, // ✅ Multi-tenancy enforcement
+        },
+      },
+      include: {
+        aula: {
+          include: {
+            turma: true,
+            professor: {
+              select: { id: true, nome: true, email: true },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  /**
+   * Atualiza campos de uma análise.
+   *
+   * **Story 6.2:** Usado para salvar edições, aprovação e rejeição
+   *
+   * @param analiseId ID da análise
+   * @param data Dados parciais a serem atualizados
+   * @returns Análise atualizada
+   */
+  async update(
+    analiseId: string,
+    data: {
+      relatorio_editado?: string;
+      status?: StatusAnalise;
+      aprovado_em?: Date;
+      rejeitado_em?: Date;
+      motivo_rejeicao?: string;
+      tempo_revisao?: number;
+    },
+  ) {
+    const escolaId = this.prisma.getEscolaIdOrThrow();
+
+    // ✅ Multi-tenancy: Verificar se análise pertence à escola
+    const analise = await this.findOne(analiseId);
+    if (!analise) {
+      throw new NotFoundException('Análise não encontrada');
+    }
+
+    return this.prisma.analise.update({
+      where: { id: analiseId },
+      data,
+    });
+  }
+
+  /**
+   * Enfileira job Bull para calcular diff entre relatório original e editado.
+   *
+   * **Story 6.2:** Feedback implícito para melhorar prompts
+   *
+   * **Job data:**
+   * - analise_id: ID da análise
+   * - original: Texto original (relatorio_texto)
+   * - editado: Texto editado (relatorio_editado)
+   *
+   * **Job processing:**
+   * - Calcula diff usando @sanity/diff-match-patch
+   * - Armazena em tabela FeedbackImplicito (Story 6.2+)
+   * - Usa diff para A/B testing e refine de prompts
+   *
+   * @param data Dados do job { analise_id, original, editado }
+   * @returns Job enfileirado
+   */
+  async enqueueReportDiff(data: { analise_id: string; original: string; editado: string }) {
+    return this.feedbackQueue.add('calculate-report-diff', data, {
+      priority: 2, // Regular priority
+      attempts: 3,
+      backoff: {
+        type: 'exponential',
+        delay: 2000,
+      },
+    });
+  }
+
+  /**
+   * Enfileira job Bull para analisar motivo de rejeição.
+   *
+   * **Story 6.2:** Feedback explícito para melhorar prompts
+   *
+   * **Job data:**
+   * - analise_id: ID da análise rejeitada
+   * - motivo: Texto do motivo de rejeição
+   * - aula_id: ID da aula (para carregar contexto se necessário)
+   *
+   * **Job processing:**
+   * - Analisa motivo com LLM para extrair padrões
+   * - Armazena em tabela FeedbackExplicito (Story 6.2+)
+   * - Identifica problemas recorrentes nos prompts
+   *
+   * @param data Dados do job { analise_id, motivo, aula_id }
+   * @returns Job enfileirado
+   */
+  async enqueueRejectionAnalysis(data: { analise_id: string; motivo: string; aula_id: string }) {
+    return this.feedbackQueue.add('analyze-rejection', data, {
+      priority: 1, // High priority (feedback is critical)
+      attempts: 3,
+      backoff: {
+        type: 'exponential',
+        delay: 2000,
       },
     });
   }

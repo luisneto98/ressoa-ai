@@ -65,6 +65,12 @@ enum ProviderLLM {
   GEMINI_FLASH
 }
 
+enum StatusAnalise {
+  AGUARDANDO_REVISAO // Freshly generated, awaiting professor review
+  APROVADO           // Approved by professor
+  REJEITADO          // Rejected by professor
+}
+
 model Escola {
   id             String   @id @default(uuid())
   nome           String
@@ -297,9 +303,20 @@ model Analise {
   // Outputs dos 5 prompts (pipeline serial)
   cobertura_json           Json     // Prompt 1: { habilidades: [ { codigo, nivel_cobertura, evidencias } ] }
   analise_qualitativa_json Json     // Prompt 2: { bloom_levels, metodologias, adequacao_cognitiva, sinais_engajamento }
-  relatorio_texto          String   @db.Text // Prompt 3: Relatório narrativo formatado em markdown
+  relatorio_texto          String   @db.Text // Prompt 3: Relatório narrativo formatado em markdown (ORIGINAL)
+  relatorio_editado        String?  @db.Text // Versão editada pelo professor (Story 6.2)
   exercicios_json          Json     // Prompt 4: [ { enunciado, gabarito, nivel_bloom, ... } ]
+  exercicios_editado       Json?    // Versão editada (Story 6.3)
   alertas_json             Json     // Prompt 5: [ { tipo, nivel, mensagem, ... } ]
+
+  // Status tracking (Story 6.2)
+  status                   StatusAnalise @default(AGUARDANDO_REVISAO)
+
+  // Approval/Rejection tracking (Story 6.2)
+  aprovado_em              DateTime?
+  rejeitado_em             DateTime?
+  motivo_rejeicao          String?  @db.Text
+  tempo_revisao            Int?     // Seconds between created_at and approval
 
   // Metadata para observability & A/B testing
   prompt_versoes_json      Json     // { cobertura: "v1.0.0", qualitativa: "v1.1.0", ... }
@@ -316,6 +333,7 @@ model Analise {
 
   @@index([aula_id])
   @@index([transcricao_id])
+  @@index([status])
   @@map("analise")
 }
 

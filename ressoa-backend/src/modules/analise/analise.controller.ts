@@ -9,7 +9,8 @@ import {
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
-import { CurrentUser, AuthenticatedUser } from '../auth/decorators/current-user.decorator';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import type { AuthenticatedUser } from '../auth/decorators/current-user.decorator';
 import { AnaliseService } from './services/analise.service';
 import { AulasService } from '../aulas/aulas.service';
 
@@ -80,7 +81,7 @@ export class AnaliseController {
       id: analise.id,
       aula: {
         id: aula.id,
-        titulo: aula.titulo || `Aula - ${aula.turma.nome}`,
+        titulo: `Aula - ${aula.turma.nome}`,
         data_aula: aula.data,
         turma: {
           nome: aula.turma.nome,

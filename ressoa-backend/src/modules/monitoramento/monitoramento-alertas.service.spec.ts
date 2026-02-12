@@ -1,11 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MonitoramentoAlertasService } from './monitoramento-alertas.service';
 import { MonitoramentoSTTService } from './monitoramento-stt.service';
+import { MonitoramentoAnaliseService } from './monitoramento-analise.service';
 import { Logger } from '@nestjs/common';
 
 describe('MonitoramentoAlertasService', () => {
   let service: MonitoramentoAlertasService;
   let mockSTTService: jest.Mocked<Pick<MonitoramentoSTTService, 'getTaxaErroUltimaHora'>>;
+  let mockAnaliseService: jest.Mocked<Pick<MonitoramentoAnaliseService, 'getQueueWaitingCount'>>;
   let loggerWarnSpy: jest.SpyInstance;
   let loggerErrorSpy: jest.SpyInstance;
 
@@ -14,12 +16,20 @@ describe('MonitoramentoAlertasService', () => {
       getTaxaErroUltimaHora: jest.fn(),
     };
 
+    mockAnaliseService = {
+      getQueueWaitingCount: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MonitoramentoAlertasService,
         {
           provide: MonitoramentoSTTService,
           useValue: mockSTTService,
+        },
+        {
+          provide: MonitoramentoAnaliseService,
+          useValue: mockAnaliseService,
         },
       ],
     }).compile();
@@ -125,6 +135,67 @@ describe('MonitoramentoAlertasService', () => {
       expect(loggerErrorSpy).toHaveBeenCalledWith(
         'Falha ao verificar taxa de erro STT',
         expect.stringContaining('Database connection failed'),
+      );
+      expect(loggerWarnSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('verificarFilaAnalise', () => {
+    it('should log warning when queue waiting > 50', async () => {
+      mockAnaliseService.getQueueWaitingCount.mockResolvedValueOnce(75);
+
+      await service.verificarFilaAnalise();
+
+      expect(loggerWarnSpy).toHaveBeenCalledTimes(1);
+      expect(loggerWarnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('75 jobs aguardando'),
+        expect.objectContaining({ waiting: 75, threshold: 50 }),
+      );
+    });
+
+    it('should NOT log when queue waiting <= 50', async () => {
+      mockAnaliseService.getQueueWaitingCount.mockResolvedValueOnce(30);
+
+      await service.verificarFilaAnalise();
+
+      expect(loggerWarnSpy).not.toHaveBeenCalled();
+    });
+
+    it('should NOT log when queue waiting is exactly 50', async () => {
+      mockAnaliseService.getQueueWaitingCount.mockResolvedValueOnce(50);
+
+      await service.verificarFilaAnalise();
+
+      expect(loggerWarnSpy).not.toHaveBeenCalled();
+    });
+
+    it('should NOT log when queue is empty', async () => {
+      mockAnaliseService.getQueueWaitingCount.mockResolvedValueOnce(0);
+
+      await service.verificarFilaAnalise();
+
+      expect(loggerWarnSpy).not.toHaveBeenCalled();
+    });
+
+    it('should log when queue has 51 jobs (just above threshold)', async () => {
+      mockAnaliseService.getQueueWaitingCount.mockResolvedValueOnce(51);
+
+      await service.verificarFilaAnalise();
+
+      expect(loggerWarnSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should log error and not crash when service throws', async () => {
+      mockAnaliseService.getQueueWaitingCount.mockRejectedValueOnce(
+        new Error('Redis connection failed'),
+      );
+
+      await expect(service.verificarFilaAnalise()).resolves.not.toThrow();
+
+      expect(loggerErrorSpy).toHaveBeenCalledTimes(1);
+      expect(loggerErrorSpy).toHaveBeenCalledWith(
+        'Falha ao verificar fila de análise',
+        expect.stringContaining('Redis connection failed'),
       );
       expect(loggerWarnSpy).not.toHaveBeenCalled();
     });

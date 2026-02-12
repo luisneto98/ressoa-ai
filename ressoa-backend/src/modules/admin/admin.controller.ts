@@ -23,6 +23,10 @@ import {
   MonitoramentoSTTService,
   MonitoramentoSTTResponse,
 } from '../monitoramento/monitoramento-stt.service';
+import {
+  MonitoramentoAnaliseService,
+  MonitoramentoAnaliseResponse,
+} from '../monitoramento/monitoramento-analise.service';
 import { FiltrosMonitoramentoDto } from '../monitoramento/dto/filtros-monitoramento.dto';
 import {
   CreateEscolaDto,
@@ -40,6 +44,7 @@ export class AdminController {
     private readonly adminService: AdminService,
     private readonly coberturaService: CoberturaService,
     private readonly monitoramentoSTTService: MonitoramentoSTTService,
+    private readonly monitoramentoAnaliseService: MonitoramentoAnaliseService,
   ) {}
 
   @Post('schools')
@@ -148,5 +153,28 @@ export class AdminController {
     @Query() filtros: FiltrosMonitoramentoDto,
   ): Promise<MonitoramentoSTTResponse> {
     return this.monitoramentoSTTService.getMetricas(filtros.periodo ?? '24h');
+  }
+
+  @Get('monitoramento/analise')
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(300000) // 5 minutos em ms
+  @ApiOperation({ summary: 'Métricas de monitoramento de análise pedagógica (admin only)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Métricas de análise retornadas',
+    schema: {
+      example: {
+        kpis: { total: 50, tempo_medio_s: 45.2, custo_medio_usd: 0.12, tempo_revisao_medio_s: 180 },
+        por_status: [{ status: 'AGUARDANDO_REVISAO', count: 20 }, { status: 'APROVADO', count: 25 }, { status: 'REJEITADO', count: 5 }],
+        queue_stats: { waiting: 3, active: 1, completed: 100, failed: 2, delayed: 0 },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Usuário não é ADMIN' })
+  async getMonitoramentoAnalise(
+    @Query() filtros: FiltrosMonitoramentoDto,
+  ): Promise<MonitoramentoAnaliseResponse> {
+    return this.monitoramentoAnaliseService.getMetricas(filtros.periodo ?? '24h');
   }
 }

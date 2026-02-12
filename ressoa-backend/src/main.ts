@@ -8,8 +8,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
 
-  // Global prefix
-  app.setGlobalPrefix('api/v1');
+  // Global prefix (exclude Bull Board UI route so it stays at /admin/queues)
+  app.setGlobalPrefix('api/v1', {
+    exclude: ['admin/queues', 'admin/queues/*path'],
+  });
 
   // CORS
   app.enableCors({

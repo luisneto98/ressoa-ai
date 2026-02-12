@@ -97,7 +97,7 @@ development_status:
     epic-7-retrospective: optional
     epic-8: in-progress
     8-1-dashboard-de-monitoramento-de-stt: done # Code review complete - 7 issues auto-fixed (3 HIGH, 4 MEDIUM) + 1 test added - 23/23 tests passing
-    8-2-dashboard-de-monitoramento-de-analise-pedagogica: backlog
+    8-2-dashboard-de-monitoramento-de-analise-pedagogica: done # Code review complete - 1 HIGH fix (Bull Board global prefix exclusion) + 1 LOW fix (React keys) - 27/27 tests passing
     8-3-dashboard-de-custos-por-escola: backlog
     8-4-dashboard-de-qualidade-de-prompts-a-b-testing: backlog
     epic-8-retrospective: optional

@@ -2,6 +2,9 @@ import { Module, DynamicModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { BullModule } from '@nestjs/bull';
+import { BullBoardModule } from '@bull-board/nestjs';
+import { ExpressAdapter } from '@bull-board/express';
+import { BullAdapter } from '@bull-board/api/bullAdapter';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ScheduleModule } from '@nestjs/schedule';
 import { redisStore } from 'cache-manager-ioredis-yet';
@@ -30,6 +33,7 @@ import { TenantInterceptor } from './common/interceptors/tenant.interceptor';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { envSchema } from './config/env';
+import { bullBoardAuthMiddleware } from './common/middleware/bull-board-auth.middleware';
 
 // Conditionally import TusModule only in non-test environments
 // This avoids Jest issues with ESM dependencies (@tus/server uses srvx which is ESM-only)
@@ -81,6 +85,18 @@ if (process.env.NODE_ENV !== 'test') {
         timeout: 300000, // 5 minutes max per job
       },
     }),
+    // Bull Board UI for queue monitoring (Story 8.2)
+    BullBoardModule.forRoot({
+      route: '/admin/queues',
+      adapter: ExpressAdapter,
+      middleware: bullBoardAuthMiddleware,
+    }),
+    BullBoardModule.forFeature(
+      { name: 'transcription', adapter: BullAdapter },
+      { name: 'analysis-pipeline', adapter: BullAdapter },
+      { name: 'feedback-queue', adapter: BullAdapter },
+      { name: 'refresh-cobertura-queue', adapter: BullAdapter },
+    ),
     ScheduleModule.forRoot(), // Cron jobs for monitoring alerts (Story 8.1)
     ContextModule, // Global module for multi-tenant context
     EmailModule, // Global module for email service (Story 1.5)

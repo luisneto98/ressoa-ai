@@ -56,6 +56,15 @@ enum TipoNotificacao {
   SISTEMA
 }
 
+enum ProviderLLM {
+  CLAUDE_SONNET
+  CLAUDE_HAIKU
+  GPT4_TURBO
+  GPT4_MINI
+  GEMINI_PRO
+  GEMINI_FLASH
+}
+
 model Escola {
   id             String   @id @default(uuid())
   nome           String
@@ -224,6 +233,7 @@ model Planejamento {
   turma                  Turma    @relation(fields: [turma_id], references: [id], onDelete: Cascade)
   habilidades            PlanejamentoHabilidade[]
   aulas                  Aula[]
+  analises               Analise[] // Análises que usaram este planejamento
 
   @@unique([turma_id, bimestre, ano_letivo]) // RN-PLAN-04: Sem duplicatas
   @@index([escola_id])
@@ -270,11 +280,43 @@ model Transcricao {
   created_at               DateTime    @default(now())
   updated_at               DateTime    @updatedAt
 
-  aula Aula @relation(fields: [aula_id], references: [id], onDelete: Cascade)
+  aula     Aula      @relation(fields: [aula_id], references: [id], onDelete: Cascade)
+  analises Analise[] // A transcricao pode ter múltiplas análises (reprocessamento)
 
   @@index([aula_id])
   @@index([provider, created_at])
   @@map("transcricao")
+}
+
+model Analise {
+  id                       String   @id @default(uuid())
+  aula_id                  String   @unique // One analysis per aula (current implementation)
+  transcricao_id           String
+  planejamento_id          String?  // Nullable - aula pode não ter planejamento
+
+  // Outputs dos 5 prompts (pipeline serial)
+  cobertura_json           Json     // Prompt 1: { habilidades: [ { codigo, nivel_cobertura, evidencias } ] }
+  analise_qualitativa_json Json     // Prompt 2: { bloom_levels, metodologias, adequacao_cognitiva, sinais_engajamento }
+  relatorio_texto          String   @db.Text // Prompt 3: Relatório narrativo formatado em markdown
+  exercicios_json          Json     // Prompt 4: [ { enunciado, gabarito, nivel_bloom, ... } ]
+  alertas_json             Json     // Prompt 5: [ { tipo, nivel, mensagem, ... } ]
+
+  // Metadata para observability & A/B testing
+  prompt_versoes_json      Json     // { cobertura: "v1.0.0", qualitativa: "v1.1.0", ... }
+  custo_total_usd          Float    // Sum of 5 prompts
+  tempo_processamento_ms   Int      // Total pipeline time
+
+  created_at               DateTime @default(now())
+  updated_at               DateTime @updatedAt
+
+  // Relations
+  aula         Aula         @relation(fields: [aula_id], references: [id], onDelete: Cascade)
+  transcricao  Transcricao  @relation(fields: [transcricao_id], references: [id])
+  planejamento Planejamento? @relation(fields: [planejamento_id], references: [id])
+
+  @@index([aula_id])
+  @@index([transcricao_id])
+  @@map("analise")
 }
 
 model Aula {
@@ -288,7 +330,6 @@ model Aula {
   status_processamento StatusProcessamento  @default(CRIADA)
   arquivo_url          String?              // S3/MinIO URL
   arquivo_tamanho      Int?                 // bytes
-  analise_id           String?              // FK para Analise (future)
   created_at           DateTime             @default(now())
   updated_at           DateTime             @updatedAt
   deleted_at           DateTime?            // Soft delete (LGPD compliance)
@@ -299,13 +340,34 @@ model Aula {
   turma         Turma         @relation(fields: [turma_id], references: [id], onDelete: Cascade)
   planejamento  Planejamento? @relation(fields: [planejamento_id], references: [id], onDelete: SetNull)
   transcricao   Transcricao?
-  // analise       Analise?      @relation(fields: [analise_id], references: [id])      // Future: Epic 5
+  analise       Analise?      // One-to-one relation (analise links back to aula)
 
   @@index([escola_id, professor_id, data])
   @@index([status_processamento])
   @@index([turma_id, data])
   @@index([deleted_at])
   @@map("aula")
+}
+
+// ============================================
+// Domínio AI/LLM - Prompts Versionados
+// ============================================
+
+model Prompt {
+  id              String       @id @default(uuid())
+  nome            String       // "prompt-cobertura", "prompt-qualitativa", etc
+  versao          String       // "v1.0.0", "v1.1.0", etc
+  conteudo        String       @db.Text
+  variaveis       Json?        // { transcricao, planejamento, habilidades, ... }
+  modelo_sugerido ProviderLLM? // CLAUDE, GPT, GEMINI
+  ativo           Boolean      @default(false)
+  ab_testing      Boolean      @default(false) // Se true, usa split 50/50 com versão anterior
+  created_at      DateTime     @default(now())
+  updated_at      DateTime     @updatedAt
+
+  @@unique([nome, versao])
+  @@index([nome, ativo])
+  @@map("prompt")
 }
 
 // ============================================

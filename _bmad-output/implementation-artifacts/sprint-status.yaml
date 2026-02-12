@@ -74,9 +74,9 @@ development_status:
     4-3-backend-transcription-worker-bull-queue: done
     4-4-backend-notification-system-email-in-app: done # Code review complete - 6 HIGH + 2 MEDIUM issues fixed - needs E2E testing
     epic-4-retrospective: optional
-    epic-5: backlog
-    5-1-backend-llm-service-abstraction-prompt-versioning: backlog
-    5-2-backend-pipeline-serial-de-5-prompts-orquestrador: backlog
+    epic-5: in-progress
+    5-1-backend-llm-service-abstraction-prompt-versioning: done # Code review complete - 9 issues found, 6 CRITICAL/MEDIUM fixed, 3 LOW accepted - all tests passing
+    5-2-backend-pipeline-serial-de-5-prompts-orquestrador: done # Code review complete - 10 issues found, 6 CRITICAL/MEDIUM fixed, 4 deferred/manual - 14/14 tests passing
     5-3-backend-prompts-1-2-cobertura-bncc-analise-qualitativa: backlog
     5-4-backend-prompts-3-4-relatorio-exercicios: backlog
     5-5-backend-prompt-5-analysis-worker-alertas-integracao: backlog

@@ -56,7 +56,7 @@ export function QuestaoCard({ questao, showGabarito = false }: QuestaoCardProps)
       </div>
 
       {/* Enunciado */}
-      <h3 className="font-semibold mb-3 text-gray-900">
+      <h3 className="font-semibold mb-3 text-deep-navy">
         {questao.numero}. {questao.enunciado}
       </h3>
 

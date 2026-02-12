@@ -1,6 +1,6 @@
 # Story 9.5: Polimento Visual — Pages do Professor
 
-Status: review
+Status: done
 
 ## Story
 
@@ -720,6 +720,32 @@ Claude Sonnet 4.5 (claude-sonnet-4-5-20250929)
 
 N/A - Visual styling changes only, no debugging required.
 
+### Code Review Session (2026-02-12)
+
+**Reviewer Agent:** Claude Sonnet 4.5 (adversarial mode)
+**Issues Found:** 14 total (8 HIGH, 4 MEDIUM, 2 LOW)
+**Auto-Fix Applied:** ✅ All HIGH + MEDIUM issues fixed immediately
+
+**Critical Findings:**
+1. **AC #1 VIOLATION**: 8 arquivos com `text-gray-900` em componentes de análise de aula (ExerciciosTab, RelatorioTab, SugestoesTab, AlertasSection, QualitativaCard, CoberturaBadge, QuestaoCard, PrioridadeCard)
+2. **AC #1 VIOLATION**: Faltava `font-montserrat` em todos os H2 headers
+3. **AC #2 VIOLATION**: Faltava responsividade `md:text-4xl` em H1 headers
+4. **AC #3 VIOLATION**: Loading state genérico ("Carregando...") em vez de contexto específico
+
+**All Issues Fixed:**
+- ✅ `text-gray-900` → `text-deep-navy` em 8 componentes
+- ✅ `prose-headings:text-gray-900` → `prose-headings:text-deep-navy` em RelatorioTab
+- ✅ Adicionado `font-montserrat` em 6 H2 headers
+- ✅ Adicionado `md:text-4xl` em 4 H1 headers
+- ✅ Melhorada mensagem de loading em CoberturaPessoalPage (contexto específico)
+
+**Validation:**
+- ✅ 132/132 testes unitários passando (sem regressões)
+- ✅ Build de produção bem-sucedido (warning de chunk size aceitável)
+- ✅ Contraste WCAG AAA mantido (deep-navy on ghost-white = 14.8:1)
+
+---
+
 ### Completion Notes List
 
 ✅ **Tipografia padronizada** (Task 1):
@@ -782,10 +808,26 @@ N/A - Visual styling changes only, no debugging required.
 5. ressoa-frontend/src/pages/aulas/AulaAnaliseEditPage.tsx
 6. ressoa-frontend/src/pages/planejamento/PlanejamentosListPage.tsx (apenas verificação - já correto)
 
-**Componentes modificados (3 arquivos):**
+**Componentes modificados (13 arquivos):**
 7. ressoa-frontend/src/pages/aulas/components/AulaHeader.tsx
 8. ressoa-frontend/src/pages/aulas/components/AulasListEmpty.tsx
 9. ressoa-frontend/src/pages/dashboard/components/StatCard.tsx
 10. ressoa-frontend/src/pages/planejamento/components/PlanejamentoCard.tsx
+11. ressoa-frontend/src/pages/aulas/components/ExerciciosTab.tsx (CODE REVIEW FIX)
+12. ressoa-frontend/src/pages/aulas/components/RelatorioTab.tsx (CODE REVIEW FIX)
+13. ressoa-frontend/src/pages/aulas/components/SugestoesTab.tsx (CODE REVIEW FIX)
+14. ressoa-frontend/src/pages/aulas/components/AlertasSection.tsx (CODE REVIEW FIX)
+15. ressoa-frontend/src/pages/aulas/components/QualitativaCard.tsx (CODE REVIEW FIX)
+16. ressoa-frontend/src/pages/aulas/components/CoberturaBadge.tsx (CODE REVIEW FIX)
+17. ressoa-frontend/src/pages/aulas/components/QuestaoCard.tsx (CODE REVIEW FIX)
+18. ressoa-frontend/src/pages/aulas/components/PrioridadeCard.tsx (CODE REVIEW FIX)
 
-**Total:** 10 arquivos modificados (9 editados + 1 verificado)
+**Total:** 18 arquivos modificados (17 editados + 1 verificado)
+
+**Code Review Fixes Applied:**
+- ✅ Fixed 8 HIGH issues: `text-gray-900` → `text-deep-navy` in all Aula analysis components
+- ✅ Fixed 4 MEDIUM issues: Added `font-montserrat` to all H2 headers + responsive `md:text-4xl` to all H1 headers
+- ✅ Fixed 1 MEDIUM issue: Improved loading state message in CoberturaPessoalPage (Radical Transparency)
+- ✅ Fixed 1 MEDIUM issue: `prose-headings:text-gray-900` → `prose-headings:text-deep-navy` in RelatorioTab
+- ✅ All 132 unit tests passing (no regressions)
+- ✅ Production build successful (chunk size warning acceptable for MVP)

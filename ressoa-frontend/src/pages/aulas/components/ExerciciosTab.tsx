@@ -124,7 +124,7 @@ export function ExerciciosTab({
     <Card className="p-6">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">Exercícios Contextuais</h2>
+          <h2 className="text-xl font-montserrat font-semibold text-deep-navy">Exercícios Contextuais</h2>
           {temEdicao && (
             <p className="text-sm text-blue-600 flex items-center gap-1 mt-1">
               <CheckCircle2 className="h-4 w-4" />

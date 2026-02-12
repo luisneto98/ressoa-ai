@@ -111,7 +111,7 @@ export function RelatorioTab({ analise }: RelatorioTabProps) {
           <CardTitle>Relatório da Aula</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="prose max-w-none prose-headings:text-gray-900 prose-p:text-gray-700">
+          <div className="prose max-w-none prose-headings:text-deep-navy prose-p:text-deep-navy/80">
             <ReactMarkdown>{analise.relatorio}</ReactMarkdown>
           </div>
         </CardContent>

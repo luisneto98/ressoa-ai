@@ -7,7 +7,7 @@ export default function UploadAulaPage() {
   return (
     <div className="min-h-screen bg-ghost-white">
       <div className="container mx-auto py-8 px-4 max-w-4xl">
-      <h1 className="text-3xl font-montserrat font-bold text-deep-navy mb-6">Nova Aula</h1>
+      <h1 className="text-3xl md:text-4xl font-montserrat font-bold text-deep-navy mb-6">Nova Aula</h1>
 
       <Tabs defaultValue="audio" className="w-full">
         <TabsList className="grid w-full grid-cols-1 md:grid-cols-3 gap-2">

@@ -55,7 +55,7 @@ export function PrioridadeCard({ prioridade }: PrioridadeCardProps) {
       </div>
 
       {/* Descrição */}
-      <h4 className="font-semibold text-gray-900 mb-2">{prioridade.descricao}</h4>
+      <h4 className="font-semibold text-deep-navy mb-2">{prioridade.descricao}</h4>
       <p className="text-sm text-gray-600 mb-3">{prioridade.justificativa}</p>
 
       {/* Recursos Sugeridos */}

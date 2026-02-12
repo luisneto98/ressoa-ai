@@ -165,7 +165,7 @@ export function AulaAnaliseEditPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-montserrat font-bold text-deep-navy">Editar Relatório</h1>
+          <h1 className="text-3xl md:text-4xl font-montserrat font-bold text-deep-navy">Editar Relatório</h1>
           <p className="text-sm text-deep-navy/80 mt-1">
             {/* ✅ HIGH FIX #1: Remove titulo field (doesn't exist in schema) */}
             {analise.aula.turma.nome} - {new Date(analise.aula.data).toLocaleDateString('pt-BR')}

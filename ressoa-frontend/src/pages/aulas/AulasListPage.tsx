@@ -140,7 +140,7 @@ export default function AulasListPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-montserrat font-bold text-deep-navy mb-2">Minhas Aulas</h1>
+          <h1 className="text-3xl md:text-4xl font-montserrat font-bold text-deep-navy mb-2">Minhas Aulas</h1>
           <p className="text-deep-navy/80">Visualize e gerencie suas aulas</p>
         </div>
         <Button onClick={() => navigate('/aulas/upload')}>

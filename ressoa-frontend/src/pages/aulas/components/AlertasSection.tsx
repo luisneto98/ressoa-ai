@@ -43,7 +43,7 @@ export function AlertasSection({ alertas }: AlertasSectionProps) {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold text-gray-900">Alertas Pedagógicos</h2>
+      <h2 className="text-2xl font-montserrat font-bold text-deep-navy">Alertas Pedagógicos</h2>
 
       <div className="space-y-3">
         {alertas.map((alerta, idx) => (

@@ -48,7 +48,7 @@ export function CoberturaBadge({
       <div className="space-y-3">
         <div className="flex items-center gap-3">
           <Badge className={config.className}>{config.label}</Badge>
-          <span className="font-semibold text-gray-900">{codigo}</span>
+          <span className="font-semibold text-deep-navy">{codigo}</span>
         </div>
 
         <p className="text-sm text-gray-600">{descricao}</p>

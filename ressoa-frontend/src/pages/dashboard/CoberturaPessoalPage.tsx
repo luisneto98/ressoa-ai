@@ -36,7 +36,10 @@ export function CoberturaPessoalPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-deep-navy/60">Carregando...</div>
+        <div className="text-center">
+          <div className="text-deep-navy/60 mb-2">Carregando sua cobertura curricular...</div>
+          <p className="text-sm text-deep-navy/40">Buscando dados de {filtros.disciplina} — {filtros.bimestre}º bimestre</p>
+        </div>
       </div>
     );
   }
@@ -70,7 +73,7 @@ export function CoberturaPessoalPage() {
   return (
     <div className="min-h-screen bg-ghost-white">
       <div className="max-w-7xl mx-auto p-6">
-      <h1 className="text-3xl font-montserrat font-bold text-deep-navy mb-6">
+      <h1 className="text-3xl md:text-4xl font-montserrat font-bold text-deep-navy mb-6">
         Minha Cobertura Curricular
       </h1>
 
@@ -138,7 +141,7 @@ export function CoberturaPessoalPage() {
 
       {/* Tabela de Cobertura por Turma */}
       <Card className="p-6 mb-6">
-        <h2 className="text-xl font-semibold text-deep-navy mb-4">
+        <h2 className="text-xl md:text-2xl font-montserrat font-semibold text-deep-navy mb-4">
           Cobertura por Turma
         </h2>
         {data.cobertura.length > 0 ? (
@@ -156,7 +159,7 @@ export function CoberturaPessoalPage() {
       {/* Gráfico de Progresso Temporal */}
       {data.cobertura.length > 0 && (
         <Card className="p-6">
-          <h2 className="text-xl font-semibold text-deep-navy mb-4">
+          <h2 className="text-xl md:text-2xl font-montserrat font-semibold text-deep-navy mb-4">
             Progresso ao Longo do Bimestre
           </h2>
           <CoberturaChart

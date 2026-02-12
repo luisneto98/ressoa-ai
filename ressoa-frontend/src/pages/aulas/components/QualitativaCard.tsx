@@ -8,7 +8,7 @@ interface QualitativaCardProps {
 export function QualitativaCard({ title, data }: QualitativaCardProps) {
   return (
     <Card className="p-4 bg-gray-50">
-      <h3 className="font-semibold text-gray-900 mb-2">{title}</h3>
+      <h3 className="font-semibold text-deep-navy mb-2">{title}</h3>
       <div className="text-sm text-gray-700">
         <pre className="whitespace-pre-wrap font-sans">
           {JSON.stringify(data, null, 2)}

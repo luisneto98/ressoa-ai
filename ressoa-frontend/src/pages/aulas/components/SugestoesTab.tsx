@@ -90,7 +90,7 @@ export function SugestoesTab({ sugestoes, planejamentoId }: SugestoesTabProps) {
   return (
     <Card className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-900">Sugestões para Próxima Aula</h2>
+        <h2 className="text-xl font-montserrat font-semibold text-deep-navy">Sugestões para Próxima Aula</h2>
         {planejamentoId && (
           <Button
             variant="outline"
@@ -128,7 +128,7 @@ export function SugestoesTab({ sugestoes, planejamentoId }: SugestoesTabProps) {
           <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
             <div className="flex items-center gap-2 mb-3">
               <Clock className="h-5 w-5 text-blue-600" aria-label="Ícone de relógio" role="img" />
-              <span className="font-semibold text-gray-900">
+              <span className="font-semibold text-deep-navy">
                 Tempo Total: {pacing_sugerido.tempo_estimado}
               </span>
             </div>
@@ -141,7 +141,7 @@ export function SugestoesTab({ sugestoes, planejamentoId }: SugestoesTabProps) {
                       {/* FIX MEDIUM #5: Use replaceAll for multiple underscores */}
                       {fase.replaceAll('_', ' ')}:
                     </span>
-                    <span className="font-semibold text-gray-900">{tempo}</span>
+                    <span className="font-semibold text-deep-navy">{tempo}</span>
                   </div>
                 ))}
               </div>
@@ -158,7 +158,7 @@ export function SugestoesTab({ sugestoes, planejamentoId }: SugestoesTabProps) {
             <div className="flex items-start gap-3">
               <Calendar className="h-5 w-5 text-blue-600 mt-0.5" aria-label="Ícone de calendário" role="img" />
               <div className="flex-1">
-                <h4 className="font-semibold text-gray-900 mb-2">
+                <h4 className="font-semibold text-deep-navy mb-2">
                   {proxima_aula_planejada.titulo}
                 </h4>
                 <div className="text-sm text-gray-700 space-y-1">

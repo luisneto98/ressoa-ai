@@ -7,6 +7,8 @@ import {
   ConflictException,
   Logger,
 } from '@nestjs/common';
+import { InjectQueue } from '@nestjs/bull';
+import type { Queue } from 'bull';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Prisma, StatusProcessamento, TipoEntrada } from '@prisma/client';
 import { CreateAulaDto } from './dto/create-aula.dto';
@@ -35,7 +37,11 @@ export class AulasService {
     ERRO: [],
   };
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @InjectQueue('transcription')
+    private readonly transcriptionQueue: Queue,
+  ) {}
 
   /**
    * Helper: Parse ISO date string to Date object
@@ -452,5 +458,108 @@ export class AulasService {
         'Planejamento não encontrado ou não pertence à turma',
       );
     }
+  }
+
+  /**
+   * Enqueue transcription job for async processing (Story 4.3)
+   *
+   * @description Adds transcription job to Bull queue with retry and priority settings.
+   *              Used by TUS upload completion and reprocessing endpoint.
+   *
+   * Priority levels:
+   * - P1 (1): Pilot schools (beta testers) - highest priority
+   * - P2 (2): Regular schools - standard priority
+   *
+   * Retry strategy: 3 attempts with exponential backoff (1min, 2min, 4min)
+   *
+   * @param aulaId - UUID of the Aula to transcribe
+   * @param priority - Priority level ('P1' or 'P2'), defaults to 'P2'
+   * @returns Promise<void>
+   */
+  async enqueueTranscription(
+    aulaId: string,
+    priority: 'P1' | 'P2' = 'P2',
+  ): Promise<void> {
+    const priorityValue = priority === 'P1' ? 1 : 2;
+
+    await this.transcriptionQueue.add(
+      'transcribe-aula',
+      { aulaId },
+      {
+        priority: priorityValue,
+        attempts: 3,
+        backoff: {
+          type: 'exponential',
+          delay: 60000, // 1 minute base delay
+        },
+        removeOnComplete: 100,
+        removeOnFail: false,
+      },
+    );
+
+    this.logger.log(
+      `Job transcribe-aula enfileirado: aulaId=${aulaId}, priority=${priority}`,
+    );
+  }
+
+  /**
+   * Reprocessar aula com erro (Story 4.3 - AC4)
+   *
+   * @description Re-enqueue failed transcription jobs for retry.
+   *              Only allows reprocessing of aulas with status ERRO.
+   *              Validates ownership (professor must own the aula).
+   *
+   * @param id - UUID of the Aula to reprocess
+   * @param user - Authenticated professor
+   * @returns Success message
+   * @throws NotFoundException - If aula not found
+   * @throws ForbiddenException - If aula doesn't belong to professor
+   * @throws BadRequestException - If aula status is not ERRO
+   */
+  async reprocessarAula(id: string, user: AuthenticatedUser) {
+    const escolaId = this.prisma.getEscolaIdOrThrow();
+
+    // Find aula with tenant isolation and ownership validation
+    const aula = await this.prisma.aula.findUnique({
+      where: {
+        id,
+        escola_id: escolaId, // ✅ Multi-tenancy
+        professor_id: user.userId, // ✅ Ownership validation
+        deleted_at: null,
+      },
+    });
+
+    if (!aula) {
+      throw new NotFoundException('Aula não encontrada');
+    }
+
+    // Validate status: only ERRO aulas can be reprocessed
+    if (aula.status_processamento !== 'ERRO') {
+      throw new BadRequestException(
+        'Apenas aulas com erro podem ser reprocessadas',
+      );
+    }
+
+    // Reset status to AGUARDANDO_TRANSCRICAO
+    await this.prisma.aula.update({
+      where: {
+        id,
+        escola_id: escolaId, // ✅ Multi-tenancy
+      },
+      data: {
+        status_processamento: 'AGUARDANDO_TRANSCRICAO',
+      },
+    });
+
+    // Enqueue transcription job
+    await this.enqueueTranscription(id);
+
+    this.logger.log(
+      `Aula ${id} reprocessada por professor ${user.userId} (escola: ${escolaId})`,
+    );
+
+    return {
+      message: 'Aula adicionada à fila de processamento',
+    };
   }
 }

@@ -3,21 +3,25 @@ import {
   BadRequestException,
   ForbiddenException,
   UnauthorizedException,
+  Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Server, Upload } from '@tus/server';
 import { S3Store } from '@tus/s3-store';
 import { S3Client } from '@aws-sdk/client-s3';
 import { PrismaService } from '../../prisma/prisma.service';
+import { AulasService } from '../aulas/aulas.service';
 import { randomUUID } from 'crypto';
 
 @Injectable()
 export class TusService {
   private server: Server;
+  private readonly logger = new Logger(TusService.name);
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
+    private readonly aulasService: AulasService,
   ) {
     const s3AccessKey = this.configService.get<string>('S3_ACCESS_KEY');
     const s3SecretKey = this.configService.get<string>('S3_SECRET_KEY');
@@ -171,9 +175,38 @@ export class TusService {
           },
         });
 
-        // TODO (Epic 4): Enfileirar job de transcrição
-        // await this.bullQueue.add('transcribe-aula', { aulaId: aula_id });
-        // NOTE: Bull queue será implementado em Epic 4, comentar por enquanto
+        // Story 4.3: Enfileirar job de transcrição assíncrona
+        try {
+          await this.aulasService.enqueueTranscription(
+            aula_id as string,
+            'P2', // Standard priority for regular schools
+          );
+          this.logger.log(
+            `Upload completo e job enfileirado: aulaId=${aula_id}`,
+          );
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : 'Unknown error';
+          this.logger.error(
+            `CRÍTICO: Falha ao enfileirar job de transcrição para aula ${aula_id}: ${errorMessage}`,
+            error instanceof Error ? error.stack : undefined,
+          );
+
+          // CRITICAL: If job enqueue fails, update Aula to ERRO so professor can retry
+          await this.prisma.aula.update({
+            where: {
+              id: aula_id as string,
+              escola_id: escola_id as string,
+            },
+            data: {
+              status_processamento: 'ERRO',
+            },
+          });
+
+          this.logger.error(
+            `Aula ${aula_id} marcada como ERRO. Professor pode reprocessar via /aulas/:id/reprocessar`,
+          );
+        }
 
         return {};
       },

@@ -1169,4 +1169,112 @@ describe('Aulas CRUD API (E2E) - Story 3.1', () => {
       await prisma.turma.delete({ where: { id: turma3.id } });
     });
   });
+
+  describe('POST /aulas/:id/reprocessar - Story 4.3 (AC4)', () => {
+    it('should reprocess failed aula successfully', async () => {
+      // Create aula with ERRO status
+      const aulaErro = await prisma.aula.create({
+        data: {
+          escola_id: escola1Id,
+          professor_id: (
+            await prisma.usuario.findFirstOrThrow({
+              where: { email: 'professor@escolademo.com' },
+            })
+          ).id,
+          turma_id: turma1Id,
+          planejamento_id: planejamento1Id,
+          data: new Date('2026-02-11T10:00:00Z'),
+          tipo_entrada: TipoEntrada.AUDIO,
+          status_processamento: StatusProcessamento.ERRO,
+          arquivo_url: 's3://ressoa-uploads/test-audio.mp3',
+        },
+      });
+
+      const response = await request(app.getHttpServer())
+        .post(`/api/v1/aulas/${aulaErro.id}/reprocessar`)
+        .set('Authorization', `Bearer ${professor1Token}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe(
+        'Aula adicionada à fila de processamento',
+      );
+
+      // Validate aula status updated to AGUARDANDO_TRANSCRICAO
+      const updatedAula = await prisma.aula.findUnique({
+        where: { id: aulaErro.id },
+      });
+      expect(updatedAula?.status_processamento).toBe('AGUARDANDO_TRANSCRICAO');
+
+      // Cleanup
+      await prisma.aula.delete({ where: { id: aulaErro.id } });
+    });
+
+    it('should reject reprocessing aula with non-ERRO status', async () => {
+      // Create aula with TRANSCRITA status
+      const aulaTranscrita = await prisma.aula.create({
+        data: {
+          escola_id: escola1Id,
+          professor_id: (
+            await prisma.usuario.findFirstOrThrow({
+              where: { email: 'professor@escolademo.com' },
+            })
+          ).id,
+          turma_id: turma1Id,
+          data: new Date('2026-02-11T11:00:00Z'),
+          tipo_entrada: TipoEntrada.TRANSCRICAO,
+          status_processamento: StatusProcessamento.TRANSCRITA,
+        },
+      });
+
+      const response = await request(app.getHttpServer())
+        .post(`/api/v1/aulas/${aulaTranscrita.id}/reprocessar`)
+        .set('Authorization', `Bearer ${professor1Token}`);
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toContain('erro podem ser reprocessadas');
+
+      // Cleanup
+      await prisma.aula.delete({ where: { id: aulaTranscrita.id } });
+    });
+
+    it('should reject reprocessing aula from different professor (ownership)', async () => {
+      // Create aula owned by professor2
+      const aulaProf2 = await prisma.aula.create({
+        data: {
+          escola_id: escola2Id,
+          professor_id: (
+            await prisma.usuario.findFirstOrThrow({
+              where: { email: 'prof2@aulas.com' }, // FIX: Use correct email from setup
+            })
+          ).id,
+          turma_id: turma2Id,
+          data: new Date('2026-02-11T12:00:00Z'),
+          tipo_entrada: TipoEntrada.AUDIO,
+          status_processamento: StatusProcessamento.ERRO,
+        },
+      });
+
+      // Professor1 tries to reprocess professor2's aula
+      const response = await request(app.getHttpServer())
+        .post(`/api/v1/aulas/${aulaProf2.id}/reprocessar`)
+        .set('Authorization', `Bearer ${professor1Token}`);
+
+      expect(response.status).toBe(404);
+      expect(response.body.message).toContain('não encontrada');
+
+      // Cleanup
+      await prisma.aula.delete({ where: { id: aulaProf2.id } });
+    });
+
+    it('should return 404 for non-existent aula', async () => {
+      const fakeId = '00000000-0000-0000-0000-000000000000';
+
+      const response = await request(app.getHttpServer())
+        .post(`/api/v1/aulas/${fakeId}/reprocessar`)
+        .set('Authorization', `Bearer ${professor1Token}`);
+
+      expect(response.status).toBe(404);
+      expect(response.body.message).toContain('não encontrada');
+    });
+  });
 });

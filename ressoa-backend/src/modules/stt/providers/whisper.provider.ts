@@ -159,7 +159,18 @@ export class WhisperProvider implements STTProvider {
 
     // Whisper supports 97 languages - validate common ones
     const supportedLanguages = [
-      'pt', 'en', 'es', 'fr', 'de', 'it', 'ja', 'ko', 'zh', 'ru', 'ar', 'hi'
+      'pt',
+      'en',
+      'es',
+      'fr',
+      'de',
+      'it',
+      'ja',
+      'ko',
+      'zh',
+      'ru',
+      'ar',
+      'hi',
     ];
 
     if (supportedLanguages.includes(baseLang)) {
@@ -168,7 +179,7 @@ export class WhisperProvider implements STTProvider {
 
     // Default to Portuguese for unsupported languages (MVP context)
     this.logger.warn(
-      `Language '${idioma}' not validated, using 'pt' as default`
+      `Language '${idioma}' not validated, using 'pt' as default`,
     );
     return 'pt';
   }

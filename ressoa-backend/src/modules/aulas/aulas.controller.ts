@@ -81,4 +81,28 @@ export class AulasController {
   ) {
     return this.aulasService.update(id, updateAulaDto, user);
   }
+
+  /**
+   * Reprocessar aula com erro (Story 4.3 - AC4)
+   *
+   * @description Re-enqueue failed transcription jobs for retry.
+   *              Only allows reprocessing of aulas with status ERRO.
+   *              Validates ownership (professor must own the aula).
+   *
+   * @param id - UUID of the Aula to reprocess
+   * @param user - Authenticated professor
+   * @returns Success message
+   * @throws NotFoundException - If aula not found
+   * @throws ForbiddenException - If aula doesn't belong to professor
+   * @throws BadRequestException - If aula status is not ERRO
+   */
+  @Post(':id/reprocessar')
+  @Roles('PROFESSOR')
+  @HttpCode(HttpStatus.OK)
+  async reprocessarAula(
+    @Param('id') id: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.aulasService.reprocessarAula(id, user);
+  }
 }

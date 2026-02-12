@@ -71,7 +71,7 @@ development_status:
     epic-4: in-progress
     4-1-backend-stt-service-abstraction-layer: done
     4-2-backend-whisper-google-speech-integration: done
-    4-3-backend-transcription-worker-bull-queue: backlog
+    4-3-backend-transcription-worker-bull-queue: done
     4-4-backend-notification-system-email-in-app: backlog
     epic-4-retrospective: optional
     epic-5: backlog

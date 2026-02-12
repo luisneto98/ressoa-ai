@@ -1,6 +1,7 @@
 import { Module, DynamicModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { BullModule } from '@nestjs/bull';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -44,6 +45,21 @@ if (process.env.NODE_ENV !== 'test') {
         limit: 10, // default global limit
       },
     ]),
+    // Bull Queue Configuration (Story 4.3 - Transcription Worker)
+    BullModule.forRoot({
+      redis: {
+        host: process.env.REDIS_HOST || 'localhost',
+        port: parseInt(process.env.REDIS_PORT || '6379', 10),
+        maxRetriesPerRequest: 3,
+        enableReadyCheck: true,
+        enableOfflineQueue: true,
+      },
+      defaultJobOptions: {
+        removeOnComplete: 100, // Keep last 100 successful jobs for debugging
+        removeOnFail: false, // Keep all failed jobs for analysis
+        timeout: 300000, // 5 minutes max per job
+      },
+    }),
     ContextModule, // Global module for multi-tenant context
     EmailModule, // Global module for email service (Story 1.5)
     PrismaModule,

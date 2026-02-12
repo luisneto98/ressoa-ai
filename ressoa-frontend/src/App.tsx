@@ -7,6 +7,7 @@ import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { PlanejamentoWizard } from '@/pages/planejamento/PlanejamentoWizard';
 import { PlanejamentosListPage } from '@/pages/planejamento/PlanejamentosListPage';
 import UploadAulaPage from '@/pages/aulas/UploadAulaPage';
+import AulasListPage from '@/pages/aulas/AulasListPage';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 // Create Query Client
@@ -50,14 +51,7 @@ function App() {
           path="/minhas-aulas"
           element={
             <ProtectedRoute>
-              <div className="min-h-screen flex items-center justify-center bg-ghost-white">
-                <div className="text-center">
-                  <h1 className="text-3xl font-montserrat font-bold text-deep-navy mb-4">
-                    Minhas Aulas
-                  </h1>
-                  <p className="text-muted-foreground">(Página em desenvolvimento - Epic 3)</p>
-                </div>
-              </div>
+              <AulasListPage />
             </ProtectedRoute>
           }
         />

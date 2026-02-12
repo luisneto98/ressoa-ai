@@ -66,7 +66,7 @@ development_status:
     3-2-backend-tus-upload-server-resumable-upload: done
     3-3-backend-multiple-input-methods-audio-texto-manual: done
     3-4-frontend-upload-page-with-drag-and-drop: done
-    3-5-frontend-aulas-list-with-status-tracking: backlog
+    3-5-frontend-aulas-list-with-status-tracking: done
     epic-3-retrospective: optional
     epic-4: backlog
     4-1-backend-stt-service-abstraction-layer: backlog

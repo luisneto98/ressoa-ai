@@ -237,7 +237,7 @@ export function MonitoramentoSTTPage() {
                   cx="50%"
                   cy="50%"
                   outerRadius={100}
-                  label={({ provider, count }) => `${provider}: ${count}`}
+                  label={(entry: any) => `${entry.provider}: ${entry.count}`}
                 >
                   {data.por_provider.map((entry) => (
                     <Cell

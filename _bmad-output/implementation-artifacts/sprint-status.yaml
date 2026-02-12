@@ -101,8 +101,8 @@ development_status:
     8-3-dashboard-de-custos-por-escola: done # Code review complete - APPROVED - 0 CRITICAL, 1 MEDIUM (projection comment), 2 LOW (prettier fix, unused components noted) - 58/58 monitoramento tests passing
     8-4-dashboard-de-qualidade-de-prompts-a-b-testing: done # Code review complete - 6 issues auto-fixed (2 HIGH: SQL column names + DiffViewer placement, 4 MEDIUM: input validation, file list, tests) - 17/17 tests passing
     epic-8-retrospective: optional
-    epic-9: backlog
-    9-1-layout-shell-sidebar-header-breadcrumbs: backlog
+    epic-9: in-progress
+    9-1-layout-shell-sidebar-header-breadcrumbs: done # Code review complete - 4 issues auto-fixed (Slot import, @radix-ui/react-slot dependency, role warnings, root path handling) - 33/33 tests passing
     9-2-sidebar-responsiva-mobile-drawer-tablet-collapse: backlog
     9-3-fix-de-rotas-quebradas-e-redirecionamentos: backlog
     9-4-navegacao-cta-botao-nova-aula-destacado: backlog

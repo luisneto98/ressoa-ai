@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { LoginPage } from '@/pages/LoginPage';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { AppLayout } from '@/components/layout';
 import { PlanejamentoWizard } from '@/pages/planejamento/PlanejamentoWizard';
 import { PlanejamentosListPage } from '@/pages/planejamento/PlanejamentosListPage';
 import UploadAulaPage from '@/pages/aulas/UploadAulaPage';
@@ -59,213 +60,209 @@ function App() {
         {/* Public route: Login */}
         <Route path="/login" element={<LoginPage />} />
 
-        {/* Protected routes: Authenticated pages */}
-        <Route
-          path="/minhas-aulas"
-          element={
-            <ProtectedRoute>
-              <AulasListPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/dashboard-coordenador"
-          element={
-            <ProtectedRoute>
-              <div className="min-h-screen flex items-center justify-center bg-ghost-white">
-                <div className="text-center">
+        {/* Protected routes: All use AppLayout with Sidebar + Header */}
+        <Route element={<AppLayout />}>
+          <Route
+            path="/minhas-aulas"
+            element={
+              <ProtectedRoute>
+                <AulasListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard-coordenador"
+            element={
+              <ProtectedRoute>
+                <div className="text-center py-12">
                   <h1 className="text-3xl font-montserrat font-bold text-deep-navy mb-4">
                     Dashboard Coordenador
                   </h1>
                   <p className="text-muted-foreground">(Página em desenvolvimento - Epic 7)</p>
                 </div>
-              </div>
-            </ProtectedRoute>
-          }
-        />
-        {/* Dashboard Diretor Route - Story 7.4 */}
-        <Route
-          path="/dashboard/diretor"
-          element={
-            <ProtectedRoute roles={['DIRETOR']}>
-              <DashboardDiretorPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <div className="min-h-screen flex items-center justify-center bg-ghost-white">
-                <div className="text-center">
+              </ProtectedRoute>
+            }
+          />
+          {/* Dashboard Diretor Route - Story 7.4 */}
+          <Route
+            path="/dashboard/diretor"
+            element={
+              <ProtectedRoute roles={['DIRETOR']}>
+                <DashboardDiretorPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <div className="text-center py-12">
                   <h1 className="text-3xl font-montserrat font-bold text-deep-navy mb-4">
                     Dashboard
                   </h1>
                   <p className="text-muted-foreground">(Página em desenvolvimento)</p>
                 </div>
-              </div>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute>
-              <div className="min-h-screen flex items-center justify-center bg-ghost-white">
-                <div className="text-center">
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <div className="text-center py-12">
                   <h1 className="text-3xl font-montserrat font-bold text-deep-navy mb-4">
                     Admin Dashboard
                   </h1>
                   <p className="text-muted-foreground">(Página em desenvolvimento - Story 1.6)</p>
                 </div>
-              </div>
-            </ProtectedRoute>
-          }
-        />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Admin Monitoramento Routes - Story 8.1, 8.2 */}
-        <Route
-          path="/admin/monitoramento/stt"
-          element={
-            <ProtectedRoute roles={['ADMIN']}>
-              <MonitoramentoSTTPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/monitoramento/analise"
-          element={
-            <ProtectedRoute roles={['ADMIN']}>
-              <MonitoramentoAnalisePage />
-            </ProtectedRoute>
-          }
-        />
+          {/* Admin Monitoramento Routes - Story 8.1, 8.2 */}
+          <Route
+            path="/admin/monitoramento/stt"
+            element={
+              <ProtectedRoute roles={['ADMIN']}>
+                <MonitoramentoSTTPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/monitoramento/analise"
+            element={
+              <ProtectedRoute roles={['ADMIN']}>
+                <MonitoramentoAnalisePage />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Admin Custos Route - Story 8.3 */}
-        <Route
-          path="/admin/custos/escolas"
-          element={
-            <ProtectedRoute roles={['ADMIN']}>
-              <CustosEscolasPage />
-            </ProtectedRoute>
-          }
-        />
+          {/* Admin Custos Route - Story 8.3 */}
+          <Route
+            path="/admin/custos/escolas"
+            element={
+              <ProtectedRoute roles={['ADMIN']}>
+                <CustosEscolasPage />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Admin Prompts Quality Routes - Story 8.4 */}
-        <Route
-          path="/admin/prompts/qualidade"
-          element={
-            <ProtectedRoute roles={['ADMIN']}>
-              <QualidadePromptsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/prompts/:nome/:versao/diffs"
-          element={
-            <ProtectedRoute roles={['ADMIN']}>
-              <PromptDiffsPage />
-            </ProtectedRoute>
-          }
-        />
+          {/* Admin Prompts Quality Routes - Story 8.4 */}
+          <Route
+            path="/admin/prompts/qualidade"
+            element={
+              <ProtectedRoute roles={['ADMIN']}>
+                <QualidadePromptsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/prompts/:nome/:versao/diffs"
+            element={
+              <ProtectedRoute roles={['ADMIN']}>
+                <PromptDiffsPage />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Dashboard Routes - Story 6.5 */}
-        <Route
-          path="/dashboard/cobertura-pessoal"
-          element={
-            <ProtectedRoute>
-              <CoberturaPessoalPage />
-            </ProtectedRoute>
-          }
-        />
+          {/* Dashboard Routes - Story 6.5 */}
+          <Route
+            path="/dashboard/cobertura-pessoal"
+            element={
+              <ProtectedRoute>
+                <CoberturaPessoalPage />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Dashboard Coordenador Routes - Story 7.2 */}
-        <Route
-          path="/dashboard/coordenador/professores"
-          element={
-            <ProtectedRoute roles={['COORDENADOR', 'DIRETOR']}>
-              <DashboardCoordenadorProfessoresPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/dashboard/coordenador/professores/:professorId/turmas"
-          element={
-            <ProtectedRoute roles={['COORDENADOR', 'DIRETOR']}>
-              <DashboardCoordenadorProfessorTurmasPage />
-            </ProtectedRoute>
-          }
-        />
+          {/* Dashboard Coordenador Routes - Story 7.2 */}
+          <Route
+            path="/dashboard/coordenador/professores"
+            element={
+              <ProtectedRoute roles={['COORDENADOR', 'DIRETOR']}>
+                <DashboardCoordenadorProfessoresPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/coordenador/professores/:professorId/turmas"
+            element={
+              <ProtectedRoute roles={['COORDENADOR', 'DIRETOR']}>
+                <DashboardCoordenadorProfessorTurmasPage />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Dashboard Coordenador Routes - Story 7.3 */}
-        <Route
-          path="/dashboard/coordenador/turmas"
-          element={
-            <ProtectedRoute roles={['COORDENADOR', 'DIRETOR']}>
-              <DashboardCoordenadorTurmasPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/dashboard/coordenador/turmas/:turmaId/detalhes"
-          element={
-            <ProtectedRoute roles={['COORDENADOR', 'DIRETOR']}>
-              <DashboardCoordenadorTurmaDetalhesPage />
-            </ProtectedRoute>
-          }
-        />
+          {/* Dashboard Coordenador Routes - Story 7.3 */}
+          <Route
+            path="/dashboard/coordenador/turmas"
+            element={
+              <ProtectedRoute roles={['COORDENADOR', 'DIRETOR']}>
+                <DashboardCoordenadorTurmasPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/coordenador/turmas/:turmaId/detalhes"
+            element={
+              <ProtectedRoute roles={['COORDENADOR', 'DIRETOR']}>
+                <DashboardCoordenadorTurmaDetalhesPage />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Aula Routes - Story 3.4, 6.1 */}
-        <Route
-          path="/aulas/upload"
-          element={
-            <ProtectedRoute>
-              <UploadAulaPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/aulas/:aulaId/analise"
-          element={
-            <ProtectedRoute>
-              <AulaAnalisePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/aulas/:aulaId/analise/edit"
-          element={
-            <ProtectedRoute>
-              <AulaAnaliseEditPage />
-            </ProtectedRoute>
-          }
-        />
+          {/* Aula Routes - Story 3.4, 6.1 */}
+          <Route
+            path="/aulas/upload"
+            element={
+              <ProtectedRoute>
+                <UploadAulaPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/aulas/:aulaId/analise"
+            element={
+              <ProtectedRoute>
+                <AulaAnalisePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/aulas/:aulaId/analise/edit"
+            element={
+              <ProtectedRoute>
+                <AulaAnaliseEditPage />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Planejamento Routes - Story 2.3 & 2.4 */}
-        <Route
-          path="/planejamentos/novo"
-          element={
-            <ProtectedRoute>
-              <PlanejamentoWizard mode="create" />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/planejamentos/:id/editar"
-          element={
-            <ProtectedRoute>
-              <PlanejamentoWizard mode="edit" />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/planejamentos"
-          element={
-            <ProtectedRoute>
-              <PlanejamentosListPage />
-            </ProtectedRoute>
-          }
-        />
+          {/* Planejamento Routes - Story 2.3 & 2.4 */}
+          <Route
+            path="/planejamentos/novo"
+            element={
+              <ProtectedRoute>
+                <PlanejamentoWizard mode="create" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/planejamentos/:id/editar"
+            element={
+              <ProtectedRoute>
+                <PlanejamentoWizard mode="edit" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/planejamentos"
+            element={
+              <ProtectedRoute>
+                <PlanejamentosListPage />
+              </ProtectedRoute>
+            }
+          />
+        </Route>
 
         {/* Default route: Redirect to login */}
         <Route path="/" element={<Navigate to="/login" replace />} />

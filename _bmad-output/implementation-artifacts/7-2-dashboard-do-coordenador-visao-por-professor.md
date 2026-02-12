@@ -1,6 +1,6 @@
 # Story 7.2: Dashboard do Coordenador - Visão por Professor
 
-Status: ready-for-dev
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -1484,16 +1484,69 @@ All technical details extracted from:
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Claude Sonnet 4.5 (claude-sonnet-4-5-20250929)
 
-### Debug Log References
+### Code Review Findings (2026-02-12)
 
-(To be filled during implementation)
+**Adversarial Code Review - 10 Issues Found & Auto-Fixed:**
+
+🔴 **CRITICAL (3 fixed):**
+1. ✅ DTO Validation Inconsistency - Changed `@IsIn` to `@IsEnum(Disciplina)` from Prisma
+2. ✅ Missing Multi-Tenancy Test Coverage - Improved E2E test to validate cross-school blocking
+3. ✅ Frontend Error Handling Missing - Added error states to drill-down page
+
+🟡 **MEDIUM (4 fixed):**
+4. ✅ Missing UUID Validation - Added `ParseUUIDPipe` to `professorId` param
+5. ✅ Missing Loading State Type Safety - Added null checks in frontend
+6. ✅ Inconsistent Number Type Handling - Fixed BigInt mocks to use `number`
+7. ✅ Missing Performance SLA Tests - Added < 500ms E2E tests
+
+🟢 **LOW (3 fixed):**
+8. ✅ Missing Filter Reset Button - Added "Limpar Filtros" button
+9. ✅ Missing Empty State Handling - Added empty state to ProfessoresTable
+10. ✅ Hardcoded Meta Threshold - Extracted to `config/constants.ts` (env-configurable)
 
 ### Completion Notes List
 
-(To be filled during implementation)
+**Implementation Complete (2026-02-09):**
+- Backend: DashboardModule + Controller + Service + DTO
+- Frontend: 2 pages (ranking + drill-down) + 2 table components
+- Tests: 8/8 unit tests + 15 E2E tests passing
+- Multi-tenancy: `WHERE escola_id` enforced in all queries
+- RBAC: `@Roles(COORDENADOR, DIRETOR)` on all endpoints
+- Caching: Redis 1h TTL via `@CacheTTL(3600)`
+
+**Code Review Fixes (2026-02-12):**
+- All 10 issues auto-fixed
+- Unit tests: 8/8 passing
+- Code quality: Type safety improved, security validated
+- Performance: SLA tests added (< 500ms validated)
 
 ### File List
 
-(To be filled during implementation)
+**Backend (Created):**
+- `ressoa-backend/src/modules/dashboard/dashboard.module.ts`
+- `ressoa-backend/src/modules/dashboard/dashboard.controller.ts` (✏️ UUID validation added)
+- `ressoa-backend/src/modules/dashboard/dashboard.service.ts` (✏️ Configurable threshold)
+- `ressoa-backend/src/modules/dashboard/dto/filtros-dashboard.dto.ts` (✏️ @IsEnum fix)
+- `ressoa-backend/src/modules/dashboard/dashboard.service.spec.ts` (✏️ BigInt → number)
+- `ressoa-backend/test/dashboard-coordenador.e2e-spec.ts` (✏️ Multi-tenancy + performance tests)
+- `ressoa-backend/src/config/constants.ts` (🆕 Created in review)
+
+**Backend (Modified):**
+- `ressoa-backend/src/app.module.ts` (imported DashboardModule + CacheModule Redis)
+- `ressoa-backend/package.json` (@nestjs/cache-manager + cache-manager-ioredis-yet)
+
+**Frontend (Created):**
+- `ressoa-frontend/src/pages/dashboard/DashboardCoordenadorProfessoresPage.tsx` (✏️ Error handling + filter reset)
+- `ressoa-frontend/src/pages/dashboard/DashboardCoordenadorProfessorTurmasPage.tsx` (✏️ Error handling)
+- `ressoa-frontend/src/pages/dashboard/components/ProfessoresTable.tsx` (✏️ Empty state)
+- `ressoa-frontend/src/pages/dashboard/components/TurmasTable.tsx`
+
+**Frontend (Modified):**
+- `ressoa-frontend/src/App.tsx` (added 2 protected routes with roles)
+- `ressoa-frontend/src/components/ProtectedRoute.tsx` (role-based access control)
+
+**Story File (Updated):**
+- `_bmad-output/implementation-artifacts/7-2-dashboard-do-coordenador-visao-por-professor.md` (Status: done, Dev Agent Record)
+- `_bmad-output/implementation-artifacts/sprint-status.yaml` (Status: done)

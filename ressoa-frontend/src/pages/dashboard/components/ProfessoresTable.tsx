@@ -32,6 +32,16 @@ interface Props {
 export function ProfessoresTable({ metricas }: Props) {
   const navigate = useNavigate();
 
+  if (metricas.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-muted-foreground">
+          Nenhum professor encontrado para os filtros selecionados.
+        </p>
+      </div>
+    );
+  }
+
   const formatTempo = (segundos: number) => {
     const minutos = Math.floor(segundos / 60);
     const secs = Math.floor(segundos % 60);

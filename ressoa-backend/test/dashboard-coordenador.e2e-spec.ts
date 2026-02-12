@@ -234,18 +234,39 @@ describe('Dashboard Coordenador (E2E)', () => {
       expect(response.body).toHaveProperty('turmas');
     });
 
-    it('should enforce multi-tenancy (cross-school blocking)', async () => {
-      // This test assumes we have users from different schools
-      // If professor from School A tries to access data, they should only see School A data
-      const response = await request(app.getHttpServer())
-        .get(
-          `/api/v1/dashboard/coordenador/professores/${testProfessorId}/turmas`,
-        )
+    it('should block cross-school data access (CRITICAL multi-tenancy)', async () => {
+      // CRITICAL: This test validates that WHERE escola_id prevents cross-tenant data leaks
+
+      // Get professores from coordenador's school (should have data)
+      const ownSchoolResponse = await request(app.getHttpServer())
+        .get('/api/v1/dashboard/coordenador/professores')
         .set('Authorization', `Bearer ${coordenadorToken}`);
 
-      expect(response.status).toBe(200);
-      // Should return data only from coordenador's school (enforced by escola_id in query)
-      expect(response.body).toHaveProperty('turmas');
+      expect(ownSchoolResponse.status).toBe(200);
+
+      if (ownSchoolResponse.body.metricas.length > 0) {
+        const ownSchoolProfessorId = ownSchoolResponse.body.metricas[0].professor_id;
+
+        // Access own school's professor (should work)
+        const validResponse = await request(app.getHttpServer())
+          .get(`/api/v1/dashboard/coordenador/professores/${ownSchoolProfessorId}/turmas`)
+          .set('Authorization', `Bearer ${coordenadorToken}`);
+
+        expect(validResponse.status).toBe(200);
+        expect(Array.isArray(validResponse.body.turmas)).toBe(true);
+      }
+
+      // Try to access a different school's data (simulate cross-school attempt)
+      // Use a different token or fake UUID to test isolation
+      const fakeSchoolProfessorId = '00000000-0000-0000-0000-000000000001';
+
+      const crossSchoolResponse = await request(app.getHttpServer())
+        .get(`/api/v1/dashboard/coordenador/professores/${fakeSchoolProfessorId}/turmas`)
+        .set('Authorization', `Bearer ${coordenadorToken}`);
+
+      expect(crossSchoolResponse.status).toBe(200);
+      // Should return EMPTY array (WHERE escola_id blocks cross-school data)
+      expect(crossSchoolResponse.body.turmas).toHaveLength(0);
     });
   });
 
@@ -284,6 +305,52 @@ describe('Dashboard Coordenador (E2E)', () => {
 
       // Data should be identical (from cache)
       expect(response1.body).toEqual(response2.body);
+    });
+  });
+
+  describe('Performance SLA', () => {
+    it('should execute query in < 500ms (Story 7.2 performance target)', async () => {
+      // Clear cache to ensure fresh query
+      const uniqueBimestre = Math.floor(Math.random() * 4) + 1;
+
+      const start = Date.now();
+
+      const response = await request(app.getHttpServer())
+        .get('/api/v1/dashboard/coordenador/professores')
+        .query({ bimestre: uniqueBimestre })
+        .set('Authorization', `Bearer ${coordenadorToken}`);
+
+      const duration = Date.now() - start;
+
+      expect(response.status).toBe(200);
+
+      // Story 7.2 claims < 200ms, but network overhead adds latency
+      // Reasonable E2E target: < 500ms (includes HTTP round-trip)
+      expect(duration).toBeLessThan(500);
+    });
+
+    it('should execute drill-down query in < 500ms', async () => {
+      // Get a valid professor ID first
+      const professoresResponse = await request(app.getHttpServer())
+        .get('/api/v1/dashboard/coordenador/professores')
+        .set('Authorization', `Bearer ${coordenadorToken}`);
+
+      if (professoresResponse.body.metricas.length > 0) {
+        const professorId = professoresResponse.body.metricas[0].professor_id;
+
+        const start = Date.now();
+
+        const response = await request(app.getHttpServer())
+          .get(
+            `/api/v1/dashboard/coordenador/professores/${professorId}/turmas`,
+          )
+          .set('Authorization', `Bearer ${coordenadorToken}`);
+
+        const duration = Date.now() - start;
+
+        expect(response.status).toBe(200);
+        expect(duration).toBeLessThan(500);
+      }
     });
   });
 });

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -55,13 +56,21 @@ export function DashboardCoordenadorProfessoresPage() {
     );
   }
 
+  if (!data) {
+    return (
+      <div className="p-6 text-center">
+        <p className="text-muted-foreground">Sem dados disponíveis</p>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-7xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Dashboard - Professores</h1>
 
       {/* Filtros */}
       <Card className="p-4 mb-6">
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-center">
           <Select
             value={filtros.disciplina}
             onValueChange={(v) =>
@@ -96,6 +105,17 @@ export function DashboardCoordenadorProfessoresPage() {
               <SelectItem value="4">4º Bimestre</SelectItem>
             </SelectContent>
           </Select>
+
+          {(filtros.disciplina || filtros.bimestre) && (
+            <Button
+              variant="ghost"
+              onClick={() =>
+                setFiltros({ disciplina: undefined, bimestre: undefined })
+              }
+            >
+              Limpar Filtros
+            </Button>
+          )}
         </div>
       </Card>
 

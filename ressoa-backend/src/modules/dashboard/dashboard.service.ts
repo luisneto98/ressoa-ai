@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { FiltrosDashboardDto } from './dto/filtros-dashboard.dto';
 import { Prisma } from '@prisma/client';
+import { COBERTURA_META_THRESHOLD } from '../../config/constants';
 
 export interface MetricasProfessor {
   professor_id: string;
@@ -59,7 +60,7 @@ export class DashboardService {
         metricas.reduce((acc, m) => acc + Number(m.media_cobertura), 0) /
           metricas.length || 0,
       professores_abaixo_meta: metricas.filter(
-        (m) => Number(m.media_cobertura) < 70,
+        (m) => Number(m.media_cobertura) < COBERTURA_META_THRESHOLD,
       ).length,
     };
 

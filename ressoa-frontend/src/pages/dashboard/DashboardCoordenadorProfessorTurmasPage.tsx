@@ -19,7 +19,7 @@ export function DashboardCoordenadorProfessorTurmasPage() {
   const navigate = useNavigate();
   const [bimestre, setBimestre] = useState(1);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ['professor-turmas', professorId, bimestre],
     queryFn: () =>
       api
@@ -33,6 +33,38 @@ export function DashboardCoordenadorProfessorTurmasPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">Carregando...</div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="p-6 text-center">
+        <p className="text-red-600">
+          Erro ao carregar turmas do professor: {error.message}
+        </p>
+        <Button
+          variant="outline"
+          onClick={() => navigate(-1)}
+          className="mt-4"
+        >
+          Voltar
+        </Button>
+      </div>
+    );
+  }
+
+  if (!data || !data.turmas) {
+    return (
+      <div className="p-6 text-center">
+        <p className="text-muted-foreground">Sem dados disponíveis</p>
+        <Button
+          variant="outline"
+          onClick={() => navigate(-1)}
+          className="mt-4"
+        >
+          Voltar
+        </Button>
       </div>
     );
   }

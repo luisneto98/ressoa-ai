@@ -27,12 +27,7 @@ interface RelatorioTabProps {
   analise: {
     id: string;
     cobertura_bncc: {
-      habilidades: Array<{
-        codigo: string;
-        descricao: string;
-        nivel_cobertura: 'COMPLETE' | 'PARTIAL' | 'MENTIONED' | 'NOT_COVERED';
-        evidencias: Array<{ texto_literal: string }>;
-      }>;
+      habilidades: Array<any>;
     };
     analise_qualitativa: {
       taxonomia_bloom: any;
@@ -60,6 +55,53 @@ function NotaCircle({ nota }: { nota: number }) {
       </div>
     </div>
   );
+}
+
+type NivelCobertura = 'COMPLETE' | 'PARTIAL' | 'MENTIONED' | 'NOT_COVERED';
+
+/**
+ * Normaliza nivel_cobertura do backend que pode vir como número (1-3) ou string
+ */
+function normalizeNivelCobertura(nivel: unknown): NivelCobertura {
+  if (typeof nivel === 'string') {
+    const upper = nivel.toUpperCase();
+    if (['COMPLETE', 'PARTIAL', 'MENTIONED', 'NOT_COVERED'].includes(upper)) {
+      return upper as NivelCobertura;
+    }
+  }
+  if (typeof nivel === 'number') {
+    if (nivel >= 3) return 'COMPLETE';
+    if (nivel === 2) return 'PARTIAL';
+    if (nivel === 1) return 'MENTIONED';
+    return 'NOT_COVERED';
+  }
+  return 'NOT_COVERED';
+}
+
+/**
+ * Normaliza habilidade do backend que pode ter formatos diferentes:
+ * - Formato 1: { habilidade_codigo, observacoes, nivel_cobertura: number, evidencias: string[] }
+ * - Formato 2: { codigo, descricao, nivel_cobertura: string, evidencias: {texto_literal}[] }
+ */
+function normalizeHabilidade(hab: any): {
+  codigo: string;
+  descricao: string;
+  nivel_cobertura: NivelCobertura;
+  evidencias: Array<{ texto_literal: string }>;
+} {
+  const codigo = hab.codigo || hab.habilidade_codigo || 'N/A';
+  const descricao = hab.descricao || hab.observacoes || '';
+  const nivel_cobertura = normalizeNivelCobertura(hab.nivel_cobertura);
+
+  // Evidências podem ser string[] ou {texto_literal: string}[]
+  let evidencias: Array<{ texto_literal: string }> = [];
+  if (Array.isArray(hab.evidencias)) {
+    evidencias = hab.evidencias.map((ev: any) =>
+      typeof ev === 'string' ? { texto_literal: ev } : ev
+    );
+  }
+
+  return { codigo, descricao, nivel_cobertura, evidencias };
 }
 
 export function RelatorioTab({ analise }: RelatorioTabProps) {
@@ -162,15 +204,18 @@ export function RelatorioTab({ analise }: RelatorioTabProps) {
         </CardHeader>
         <CardContent className="space-y-3">
           {analise.cobertura_bncc?.habilidades?.length > 0 ? (
-            analise.cobertura_bncc.habilidades.map((hab) => (
-              <CoberturaBadge
-                key={hab.codigo}
-                codigo={hab.codigo}
-                descricao={hab.descricao}
-                nivel={hab.nivel_cobertura}
-                evidencias={hab.evidencias}
-              />
-            ))
+            analise.cobertura_bncc.habilidades.map((hab, idx) => {
+              const normalized = normalizeHabilidade(hab);
+              return (
+                <CoberturaBadge
+                  key={normalized.codigo || idx}
+                  codigo={normalized.codigo}
+                  descricao={normalized.descricao}
+                  nivel={normalized.nivel_cobertura}
+                  evidencias={normalized.evidencias}
+                />
+              );
+            })
           ) : (
             <p className="text-sm text-muted-foreground">Nenhuma habilidade identificada na análise.</p>
           )}

@@ -1,7 +1,7 @@
 {
   "nome": "prompt-exercicios",
   "versao": "v2.0.0",
-  "modelo_sugerido": "GPT_4O_MINI",
+  "modelo_sugerido": "GPT4_MINI",
   "ativo": true,
   "ab_testing": false,
   "variaveis": {

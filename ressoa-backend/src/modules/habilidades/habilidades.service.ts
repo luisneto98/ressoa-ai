@@ -131,6 +131,7 @@ export class HabilidadesService {
     // Add tipo_ensino filter (Story 10.5)
     if (where.tipo_ensino) {
       whereParams.push(where.tipo_ensino);
+      // ✅ CRITICAL: Match enum value directly (Prisma sends enum value as-is)
       conditions.push(`tipo_ensino = $${whereParams.length}`);
     }
 

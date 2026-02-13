@@ -106,6 +106,28 @@ export class TurmasController {
     return this.turmasService.findAllByEscola();
   }
 
+  @Get('professores')
+  @Roles('COORDENADOR', 'DIRETOR')
+  @ApiOperation({ summary: 'Listar professores da escola (para select de turma)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de professores',
+    schema: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          id: { type: 'string', format: 'uuid' },
+          nome: { type: 'string' },
+          email: { type: 'string' },
+        },
+      },
+    },
+  })
+  async listProfessores() {
+    return this.turmasService.listProfessores();
+  }
+
   @Get(':id')
   @Roles('PROFESSOR', 'COORDENADOR', 'DIRETOR')
   @ApiOperation({ summary: 'Buscar turma por ID' })

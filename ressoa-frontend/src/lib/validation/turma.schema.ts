@@ -12,7 +12,7 @@ import { TipoEnsino, Serie, Turno } from '@/types/turma';
  * - disciplina: required
  * - ano_letivo: required, number between 2020-2030
  * - turno: required, enum MATUTINO | VESPERTINO | INTEGRAL
- * - quantidade_alunos: optional, number between 1-50
+ * - professor_id: required, uuid
  *
  * Custom validation: serie must be compatible with tipo_ensino
  */
@@ -60,15 +60,7 @@ export const turmaFormSchema = z
       message: 'Turno é obrigatório',
     }),
 
-    quantidade_alunos: z
-      .number({
-        message: 'Quantidade de alunos deve ser um número',
-      })
-      .int('Quantidade de alunos deve ser um número inteiro')
-      .min(1, 'Mínimo de 1 aluno')
-      .max(50, 'Máximo de 50 alunos')
-      .nullable()
-      .optional(),
+    professor_id: z.string({ message: 'Professor é obrigatório' }).uuid('Professor inválido'),
   })
   .refine(
     (data) => {
@@ -109,7 +101,8 @@ export const getTurmaFormDefaults = (turma?: {
   disciplina: string;
   ano_letivo: number;
   turno: Turno;
-  quantidade_alunos: number | null;
+  professor_id?: string | null;
+  professor?: { id: string; nome: string; email: string } | null;
 }): TurmaFormData => {
   if (turma) {
     return {
@@ -119,7 +112,7 @@ export const getTurmaFormDefaults = (turma?: {
       disciplina: turma.disciplina,
       ano_letivo: turma.ano_letivo,
       turno: turma.turno,
-      quantidade_alunos: turma.quantidade_alunos,
+      professor_id: turma.professor?.id ?? turma.professor_id ?? '',
     };
   }
 
@@ -131,6 +124,6 @@ export const getTurmaFormDefaults = (turma?: {
     disciplina: '',
     ano_letivo: new Date().getFullYear(),
     turno: Turno.MATUTINO,
-    quantidade_alunos: null,
+    professor_id: '',
   };
 };

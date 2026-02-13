@@ -258,6 +258,32 @@ export class TurmasService {
   }
 
   /**
+   * Lista professores da escola (para select no formulário de turma)
+   *
+   * @returns Lista de professores com id, nome, email
+   */
+  async listProfessores() {
+    const escolaId = this.prisma.getEscolaIdOrThrow();
+
+    return this.prisma.usuario.findMany({
+      where: {
+        escola_id: escolaId,
+        perfil_usuario: {
+          is: {
+            role: 'PROFESSOR',
+          },
+        },
+      },
+      select: {
+        id: true,
+        nome: true,
+        email: true,
+      },
+      orderBy: { nome: 'asc' },
+    });
+  }
+
+  /**
    * Remove turma (soft delete para LGPD compliance)
    *
    * @param id - ID da turma

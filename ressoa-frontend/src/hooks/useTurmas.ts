@@ -6,6 +6,7 @@ import {
   createTurma,
   updateTurma,
   deleteTurma,
+  fetchProfessores,
 } from '@/api/turmas';
 import type { CreateTurmaDto, UpdateTurmaDto } from '@/types/turma';
 
@@ -27,6 +28,18 @@ export const turmasKeys = {
   list: (filters?: { tipo_ensino?: string }) => [...turmasKeys.lists(), filters] as const,
   details: () => [...turmasKeys.all, 'detail'] as const,
   detail: (id: string) => [...turmasKeys.details(), id] as const,
+};
+
+/**
+ * Hook to fetch professores for turma form select
+ * @returns Query result with professores list
+ */
+export const useProfessores = () => {
+  return useQuery({
+    queryKey: ['professores'] as const,
+    queryFn: fetchProfessores,
+    staleTime: 10 * 60 * 1000, // 10 minutes
+  });
 };
 
 /**

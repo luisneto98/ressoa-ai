@@ -37,6 +37,7 @@ import {
   getSeriesByTipoEnsino,
 } from '@/types/turma';
 import type { Turma } from '@/types/turma';
+import { useProfessores } from '@/hooks/useTurmas';
 
 /**
  * Form dialog for creating/editing turmas
@@ -80,6 +81,8 @@ export function TurmaFormDialog({
   onSubmit,
   isLoading = false,
 }: TurmaFormDialogProps) {
+  const { data: professores = [], isLoading: professoresLoading } = useProfessores();
+
   const form = useForm<TurmaFormData>({
     resolver: zodResolver(turmaFormSchema),
     defaultValues: getTurmaFormDefaults(defaultValues),
@@ -241,6 +244,32 @@ export function TurmaFormDialog({
                 )}
               />
 
+              {/* Professor */}
+              <FormField
+                control={form.control}
+                name="professor_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="professor_id">Professor Responsável *</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger id="professor_id" aria-invalid={!!form.formState.errors.professor_id}>
+                          <SelectValue placeholder={professoresLoading ? 'Carregando...' : 'Selecione o professor'} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {professores.map((prof) => (
+                          <SelectItem key={prof.id} value={prof.id}>
+                            {prof.nome}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage aria-live="polite" />
+                  </FormItem>
+                )}
+              />
+
               {/* Grid: Ano Letivo + Turno */}
               <div className="grid grid-cols-2 gap-4">
                 {/* Ano Letivo */}
@@ -294,33 +323,6 @@ export function TurmaFormDialog({
                 />
               </div>
 
-              {/* Quantidade de Alunos (opcional) */}
-              <FormField
-                control={form.control}
-                name="quantidade_alunos"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel htmlFor="quantidade_alunos">Quantidade de Alunos (opcional)</FormLabel>
-                    <FormControl>
-                      <Input
-                        id="quantidade_alunos"
-                        type="number"
-                        min={1}
-                        max={50}
-                        placeholder="30"
-                        aria-invalid={!!form.formState.errors.quantidade_alunos}
-                        {...field}
-                        value={field.value ?? ''}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          field.onChange(value === '' ? null : parseInt(value, 10));
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage aria-live="polite" />
-                  </FormItem>
-                )}
-              />
             </div>
 
             <DialogFooter>

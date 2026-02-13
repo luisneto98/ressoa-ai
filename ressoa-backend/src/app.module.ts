@@ -20,6 +20,7 @@ import { HabilidadesModule } from './modules/habilidades/habilidades.module';
 import { TurmasModule } from './modules/turmas/turmas.module';
 import { AulasModule } from './modules/aulas/aulas.module';
 import { SttModule } from './modules/stt/stt.module';
+import { ObjetivosModule } from './modules/objetivos/objetivos.module';
 import { LLMModule } from './modules/llm/llm.module';
 import { AnaliseModule } from './modules/analise/analise.module';
 import { NotificacoesModule } from './modules/notificacoes/notificacoes.module';
@@ -109,6 +110,7 @@ if (process.env.NODE_ENV !== 'test') {
     TurmasModule, // Turmas Query API (Story 2.3 - blocker resolution)
     AulasModule, // Aula Entity & Basic CRUD (Story 3.1)
     SttModule, // STT Service Abstraction Layer (Story 4.1)
+    ObjetivosModule, // Objetivos de Aprendizagem - BNCC & Custom (Story 11.1)
     LLMModule, // LLM Service Abstraction & Prompt Versioning (Story 5.1)
     AnaliseModule, // Pipeline Serial de 5 Prompts (Story 5.2)
     NotificacoesModule, // Notification System (Story 4.4)

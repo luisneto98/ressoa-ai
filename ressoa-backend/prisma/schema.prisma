@@ -75,61 +75,61 @@ enum ProviderLLM {
 
 enum StatusAnalise {
   AGUARDANDO_REVISAO // Freshly generated, awaiting professor review
-  APROVADO           // Approved by professor
-  REJEITADO          // Rejected by professor
+  APROVADO // Approved by professor
+  REJEITADO // Rejected by professor
 }
 
 model Escola {
-  id             String   @id @default(uuid())
-  nome           String
-  cnpj           String?  @unique
-  email_contato  String?
-  telefone       String?
-  created_at     DateTime @default(now())
-  updated_at     DateTime @updatedAt
+  id            String   @id @default(uuid())
+  nome          String
+  cnpj          String?  @unique
+  email_contato String?
+  telefone      String?
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
 
   // Relations
-  usuarios       Usuario[]
-  turmas         Turma[]
-  planejamentos  Planejamento[]
-  aulas          Aula[]
+  usuarios      Usuario[]
+  turmas        Turma[]
+  planejamentos Planejamento[]
+  aulas         Aula[]
 
   @@map("escola")
 }
 
 model Usuario {
-  id          String   @id @default(uuid())
-  nome        String
-  email       String
-  senha_hash  String
-  escola_id   String?  // Nullable para ADMIN (não pertence a escola)
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  id         String   @id @default(uuid())
+  nome       String
+  email      String
+  senha_hash String
+  escola_id  String? // Nullable para ADMIN (não pertence a escola)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   // Relations
-  escola          Escola?        @relation(fields: [escola_id], references: [id], onDelete: Cascade)
-  perfil_usuario  PerfilUsuario?
-  turmas          Turma[]
-  planejamentos   Planejamento[]
-  aulas           Aula[]
-  notificacoes    Notificacao[]
+  escola         Escola?        @relation(fields: [escola_id], references: [id], onDelete: Cascade)
+  perfil_usuario PerfilUsuario?
+  turmas         Turma[]
+  planejamentos  Planejamento[]
+  aulas          Aula[]
+  notificacoes   Notificacao[]
 
-  @@unique([email, escola_id])  // PostgreSQL permite múltiplos NULL sem violar unique
+  @@unique([email, escola_id]) // PostgreSQL permite múltiplos NULL sem violar unique
   @@index([escola_id])
   @@index([email])
   @@map("usuario")
 }
 
 model PerfilUsuario {
-  id                  String       @id @default(uuid())
-  usuario_id          String       @unique
-  role                RoleUsuario  @default(PROFESSOR)
-  notificacoes_email  Boolean      @default(true)
-  created_at          DateTime     @default(now())
-  updated_at          DateTime     @updatedAt
+  id                 String      @id @default(uuid())
+  usuario_id         String      @unique
+  role               RoleUsuario @default(PROFESSOR)
+  notificacoes_email Boolean     @default(true)
+  created_at         DateTime    @default(now())
+  updated_at         DateTime    @updatedAt
 
   // Relations
-  usuario             Usuario      @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  usuario Usuario @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
 
   @@index([usuario_id])
   @@map("perfil_usuario")
@@ -165,25 +165,26 @@ model Ano {
 }
 
 model Habilidade {
-  id                      String      @id @default(uuid())
-  codigo                  String      @unique // EF06MA01, EF67LP03, EF69LP10, EM13LGG101, etc.
-  descricao               String      @db.Text
-  disciplina              String      // MATEMATICA, LINGUA_PORTUGUESA, CIENCIAS, CIENCIAS_HUMANAS
-  tipo_ensino             TipoEnsino  @default(FUNDAMENTAL) // FUNDAMENTAL or MEDIO
-  ano_inicio              Int         // 6, 7, 8, 9 (Fundamental) or 1 (Médio)
-  ano_fim                 Int?        // NULL para habilidades específicas, 7/9 para blocos compartilhados (Fundamental), 3 (Médio)
-  unidade_tematica        String?     // Números, Álgebra, Práticas de Linguagem, etc. (apenas Fundamental)
-  competencia_especifica  Int?        // 1-7 (apenas Ensino Médio - competência da área BNCC)
-  objeto_conhecimento     String?     @db.Text
-  metadata                Json?       // Additional metadata (e.g., {"area": "Linguagens e suas Tecnologias"} for EM)
-  versao_bncc             String      @default("2018") // Versionamento (futuro: 2024?)
-  ativa                   Boolean     @default(true) // Soft delete
-  searchable              Unsupported("tsvector")? @default(dbgenerated("(setweight(to_tsvector('portuguese'::regconfig, COALESCE(codigo, ''::text)), 'A'::\"char\") || setweight(to_tsvector('portuguese'::regconfig, COALESCE(descricao, ''::text)), 'B'::\"char\"))"))
-  created_at              DateTime    @default(now())
-  updated_at              DateTime    @updatedAt
+  id                     String                   @id @default(uuid())
+  codigo                 String                   @unique // EF06MA01, EF67LP03, EF69LP10, EM13LGG101, etc.
+  descricao              String                   @db.Text
+  disciplina             String // MATEMATICA, LINGUA_PORTUGUESA, CIENCIAS, CIENCIAS_HUMANAS
+  tipo_ensino            TipoEnsino               @default(FUNDAMENTAL) // FUNDAMENTAL or MEDIO
+  ano_inicio             Int // 6, 7, 8, 9 (Fundamental) or 1 (Médio)
+  ano_fim                Int? // NULL para habilidades específicas, 7/9 para blocos compartilhados (Fundamental), 3 (Médio)
+  unidade_tematica       String? // Números, Álgebra, Práticas de Linguagem, etc. (apenas Fundamental)
+  competencia_especifica Int? // 1-7 (apenas Ensino Médio - competência da área BNCC)
+  objeto_conhecimento    String?                  @db.Text
+  metadata               Json? // Additional metadata (e.g., {"area": "Linguagens e suas Tecnologias"} for EM)
+  versao_bncc            String                   @default("2018") // Versionamento (futuro: 2024?)
+  ativa                  Boolean                  @default(true) // Soft delete
+  searchable             Unsupported("tsvector")? @default(dbgenerated("(setweight(to_tsvector('portuguese'::regconfig, COALESCE(codigo, ''::text)), 'A'::\"char\") || setweight(to_tsvector('portuguese'::regconfig, COALESCE(descricao, ''::text)), 'B'::\"char\"))"))
+  created_at             DateTime                 @default(now())
+  updated_at             DateTime                 @updatedAt
 
-  anos                        HabilidadeAno[]
-  planejamentos_habilidades   PlanejamentoHabilidade[]
+  anos                      HabilidadeAno[]
+  planejamentos_habilidades PlanejamentoHabilidade[]
+  objetivos_aprendizagem    ObjetivoAprendizagem[] // Migração BNCC → Objetivos (Story 11.1)
 
   @@index([disciplina, ano_inicio])
   @@index([tipo_ensino])
@@ -213,24 +214,25 @@ model HabilidadeAno {
 // ============================================
 
 model Turma {
-  id            String      @id @default(uuid())
-  nome          String      // ex: "6A", "7B"
-  disciplina    String      // Código da disciplina: MATEMATICA, LINGUA_PORTUGUESA, CIENCIAS
-  serie         Serie
-  tipo_ensino   TipoEnsino  @default(FUNDAMENTAL)
-  ano_letivo    Int
-  turno         String      // "MATUTINO", "VESPERTINO", "INTEGRAL"
-  escola_id     String
-  professor_id  String
-  deleted_at    DateTime?   // Soft delete timestamp (LGPD compliance)
-  created_at    DateTime    @default(now())
-  updated_at    DateTime    @updatedAt
+  id           String     @id @default(uuid())
+  nome         String // ex: "6A", "7B"
+  disciplina   String // Código da disciplina: MATEMATICA, LINGUA_PORTUGUESA, CIENCIAS
+  serie        Serie
+  tipo_ensino  TipoEnsino @default(FUNDAMENTAL)
+  ano_letivo   Int
+  turno        String // "MATUTINO", "VESPERTINO", "INTEGRAL"
+  escola_id    String
+  professor_id String
+  deleted_at   DateTime? // Soft delete timestamp (LGPD compliance)
+  created_at   DateTime   @default(now())
+  updated_at   DateTime   @updatedAt
 
   // Relations
-  escola        Escola      @relation(fields: [escola_id], references: [id], onDelete: Cascade)
-  professor     Usuario     @relation(fields: [professor_id], references: [id], onDelete: Cascade)
-  planejamentos Planejamento[]
-  aulas         Aula[]
+  escola                 Escola                 @relation(fields: [escola_id], references: [id], onDelete: Cascade)
+  professor              Usuario                @relation(fields: [professor_id], references: [id], onDelete: Cascade)
+  planejamentos          Planejamento[]
+  aulas                  Aula[]
+  objetivos_customizados ObjetivoAprendizagem[] // Objetivos custom específicos desta turma (Story 11.1)
 
   @@index([escola_id])
   @@index([professor_id])
@@ -245,24 +247,25 @@ model Turma {
 }
 
 model Planejamento {
-  id                     String    @id @default(uuid())
-  turma_id               String
-  bimestre               Int       // 1-4
-  ano_letivo             Int
-  escola_id              String
-  professor_id           String
-  validado_coordenacao   Boolean   @default(false)
-  deleted_at             DateTime? // Soft delete (LGPD compliance)
-  created_at             DateTime  @default(now())
-  updated_at             DateTime  @updatedAt
+  id                   String    @id @default(uuid())
+  turma_id             String
+  bimestre             Int // 1-4
+  ano_letivo           Int
+  escola_id            String
+  professor_id         String
+  validado_coordenacao Boolean   @default(false)
+  deleted_at           DateTime? // Soft delete (LGPD compliance)
+  created_at           DateTime  @default(now())
+  updated_at           DateTime  @updatedAt
 
   // Relations
-  escola                 Escola   @relation(fields: [escola_id], references: [id], onDelete: Cascade)
-  professor              Usuario  @relation(fields: [professor_id], references: [id], onDelete: Cascade)
-  turma                  Turma    @relation(fields: [turma_id], references: [id], onDelete: Cascade)
-  habilidades            PlanejamentoHabilidade[]
-  aulas                  Aula[]
-  analises               Analise[] // Análises que usaram este planejamento
+  escola      Escola                   @relation(fields: [escola_id], references: [id], onDelete: Cascade)
+  professor   Usuario                  @relation(fields: [professor_id], references: [id], onDelete: Cascade)
+  turma       Turma                    @relation(fields: [turma_id], references: [id], onDelete: Cascade)
+  habilidades PlanejamentoHabilidade[]
+  objetivos   PlanejamentoObjetivo[] // Substitui habilidades em implementações futuras (Story 11.3)
+  aulas       Aula[]
+  analises    Analise[] // Análises que usaram este planejamento
 
   @@unique([turma_id, bimestre, ano_letivo]) // RN-PLAN-04: Sem duplicatas
   @@index([escola_id])
@@ -274,16 +277,16 @@ model Planejamento {
 }
 
 model PlanejamentoHabilidade {
-  id                String        @id @default(uuid())
-  planejamento_id   String
-  habilidade_id     String
-  peso              Float         @default(1.0) // RN-PLAN-02: Peso padrão 1.0
-  aulas_previstas   Int?          // RN-PLAN-03: Opcional, estimado se não fornecido
-  created_at        DateTime      @default(now())
+  id              String   @id @default(uuid())
+  planejamento_id String
+  habilidade_id   String
+  peso            Float    @default(1.0) // RN-PLAN-02: Peso padrão 1.0
+  aulas_previstas Int? // RN-PLAN-03: Opcional, estimado se não fornecido
+  created_at      DateTime @default(now())
 
   // Relations
-  planejamento      Planejamento  @relation(fields: [planejamento_id], references: [id], onDelete: Cascade)
-  habilidade        Habilidade    @relation(fields: [habilidade_id], references: [id], onDelete: Cascade)
+  planejamento Planejamento @relation(fields: [planejamento_id], references: [id], onDelete: Cascade)
+  habilidade   Habilidade   @relation(fields: [habilidade_id], references: [id], onDelete: Cascade)
 
   @@unique([planejamento_id, habilidade_id]) // N:N sem duplicatas
   @@index([planejamento_id])
@@ -291,23 +294,97 @@ model PlanejamentoHabilidade {
   @@map("planejamento_habilidade")
 }
 
+/// Enum: Níveis cognitivos da Taxonomia de Bloom (6 níveis)
+/// Usado para classificar objetivos de aprendizagem por complexidade cognitiva
+enum NivelBloom {
+  LEMBRAR // Recordar informações (ex: definir, listar, nomear)
+  ENTENDER // Compreender significado (ex: explicar, resumir, interpretar)
+  APLICAR // Usar conhecimento em situações concretas (ex: executar, resolver, demonstrar)
+  ANALISAR // Decompor informação em partes (ex: comparar, organizar, distinguir)
+  AVALIAR // Julgar valor de ideias/materiais (ex: criticar, defender, justificar)
+  CRIAR // Combinar elementos para formar novo (ex: projetar, construir, planejar)
+}
+
+/// Enum: Tipo de fonte do objetivo de aprendizagem
+/// Permite sistema suportar múltiplas fontes curriculares além da BNCC
+enum TipoFonte {
+  BNCC // Base Nacional Comum Curricular (oficial)
+  CUSTOM // Objetivos customizados por escola/professor
+  CEFR // Common European Framework (idiomas) - Futuro
+  SENAC // Cursos técnicos SENAC - Futuro
+}
+
+/// Model: ObjetivoAprendizagem - Abstração genérica para BNCC e objetivos customizados
+/// Permite sistema suportar cursos não-BNCC mantendo qualidade de análise pedagógica
+/// Design: Framework híbrido onde BNCC é um "provider" de objetivos
+model ObjetivoAprendizagem {
+  id              String     @id @default(uuid())
+  codigo          String     @unique // Ex: EF06MA01 (BNCC) ou PM-MAT-01 (custom)
+  descricao       String     @db.Text
+  nivel_cognitivo NivelBloom // Bloom's Taxonomy classification
+  tipo_fonte      TipoFonte // Source type: BNCC or CUSTOM
+
+  // Campos condicionais - BNCC
+  habilidade_bncc_id String?
+  habilidade_bncc    Habilidade? @relation(fields: [habilidade_bncc_id], references: [id])
+
+  // Campos condicionais - Custom
+  turma_id            String?
+  turma               Turma?   @relation(fields: [turma_id], references: [id])
+  area_conhecimento   String? // Ex: "Matemática Financeira PM"
+  criterios_evidencia String[] @default([]) // Max 5 itens - usado pela IA para detectar atingimento
+  contexto_json       Json? // Metadata adicional (disciplina, competências, etc)
+
+  // Metadata
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // Relations
+  planejamentos PlanejamentoObjetivo[]
+
+  @@unique([turma_id, codigo]) // Código único por turma para custom (permite reutilização entre turmas)
+  @@index([tipo_fonte, turma_id]) // Query: listar objetivos custom de turma X
+  @@index([habilidade_bncc_id]) // Query: join com tabela Habilidade
+  @@map("objetivo_aprendizagem")
+}
+
+/// Model: PlanejamentoObjetivo - Relação N:N entre Planejamento e ObjetivoAprendizagem
+/// Substitui PlanejamentoHabilidade em implementações futuras (Story 11.3)
+model PlanejamentoObjetivo {
+  id              String   @id @default(uuid())
+  planejamento_id String
+  objetivo_id     String
+  peso            Float    @default(1.0)
+  aulas_previstas Int?
+  created_at      DateTime @default(now())
+
+  // Relations
+  planejamento Planejamento         @relation(fields: [planejamento_id], references: [id], onDelete: Cascade)
+  objetivo     ObjetivoAprendizagem @relation(fields: [objetivo_id], references: [id], onDelete: Cascade)
+
+  @@unique([planejamento_id, objetivo_id])
+  @@index([planejamento_id])
+  @@index([objetivo_id])
+  @@map("planejamento_objetivo")
+}
+
 // ============================================
 // Domínio Execução - Aulas & Processamento
 // ============================================
 
 model Transcricao {
-  id                       String      @id @default(uuid())
-  aula_id                  String      @unique
-  texto                    String      @db.Text
-  provider                 ProviderSTT
-  idioma                   String      @default("pt-BR")
-  duracao_segundos         Int?
-  confianca                Float?      // 0.0-1.0
-  custo_usd                Float?      // Cost tracking
-  tempo_processamento_ms   Int?
-  metadata_json            Json?       // Provider-specific data
-  created_at               DateTime    @default(now())
-  updated_at               DateTime    @updatedAt
+  id                     String      @id @default(uuid())
+  aula_id                String      @unique
+  texto                  String      @db.Text
+  provider               ProviderSTT
+  idioma                 String      @default("pt-BR")
+  duracao_segundos       Int?
+  confianca              Float? // 0.0-1.0
+  custo_usd              Float? // Cost tracking
+  tempo_processamento_ms Int?
+  metadata_json          Json? // Provider-specific data
+  created_at             DateTime    @default(now())
+  updated_at             DateTime    @updatedAt
 
   aula     Aula      @relation(fields: [aula_id], references: [id], onDelete: Cascade)
   analises Analise[] // A transcricao pode ter múltiplas análises (reprocessamento)
@@ -318,40 +395,40 @@ model Transcricao {
 }
 
 model Analise {
-  id                       String   @id @default(uuid())
-  aula_id                  String   @unique // One analysis per aula (current implementation)
-  transcricao_id           String
-  planejamento_id          String?  // Nullable - aula pode não ter planejamento
+  id              String  @id @default(uuid())
+  aula_id         String  @unique // One analysis per aula (current implementation)
+  transcricao_id  String
+  planejamento_id String? // Nullable - aula pode não ter planejamento
 
   // Outputs dos 5 prompts (pipeline serial)
-  cobertura_json           Json     // Prompt 1: { habilidades: [ { codigo, nivel_cobertura, evidencias } ] }
-  analise_qualitativa_json Json     // Prompt 2: { bloom_levels, metodologias, adequacao_cognitiva, sinais_engajamento }
-  relatorio_texto          String   @db.Text // Prompt 3: Relatório narrativo formatado em markdown (ORIGINAL)
-  relatorio_editado        String?  @db.Text // Versão editada pelo professor (Story 6.2)
-  exercicios_json          Json     // Prompt 4: [ { enunciado, gabarito, nivel_bloom, ... } ]
-  exercicios_editado       Json?    // Versão editada (Story 6.3)
-  alertas_json             Json     // Prompt 5: [ { tipo, nivel, mensagem, ... } ]
+  cobertura_json           Json // Prompt 1: { habilidades: [ { codigo, nivel_cobertura, evidencias } ] }
+  analise_qualitativa_json Json // Prompt 2: { bloom_levels, metodologias, adequacao_cognitiva, sinais_engajamento }
+  relatorio_texto          String  @db.Text // Prompt 3: Relatório narrativo formatado em markdown (ORIGINAL)
+  relatorio_editado        String? @db.Text // Versão editada pelo professor (Story 6.2)
+  exercicios_json          Json // Prompt 4: [ { enunciado, gabarito, nivel_bloom, ... } ]
+  exercicios_editado       Json? // Versão editada (Story 6.3)
+  alertas_json             Json // Prompt 5: [ { tipo, nivel, mensagem, ... } ]
 
   // Status tracking (Story 6.2)
-  status                   StatusAnalise @default(AGUARDANDO_REVISAO)
+  status StatusAnalise @default(AGUARDANDO_REVISAO)
 
   // Approval/Rejection tracking (Story 6.2)
-  aprovado_em              DateTime?
-  rejeitado_em             DateTime?
-  motivo_rejeicao          String?  @db.Text
-  tempo_revisao            Int?     // Seconds between created_at and approval
+  aprovado_em     DateTime?
+  rejeitado_em    DateTime?
+  motivo_rejeicao String?   @db.Text
+  tempo_revisao   Int? // Seconds between created_at and approval
 
   // Metadata para observability & A/B testing
-  prompt_versoes_json      Json     // { cobertura: "v1.0.0", qualitativa: "v1.1.0", ... }
-  custo_total_usd          Float    // Sum of 5 prompts
-  tempo_processamento_ms   Int      // Total pipeline time
+  prompt_versoes_json    Json // { cobertura: "v1.0.0", qualitativa: "v1.1.0", ... }
+  custo_total_usd        Float // Sum of 5 prompts
+  tempo_processamento_ms Int // Total pipeline time
 
-  created_at               DateTime @default(now())
-  updated_at               DateTime @updatedAt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   // Relations
-  aula         Aula         @relation(fields: [aula_id], references: [id], onDelete: Cascade)
-  transcricao  Transcricao  @relation(fields: [transcricao_id], references: [id])
+  aula         Aula          @relation(fields: [aula_id], references: [id], onDelete: Cascade)
+  transcricao  Transcricao   @relation(fields: [transcricao_id], references: [id])
   planejamento Planejamento? @relation(fields: [planejamento_id], references: [id])
 
   @@index([aula_id])
@@ -361,27 +438,27 @@ model Analise {
 }
 
 model Aula {
-  id                   String               @id @default(uuid())
+  id                   String              @id @default(uuid())
   escola_id            String
   professor_id         String
   turma_id             String
   planejamento_id      String?
   data                 DateTime
   tipo_entrada         TipoEntrada
-  status_processamento StatusProcessamento  @default(CRIADA)
-  arquivo_url          String?              // S3/MinIO URL
-  arquivo_tamanho      Int?                 // bytes
-  created_at           DateTime             @default(now())
-  updated_at           DateTime             @updatedAt
-  deleted_at           DateTime?            // Soft delete (LGPD compliance)
+  status_processamento StatusProcessamento @default(CRIADA)
+  arquivo_url          String? // S3/MinIO URL
+  arquivo_tamanho      Int? // bytes
+  created_at           DateTime            @default(now())
+  updated_at           DateTime            @updatedAt
+  deleted_at           DateTime? // Soft delete (LGPD compliance)
 
   // Relations
-  escola        Escola        @relation(fields: [escola_id], references: [id], onDelete: Cascade)
-  professor     Usuario       @relation(fields: [professor_id], references: [id], onDelete: Cascade)
-  turma         Turma         @relation(fields: [turma_id], references: [id], onDelete: Cascade)
-  planejamento  Planejamento? @relation(fields: [planejamento_id], references: [id], onDelete: SetNull)
-  transcricao   Transcricao?
-  analise       Analise?      // One-to-one relation (analise links back to aula)
+  escola       Escola        @relation(fields: [escola_id], references: [id], onDelete: Cascade)
+  professor    Usuario       @relation(fields: [professor_id], references: [id], onDelete: Cascade)
+  turma        Turma         @relation(fields: [turma_id], references: [id], onDelete: Cascade)
+  planejamento Planejamento? @relation(fields: [planejamento_id], references: [id], onDelete: SetNull)
+  transcricao  Transcricao?
+  analise      Analise? // One-to-one relation (analise links back to aula)
 
   @@index([escola_id, professor_id, data])
   @@index([status_processamento])
@@ -396,10 +473,10 @@ model Aula {
 
 model Prompt {
   id              String       @id @default(uuid())
-  nome            String       // "prompt-cobertura", "prompt-qualitativa", etc
-  versao          String       // "v1.0.0", "v1.1.0", etc
+  nome            String // "prompt-cobertura", "prompt-qualitativa", etc
+  versao          String // "v1.0.0", "v1.1.0", etc
   conteudo        String       @db.Text
-  variaveis       Json?        // { transcricao, planejamento, habilidades, ... }
+  variaveis       Json? // { transcricao, planejamento, habilidades, ... }
   modelo_sugerido ProviderLLM? // CLAUDE, GPT, GEMINI
   ativo           Boolean      @default(false)
   ab_testing      Boolean      @default(false) // Se true, usa split 50/50 com versão anterior
@@ -416,18 +493,18 @@ model Prompt {
 // ============================================
 
 model Notificacao {
-  id            String           @id @default(uuid())
+  id            String          @id @default(uuid())
   usuario_id    String
   tipo          TipoNotificacao
   titulo        String
   mensagem      String
-  lida          Boolean          @default(false)
-  link          String?          // Deep link para ação relevante
+  lida          Boolean         @default(false)
+  link          String? // Deep link para ação relevante
   metadata_json Json?
-  created_at    DateTime         @default(now())
+  created_at    DateTime        @default(now())
 
   // Relations
-  usuario       Usuario          @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  usuario Usuario @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
 
   @@index([usuario_id, lida, created_at])
   @@map("notificacao")

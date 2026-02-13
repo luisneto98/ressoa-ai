@@ -10,7 +10,7 @@ import type { Turma } from '@/types/turma';
  * Story 10.4 - AC#2, #8, #9, #10
  *
  * Features:
- * - 8 columns: Nome, Série, Tipo Ensino (badge), Disciplina, Ano Letivo, Turno, Qtd Alunos, Ações
+ * - 8 columns: Nome, Série, Tipo Ensino (badge), Disciplina, Ano Letivo, Turno, Professor, Ações
  * - Edit and Delete action buttons
  * - Hover states
  * - Responsive (handled by parent/CSS)
@@ -35,9 +35,7 @@ export function TurmasTable({ turmas, onEdit, onDelete }: TurmasTableProps) {
             <TableHead className="font-heading font-semibold text-deep-navy">Disciplina</TableHead>
             <TableHead className="font-heading font-semibold text-deep-navy">Ano Letivo</TableHead>
             <TableHead className="font-heading font-semibold text-deep-navy">Turno</TableHead>
-            <TableHead className="font-heading font-semibold text-deep-navy text-center">
-              Qtd Alunos
-            </TableHead>
+            <TableHead className="font-heading font-semibold text-deep-navy">Professor</TableHead>
             <TableHead className="font-heading font-semibold text-deep-navy text-right">Ações</TableHead>
           </TableRow>
         </TableHeader>
@@ -55,8 +53,8 @@ export function TurmasTable({ turmas, onEdit, onDelete }: TurmasTableProps) {
               <TableCell className="text-gray-700">{turma.disciplina}</TableCell>
               <TableCell className="text-gray-700">{turma.ano_letivo}</TableCell>
               <TableCell className="text-gray-700">{TURNO_LABELS[turma.turno]}</TableCell>
-              <TableCell className="text-center text-gray-700">
-                {turma.quantidade_alunos ?? '—'}
+              <TableCell className="text-gray-700">
+                {turma.professor?.nome ?? '—'}
               </TableCell>
               <TableCell>
                 <div className="flex justify-end gap-2">

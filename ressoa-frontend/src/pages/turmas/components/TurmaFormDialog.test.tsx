@@ -1,8 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { TurmaFormDialog } from './TurmaFormDialog';
 import type { Turma } from '@/types/turma';
+
+vi.mock('@/api/turmas', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/api/turmas')>();
+  return {
+    ...actual,
+    fetchProfessores: vi.fn().mockResolvedValue([
+      { id: 'prof-1', nome: 'Maria Silva', email: 'maria@test.com' },
+    ]),
+  };
+});
 
 /**
  * NOTE: Tests for Radix UI Select interactions are skipped due to JSDOM limitation
@@ -12,6 +23,21 @@ import type { Turma } from '@/types/turma';
  *
  * See: ressoa-frontend/TESTING_NOTES_RADIX_SELECT.md for details
  */
+
+const createTestQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+      mutations: { retry: false },
+    },
+  });
+
+const renderWithProviders = (ui: React.ReactElement) => {
+  const queryClient = createTestQueryClient();
+  return render(
+    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
+  );
+};
 
 describe('TurmaFormDialog', () => {
   const mockOnSubmit = vi.fn();
@@ -25,9 +51,9 @@ describe('TurmaFormDialog', () => {
     disciplina: 'MATEMATICA',
     ano_letivo: 2026,
     turno: 'MATUTINO',
-    quantidade_alunos: 30,
     escola_id: 'escola-1',
-    professor_id: null,
+    professor_id: 'prof-1',
+    professor: { id: 'prof-1', nome: 'Maria Silva', email: 'maria@test.com' },
     created_at: '2026-01-01T00:00:00Z',
     updated_at: '2026-01-01T00:00:00Z',
     deleted_at: null,
@@ -39,7 +65,7 @@ describe('TurmaFormDialog', () => {
   });
 
   it('should render with title "Nova Turma" in create mode', () => {
-    render(
+    renderWithProviders(
       <TurmaFormDialog
         open={true}
         onOpenChange={mockOnOpenChange}
@@ -52,7 +78,7 @@ describe('TurmaFormDialog', () => {
   });
 
   it('should render with title "Editar Turma" in edit mode', () => {
-    render(
+    renderWithProviders(
       <TurmaFormDialog
         open={true}
         onOpenChange={mockOnOpenChange}
@@ -68,7 +94,7 @@ describe('TurmaFormDialog', () => {
   it('should validate required fields', async () => {
     const user = userEvent.setup();
 
-    render(
+    renderWithProviders(
       <TurmaFormDialog
         open={true}
         onOpenChange={mockOnOpenChange}
@@ -90,7 +116,7 @@ describe('TurmaFormDialog', () => {
   it('should validate minimum name length', async () => {
     const user = userEvent.setup();
 
-    render(
+    renderWithProviders(
       <TurmaFormDialog
         open={true}
         onOpenChange={mockOnOpenChange}
@@ -115,7 +141,7 @@ describe('TurmaFormDialog', () => {
   it.skip('should change Serie options when tipo_ensino changes', async () => {
     const user = userEvent.setup();
 
-    render(
+    renderWithProviders(
       <TurmaFormDialog
         open={true}
         onOpenChange={mockOnOpenChange}
@@ -156,7 +182,7 @@ describe('TurmaFormDialog', () => {
   });
 
   it('should pre-fill form in edit mode', () => {
-    render(
+    renderWithProviders(
       <TurmaFormDialog
         open={true}
         onOpenChange={mockOnOpenChange}
@@ -178,7 +204,7 @@ describe('TurmaFormDialog', () => {
   it.skip('should call onSubmit with correct data', async () => {
     const user = userEvent.setup();
 
-    render(
+    renderWithProviders(
       <TurmaFormDialog
         open={true}
         onOpenChange={mockOnOpenChange}
@@ -218,7 +244,7 @@ describe('TurmaFormDialog', () => {
   });
 
   it('should display loading state when isLoading is true', () => {
-    render(
+    renderWithProviders(
       <TurmaFormDialog
         open={true}
         onOpenChange={mockOnOpenChange}

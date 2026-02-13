@@ -9,6 +9,7 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Serie, TipoEnsino } from '@prisma/client';
+import { DISCIPLINAS } from '../../../common/constants/disciplinas';
 
 export class CreateTurmaDto {
   @ApiProperty({ example: '6A', description: 'Nome da turma' })
@@ -19,12 +20,12 @@ export class CreateTurmaDto {
   @ApiProperty({
     example: 'MATEMATICA',
     description: 'Código da disciplina',
-    enum: ['MATEMATICA', 'LINGUA_PORTUGUESA', 'CIENCIAS'],
+    enum: DISCIPLINAS,
   })
   @IsString()
   @IsNotEmpty()
-  @IsEnum(['MATEMATICA', 'LINGUA_PORTUGUESA', 'CIENCIAS'], {
-    message: 'disciplina deve ser MATEMATICA, LINGUA_PORTUGUESA ou CIENCIAS',
+  @IsEnum(DISCIPLINAS, {
+    message: `disciplina deve ser um dos valores: ${DISCIPLINAS.join(', ')}`,
   })
   disciplina!: string;
 

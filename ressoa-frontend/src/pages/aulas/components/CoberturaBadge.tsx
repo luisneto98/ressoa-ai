@@ -38,6 +38,11 @@ export function CoberturaBadge({
           className: 'bg-gray-100 text-gray-600 hover:bg-gray-200',
           label: 'Não coberto',
         };
+      default:
+        return {
+          className: 'bg-gray-100 text-gray-600 hover:bg-gray-200',
+          label: nivel ?? 'Desconhecido',
+        };
     }
   };
 

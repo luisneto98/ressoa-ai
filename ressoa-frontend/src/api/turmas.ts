@@ -37,3 +37,9 @@ export const updateTurma = async (id: string, data: UpdateTurmaDto): Promise<Tur
 export const deleteTurma = async (id: string): Promise<void> => {
   await apiClient.delete(`/turmas/${id}`);
 };
+
+// GET professores for turma form (COORDENADOR/DIRETOR only)
+export const fetchProfessores = async (): Promise<{ id: string; nome: string; email: string }[]> => {
+  const response = await apiClient.get('/turmas/professores');
+  return response.data;
+};

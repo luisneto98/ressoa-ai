@@ -2,22 +2,28 @@ import { Badge } from '@/components/ui/badge';
 import { CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+interface Alternativa {
+  letra: string;
+  texto: string;
+  correta: boolean;
+}
+
 interface Questao {
   numero: number;
   enunciado: string;
-  // Múltipla-escolha
-  alternativas?: Array<{
-    letra: string;
-    texto: string;
-    correta: boolean;
-  }>;
-  // Dissertativa (gabarito da IA)
+  tipo?: string;
+  // Múltipla-escolha (formato normalizado)
+  alternativas?: Array<Alternativa | string>;
+  // Dissertativa (gabarito da IA - formato novo)
   gabarito?: {
     resposta_curta?: string;
     resolucao_passo_a_passo?: string[];
     criterios_correcao?: string[];
     dica_professor?: string;
   };
+  // Formato alternativo do backend
+  resposta_esperada?: string;
+  justificativa_pedagogica?: string;
   habilidade_bncc?: string;
   habilidade_relacionada?: string;
   nivel_bloom: string | number;
@@ -27,6 +33,32 @@ interface Questao {
   contexto_aula?: string;
 }
 
+/**
+ * Normaliza alternativas que podem vir como:
+ * - string[]: ["a) 1888", "b) 1889", ...]
+ * - { letra, texto, correta }[]
+ */
+function normalizeAlternativas(
+  alternativas: Array<Alternativa | string> | undefined,
+  respostaEsperada?: string,
+): Alternativa[] {
+  if (!alternativas || alternativas.length === 0) return [];
+
+  return alternativas.map((alt) => {
+    if (typeof alt === 'string') {
+      // Parse "a) 1888" → { letra: "a", texto: "1888", correta: false }
+      const match = alt.match(/^([a-z])\)\s*(.+)$/i);
+      const letra = match ? match[1] : '?';
+      const texto = match ? match[2] : alt;
+      const correta = respostaEsperada
+        ? respostaEsperada.toLowerCase().startsWith(letra.toLowerCase() + ')')
+        : false;
+      return { letra, texto, correta };
+    }
+    return alt;
+  });
+}
+
 interface QuestaoCardProps {
   questao: Questao;
   showGabarito?: boolean;
@@ -34,7 +66,8 @@ interface QuestaoCardProps {
 
 export function QuestaoCard({ questao, showGabarito = false }: QuestaoCardProps) {
   const habilidade = questao.habilidade_bncc || questao.habilidade_relacionada || '';
-  const nivelBloom = questao.nivel_bloom_descricao || `Nível ${questao.nivel_bloom}`;
+  const nivelBloom = questao.nivel_bloom_descricao || `${questao.nivel_bloom}`;
+  const alternativas = normalizeAlternativas(questao.alternativas, questao.resposta_esperada);
 
   return (
     <div className="border rounded-lg p-4 bg-white">
@@ -48,6 +81,11 @@ export function QuestaoCard({ questao, showGabarito = false }: QuestaoCardProps)
         <Badge variant="secondary" className="text-xs">
           Bloom: {nivelBloom}
         </Badge>
+        {questao.tipo && (
+          <Badge variant="secondary" className="text-xs capitalize">
+            {questao.tipo.replace(/_/g, ' ')}
+          </Badge>
+        )}
         {questao.dificuldade && (
           <Badge variant="secondary" className="text-xs capitalize">
             {questao.dificuldade}
@@ -61,9 +99,9 @@ export function QuestaoCard({ questao, showGabarito = false }: QuestaoCardProps)
       </h3>
 
       {/* Múltipla-escolha: Alternativas */}
-      {questao.alternativas && questao.alternativas.length > 0 && (
+      {alternativas.length > 0 && (
         <div className="space-y-2 mb-4">
-          {questao.alternativas.map((alt) => (
+          {alternativas.map((alt) => (
             <div
               key={alt.letra}
               className={cn(
@@ -85,7 +123,7 @@ export function QuestaoCard({ questao, showGabarito = false }: QuestaoCardProps)
         </div>
       )}
 
-      {/* Dissertativa: Gabarito */}
+      {/* Gabarito: formato novo (gabarito object) */}
       {showGabarito && questao.gabarito && (
         <div className="bg-blue-50 p-3 rounded-lg border border-blue-200 space-y-3">
           {questao.gabarito.resposta_curta && (
@@ -113,8 +151,24 @@ export function QuestaoCard({ questao, showGabarito = false }: QuestaoCardProps)
         </div>
       )}
 
-      {/* Explicação (formato antigo) */}
-      {showGabarito && questao.explicacao && !questao.gabarito && (
+      {/* Gabarito: formato v2 (resposta_esperada + justificativa) */}
+      {showGabarito && questao.resposta_esperada && !questao.gabarito && (
+        <div className="bg-blue-50 p-3 rounded-lg border border-blue-200 space-y-2">
+          <div>
+            <p className="text-sm font-semibold mb-1 text-blue-900">Resposta esperada:</p>
+            <p className="text-sm text-blue-800">{questao.resposta_esperada}</p>
+          </div>
+          {questao.justificativa_pedagogica && (
+            <div>
+              <p className="text-sm font-semibold mb-1 text-blue-900">Justificativa pedagógica:</p>
+              <p className="text-sm text-blue-800">{questao.justificativa_pedagogica}</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Explicação (formato legado) */}
+      {showGabarito && questao.explicacao && !questao.gabarito && !questao.resposta_esperada && (
         <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
           <p className="text-sm font-semibold mb-1 text-blue-900">Explicação:</p>
           <p className="text-sm text-blue-800">{questao.explicacao}</p>

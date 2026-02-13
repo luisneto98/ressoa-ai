@@ -38,9 +38,9 @@ export interface Turma {
   disciplina: string;
   ano_letivo: number;
   turno: Turno;
-  quantidade_alunos: number | null;
   escola_id: string;
   professor_id: string | null;
+  professor?: { id: string; nome: string; email: string };
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
@@ -53,7 +53,7 @@ export interface CreateTurmaDto {
   disciplina: string;
   ano_letivo: number;
   turno: Turno;
-  quantidade_alunos?: number | null;
+  professor_id: string;
 }
 
 export interface UpdateTurmaDto {
@@ -63,13 +63,8 @@ export interface UpdateTurmaDto {
   disciplina?: string;
   ano_letivo?: number;
   turno?: Turno;
-  quantidade_alunos?: number | null;
+  professor_id?: string;
 }
-
-// Helper type for form data (used with zod schema)
-export type TurmaFormData = Omit<CreateTurmaDto, 'quantidade_alunos'> & {
-  quantidade_alunos: number | null;
-};
 
 // Display helpers
 export const SERIE_LABELS: Record<Serie, string> = {

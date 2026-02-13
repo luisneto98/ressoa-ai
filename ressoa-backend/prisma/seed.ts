@@ -523,6 +523,72 @@ async function seedBNCCEnsinoMedio() {
   console.log(`✅ Seeded ${totalHabilidades} habilidades de Ensino Médio`);
 }
 
+/**
+ * Story 11.1: Migrate BNCC Habilidades to ObjetivoAprendizagem
+ * Migrates all 869 BNCC habilidades (369 Fundamental + 500 Médio) to generic learning objectives
+ * This function is idempotent - can be run multiple times without duplicating data
+ */
+async function migrateBNCCToObjetivos() {
+  console.log('🔄 Migrando habilidades BNCC para ObjetivoAprendizagem...');
+
+  const habilidades = await prisma.habilidade.findMany({
+    where: { ativa: true },
+  });
+
+  console.log(`📚 Found ${habilidades.length} active BNCC habilidades to migrate`);
+
+  let migrated = 0;
+  let skipped = 0;
+
+  for (const hab of habilidades) {
+    try {
+      await prisma.objetivoAprendizagem.upsert({
+        where: { codigo: hab.codigo },
+        update: {}, // Não atualiza se já existe (idempotente)
+        create: {
+          codigo: hab.codigo,
+          descricao: hab.descricao,
+          nivel_cognitivo: 'APLICAR', // Default BNCC (maioria é nível Aplicar segundo Bloom)
+          tipo_fonte: 'BNCC',
+          habilidade_bncc_id: hab.id,
+          area_conhecimento: hab.unidade_tematica || hab.disciplina,
+          contexto_json: {
+            disciplina: hab.disciplina,
+            tipo_ensino: hab.tipo_ensino,
+            ano_inicio: hab.ano_inicio,
+            ano_fim: hab.ano_fim,
+            unidade_tematica: hab.unidade_tematica,
+            competencia_especifica: hab.competencia_especifica,
+            objeto_conhecimento: hab.objeto_conhecimento,
+            versao_bncc: hab.versao_bncc,
+          },
+        },
+      });
+      migrated++;
+
+      if (migrated % 100 === 0) {
+        console.log(`  ✓ Migrated ${migrated}/${habilidades.length}...`);
+      }
+    } catch (error) {
+      console.error(`  ❌ Error migrating ${hab.codigo}:`, error);
+      skipped++;
+    }
+  }
+
+  console.log(`✅ ${migrated} habilidades BNCC migradas para ObjetivoAprendizagem`);
+  if (skipped > 0) {
+    console.log(`⚠️  ${skipped} habilidades skipped due to errors`);
+  }
+
+  // Verify migration
+  const totalObjetivos = await prisma.objetivoAprendizagem.count({
+    where: { tipo_fonte: 'BNCC' },
+  });
+  console.log(`📊 Total BNCC objetivos in database: ${totalObjetivos}`);
+
+  return { migrated, skipped, total: totalObjetivos };
+}
+
 async function main() {
   console.log('🚀 Starting seed...');
   console.log(`📦 Database: ${process.env['DATABASE_URL']?.split('@')[1] || 'configured'}`);
@@ -544,6 +610,9 @@ async function main() {
 
   // Seed Turmas (Story 2.3 - blocker resolution)
   await seedTurmas();
+
+  // Story 11.1: Migrate BNCC to ObjetivoAprendizagem
+  await migrateBNCCToObjetivos();
 
   console.log('🎉 Seed completed successfully!');
 }

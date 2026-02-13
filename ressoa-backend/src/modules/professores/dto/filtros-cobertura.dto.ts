@@ -8,6 +8,7 @@ import {
   Max,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { DISCIPLINAS } from '../../../common/constants/disciplinas';
 
 export class FiltrosCoberturaDto {
   @IsOptional()
@@ -16,7 +17,7 @@ export class FiltrosCoberturaDto {
 
   @IsOptional()
   @IsString()
-  @IsIn(['MATEMATICA', 'LINGUA_PORTUGUESA', 'CIENCIAS'])
+  @IsIn([...DISCIPLINAS])
   disciplina?: string;
 
   @IsOptional()

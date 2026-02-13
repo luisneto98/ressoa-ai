@@ -119,11 +119,11 @@ development_status:
     10-6-backend-ajustar-prompts-ia-ensino-medio: done
     10-7-frontend-filtros-tipo-ensino-dashboards: done
     10-8-backend-query-optimization-turmas-multi-tipo: done
-    10-9-testing-e2e-crud-turmas-analise-em: in-progress
+    10-9-testing-e2e-crud-turmas-analise-em: review
     10-10-documentation-guia-migracao-escolas-em: backlog
     epic-10-retrospective: optional
-    epic-11: backlog
-    11-1-backend-modelo-objetivos-aprendizagem: backlog
+    epic-11: in-progress
+    11-1-backend-modelo-objetivos-aprendizagem: done # Code review: 6/10 auto-fixed, 4 manual actions required (see 11-1-code-review-manual-fixes-required.md)
     11-2-backend-expandir-turma-curriculo-tipo: backlog
     11-3-backend-planejamento-objetivos-genericos: backlog
     11-4-backend-crud-objetivos-customizados: backlog

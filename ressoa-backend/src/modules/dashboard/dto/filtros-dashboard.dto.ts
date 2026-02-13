@@ -1,6 +1,7 @@
 import { IsOptional, IsInt, Min, Max, IsString, IsIn } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+import { DISCIPLINAS } from '../../../common/constants/disciplinas';
 
 export class FiltrosDashboardDto {
   @ApiProperty({
@@ -18,17 +19,17 @@ export class FiltrosDashboardDto {
   bimestre?: number;
 
   @ApiProperty({
-    description: 'Disciplina (MATEMATICA, LINGUA_PORTUGUESA, CIENCIAS)',
+    description: 'Disciplina',
     required: false,
-    enum: ['MATEMATICA', 'LINGUA_PORTUGUESA', 'CIENCIAS'],
+    enum: DISCIPLINAS,
     example: 'MATEMATICA',
   })
   @IsOptional()
   @IsString()
-  @IsIn(['MATEMATICA', 'LINGUA_PORTUGUESA', 'CIENCIAS'], {
-    message: 'Disciplina deve ser MATEMATICA, LINGUA_PORTUGUESA ou CIENCIAS',
+  @IsIn([...DISCIPLINAS], {
+    message: `Disciplina deve ser um dos valores: ${DISCIPLINAS.join(', ')}`,
   })
-  disciplina?: 'MATEMATICA' | 'LINGUA_PORTUGUESA' | 'CIENCIAS';
+  disciplina?: string;
 
   @ApiProperty({
     description: 'Tipo de Ensino (FUNDAMENTAL, MEDIO)',

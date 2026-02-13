@@ -110,3 +110,15 @@ development_status:
     9-6-polimento-visual-dashboards-de-gestao-e-admin: done # Code review complete - 10 issues found & auto-fixed (6 CRITICAL, 4 HIGH) - 132/132 tests passing - All shared dashboard components now compliant with design system
     9-7-padronizacao-de-icones-substituir-emoticons-por-tabler-icons: done # Code review complete - 2 CRITICAL + 2 MEDIUM issues auto-fixed (backend scope creep reverted, console.log emoticons removed, architecture AD-3.6 added) - 132/132 tests passing
     epic-9-retrospective: optional
+    epic-10: backlog
+    10-1-backend-expandir-modelo-turma-tipo-ensino-series-em: backlog
+    10-2-backend-api-crud-turmas-rbac: backlog
+    10-3-backend-seeding-habilidades-bncc-ensino-medio: backlog
+    10-4-frontend-tela-gestao-turmas-crud: backlog
+    10-5-frontend-adaptar-seletor-habilidades-ensino-medio: backlog
+    10-6-backend-ajustar-prompts-ia-ensino-medio: backlog
+    10-7-frontend-filtros-tipo-ensino-dashboards: backlog
+    10-8-backend-query-optimization-turmas-multi-tipo: backlog
+    10-9-testing-e2e-crud-turmas-analise-em: backlog
+    10-10-documentation-guia-migracao-escolas-em: backlog
+    epic-10-retrospective: optional

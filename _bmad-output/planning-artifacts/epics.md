@@ -9647,6 +9647,749 @@ So that **a interface tenha aparência consistente e profissional, sem emoticons
 
 ---
 
+### Story 9.8: Testing E2E — Navegação e Polimento Visual
+
+As a **desenvolvedor**,
+I want **testes E2E que validem navegação, sidebar, breadcrumbs, e visual consistency**,
+So that **mudanças futuras não quebrem a experiência de navegação e visual**.
+
+**Acceptance Criteria:**
+
+**Given** aplicação está rodando
+**When** usuário faz login como PROFESSOR
+**Then** sidebar renderiza com items corretos, CTA "Nova Aula" destacado
+
+**Given** usuário está na página de upload
+**When** breadcrumbs renderizam
+**Then** mostram "Dashboard > Aulas > Nova Aula"
+
+**Given** usuário é COORDENADOR
+**When** navega entre dashboards
+**Then** menu lateral muda (sem "Nova Aula"), breadcrumbs corretos
+
+---
+
+## Epic 10: Gestão de Turmas & Suporte a Ensino Médio
+
+**Goal:** Permitir que Diretores e Coordenadores cadastrem turmas de forma independente, e expandir o sistema para suportar Ensino Médio (1º-3º ano EM), mantendo todas as funcionalidades pedagógicas do sistema (planejamento BNCC, análise de cobertura, dashboards) compatíveis com ambos os níveis de ensino.
+
+**User Outcome:**
+- **Diretor/Coordenador** pode criar, editar e gerenciar turmas sem depender de seeds ou admin interno
+- **Professor** pode lecionar para turmas de Ensino Médio com mesma qualidade de análise pedagógica baseada em BNCC
+- **Sistema** suporta escolas que oferecem Fundamental (6º-9º) E Ensino Médio (1º-3º)
+
+**FRs covered:**
+- **Novo:** FR51: Diretor/Coordenador pode criar e gerenciar turmas
+- **Novo:** FR52: Sistema suporta turmas de Ensino Médio (1º-3º ano)
+- **Novo:** FR53: Sistema filtra habilidades BNCC por tipo de ensino (Fundamental vs Médio)
+- **Expansão de:** FR3, FR31-FR36 (dashboards e planejamento agora incluem EM)
+
+**Key Deliverables:**
+- **Backend:**
+  - Expandir modelo `Turma` com campo `tipo_ensino` (ENUM: FUNDAMENTAL, MEDIO)
+  - Expandir enum `Serie` para incluir: PRIMEIRO_ANO_EM, SEGUNDO_ANO_EM, TERCEIRO_ANO_EM
+  - API CRUD completa de Turmas (POST, PUT, DELETE) com RBAC
+  - Seeding de habilidades BNCC do Ensino Médio (~500 habilidades: LGG, MAT, CNT, CHS)
+  - Ajustar queries de habilidades para filtrar por `tipo_ensino`
+  - Adaptar prompts de IA para considerar faixa etária 14-17 anos (EM)
+
+- **Frontend:**
+  - Tela de gestão de turmas (lista, criar, editar, deletar) - acessível por Diretor/Coordenador
+  - Formulário de turma com seletor de `tipo_ensino` + `serie` dinâmico
+  - Adaptar seletor de habilidades BNCC em planejamento para mostrar LGG/MAT/CNT/CHS quando EM
+  - Filtros de `tipo_ensino` em dashboards de cobertura
+  - Badge visual diferenciando Fundamental vs Médio
+
+- **Data Migration:**
+  - Adicionar `tipo_ensino = FUNDAMENTAL` para turmas existentes (default seguro)
+  - Seed script idempotente para habilidades EM
+
+**Technical Notes:**
+- **Compatibilidade retroativa:** Turmas existentes recebem `tipo_ensino = FUNDAMENTAL` automaticamente
+- **BNCC Ensino Médio:**
+  - Estrutura hierárquica diferente: Áreas (LGG, MAT, CNT, CHS) > Competências > Habilidades
+  - Código alfanumérico: `EM13LGG101` (EM = Ensino Médio, 13 = etapa, LGG = Linguagens, 101 = habilidade)
+  - ~500 habilidades totais (vs 369 do Fundamental)
+  - Fonte: BNCC oficial MEC 2018 (mesmo doc que Fundamental)
+- **Prompts de IA:**
+  - Bloom Taxonomy para EM requer ajuste de complexidade cognitiva (14-17 anos vs 11-14 anos)
+  - Metodologias pedagógicas apropriadas para adolescentes (mais investigação, menos direcionamento)
+  - Exercícios precisam considerar preparação ENEM/vestibular (EM) vs formação básica (Fundamental)
+- **Permissões:**
+  - POST/PUT/DELETE `/turmas`: Apenas DIRETOR + COORDENADOR
+  - GET `/turmas`: PROFESSOR (filtra por `professor_id`), COORDENADOR/DIRETOR (todas da escola)
+- **Validações:**
+  - Nome único por escola + ano_letivo + turno (não pode ter "1A" duplicado no mesmo ano/turno)
+  - Serie compatível com tipo_ensino (SEXTO_ANO só se FUNDAMENTAL, PRIMEIRO_ANO_EM só se MEDIO)
+  - Disciplina válida para ambos níveis (MA/LP/CI aplicam a ambos; LGG/CNT/CHS só para EM)
+
+**NFRs addressed:**
+- **NFR-SCALE-02:** Suporte a escolas maiores (Fundamental + Médio = ~2x volume de turmas)
+- **NFR-ACCESS-02:** Navegação por teclado em formulário de turmas
+- **NFR-SEC-03:** Multi-tenancy (turmas isoladas por escola_id)
+
+**Dependencies:**
+- ✅ Epic 0: BNCC seeding infrastructure já existe
+- ✅ Epic 1: RBAC foundations já existem (apenas adicionar guards em novos endpoints)
+- ✅ Epic 2: Planejamento BNCC já existe (apenas filtrar habilidades por tipo_ensino)
+
+**Estimated Effort:** 8-10 stories, ~4-5 semanas
+
+**Risk Mitigation:**
+- **Risco:** BNCC Ensino Médio tem estrutura diferente (sem Unidades Temáticas, usa Competências de Área)
+  - **Mitigação:** Modelo de dados já suporta campos opcionais; mapear hierarquia EM como JSON adicional se necessário
+- **Risco:** Prompts de IA podem gerar análises inadequadas para EM
+  - **Mitigação:** Criar variantes de prompts por faixa etária; A/B testing com professores EM durante rollout
+
+---
+
+### Story 10.1: Backend — Expandir Modelo Turma com Tipo de Ensino e Novas Séries
+
+As a **desenvolvedor**,
+I want **expandir o modelo Prisma `Turma` para incluir `tipo_ensino` e novas séries de Ensino Médio**,
+So that **o banco de dados suporta tanto Ensino Fundamental quanto Médio sem quebrar dados existentes**.
+
+**Acceptance Criteria:**
+
+**Given** o schema Prisma atual tem `Serie` enum limitado a Fundamental
+**When** adiciono ao enum:
+```prisma
+enum Serie {
+  SEXTO_ANO
+  SETIMO_ANO
+  OITAVO_ANO
+  NONO_ANO
+  PRIMEIRO_ANO_EM  // Novo
+  SEGUNDO_ANO_EM   // Novo
+  TERCEIRO_ANO_EM  // Novo
+}
+```
+**Then** o enum é expandido sem remover valores antigos
+
+**Given** o schema Prisma atual tem model `Turma`
+**When** adiciono campo:
+```prisma
+model Turma {
+  // ... campos existentes
+  tipo_ensino TipoEnsino @default(FUNDAMENTAL)
+  // ... relações
+}
+
+enum TipoEnsino {
+  FUNDAMENTAL
+  MEDIO
+}
+```
+**Then** o campo `tipo_ensino` é adicionado com default seguro
+
+**Given** schema Prisma foi alterado
+**When** crio migration:
+```bash
+npx prisma migrate dev --name add-tipo-ensino-and-em-series
+```
+**Then** migration é criada e aplicada ao banco local
+
+**Given** migration foi aplicada
+**When** verifico turmas existentes no banco
+**Then** todas têm `tipo_ensino = FUNDAMENTAL` (default automático)
+
+**Given** types Prisma foram regenerados
+**When** executo `npx prisma generate`
+**Then** tipos TypeScript incluem `TipoEnsino` e novas `Serie`
+
+**Given** DTO `CreateTurmaDto` existe
+**When** adiciono validação:
+```typescript
+@IsEnum(TipoEnsino)
+@IsNotEmpty()
+tipo_ensino: TipoEnsino;
+
+@IsEnum(Serie)
+@IsNotEmpty()
+serie: Serie;
+```
+**Then** validação impede criação de turmas com dados inválidos
+
+**Given** turma EM está sendo criada
+**When** valido compatibilidade serie-tipo_ensino:
+```typescript
+if (tipo_ensino === TipoEnsino.FUNDAMENTAL && !['SEXTO_ANO', 'SETIMO_ANO', 'OITAVO_ANO', 'NONO_ANO'].includes(serie)) {
+  throw new BadRequestException('Série incompatível com Ensino Fundamental');
+}
+if (tipo_ensino === TipoEnsino.MEDIO && !['PRIMEIRO_ANO_EM', 'SEGUNDO_ANO_EM', 'TERCEIRO_ANO_EM'].includes(serie)) {
+  throw new BadRequestException('Série incompatível com Ensino Médio');
+}
+```
+**Then** request é rejeitado se serie-tipo_ensino forem incompatíveis
+
+---
+
+### Story 10.2: Backend — API CRUD Completa de Turmas com RBAC
+
+As a **Diretor ou Coordenador**,
+I want **uma API REST completa para criar, editar, listar e deletar turmas**,
+So that **posso gerenciar turmas sem depender de seeds ou ferramentas internas**.
+
+**Acceptance Criteria:**
+
+**Given** módulo `TurmasModule` existe
+**When** adiciono endpoint POST `/api/v1/turmas`:
+```typescript
+@Post()
+@Roles('DIRETOR', 'COORDENADOR')
+@UseGuards(JwtAuthGuard, RolesGuard)
+async create(@CurrentUser() user, @Body() dto: CreateTurmaDto) {
+  return this.turmasService.create({ ...dto, escola_id: user.escolaId });
+}
+```
+**Then** Diretor/Coordenador podem criar turmas
+
+**Given** CreateTurmaDto tem `escola_id` injetado automaticamente
+**When** request é processado
+**Then** `escola_id` vem de `user.escolaId` (multi-tenancy enforced)
+
+**Given** endpoint PUT `/api/v1/turmas/:id` existe
+**When** Diretor/Coordenador atualiza turma:
+```typescript
+@Put(':id')
+@Roles('DIRETOR', 'COORDENADOR')
+async update(@Param('id') id: string, @Body() dto: UpdateTurmaDto, @CurrentUser() user) {
+  await this.turmasService.ensureTurmaOwnership(id, user.escolaId); // Verifica que turma pertence à escola do user
+  return this.turmasService.update(id, dto);
+}
+```
+**Then** turma é atualizada apenas se pertencer à escola do user
+
+**Given** endpoint DELETE `/api/v1/turmas/:id` existe
+**When** Diretor deleta turma:
+```typescript
+@Delete(':id')
+@Roles('DIRETOR') // Apenas Diretor pode deletar
+async remove(@Param('id') id: string, @CurrentUser() user) {
+  await this.turmasService.ensureTurmaOwnership(id, user.escolaId);
+  return this.turmasService.softDelete(id); // Soft delete
+}
+```
+**Then** turma é soft-deleted (não removida fisicamente)
+
+**Given** endpoint GET `/api/v1/turmas` existe
+**When** Professor faz request
+**Then** retorna apenas turmas onde `professor_id = user.userId` (comportamento atual mantido)
+
+**Given** endpoint GET `/api/v1/turmas` existe
+**When** Coordenador/Diretor faz request
+**Then** retorna TODAS turmas da escola (`escola_id = user.escolaId`)
+
+**Given** validações de unicidade existem
+**When** tento criar turma duplicada (mesmo nome + ano_letivo + turno + escola_id)
+**Then** retorna 409 Conflict com mensagem: "Turma com esse nome já existe para este ano letivo e turno"
+
+**Given** turma tem planejamentos ou aulas associadas
+**When** tento deletar
+**Then** soft delete é executado (dados preservados, flag `deleted_at` setada)
+
+**And** endpoints de listagem filtram turmas deletadas (não aparecem)
+
+**Given** Swagger docs existem
+**When** acesso `/api/v1/docs`
+**Then** endpoints de turmas estão documentados com exemplos de request/response
+
+---
+
+### Story 10.3: Backend — Seeding de Habilidades BNCC do Ensino Médio
+
+As a **desenvolvedor**,
+I want **as ~500 habilidades BNCC do Ensino Médio mapeadas e inseridas no banco via seed script**,
+So that **professores de EM podem criar planejamentos usando habilidades oficiais**.
+
+**Acceptance Criteria:**
+
+**Given** fonte oficial BNCC 2018 (PDF/site MEC)
+**When** extraio habilidades do Ensino Médio
+**Then** crio JSON files em `prisma/seeds/bncc-ensino-medio/`:
+- `bncc-em-lgg.json` (~150 habilidades Linguagens e suas Tecnologias)
+- `bncc-em-mat.json` (~120 habilidades Matemática e suas Tecnologias)
+- `bncc-em-cnt.json` (~110 habilidades Ciências da Natureza e suas Tecnologias)
+- `bncc-em-chs.json` (~120 habilidades Ciências Humanas e Sociais Aplicadas)
+
+**Given** JSON files estão criados
+**When** inspeciono estrutura:
+```json
+{
+  "codigo": "EM13LGG101",
+  "descricao": "Compreender e analisar processos de produção...",
+  "area": "Linguagens e suas Tecnologias",
+  "competencia_especifica": 1,
+  "tipo_ensino": "MEDIO",
+  "anos": [1, 2, 3] // EM abrange todos os 3 anos
+}
+```
+**Then** estrutura está consistente com BNCC oficial
+
+**Given** seed script `prisma/seed.ts` existe
+**When** adiciono função:
+```typescript
+async function seedBNCCEnsinoMedio() {
+  const lgg = JSON.parse(fs.readFileSync('prisma/seeds/bncc-ensino-medio/bncc-em-lgg.json', 'utf-8'));
+  const mat = JSON.parse(fs.readFileSync('prisma/seeds/bncc-ensino-medio/bncc-em-mat.json', 'utf-8'));
+  const cnt = JSON.parse(fs.readFileSync('prisma/seeds/bncc-ensino-medio/bncc-em-cnt.json', 'utf-8'));
+  const chs = JSON.parse(fs.readFileSync('prisma/seeds/bncc-ensino-medio/bncc-em-chs.json', 'utf-8'));
+
+  const allHabilidades = [...lgg, ...mat, ...cnt, ...chs];
+
+  for (const hab of allHabilidades) {
+    await prisma.habilidade.upsert({
+      where: { codigo: hab.codigo },
+      update: {}, // Não atualiza se já existe
+      create: {
+        codigo: hab.codigo,
+        descricao: hab.descricao,
+        disciplina: mapAreaToDisciplina(hab.area), // LGG → LINGUA_PORTUGUESA/INGLES, etc
+        tipo_ensino: 'MEDIO',
+        ano_inicio: 1, // EM não divide por ano como Fundamental
+        ano_fim: 3,
+        unidade_tematica: null, // EM não usa Unidades Temáticas
+        competencia_especifica: hab.competencia_especifica,
+        metadata: { area: hab.area } // JSON field para dados adicionais
+      }
+    });
+  }
+}
+```
+**Then** função insere habilidades de forma idempotente
+
+**Given** função `mapAreaToDisciplina` precisa mapear áreas EM para disciplinas
+**When** implemento:
+```typescript
+function mapAreaToDisciplina(area: string): string {
+  const map = {
+    'Linguagens e suas Tecnologias': 'LINGUA_PORTUGUESA', // Simplificação MVP
+    'Matemática e suas Tecnologias': 'MATEMATICA',
+    'Ciências da Natureza e suas Tecnologias': 'CIENCIAS',
+    'Ciências Humanas e Sociais Aplicadas': 'CIENCIAS_HUMANAS' // Nova disciplina?
+  };
+  return map[area] || 'OUTROS';
+}
+```
+**Then** mapeamento está funcional
+
+**Given** seed script está completo
+**When** executo `npm run prisma:seed`
+**Then** ~500 habilidades EM são inseridas sem duplicatas
+
+**And** habilidades existentes (Fundamental) não são afetadas
+
+**Given** habilidades EM foram inseridas
+**When** consulto `SELECT COUNT(*) FROM habilidade WHERE tipo_ensino = 'MEDIO'`
+**Then** retorna ~500 registros
+
+---
+
+### Story 10.4: Frontend — Tela de Gestão de Turmas (CRUD)
+
+As a **Diretor ou Coordenador**,
+I want **uma tela para listar, criar, editar e deletar turmas**,
+So that **posso gerenciar turmas da escola sem depender de ferramentas externas**.
+
+**Acceptance Criteria:**
+
+**Given** usuário é DIRETOR ou COORDENADOR
+**When** acessa rota `/turmas`
+**Then** renderiza `TurmasListPage` com tabela de turmas
+
+**Given** `TurmasListPage` renderiza
+**When** carrega dados via `useTurmas()` hook
+**Then** exibe tabela com colunas: Nome, Série, Tipo Ensino, Disciplina, Ano Letivo, Turno, Qtd Alunos, Ações
+
+**Given** tabela está renderizada
+**When** clico em botão "Nova Turma" (header CTA)
+**Then** navega para `/turmas/nova`
+
+**Given** estou em `/turmas/nova`
+**When** renderiza `TurmaFormPage`
+**Then** exibe formulário com campos:
+- Nome (text input)
+- Tipo de Ensino (select: Fundamental, Médio)
+- Série (select dinâmico baseado em tipo_ensino)
+- Disciplina (select)
+- Ano Letivo (number input)
+- Turno (select: Matutino, Vespertino, Integral)
+- Qtd Alunos (number input)
+- Professor Responsável (combobox com search)
+
+**Given** tipo_ensino = FUNDAMENTAL selecionado
+**When** campo Série renderiza
+**Then** mostra opções: 6º Ano, 7º Ano, 8º Ano, 9º Ano
+
+**Given** tipo_ensino = MEDIO selecionado
+**When** campo Série renderiza
+**Then** mostra opções: 1º Ano (EM), 2º Ano (EM), 3º Ano (EM)
+
+**Given** formulário preenchido corretamente
+**When** clico "Salvar"
+**Then** POST `/api/v1/turmas` é executado
+
+**And** redirect para `/turmas` com toast de sucesso
+
+**Given** erro de validação ocorre (nome duplicado)
+**When** API retorna 409 Conflict
+**Then** exibe mensagem de erro embaixo do campo Nome
+
+**Given** tabela de turmas renderizada
+**When** clico ícone de editar em uma turma
+**Then** navega para `/turmas/:id/editar`
+
+**And** formulário pré-preenche com dados da turma
+
+**Given** estou editando turma
+**When** altero dados e clico "Salvar"
+**Then** PUT `/api/v1/turmas/:id` é executado
+
+**Given** tabela de turmas renderizada
+**When** clico ícone de deletar
+**Then** exibe dialog de confirmação: "Deletar turma X? Planejamentos e aulas serão preservados mas turma ficará inativa."
+
+**Given** dialog de confirmação exibido
+**When** confirmo deleção
+**Then** DELETE `/api/v1/turmas/:id` é executado
+
+**And** turma desaparece da tabela
+
+**Given** tabela tem badge de Tipo Ensino
+**When** tipo_ensino = FUNDAMENTAL
+**Then** badge azul com texto "Fundamental"
+
+**Given** tabela tem badge de Tipo Ensino
+**When** tipo_ensino = MEDIO
+**Then** badge roxo com texto "Médio"
+
+---
+
+### Story 10.5: Frontend — Adaptar Seletor de Habilidades BNCC para Ensino Médio
+
+As a **Professor de Ensino Médio**,
+I want **que o seletor de habilidades no planejamento mostre habilidades do EM quando aplicável**,
+So that **posso planejar minhas aulas com base no currículo oficial do Ensino Médio**.
+
+**Acceptance Criteria:**
+
+**Given** estou criando planejamento para turma de EM
+**When** acesso Step 2 do wizard de planejamento
+**Then** seletor de habilidades filtra por `tipo_ensino = MEDIO`
+
+**Given** seletor de habilidades EM renderiza
+**When** filtro por disciplina
+**Then** mostra opções: Linguagens, Matemática, Ciências da Natureza, Ciências Humanas
+
+**Given** seletor de habilidades EM renderiza
+**When** não há filtro de "série" específico (EM abrange 1º-3º)
+**Then** campo de filtro por série não renderiza (EM não divide habilidades por ano)
+
+**Given** seletor de habilidades EM renderiza
+**When** listo habilidades
+**Then** exibe código (EM13LGG101), descrição, área, competência específica
+
+**Given** habilidade EM é selecionada
+**When** adiciono ao planejamento
+**Then** habilidade aparece na lista de selecionadas com badge "EM"
+
+**Given** planejamento de turma Fundamental já existe
+**When** edito planejamento
+**Then** seletor continua mostrando habilidades Fundamental (não afetado)
+
+**Given** hook `useHabilidadesBNCC` existe
+**When** recebe parâmetro `tipo_ensino`:
+```typescript
+export const useHabilidadesBNCC = (tipo_ensino: 'FUNDAMENTAL' | 'MEDIO', disciplina?: string, serie?: number) => {
+  return useQuery({
+    queryKey: ['habilidades-bncc', tipo_ensino, disciplina, serie],
+    queryFn: async () => {
+      const params = { tipo_ensino, disciplina, ...(tipo_ensino === 'FUNDAMENTAL' && { serie }) };
+      const { data } = await apiClient.get<Habilidade[]>('/habilidades-bncc', { params });
+      return data;
+    },
+  });
+};
+```
+**Then** retorna habilidades filtradas corretamente
+
+**Given** backend endpoint `/habilidades-bncc` existe
+**When** recebe query param `tipo_ensino=MEDIO`
+**Then** filtra `WHERE tipo_ensino = 'MEDIO'`
+
+---
+
+### Story 10.6: Backend — Ajustar Prompts de IA para Ensino Médio
+
+As a **Professor de Ensino Médio**,
+I want **que a análise pedagógica por IA considere a faixa etária e complexidade cognitiva do EM**,
+So that **relatórios e exercícios gerados sejam apropriados para adolescentes de 14-17 anos**.
+
+**Acceptance Criteria:**
+
+**Given** pipeline de 5 prompts existe
+**When** aula de turma EM é analisada
+**Then** sistema detecta `tipo_ensino = MEDIO` via relacionamento `Aula.turma.tipo_ensino`
+
+**Given** Prompt 1 (Cobertura BNCC) está sendo executado
+**When** tipo_ensino = MEDIO
+**Then** prompt inclui contexto adicional:
+```
+A aula analisada é de Ensino Médio (faixa etária 14-17 anos).
+Habilidades BNCC do EM são organizadas por ÁREAS e COMPETÊNCIAS ESPECÍFICAS, não Unidades Temáticas.
+Considere que alunos de EM têm maior capacidade de abstração e pensamento crítico.
+```
+
+**Given** Prompt 2 (Análise Qualitativa) está sendo executado
+**When** tipo_ensino = MEDIO
+**Then** prompt ajusta Bloom Taxonomy:
+```
+Para Ensino Médio, espera-se maior uso de níveis cognitivos superiores:
+- Análise (40% do conteúdo)
+- Avaliação (30%)
+- Criação (20%)
+- Aplicação/Compreensão (10%)
+
+Metodologias apropriadas: investigação científica, debates estruturados, projetos interdisciplinares.
+```
+
+**Given** Prompt 4 (Exercícios) está sendo executado
+**When** tipo_ensino = MEDIO
+**Then** prompt adapta complexidade:
+```
+Exercícios devem:
+- Usar linguagem técnica apropriada para EM
+- Incluir questões dissertativas e de múltipla escolha
+- Contextualizar com temas atuais e interdisciplinares
+- Preparar para ENEM/vestibulares quando aplicável (especialmente 3º ano EM)
+- Evitar infantilização (sem ilustrações excessivas, linguagem simples demais)
+```
+
+**Given** serviço `LLMService.executePrompt()` recebe contexto de turma
+**When** monta payload para LLM:
+```typescript
+const context = {
+  turma: {
+    tipo_ensino: aula.turma.tipo_ensino,
+    serie: aula.turma.serie,
+    faixa_etaria: aula.turma.tipo_ensino === 'MEDIO' ? '14-17 anos' : '11-14 anos'
+  },
+  habilidades_planejadas: // filtradas por tipo_ensino
+};
+```
+**Then** LLM recebe contexto completo para gerar análise apropriada
+
+**Given** variantes de prompts foram criadas
+**When** comparo análises geradas para mesma transcrição (Fundamental vs Médio)
+**Then** relatório EM usa linguagem mais técnica, exercícios mais complexos, metodologias apropriadas
+
+---
+
+### Story 10.7: Frontend — Filtros de Tipo de Ensino em Dashboards
+
+As a **Coordenador ou Diretor**,
+I want **filtrar dashboards de cobertura por tipo de ensino (Fundamental, Médio, Todos)**,
+So that **posso analisar performance curricular separadamente por nível de ensino**.
+
+**Acceptance Criteria:**
+
+**Given** dashboard de Coordenador (visão por turma) renderiza
+**When** adiciono filtro de tipo de ensino no header:
+```tsx
+<Select value={tipoEnsinoFilter} onValueChange={setTipoEnsinoFilter}>
+  <SelectItem value="TODOS">Todos</SelectItem>
+  <SelectItem value="FUNDAMENTAL">Ensino Fundamental</SelectItem>
+  <SelectItem value="MEDIO">Ensino Médio</SelectItem>
+</Select>
+```
+**Then** filtro é exibido junto com filtros de disciplina e bimestre
+
+**Given** filtro de tipo_ensino = MEDIO selecionado
+**When** query de turmas executa
+**Then** filtra `WHERE tipo_ensino = 'MEDIO'`
+
+**Given** dashboard de cobertura por professor renderiza
+**When** filtro tipo_ensino = FUNDAMENTAL
+**Then** métrica de cobertura mostra % baseado em habilidades Fundamental
+
+**Given** StatCard de "Total de Turmas" renderiza
+**When** filtro tipo_ensino = TODOS
+**Then** mostra total geral (Fundamental + Médio)
+
+**Given** gráfico de cobertura ao longo do tempo renderiza
+**When** filtro tipo_ensino aplicado
+**Then** séries do gráfico refletem apenas dados do tipo selecionado
+
+**Given** tabela de turmas com atraso renderiza
+**When** filtro tipo_ensino = MEDIO
+**Then** lista apenas turmas EM com gaps de cobertura
+
+**Given** dashboard de Diretor (métricas agregadas) renderiza
+**When** adiciono breakdown por tipo de ensino:
+```tsx
+<div className="grid grid-cols-2 gap-4">
+  <StatCard title="Cobertura Fundamental" value="78%" />
+  <StatCard title="Cobertura Médio" value="82%" />
+</div>
+```
+**Then** métricas separadas são exibidas lado a lado
+
+---
+
+### Story 10.8: Backend — Query Optimization para Turmas Multi-Tipo
+
+As a **desenvolvedor**,
+I want **queries otimizadas para lidar com turmas Fundamental + Médio sem degradação de performance**,
+So that **dashboards e listagens continuam rápidos mesmo com 2x mais dados**.
+
+**Acceptance Criteria:**
+
+**Given** queries de cobertura existem
+**When** adiciono índice composto:
+```sql
+CREATE INDEX idx_turma_tipo_ensino_escola ON turma(tipo_ensino, escola_id, ano_letivo);
+```
+**Then** queries filtradas por tipo_ensino são otimizadas
+
+**Given** materialized view `cobertura_bimestral` existe
+**When** adiciono coluna `tipo_ensino`:
+```sql
+CREATE MATERIALIZED VIEW cobertura_bimestral AS
+SELECT
+  t.id AS turma_id,
+  t.tipo_ensino,
+  t.serie,
+  -- ... resto das colunas
+FROM turma t
+-- ... joins
+```
+**Then** view inclui tipo_ensino para filtros rápidos
+
+**Given** query de dashboard por tipo_ensino executa
+**When** uso view materializada:
+```typescript
+await prisma.$queryRaw`
+  SELECT * FROM cobertura_bimestral
+  WHERE escola_id = ${escolaId}
+  AND tipo_ensino = ${tipoEnsino}
+  AND ano_letivo = ${anoLetivo}
+`;
+```
+**Then** query retorna em <500ms mesmo com 200+ turmas
+
+**Given** seed de EM adiciona ~500 habilidades
+**When** query de habilidades filtra por tipo_ensino + disciplina
+**Then** usa índice `idx_habilidade_tipo_ensino_disciplina` (criar se não existe)
+
+**Given** testes de carga existem
+**When** simulo escola com 50 turmas Fundamental + 50 turmas Médio
+**Then** dashboards carregam em <2s (NFR-PERF-04)
+
+---
+
+### Story 10.9: Testing E2E — CRUD de Turmas & Análise EM
+
+As a **QA/desenvolvedor**,
+I want **testes E2E que validem fluxo completo de gestão de turmas e análise pedagógica para EM**,
+So that **mudanças futuras não quebrem funcionalidades críticas**.
+
+**Acceptance Criteria:**
+
+**Given** aplicação está rodando
+**When** faço login como DIRETOR
+**Then** posso acessar `/turmas`
+
+**Given** estou em `/turmas`
+**When** clico "Nova Turma"
+**Then** formulário renderiza
+
+**Given** formulário renderizado
+**When** preencho:
+- Nome: "1A - Matutino"
+- Tipo Ensino: Médio
+- Série: 1º Ano (EM)
+- Disciplina: Matemática
+- Ano Letivo: 2026
+- Turno: Matutino
+- Qtd Alunos: 35
+**Then** turma é criada com sucesso
+
+**Given** turma EM foi criada
+**When** faço login como PROFESSOR associado
+**Then** vejo turma na lista de minhas turmas
+
+**Given** turma EM existe
+**When** crio planejamento para ela
+**Then** seletor de habilidades mostra habilidades EM (EM13MAT...)
+
+**Given** planejamento EM foi criado
+**When** faço upload de aula de Matemática EM
+**Then** aula é transcrita e analisada
+
+**Given** análise de aula EM foi concluída
+**When** abro relatório
+**Then** relatório usa linguagem apropriada para EM (técnica, complexa)
+
+**And** exercícios gerados são de nível EM (não infantilizados)
+
+**Given** dashboard de Coordenador renderiza
+**When** filtro tipo_ensino = MEDIO
+**Then** vejo apenas turmas e métricas de EM
+
+**Given** turma tem planejamentos associados
+**When** tento deletar turma como DIRETOR
+**Then** turma é soft-deleted (não removida)
+
+**And** planejamentos continuam existindo
+
+**Given** suite de testes E2E está completa
+**When** executo `npm run test:e2e`
+**Then** todos os testes passam (CRUD turmas + análise EM + dashboards)
+
+---
+
+### Story 10.10: Documentation — Guia de Migração para Escolas com EM
+
+As a **usuário admin/suporte**,
+I want **documentação clara de como migrar escolas existentes para usar Ensino Médio**,
+So that **rollout da funcionalidade é suave e sem erros**.
+
+**Acceptance Criteria:**
+
+**Given** documentação de migração é criada em `docs/migration-ensino-medio.md`
+**When** leio o guia
+**Then** inclui seções:
+1. Pré-requisitos (atualizar backend, rodar migrations)
+2. Passo a passo para criar turmas EM
+3. Como professores criam planejamentos EM
+4. Diferenças entre Fundamental e Médio (habilidades, prompts)
+5. FAQ (turmas existentes são afetadas? Como deletar turma?)
+6. Troubleshooting (erros comuns)
+
+**Given** seção de pré-requisitos existe
+**When** leio instruções
+**Then** inclui comandos:
+```bash
+git pull origin main
+npm install
+npx prisma migrate deploy
+npm run prisma:seed # Roda seed de habilidades EM
+```
+
+**Given** seção de FAQ existe
+**When** leio pergunta "Turmas existentes são afetadas?"
+**Then** resposta: "Não. Todas turmas existentes receberam automaticamente tipo_ensino=FUNDAMENTAL. Funcionalidades antigas continuam idênticas."
+
+**Given** troubleshooting existe
+**When** leio erro comum "Série incompatível com tipo de ensino"
+**Then** explica: "Verifique que série selecionada corresponde ao tipo (6º-9º para Fundamental, 1º-3º EM para Médio)"
+
+**Given** documentação está completa
+**When** time de suporte consulta
+**Then** consegue responder 90% das dúvidas sem escalar para dev
+
+---
+
 ## Status Geral dos Épicos
 
 - ✅ **Epic 0:** Project Setup & Infrastructure Foundation (5 stories)
@@ -9658,8 +10401,9 @@ So that **a interface tenha aparência consistente e profissional, sem emoticons
 - ✅ **Epic 6:** Relatórios & Exercícios para Professor (5 stories)
 - ✅ **Epic 7:** Dashboard de Gestão (Coordenador & Diretor) (5 stories)
 - ✅ **Epic 8:** Administração & Monitoramento Interno (4 stories)
-- 🆕 **Epic 9:** Layout de Navegação & Polimento Visual (7 stories)
+- 🆕 **Epic 9:** Layout de Navegação & Polimento Visual (8 stories)
+- 🆕 **Epic 10:** Gestão de Turmas & Suporte a Ensino Médio (10 stories)
 
-**Total:** 10 épicos, 51 stories
+**Total:** 11 épicos, 62 stories
 
 ---

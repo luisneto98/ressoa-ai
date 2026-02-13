@@ -29,4 +29,17 @@ export class FiltrosDashboardDto {
     message: 'Disciplina deve ser MATEMATICA, LINGUA_PORTUGUESA ou CIENCIAS',
   })
   disciplina?: 'MATEMATICA' | 'LINGUA_PORTUGUESA' | 'CIENCIAS';
+
+  @ApiProperty({
+    description: 'Tipo de Ensino (FUNDAMENTAL, MEDIO)',
+    required: false,
+    enum: ['FUNDAMENTAL', 'MEDIO'],
+    example: 'FUNDAMENTAL',
+  })
+  @IsOptional()
+  @IsString()
+  @IsIn(['FUNDAMENTAL', 'MEDIO'], {
+    message: 'Tipo de ensino deve ser FUNDAMENTAL ou MEDIO',
+  })
+  tipo_ensino?: 'FUNDAMENTAL' | 'MEDIO';
 }

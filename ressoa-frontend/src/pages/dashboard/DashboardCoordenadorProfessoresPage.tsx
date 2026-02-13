@@ -17,12 +17,14 @@ import { TrendingUp, Users, AlertTriangle, Loader2 } from 'lucide-react';
 interface FiltrosCobertura {
   disciplina?: 'MATEMATICA' | 'LINGUA_PORTUGUESA' | 'CIENCIAS';
   bimestre?: number;
+  tipo_ensino?: 'FUNDAMENTAL' | 'MEDIO';
 }
 
 export function DashboardCoordenadorProfessoresPage() {
   const [filtros, setFiltros] = useState<FiltrosCobertura>({
     bimestre: 1,
     disciplina: 'MATEMATICA',
+    tipo_ensino: undefined, // Todos os tipos por padrão (AC #3)
   });
 
   const {
@@ -86,14 +88,30 @@ export function DashboardCoordenadorProfessoresPage() {
 
       {/* Filtros */}
       <Card className="p-4 mb-6">
-        <div className="flex gap-4 items-center">
+        <div className="flex gap-4 items-center flex-wrap">
+          <Select
+            value={filtros.tipo_ensino || 'TODOS'}
+            onValueChange={(v) =>
+              setFiltros({ ...filtros, tipo_ensino: v === 'TODOS' ? undefined : v as 'FUNDAMENTAL' | 'MEDIO' })
+            }
+          >
+            <SelectTrigger className="w-full md:w-[200px]">
+              <SelectValue placeholder="Tipo de Ensino" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="TODOS">Todos</SelectItem>
+              <SelectItem value="FUNDAMENTAL">Ensino Fundamental</SelectItem>
+              <SelectItem value="MEDIO">Ensino Médio</SelectItem>
+            </SelectContent>
+          </Select>
+
           <Select
             value={filtros.disciplina}
             onValueChange={(v) =>
               setFiltros({ ...filtros, disciplina: v as any })
             }
           >
-            <SelectTrigger className="w-[220px]">
+            <SelectTrigger className="w-full md:w-[220px]">
               <SelectValue placeholder="Disciplina" />
             </SelectTrigger>
             <SelectContent>
@@ -111,7 +129,7 @@ export function DashboardCoordenadorProfessoresPage() {
               setFiltros({ ...filtros, bimestre: parseInt(v) })
             }
           >
-            <SelectTrigger className="w-[150px]">
+            <SelectTrigger className="w-full md:w-[150px]">
               <SelectValue placeholder="Bimestre" />
             </SelectTrigger>
             <SelectContent>
@@ -122,11 +140,11 @@ export function DashboardCoordenadorProfessoresPage() {
             </SelectContent>
           </Select>
 
-          {(filtros.disciplina || filtros.bimestre) && (
+          {(filtros.disciplina || filtros.bimestre || filtros.tipo_ensino) && (
             <Button
               variant="ghost"
               onClick={() =>
-                setFiltros({ disciplina: undefined, bimestre: undefined })
+                setFiltros({ disciplina: undefined, bimestre: undefined, tipo_ensino: undefined })
               }
             >
               Limpar Filtros
@@ -136,7 +154,7 @@ export function DashboardCoordenadorProfessoresPage() {
       </Card>
 
       {/* Cards de Resumo */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <StatCard
           title="Média Geral de Cobertura"
           value={`${data.resumo.media_geral.toFixed(1)}%`}
@@ -156,6 +174,14 @@ export function DashboardCoordenadorProfessoresPage() {
           color="orange"
         />
       </div>
+
+      {/* Helper text for tipo_ensino context (AC #3 subtask 2.5) */}
+      {filtros.tipo_ensino && (
+        <p className="text-sm text-deep-navy/60 mb-6">
+          Cobertura baseada em habilidades {filtros.tipo_ensino === 'MEDIO' ? 'EM' : 'EF'} (
+          {filtros.tipo_ensino === 'MEDIO' ? 'Ensino Médio' : 'Ensino Fundamental'})
+        </p>
+      )}
 
       {/* Tabela de Professores */}
       <Card className="p-6">

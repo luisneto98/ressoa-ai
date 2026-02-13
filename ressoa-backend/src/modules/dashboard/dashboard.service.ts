@@ -77,22 +77,25 @@ export class DashboardService {
 
   async getMetricasPorProfessor(escolaId: string, filtros: FiltrosDashboardDto) {
     // Query raw SQL para agregar dados da materialized view
+    // JOIN with Turma to get tipo_ensino (materialized view doesn't include it yet)
     const metricas = await this.prisma.$queryRaw<MetricasProfessor[]>`
       SELECT
-        professor_id,
-        professor_nome,
-        disciplina,
-        COUNT(DISTINCT turma_id) as total_turmas,
-        AVG(percentual_cobertura) as media_cobertura,
-        SUM(habilidades_planejadas) as total_habilidades_planejadas,
-        SUM(habilidades_trabalhadas) as total_habilidades_trabalhadas,
-        SUM(total_aulas_aprovadas) as total_aulas,
-        AVG(tempo_medio_revisao) as tempo_medio_revisao
-      FROM cobertura_bimestral
-      WHERE escola_id = ${escolaId}
-        ${filtros.bimestre ? Prisma.sql`AND bimestre = ${filtros.bimestre}` : Prisma.empty}
-        ${filtros.disciplina ? Prisma.sql`AND disciplina = ${filtros.disciplina}` : Prisma.empty}
-      GROUP BY professor_id, professor_nome, disciplina
+        cb.professor_id,
+        cb.professor_nome,
+        cb.disciplina,
+        COUNT(DISTINCT cb.turma_id) as total_turmas,
+        AVG(cb.percentual_cobertura) as media_cobertura,
+        SUM(cb.habilidades_planejadas) as total_habilidades_planejadas,
+        SUM(cb.habilidades_trabalhadas) as total_habilidades_trabalhadas,
+        SUM(cb.total_aulas_aprovadas) as total_aulas,
+        AVG(cb.tempo_medio_revisao) as tempo_medio_revisao
+      FROM cobertura_bimestral cb
+      INNER JOIN turma t ON cb.turma_id = t.id
+      WHERE cb.escola_id = ${escolaId}
+        ${filtros.bimestre ? Prisma.sql`AND cb.bimestre = ${filtros.bimestre}` : Prisma.empty}
+        ${filtros.disciplina ? Prisma.sql`AND cb.disciplina = ${filtros.disciplina}` : Prisma.empty}
+        ${filtros.tipo_ensino ? Prisma.sql`AND t.tipo_ensino = ${filtros.tipo_ensino}` : Prisma.empty}
+      GROUP BY cb.professor_id, cb.professor_nome, cb.disciplina
       ORDER BY media_cobertura DESC;
     `;
 
@@ -120,20 +123,22 @@ export class DashboardService {
   ) {
     const turmas = await this.prisma.$queryRaw<MetricasTurma[]>`
       SELECT
-        turma_id,
-        turma_nome,
-        turma_serie,
-        disciplina,
-        bimestre,
-        percentual_cobertura,
-        habilidades_planejadas,
-        habilidades_trabalhadas,
-        total_aulas_aprovadas
-      FROM cobertura_bimestral
-      WHERE escola_id = ${escolaId}
-        AND professor_id = ${professorId}
-        ${filtros.bimestre ? Prisma.sql`AND bimestre = ${filtros.bimestre}` : Prisma.empty}
-      ORDER BY percentual_cobertura ASC;
+        cb.turma_id,
+        cb.turma_nome,
+        cb.turma_serie,
+        cb.disciplina,
+        cb.bimestre,
+        cb.percentual_cobertura,
+        cb.habilidades_planejadas,
+        cb.habilidades_trabalhadas,
+        cb.total_aulas_aprovadas
+      FROM cobertura_bimestral cb
+      INNER JOIN turma t ON cb.turma_id = t.id
+      WHERE cb.escola_id = ${escolaId}
+        AND cb.professor_id = ${professorId}
+        ${filtros.bimestre ? Prisma.sql`AND cb.bimestre = ${filtros.bimestre}` : Prisma.empty}
+        ${filtros.tipo_ensino ? Prisma.sql`AND t.tipo_ensino = ${filtros.tipo_ensino}` : Prisma.empty}
+      ORDER BY cb.percentual_cobertura ASC;
     `;
 
     return { turmas };
@@ -143,21 +148,23 @@ export class DashboardService {
     // Query raw SQL para agregar dados da materialized view por turma
     const metricas = await this.prisma.$queryRaw<MetricasTurmaAgregada[]>`
       SELECT
-        turma_id,
-        turma_nome,
-        turma_serie,
-        disciplina,
-        bimestre,
-        AVG(percentual_cobertura) as percentual_cobertura,
-        SUM(habilidades_planejadas) as habilidades_planejadas,
-        SUM(habilidades_trabalhadas) as habilidades_trabalhadas,
-        SUM(total_aulas_aprovadas) as total_aulas,
-        STRING_AGG(DISTINCT professor_nome, ', ') as professores
-      FROM cobertura_bimestral
-      WHERE escola_id = ${escolaId}
-        ${filtros.bimestre ? Prisma.sql`AND bimestre = ${filtros.bimestre}` : Prisma.empty}
-        ${filtros.disciplina ? Prisma.sql`AND disciplina = ${filtros.disciplina}` : Prisma.empty}
-      GROUP BY turma_id, turma_nome, turma_serie, disciplina, bimestre
+        cb.turma_id,
+        cb.turma_nome,
+        cb.turma_serie,
+        cb.disciplina,
+        cb.bimestre,
+        AVG(cb.percentual_cobertura) as percentual_cobertura,
+        SUM(cb.habilidades_planejadas) as habilidades_planejadas,
+        SUM(cb.habilidades_trabalhadas) as habilidades_trabalhadas,
+        SUM(cb.total_aulas_aprovadas) as total_aulas,
+        STRING_AGG(DISTINCT cb.professor_nome, ', ') as professores
+      FROM cobertura_bimestral cb
+      INNER JOIN turma t ON cb.turma_id = t.id
+      WHERE cb.escola_id = ${escolaId}
+        ${filtros.bimestre ? Prisma.sql`AND cb.bimestre = ${filtros.bimestre}` : Prisma.empty}
+        ${filtros.disciplina ? Prisma.sql`AND cb.disciplina = ${filtros.disciplina}` : Prisma.empty}
+        ${filtros.tipo_ensino ? Prisma.sql`AND t.tipo_ensino = ${filtros.tipo_ensino}` : Prisma.empty}
+      GROUP BY cb.turma_id, cb.turma_nome, cb.turma_serie, cb.disciplina, cb.bimestre
       ORDER BY percentual_cobertura ASC;
     `;
 
@@ -237,7 +244,7 @@ export class DashboardService {
   }
 
   async getMetricasEscola(escolaId: string, bimestre?: number) {
-    // === QUERY 1: KPIs Consolidados ===
+    // === QUERY 1: KPIs Consolidados (Overall + Breakdown by tipo_ensino) ===
     const kpisRaw = await this.prisma.$queryRaw<
       Array<{
         cobertura_geral: number;
@@ -248,15 +255,50 @@ export class DashboardService {
       }>
     >`
       SELECT
-        AVG(percentual_cobertura) as cobertura_geral,
-        COUNT(DISTINCT professor_id) as total_professores_ativos,
-        COUNT(DISTINCT turma_id) as total_turmas,
-        SUM(total_aulas_aprovadas) as total_aulas,
-        AVG(tempo_medio_revisao) as tempo_medio_revisao_geral
-      FROM cobertura_bimestral
-      WHERE escola_id = ${escolaId}
-        ${bimestre ? Prisma.sql`AND bimestre = ${bimestre}` : Prisma.empty}
+        AVG(cb.percentual_cobertura) as cobertura_geral,
+        COUNT(DISTINCT cb.professor_id) as total_professores_ativos,
+        COUNT(DISTINCT cb.turma_id) as total_turmas,
+        SUM(cb.total_aulas_aprovadas) as total_aulas,
+        AVG(cb.tempo_medio_revisao) as tempo_medio_revisao_geral
+      FROM cobertura_bimestral cb
+      WHERE cb.escola_id = ${escolaId}
+        ${bimestre ? Prisma.sql`AND cb.bimestre = ${bimestre}` : Prisma.empty}
     `;
+
+    // Breakdown by tipo_ensino (AC #7)
+    const breakdownRaw = await this.prisma.$queryRaw<
+      Array<{
+        tipo_ensino: string;
+        cobertura_media: number;
+        total_turmas: bigint;
+      }>
+    >`
+      SELECT
+        t.tipo_ensino,
+        AVG(cb.percentual_cobertura) as cobertura_media,
+        COUNT(DISTINCT cb.turma_id) as total_turmas
+      FROM cobertura_bimestral cb
+      INNER JOIN turma t ON cb.turma_id = t.id
+      WHERE cb.escola_id = ${escolaId}
+        ${bimestre ? Prisma.sql`AND cb.bimestre = ${bimestre}` : Prisma.empty}
+      GROUP BY t.tipo_ensino
+    `;
+
+    // Transform breakdown to object with FUNDAMENTAL and MEDIO keys
+    const breakdown = {
+      fundamental: breakdownRaw.find((b) => b.tipo_ensino === 'FUNDAMENTAL')
+        ? {
+            cobertura: Number(breakdownRaw.find((b) => b.tipo_ensino === 'FUNDAMENTAL')!.cobertura_media) || 0,
+            total_turmas: Number(breakdownRaw.find((b) => b.tipo_ensino === 'FUNDAMENTAL')!.total_turmas),
+          }
+        : { cobertura: 0, total_turmas: 0 },
+      medio: breakdownRaw.find((b) => b.tipo_ensino === 'MEDIO')
+        ? {
+            cobertura: Number(breakdownRaw.find((b) => b.tipo_ensino === 'MEDIO')!.cobertura_media) || 0,
+            total_turmas: Number(breakdownRaw.find((b) => b.tipo_ensino === 'MEDIO')!.total_turmas),
+          }
+        : { cobertura: 0, total_turmas: 0 },
+    };
 
     // Transformar bigint → number
     const kpis = kpisRaw[0]
@@ -266,6 +308,11 @@ export class DashboardService {
           total_turmas: Number(kpisRaw[0].total_turmas),
           total_aulas: Number(kpisRaw[0].total_aulas),
           tempo_medio_revisao_geral: Number(kpisRaw[0].tempo_medio_revisao_geral) || 0,
+          // Add breakdown to KPIs (AC #7)
+          cobertura_fundamental: breakdown.fundamental.cobertura,
+          cobertura_medio: breakdown.medio.cobertura,
+          total_turmas_fundamental: breakdown.fundamental.total_turmas,
+          total_turmas_medio: breakdown.medio.total_turmas,
         }
       : {
           cobertura_geral: 0,
@@ -273,6 +320,10 @@ export class DashboardService {
           total_turmas: 0,
           total_aulas: 0,
           tempo_medio_revisao_geral: 0,
+          cobertura_fundamental: 0,
+          cobertura_medio: 0,
+          total_turmas_fundamental: 0,
+          total_turmas_medio: 0,
         };
 
     // === QUERY 2: Distribuição por Disciplina ===

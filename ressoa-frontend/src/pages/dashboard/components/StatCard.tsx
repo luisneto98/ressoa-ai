@@ -6,9 +6,10 @@ interface StatCardProps {
   value: string | number;
   icon: ReactNode;
   color: 'blue' | 'green' | 'orange' | 'red' | 'cyan' | 'purple';
+  subtitle?: string; // Optional subtitle (AC #7)
 }
 
-export function StatCard({ title, value, icon, color }: StatCardProps) {
+export function StatCard({ title, value, icon, color, subtitle }: StatCardProps) {
   const colorClasses = {
     blue: 'bg-tech-blue/10 text-tech-blue',
     green: 'bg-green-50 text-green-600',
@@ -25,6 +26,9 @@ export function StatCard({ title, value, icon, color }: StatCardProps) {
         <div>
           <p className="text-sm text-deep-navy/80 font-medium">{title}</p>
           <p className="text-2xl font-montserrat font-bold text-deep-navy">{value}</p>
+          {subtitle && (
+            <p className="text-xs text-deep-navy/60 mt-1">{subtitle}</p>
+          )}
         </div>
       </div>
     </Card>

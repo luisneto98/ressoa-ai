@@ -18,6 +18,7 @@ import { AlertCircle, AlertTriangle, CheckCircle, Loader2 } from 'lucide-react';
 interface FiltrosCobertura {
   disciplina?: 'MATEMATICA' | 'LINGUA_PORTUGUESA' | 'CIENCIAS';
   bimestre?: number;
+  tipo_ensino?: 'FUNDAMENTAL' | 'MEDIO';
 }
 
 /**
@@ -35,6 +36,7 @@ export function DashboardCoordenadorTurmasPage() {
   const [filtros, setFiltros] = useState<FiltrosCobertura>({
     bimestre: getCurrentBimestre(),
     disciplina: undefined, // Mostrar todas por padrão
+    tipo_ensino: undefined, // Mostrar todos os tipos por padrão (AC #1)
   });
 
   const { data, isLoading, isError, error } = useQuery({
@@ -46,7 +48,7 @@ export function DashboardCoordenadorTurmasPage() {
   });
 
   const handleLimparFiltros = () => {
-    setFiltros({ bimestre: undefined, disciplina: undefined });
+    setFiltros({ bimestre: undefined, disciplina: undefined, tipo_ensino: undefined });
   };
 
   if (isLoading) {
@@ -97,14 +99,30 @@ export function DashboardCoordenadorTurmasPage() {
 
       {/* Filtros */}
       <Card className="p-4 mb-6">
-        <div className="flex gap-4 items-center">
+        <div className="flex gap-4 items-center flex-wrap">
+          <Select
+            value={filtros.tipo_ensino || 'TODOS'}
+            onValueChange={(v) =>
+              setFiltros({ ...filtros, tipo_ensino: v === 'TODOS' ? undefined : v as 'FUNDAMENTAL' | 'MEDIO' })
+            }
+          >
+            <SelectTrigger className="w-full md:w-[200px]">
+              <SelectValue placeholder="Tipo de Ensino" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="TODOS">Todos</SelectItem>
+              <SelectItem value="FUNDAMENTAL">Ensino Fundamental</SelectItem>
+              <SelectItem value="MEDIO">Ensino Médio</SelectItem>
+            </SelectContent>
+          </Select>
+
           <Select
             value={filtros.disciplina}
             onValueChange={(v) =>
               setFiltros({ ...filtros, disciplina: v as any })
             }
           >
-            <SelectTrigger className="w-[220px]">
+            <SelectTrigger className="w-full md:w-[220px]">
               <SelectValue placeholder="Disciplina" />
             </SelectTrigger>
             <SelectContent>
@@ -122,7 +140,7 @@ export function DashboardCoordenadorTurmasPage() {
               setFiltros({ ...filtros, bimestre: parseInt(v) })
             }
           >
-            <SelectTrigger className="w-[150px]">
+            <SelectTrigger className="w-full md:w-[150px]">
               <SelectValue placeholder="Bimestre" />
             </SelectTrigger>
             <SelectContent>
@@ -133,7 +151,7 @@ export function DashboardCoordenadorTurmasPage() {
             </SelectContent>
           </Select>
 
-          {(filtros.disciplina || filtros.bimestre) && (
+          {(filtros.disciplina || filtros.bimestre || filtros.tipo_ensino) && (
             <Button variant="ghost" onClick={handleLimparFiltros}>
               Limpar Filtros
             </Button>
@@ -179,10 +197,15 @@ export function DashboardCoordenadorTurmasPage() {
       {data.metricas.length === 0 ? (
         <Card className="p-8 text-center">
           <p className="text-deep-navy/80">
-            Nenhuma turma encontrada com os filtros selecionados.
+            {/* AC #8: Empty state customizado por filtro */}
+            {filtros.tipo_ensino === 'MEDIO'
+              ? 'Não há turmas de Ensino Médio cadastradas neste filtro.'
+              : filtros.tipo_ensino === 'FUNDAMENTAL'
+              ? 'Não há turmas de Ensino Fundamental cadastradas neste filtro.'
+              : 'Nenhuma turma encontrada com os filtros selecionados.'}
           </p>
           <Button variant="outline" onClick={handleLimparFiltros} className="mt-4">
-            Limpar Filtros
+            {filtros.tipo_ensino ? 'Ver todas as turmas' : 'Limpar Filtros'}
           </Button>
         </Card>
       ) : (

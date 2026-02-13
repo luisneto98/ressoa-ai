@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { TrendingUp, Users, School, CheckCircle, Clock, X, Loader2, AlertTriangle } from 'lucide-react';
+import { TrendingUp, Users, School, CheckCircle, Clock, X, Loader2, AlertTriangle, BookOpen, GraduationCap } from 'lucide-react';
 import { apiClient } from '@/api/axios';
 import { StatCard } from './components/StatCard';
 import { CoberturaPorDisciplinaChart } from './components/CoberturaPorDisciplinaChart';
@@ -22,6 +22,11 @@ interface MetricasDiretor {
     total_turmas: number;
     total_aulas: number;
     tempo_medio_revisao_geral: number;
+    // AC #7: Breakdown by tipo_ensino
+    cobertura_fundamental: number;
+    cobertura_medio: number;
+    total_turmas_fundamental: number;
+    total_turmas_medio: number;
   };
   por_disciplina: Array<{
     disciplina: string;
@@ -169,6 +174,39 @@ export function DashboardDiretorPage() {
                 : 'red'
           }
         />
+      </div>
+
+      {/* AC #7: Breakdown por tipo de ensino - Side by side */}
+      <div className="mb-8">
+        <h2 className="text-xl md:text-2xl font-montserrat font-semibold text-deep-navy mb-4">Cobertura por Tipo de Ensino</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <StatCard
+            title="Cobertura Fundamental"
+            value={`${data.kpis.cobertura_fundamental.toFixed(1)}%`}
+            subtitle={`${data.kpis.total_turmas_fundamental} turmas`}
+            icon={<BookOpen className="h-5 w-5" />}
+            color={
+              data.kpis.cobertura_fundamental >= COBERTURA_META_THRESHOLD
+                ? 'green'
+                : data.kpis.cobertura_fundamental >= COBERTURA_ATENCAO_THRESHOLD
+                  ? 'orange'
+                  : 'red'
+            }
+          />
+          <StatCard
+            title="Cobertura Médio"
+            value={`${data.kpis.cobertura_medio.toFixed(1)}%`}
+            subtitle={`${data.kpis.total_turmas_medio} turmas`}
+            icon={<GraduationCap className="h-5 w-5" />}
+            color={
+              data.kpis.cobertura_medio >= COBERTURA_META_THRESHOLD
+                ? 'green'
+                : data.kpis.cobertura_medio >= COBERTURA_ATENCAO_THRESHOLD
+                  ? 'orange'
+                  : 'red'
+            }
+          />
+        </div>
       </div>
 
       {/* Gráficos */}

@@ -34,15 +34,13 @@ export const turmasKeys = {
  * @param filters Optional filters (tipo_ensino)
  * @returns Query result with turmas list
  */
-export const useTurmas = (filters?: { tipo_ensino?: string }) => {
+export const useTurmas = (filters?: { tipo_ensino?: string; disciplina?: string; bimestre?: number }) => {
   return useQuery({
     queryKey: turmasKeys.list(filters),
     queryFn: async () => {
-      const turmas = await fetchTurmas();
-      // Client-side filtering if tipo_ensino provided
-      if (filters?.tipo_ensino) {
-        return turmas.filter((t) => t.tipo_ensino === filters.tipo_ensino);
-      }
+      // Story 10.7 - AC #2: Server-side filtering by tipo_ensino
+      // Pass filters as query params to backend (more efficient than client-side)
+      const turmas = await fetchTurmas(filters);
       return turmas;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes

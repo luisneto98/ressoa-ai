@@ -9,6 +9,7 @@ import { ObjetivosCustomForm } from './components/ObjetivosCustomForm';
 import { Step3Revisao } from './components/Step3Revisao';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CurriculoTipo } from '@/types/turma';
+import type { Turma } from '@/types/turma';
 import type { CreateObjetivoDto } from '@/types/objetivo';
 import { useCreateObjetivosBatch } from './hooks/useCreateObjetivosBatch';
 
@@ -49,7 +50,7 @@ export const PlanejamentoWizard = ({ mode = 'create' }: PlanejamentoWizardProps)
           ...planejamento.turma,
           serie: String(planejamento.turma.serie), // Convert number to string for wizard
           ano_letivo: planejamento.ano_letivo,
-        },
+        } satisfies Turma,
         bimestre: planejamento.bimestre,
         ano_letivo: planejamento.ano_letivo,
       });

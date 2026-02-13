@@ -29,7 +29,7 @@ export const objetivoSchema = z.object({
     .or(z.literal('')), // Permite string vazia
 
   nivel_cognitivo: z.nativeEnum(NivelBloom, {
-    errorMap: () => ({ message: 'Selecione um nível cognitivo (Taxonomia de Bloom)' }),
+    message: 'Selecione um nível cognitivo (Taxonomia de Bloom)',
   }),
 
   criterios_evidencia: z

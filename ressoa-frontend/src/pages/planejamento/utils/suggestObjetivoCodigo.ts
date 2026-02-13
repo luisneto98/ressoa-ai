@@ -40,11 +40,15 @@ export function suggestObjetivoCodigo(
     for (const pattern of patterns) {
       const match = objetivo.match(pattern);
       if (match && match[1]) {
-        prefixo = match[1]
+        const extracted = match[1]
           .toUpperCase()
           .replace(/[^A-Z0-9]/g, '')
           .slice(0, 3);
-        break;
+        // Skip if result is numeric-only (e.g., "2026")
+        if (!/^\d+$/.test(extracted)) {
+          prefixo = extracted;
+          break;
+        }
       }
     }
   }

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { UpdateObjetivoDto, ObjetivoCustom } from '@/types/objetivo';
-import { api } from '@/lib/api';
+import type { UpdateObjetivoDto, ObjetivoCustom } from '@/types/objetivo';
+import api from '@/lib/api';
 
 /**
  * Hook para atualizar um objetivo de aprendizagem

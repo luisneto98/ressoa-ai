@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { ObjetivoCustom } from '@/types/objetivo';
-import { api } from '@/lib/api';
+import type { ObjetivoCustom } from '@/types/objetivo';
+import api from '@/lib/api';
 
 /**
  * Hook para listar objetivos de aprendizagem de uma turma

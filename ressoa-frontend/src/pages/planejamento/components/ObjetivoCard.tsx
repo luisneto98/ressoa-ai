@@ -2,7 +2,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { IconGripVertical, IconEdit, IconTrash, IconClipboardList, IconBook } from '@tabler/icons-react';
-import { ObjetivoCustom } from '@/types/objetivo';
+import type { ObjetivoCustom } from '@/types/objetivo';
 import { NivelBloomBadge } from './NivelBloomBadge';
 import { cn } from '@/lib/utils';
 

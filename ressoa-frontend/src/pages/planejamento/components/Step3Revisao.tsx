@@ -8,6 +8,9 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { apiClient } from '../../../api/axios';
+import { CurriculoTipo } from '@/types/turma';
+import { useObjetivos } from '../hooks/useObjetivos';
+import { NivelBloomBadge } from './NivelBloomBadge';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,6 +33,11 @@ export const Step3Revisao = ({ mode = 'create', planejamentoId }: Step3RevisaoPr
   const createMutation = useCreatePlanejamento();
   const updateMutation = useUpdatePlanejamento();
   const navigate = useNavigate();
+
+  // Query objetivos customizados (se turma CUSTOM)
+  const { data: objetivos = [] } = useObjetivos(
+    formData.turma?.curriculo_tipo === CurriculoTipo.CUSTOM ? formData.turma_id : undefined
+  );
 
   const [showDuplicateAlert, setShowDuplicateAlert] = useState(false);
   const [existingPlanejamentoId, setExistingPlanejamentoId] = useState<
@@ -144,41 +152,75 @@ export const Step3Revisao = ({ mode = 'create', planejamentoId }: Step3RevisaoPr
             </div>
           </div>
 
-          {/* Habilidades List */}
-          <div>
-            <h3 className="mb-4 font-semibold">
-              Habilidades ({selectedHabilidades.length})
-            </h3>
-            <div className="max-h-[400px] space-y-3 overflow-auto">
-              {selectedHabilidades.map((hab) => (
-                <div
-                  key={hab.id}
-                  className="rounded-lg border bg-white p-4 shadow-sm"
-                >
-                  <div className="mb-2 flex items-start justify-between">
-                    <span className="font-bold text-deep-navy">
-                      {hab.codigo}
-                    </span>
-                    <div className="text-right text-sm text-gray-600">
-                      <div>Peso: {pesoAutomatico.toFixed(1)}%</div>
-                      <div>~{aulasEstimadas} aulas</div>
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-700">{hab.descricao}</p>
-                  {hab.unidade_tematica && (
-                    <Badge variant="secondary" className="mt-2">
-                      {hab.unidade_tematica}
-                    </Badge>
-                  )}
+          {/* Habilidades BNCC ou Objetivos Customizados */}
+          {formData.turma?.curriculo_tipo === CurriculoTipo.CUSTOM ? (
+            <div>
+              <h3 className="mb-4 font-semibold">
+                Objetivos de Aprendizagem Customizados ({objetivos.length})
+              </h3>
+              {objetivos.length === 0 ? (
+                <p className="text-sm text-gray-600">Nenhum objetivo definido.</p>
+              ) : (
+                <div className="space-y-2">
+                  {objetivos.map((objetivo) => (
+                    <Card key={objetivo.id} className="p-3">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="font-mono text-sm font-semibold">{objetivo.codigo}</span>
+                            <NivelBloomBadge nivel={objetivo.nivel_cognitivo} size="sm" />
+                          </div>
+                          <p className="text-sm text-gray-700 mb-2">{objetivo.descricao}</p>
+                          <p className="text-xs text-gray-600">
+                            Critérios: {objetivo.criterios_evidencia.length}
+                            {objetivo.area_conhecimento && ` | ${objetivo.area_conhecimento}`}
+                          </p>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
                 </div>
-              ))}
+              )}
+              <Button type="button" variant="outline" onClick={prevStep} className="mt-4">
+                Editar Objetivos
+              </Button>
             </div>
-          </div>
+          ) : (
+            <div>
+              <h3 className="mb-4 font-semibold">
+                Habilidades ({selectedHabilidades.length})
+              </h3>
+              <div className="max-h-[400px] space-y-3 overflow-auto">
+                {selectedHabilidades.map((hab) => (
+                  <div
+                    key={hab.id}
+                    className="rounded-lg border bg-white p-4 shadow-sm"
+                  >
+                    <div className="mb-2 flex items-start justify-between">
+                      <span className="font-bold text-deep-navy">
+                        {hab.codigo}
+                      </span>
+                      <div className="text-right text-sm text-gray-600">
+                        <div>Peso: {pesoAutomatico.toFixed(1)}%</div>
+                        <div>~{aulasEstimadas} aulas</div>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-700">{hab.descricao}</p>
+                    {hab.unidade_tematica && (
+                      <Badge variant="secondary" className="mt-2">
+                        {hab.unidade_tematica}
+                      </Badge>
+                    )}
+                  </div>
+                ))}
+              </div>
 
-          <p className="mt-4 text-sm text-gray-600">
-            * Os pesos e aulas previstas são calculados automaticamente pelo
-            sistema (1/N para cada habilidade)
-          </p>
+              <p className="mt-4 text-sm text-gray-600">
+                * Os pesos e aulas previstas são calculados automaticamente pelo
+                sistema (1/N para cada habilidade)
+              </p>
+            </div>
+          )}
         </Card>
 
         {/* Actions */}

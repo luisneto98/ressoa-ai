@@ -6,19 +6,20 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndEvent,
+  type DragEndEvent,
 } from '@dnd-kit/core';
 import {
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
   useSortable,
+  arrayMove,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { IconAlertCircle, IconPlus } from '@tabler/icons-react';
-import { CreateObjetivoDto } from '@/types/objetivo';
+import type { CreateObjetivoDto } from '@/types/objetivo';
 import { ObjetivoFormInline } from './ObjetivoFormInline';
 import { ObjetivoCard } from './ObjetivoCard';
 import { DeleteObjetivoDialog } from './DeleteObjetivoDialog';
@@ -125,13 +126,10 @@ export function ObjetivosCustomForm({ turma, onNext }: ObjetivosCustomFormProps)
         const oldIndex = items.findIndex((item) => item.localId === active.id);
         const newIndex = items.findIndex((item) => item.localId === over.id);
 
-        // arrayMove implementation
-        const result = [...items];
-        const [removed] = result.splice(oldIndex, 1);
-        result.splice(newIndex, 0, removed);
+        const reordered = arrayMove(items, oldIndex, newIndex);
 
         // Atualizar campo `ordem`
-        return result.map((item, index) => ({ ...item, ordem: index + 1 }));
+        return reordered.map((item, index) => ({ ...item, ordem: index + 1 }));
       });
     }
   };

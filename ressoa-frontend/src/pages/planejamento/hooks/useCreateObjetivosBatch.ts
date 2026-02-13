@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { CreateObjetivoDto, ObjetivoCustom } from '@/types/objetivo';
-import { api } from '@/lib/api';
+import type { CreateObjetivoDto, ObjetivoCustom } from '@/types/objetivo';
+import api from '@/lib/api';
 
 /**
  * Hook para criar múltiplos objetivos em batch
@@ -13,8 +13,14 @@ export function useCreateObjetivosBatch(turmaId: string) {
 
   return useMutation<ObjetivoCustom[], Error, CreateObjetivoDto[]>({
     mutationFn: async (objetivos) => {
-      const { data } = await api.post(`/turmas/${turmaId}/objetivos/batch`, objetivos);
-      return data;
+      // Fallback: batch endpoint not implemented in backend (Story 11.4)
+      // Use individual POSTs instead
+      const results = await Promise.all(
+        objetivos.map(objetivo =>
+          api.post(`/turmas/${turmaId}/objetivos`, objetivo)
+        )
+      );
+      return results.map((r: any) => r.data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['objetivos', turmaId] });

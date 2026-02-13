@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { TipoEnsino, Serie, Turno, CurriculoTipo, ContextoPedagogicoDto } from '@/types/turma';
+import { TipoEnsino, Serie, Turno, CurriculoTipo, type ContextoPedagogicoDto } from '@/types/turma';
 
 /**
  * Zod validation schema for Turma form

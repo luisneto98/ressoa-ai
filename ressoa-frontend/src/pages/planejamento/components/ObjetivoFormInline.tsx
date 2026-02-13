@@ -15,13 +15,14 @@ import {
 import { Label } from '@/components/ui/label';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { IconAlertCircle, IconRefresh, IconCheck, IconX } from '@tabler/icons-react';
-import { objetivoSchema, ObjetivoFormData } from '@/lib/validation/objetivo.schema';
+import { objetivoSchema } from '@/lib/validation/objetivo.schema';
+import type { ObjetivoFormData } from '@/lib/validation/objetivo.schema';
 import {
   NivelBloom,
   NIVEL_BLOOM_LABELS,
   NIVEL_BLOOM_DESCRIPTIONS,
-  CreateObjetivoDto,
 } from '@/types/objetivo';
+import type { CreateObjetivoDto } from '@/types/objetivo';
 import { CriteriosEvidenciaField } from './CriteriosEvidenciaField';
 import { cn } from '@/lib/utils';
 
@@ -66,7 +67,7 @@ export function ObjetivoFormInline({
       objetivoSchema.refine(
         (data) => {
           // Validação de código duplicado (exceto quando editando o próprio código)
-          if (mode === 'edit' && data.codigo === defaultValues?.codigo) {
+          if (mode === 'edit' && data.codigo.toUpperCase() === defaultValues?.codigo?.toUpperCase()) {
             return true;
           }
           return !existingCodes.includes(data.codigo);

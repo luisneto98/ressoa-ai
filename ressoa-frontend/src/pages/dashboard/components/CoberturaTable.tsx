@@ -9,6 +9,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { CurriculoTypeBadge } from '@/components/CurriculoTypeBadge';
+import { getItensPlanejadasLabel, getItensTrabalhadasLabel } from '@/lib/cobertura-helpers';
 
 interface CoberturaItem {
   turma_id: string;
@@ -44,14 +45,27 @@ export function CoberturaTable({ cobertura }: CoberturaTableProps) {
     }
   };
 
+  // Story 11.8 AC3 Fix: Determine if table has mixed types or single type
+  const hasMixedTypes = cobertura.length > 1 &&
+    cobertura.some(c => c.curriculo_tipo === 'BNCC') &&
+    cobertura.some(c => c.curriculo_tipo === 'CUSTOM');
+
+  // Use generic labels for mixed, specific labels for single type
+  const planejadasLabel = hasMixedTypes
+    ? 'Objetivos Planejados'
+    : getItensPlanejadasLabel(cobertura[0]?.curriculo_tipo);
+  const trabalhadasLabel = hasMixedTypes
+    ? 'Objetivos Trabalhados'
+    : getItensTrabalhadasLabel(cobertura[0]?.curriculo_tipo);
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
           <TableHead>Turma</TableHead>
-          <TableHead className="text-center">Habilidades Planejadas</TableHead>
+          <TableHead className="text-center">{planejadasLabel}</TableHead>
           <TableHead className="text-center">
-            Habilidades Trabalhadas
+            {trabalhadasLabel}
           </TableHead>
           <TableHead>% Cobertura</TableHead>
           <TableHead className="text-center">Status</TableHead>

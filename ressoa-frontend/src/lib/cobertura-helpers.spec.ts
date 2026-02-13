@@ -20,14 +20,14 @@ describe('cobertura-helpers - Story 11.8 AC3', () => {
     it('returns general label when curriculo_tipo is TODOS', () => {
       const result = getCoberturaLabel('TODOS');
 
-      expect(result.title).toBe('% Cobertura Geral');
+      expect(result.title).toBe('% Objetivos Gerais');
       expect(result.tooltip).toContain('BNCC + Customizados');
     });
 
     it('returns general label when curriculo_tipo is undefined', () => {
       const result = getCoberturaLabel();
 
-      expect(result.title).toBe('% Cobertura Geral');
+      expect(result.title).toBe('% Objetivos Gerais');
       expect(result.tooltip).toContain('objetivos planejados');
     });
   });

@@ -31,7 +31,7 @@ export function getCoberturaLabel(
     case 'TODOS':
     default:
       return {
-        title: '% Cobertura Geral',
+        title: '% Objetivos Gerais',
         tooltip: 'Percentual de objetivos planejados (BNCC + Customizados) que foram trabalhados',
       };
   }

@@ -95,7 +95,10 @@ export function CoberturaPessoalPage() {
           <Select
             value={filtros.disciplina}
             onValueChange={(v) =>
-              setFiltros({ ...filtros, disciplina: v as any })
+              setFiltros({
+                ...filtros,
+                disciplina: v as 'MATEMATICA' | 'LINGUA_PORTUGUESA' | 'CIENCIAS'
+              })
             }
           >
             <SelectTrigger className="w-[220px]">
@@ -130,7 +133,10 @@ export function CoberturaPessoalPage() {
           <Select
             value={filtros.curriculo_tipo}
             onValueChange={(v) =>
-              setFiltros({ ...filtros, curriculo_tipo: v as any })
+              setFiltros({
+                ...filtros,
+                curriculo_tipo: v as 'TODOS' | 'BNCC' | 'CUSTOM'
+              })
             }
           >
             <SelectTrigger className="w-[200px]">

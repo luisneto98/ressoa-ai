@@ -53,6 +53,10 @@ export class ProfessoresService {
   ): Promise<CoberturaResult[]> {
     // Query: JOIN Planejamento, PlanejamentoHabilidade, Turma, Aula, Analise
     // Calcula: % cobertura = habilidades trabalhadas (COMPLETE/PARTIAL) / habilidades planejadas
+    //
+    // CRITICAL (Story 11.8): This query assumes Turma.curriculo_tipo column exists
+    // Migration added in Story 11.2 - if migration failed, query will error
+    // TODO Story 11.10: Add startup schema validation or migration smoke test
 
     const result = await this.prisma.$queryRaw<CoberturaResult[]>`
       SELECT

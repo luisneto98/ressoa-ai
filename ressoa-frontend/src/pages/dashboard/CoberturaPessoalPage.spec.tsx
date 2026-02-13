@@ -120,7 +120,7 @@ describe('CoberturaPessoalPage - Story 11.8 Simplified Tests', () => {
     expect(customBadge).toHaveClass('bg-purple-600');
   });
 
-  it('Test 4: Exibe label "% Cobertura Geral" quando filtro é TODOS (AC3)', async () => {
+  it('Test 4: Exibe label "% Objetivos Gerais" quando filtro é TODOS (AC3)', async () => {
     mockApiGet.mockResolvedValueOnce({
       data: {
         cobertura: mockCoberturaAll,
@@ -131,7 +131,7 @@ describe('CoberturaPessoalPage - Story 11.8 Simplified Tests', () => {
     render(<CoberturaPessoalPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText('% Cobertura Geral')).toBeInTheDocument();
+      expect(screen.getByText('% Objetivos Gerais')).toBeInTheDocument();
     });
   });
 

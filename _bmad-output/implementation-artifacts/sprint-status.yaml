@@ -119,6 +119,18 @@ development_status:
     10-6-backend-ajustar-prompts-ia-ensino-medio: done
     10-7-frontend-filtros-tipo-ensino-dashboards: done
     10-8-backend-query-optimization-turmas-multi-tipo: done
-    10-9-testing-e2e-crud-turmas-analise-em: backlog
+    10-9-testing-e2e-crud-turmas-analise-em: in-progress
     10-10-documentation-guia-migracao-escolas-em: backlog
     epic-10-retrospective: optional
+    epic-11: backlog
+    11-1-backend-modelo-objetivos-aprendizagem: backlog
+    11-2-backend-expandir-turma-curriculo-tipo: backlog
+    11-3-backend-planejamento-objetivos-genericos: backlog
+    11-4-backend-crud-objetivos-customizados: backlog
+    11-5-frontend-cadastro-turma-contexto-pedagogico: backlog
+    11-6-frontend-gestao-objetivos-customizados: backlog
+    11-7-backend-adaptar-prompts-ia-objetivos-genericos: backlog
+    11-8-frontend-dashboard-cobertura-adaptado: backlog
+    11-9-frontend-relatorio-aula-turmas-custom: backlog
+    11-10-testing-e2e-validacao-qualidade: backlog
+    epic-11-retrospective: optional

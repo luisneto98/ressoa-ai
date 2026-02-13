@@ -33,11 +33,13 @@ export class TurmasController {
   constructor(private readonly turmasService: TurmasService) {}
 
   @Post()
-  @Roles('PROFESSOR', 'COORDENADOR', 'DIRETOR')
-  @ApiOperation({ summary: 'Criar nova turma' })
+  @Roles('COORDENADOR', 'DIRETOR')
+  @ApiOperation({ summary: 'Criar nova turma (COORDENADOR + DIRETOR apenas)' })
   @ApiResponse({ status: 201, description: 'Turma criada com sucesso' })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
   @ApiResponse({ status: 401, description: 'Não autenticado' })
+  @ApiResponse({ status: 403, description: 'Permissões insuficientes (PROFESSOR não permitido)' })
+  @ApiResponse({ status: 409, description: 'Turma duplicada (nome + ano + turno)' })
   async create(@Body() createTurmaDto: CreateTurmaDto) {
     return this.turmasService.create(createTurmaDto);
   }
@@ -45,15 +47,14 @@ export class TurmasController {
   @Get()
   @Roles('PROFESSOR', 'COORDENADOR', 'DIRETOR')
   @ApiOperation({
-    summary: 'Listar turmas do professor',
+    summary: 'Listar turmas',
     description:
-      'Retorna todas as turmas do professor autenticado com isolamento de tenant (escola_id). ' +
-      'NOTA: Coordenador/Diretor receberão array vazio pois service filtra por professor_id. ' +
-      'Use endpoints de dashboard para visualização por roles administrativos.',
+      'PROFESSOR: retorna apenas turmas onde é responsável. ' +
+      'COORDENADOR/DIRETOR: retorna todas turmas da escola.',
   })
   @ApiResponse({
     status: 200,
-    description: 'Lista de turmas do professor',
+    description: 'Lista de turmas conforme role',
     schema: {
       type: 'array',
       items: {
@@ -80,6 +81,16 @@ export class TurmasController {
             example: 'FUNDAMENTAL',
           },
           ano_letivo: { type: 'number', example: 2026 },
+          turno: { type: 'string', enum: ['MATUTINO', 'VESPERTINO', 'INTEGRAL'] },
+          professor: {
+            type: 'object',
+            description: 'Apenas para Coordenador/Diretor',
+            properties: {
+              id: { type: 'string' },
+              nome: { type: 'string' },
+              email: { type: 'string' },
+            },
+          },
         },
       },
     },
@@ -87,7 +98,12 @@ export class TurmasController {
   @ApiResponse({ status: 401, description: 'Não autenticado' })
   @ApiResponse({ status: 403, description: 'Permissões insuficientes' })
   async findAll(@CurrentUser() user: AuthenticatedUser) {
-    return this.turmasService.findAllByProfessor(user.userId);
+    if (user.role === 'PROFESSOR') {
+      return this.turmasService.findAllByProfessor(user.userId);
+    }
+
+    // Coordenador/Diretor: todas turmas da escola
+    return this.turmasService.findAllByEscola();
   }
 
   @Get(':id')
@@ -100,20 +116,22 @@ export class TurmasController {
   }
 
   @Patch(':id')
-  @Roles('PROFESSOR', 'COORDENADOR', 'DIRETOR')
-  @ApiOperation({ summary: 'Atualizar turma' })
+  @Roles('COORDENADOR', 'DIRETOR')
+  @ApiOperation({ summary: 'Atualizar turma (COORDENADOR + DIRETOR apenas)' })
   @ApiResponse({ status: 200, description: 'Turma atualizada' })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
+  @ApiResponse({ status: 403, description: 'Permissões insuficientes (PROFESSOR não permitido)' })
   @ApiResponse({ status: 404, description: 'Turma não encontrada' })
   async update(@Param('id') id: string, @Body() updateTurmaDto: UpdateTurmaDto) {
     return this.turmasService.update(id, updateTurmaDto);
   }
 
   @Delete(':id')
-  @Roles('PROFESSOR', 'COORDENADOR', 'DIRETOR')
+  @Roles('DIRETOR')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Remover turma' })
-  @ApiResponse({ status: 204, description: 'Turma removida' })
+  @ApiOperation({ summary: 'Remover turma (DIRETOR apenas)' })
+  @ApiResponse({ status: 204, description: 'Turma removida (soft delete)' })
+  @ApiResponse({ status: 403, description: 'Permissões insuficientes (COORDENADOR/PROFESSOR não permitidos)' })
   @ApiResponse({ status: 404, description: 'Turma não encontrada' })
   async remove(@Param('id') id: string) {
     await this.turmasService.remove(id);

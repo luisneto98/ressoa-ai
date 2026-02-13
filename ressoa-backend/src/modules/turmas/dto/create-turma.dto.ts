@@ -57,6 +57,17 @@ export class CreateTurmaDto {
   ano_letivo!: number;
 
   @ApiProperty({
+    enum: ['MATUTINO', 'VESPERTINO', 'INTEGRAL'],
+    example: 'MATUTINO',
+    description: 'Turno da turma',
+  })
+  @IsEnum(['MATUTINO', 'VESPERTINO', 'INTEGRAL'], {
+    message: 'Turno deve ser MATUTINO, VESPERTINO ou INTEGRAL',
+  })
+  @IsNotEmpty()
+  turno!: string;
+
+  @ApiProperty({
     example: 'uuid-v4',
     description: 'ID do professor responsável',
   })

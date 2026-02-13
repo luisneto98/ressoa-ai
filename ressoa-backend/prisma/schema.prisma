@@ -213,8 +213,10 @@ model Turma {
   serie         Serie
   tipo_ensino   TipoEnsino  @default(FUNDAMENTAL)
   ano_letivo    Int
+  turno         String      // "MATUTINO", "VESPERTINO", "INTEGRAL"
   escola_id     String
   professor_id  String
+  deleted_at    DateTime?   // Soft delete timestamp (LGPD compliance)
   created_at    DateTime    @default(now())
   updated_at    DateTime    @updatedAt
 
@@ -227,6 +229,9 @@ model Turma {
   @@index([escola_id])
   @@index([professor_id])
   @@index([ano_letivo, disciplina])
+  @@index([tipo_ensino])
+  @@index([deleted_at])
+  @@index([escola_id, nome, ano_letivo, turno]) // Uniqueness validation query performance
   @@map("turma")
 }
 

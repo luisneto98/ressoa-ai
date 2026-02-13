@@ -2,6 +2,7 @@ import {
   Injectable,
   BadRequestException,
   NotFoundException,
+  ConflictException,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Serie, TipoEnsino } from '@prisma/client';
@@ -53,10 +54,11 @@ export class TurmasService {
   }
 
   /**
-   * Cria uma nova turma com validação de compatibilidade serie-tipo_ensino
+   * Cria uma nova turma com validação de compatibilidade serie-tipo_ensino e unicidade
    *
    * @param dto - Dados da turma a ser criada
    * @returns Turma criada
+   * @throws ConflictException se turma duplicada (nome + ano + turno)
    */
   async create(dto: CreateTurmaDto) {
     // ✅ CRITICAL: Get escolaId from tenant context (TenantInterceptor)
@@ -64,6 +66,23 @@ export class TurmasService {
 
     // Validar compatibilidade serie-tipo_ensino
     this.validateSerieCompatibility(dto.serie, dto.tipo_ensino);
+
+    // Validar unicidade: nome + ano_letivo + turno + escola_id
+    const existing = await this.prisma.turma.findFirst({
+      where: {
+        escola_id: escolaId,
+        nome: dto.nome,
+        ano_letivo: dto.ano_letivo,
+        turno: dto.turno,
+        deleted_at: null, // ✅ Exclude soft-deleted
+      },
+    });
+
+    if (existing) {
+      throw new ConflictException(
+        `Turma com nome '${dto.nome}' já existe para ${dto.ano_letivo} no turno ${dto.turno}`,
+      );
+    }
 
     // Criar turma (lógica existente + novo campo)
     const turma = await this.prisma.turma.create({
@@ -87,20 +106,45 @@ export class TurmasService {
     // ✅ CRITICAL: Get escolaId from tenant context (TenantInterceptor)
     const escolaId = this.prisma.getEscolaIdOrThrow();
 
+    // Buscar turma atual para validações
+    const turmaAtual = await this.prisma.turma.findUnique({
+      where: { id, escola_id: escolaId }, // ✅ Tenant isolation
+    });
+
+    if (!turmaAtual) {
+      throw new NotFoundException(`Turma ${id} não encontrada ou acesso negado`);
+    }
+
     // Se dto altera serie OU tipo_ensino, validar compatibilidade
     if (dto.serie || dto.tipo_ensino) {
-      const turmaAtual = await this.prisma.turma.findUnique({
-        where: { id, escola_id: escolaId }, // ✅ Tenant isolation
-      });
-
-      if (!turmaAtual) {
-        throw new NotFoundException(`Turma ${id} não encontrada ou acesso negado`);
-      }
-
       const serie = dto.serie ?? turmaAtual.serie;
       const tipo_ensino = dto.tipo_ensino ?? turmaAtual.tipo_ensino;
 
       this.validateSerieCompatibility(serie, tipo_ensino);
+    }
+
+    // ✅ NEW: Validar unicidade se nome, ano_letivo ou turno forem alterados
+    if (dto.nome || dto.ano_letivo || dto.turno) {
+      const nome = dto.nome ?? turmaAtual.nome;
+      const ano_letivo = dto.ano_letivo ?? turmaAtual.ano_letivo;
+      const turno = dto.turno ?? turmaAtual.turno;
+
+      const existing = await this.prisma.turma.findFirst({
+        where: {
+          escola_id: escolaId,
+          nome,
+          ano_letivo,
+          turno,
+          deleted_at: null,
+          id: { not: id }, // ✅ Excluir própria turma da validação
+        },
+      });
+
+      if (existing) {
+        throw new ConflictException(
+          `Turma com nome '${nome}' já existe para ${ano_letivo} no turno ${turno}`,
+        );
+      }
     }
 
     return this.prisma.turma.update({
@@ -120,8 +164,12 @@ export class TurmasService {
     // ✅ CRITICAL: Get escolaId from tenant context
     const escolaId = this.prisma.getEscolaIdOrThrow();
 
-    const turma = await this.prisma.turma.findUnique({
-      where: { id, escola_id: escolaId }, // ✅ Tenant isolation
+    const turma = await this.prisma.turma.findFirst({
+      where: {
+        id,
+        escola_id: escolaId, // ✅ Tenant isolation
+        deleted_at: null, // ✅ Exclude soft-deleted
+      },
       select: {
         id: true,
         nome: true,
@@ -129,6 +177,7 @@ export class TurmasService {
         serie: true,
         tipo_ensino: true,
         ano_letivo: true,
+        turno: true,
         professor_id: true,
         created_at: true,
         updated_at: true,
@@ -159,6 +208,7 @@ export class TurmasService {
       where: {
         escola_id: escolaId, // ✅ Tenant isolation
         professor_id: professorId, // ✅ Professor-specific data
+        deleted_at: null, // ✅ Exclude soft-deleted
       },
       select: {
         id: true,
@@ -167,6 +217,41 @@ export class TurmasService {
         serie: true,
         tipo_ensino: true,
         ano_letivo: true,
+        turno: true,
+      },
+      orderBy: [{ ano_letivo: 'desc' }, { nome: 'asc' }],
+    });
+  }
+
+  /**
+   * Busca todas as turmas da escola (para Coordenador/Diretor)
+   *
+   * @returns Lista de todas turmas da escola
+   */
+  async findAllByEscola() {
+    // ✅ CRITICAL: Get escolaId from tenant context
+    const escolaId = this.prisma.getEscolaIdOrThrow();
+
+    return this.prisma.turma.findMany({
+      where: {
+        escola_id: escolaId, // ✅ Tenant isolation
+        deleted_at: null, // ✅ Exclude soft-deleted
+      },
+      select: {
+        id: true,
+        nome: true,
+        disciplina: true,
+        serie: true,
+        tipo_ensino: true,
+        ano_letivo: true,
+        turno: true,
+        professor: {
+          select: {
+            id: true,
+            nome: true,
+            email: true,
+          },
+        },
       },
       orderBy: [{ ano_letivo: 'desc' }, { nome: 'asc' }],
     });
@@ -176,7 +261,7 @@ export class TurmasService {
    * Remove turma (soft delete para LGPD compliance)
    *
    * @param id - ID da turma
-   * @returns Turma removida
+   * @returns Turma removida (soft deleted)
    */
   async remove(id: string) {
     // ✅ CRITICAL: Get escolaId from tenant context
@@ -191,11 +276,10 @@ export class TurmasService {
       throw new NotFoundException(`Turma ${id} não encontrada ou acesso negado`);
     }
 
-    // Soft delete (LGPD) - apenas marca planejamentos como deletados
-    // Turma não tem deleted_at, então fazemos hard delete por enquanto
-    // TODO Story futura: adicionar deleted_at ao modelo Turma
-    return this.prisma.turma.delete({
+    // Soft delete: apenas seta deleted_at (preserva planejamentos e aulas)
+    return this.prisma.turma.update({
       where: { id, escola_id: escolaId }, // ✅ Tenant isolation
+      data: { deleted_at: new Date() },
     });
   }
 }

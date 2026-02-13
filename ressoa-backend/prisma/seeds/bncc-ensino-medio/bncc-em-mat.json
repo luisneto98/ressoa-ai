@@ -1,0 +1,78 @@
+{
+  "area": "Matemática e suas Tecnologias",
+  "tipo_ensino": "MEDIO",
+  "habilidades": [
+    {
+      "codigo": "EM13MAT101",
+      "descricao": "Interpretar criticamente situações econômicas, sociais e fatos relativos às Ciências da Natureza que envolvam a variação de grandezas, pela análise dos gráficos das funções representadas e das taxas de variação, com ou sem apoio de tecnologias digitais.",
+      "competencia_especifica": 1,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13MAT102",
+      "descricao": "Analisar tabelas, gráficos e amostras de pesquisas estatísticas apresentadas em relatórios divulgados por diferentes meios de comunicação, identificando, quando for o caso, inadequações que possam induzir a erros de interpretação, como escalas e amostras não apropriadas.",
+      "competencia_especifica": 1,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13MAT103",
+      "descricao": "Interpretar e compreender textos científicos ou divulgados pelas mídias, que empregam unidades de medida de diferentes grandezas e as conversões possíveis entre elas, adotadas ou não pelo Sistema Internacional (SI), como as de armazenamento e velocidade de transferência de dados, ligadas aos avanços tecnológicos.",
+      "competencia_especifica": 1,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13MAT104",
+      "descricao": "Interpretar taxas e índices de natureza socioeconômica (índice de desenvolvimento humano, taxas de inflação, entre outros), investigando os processos de cálculo desses números, para analisar criticamente a realidade e produzir argumentos.",
+      "competencia_especifica": 1,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13MAT105",
+      "descricao": "Utilizar as noções de transformações isométricas (translação, reflexão, rotação e composições destas) e transformações homotéticas para construir figuras e analisar elementos da natureza e diferentes produções humanas (fractais, construções civis, obras de arte, entre outras).",
+      "competencia_especifica": 1,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13MAT201",
+      "descricao": "Propor ou participar de ações adequadas às demandas da região, preferencialmente para sua comunidade, envolvendo medições e cálculos de perímetro, de área, de volume, de capacidade ou de massa.",
+      "competencia_especifica": 2,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13MAT202",
+      "descricao": "Planejar e executar pesquisa amostral sobre questões relevantes, usando dados coletados diretamente ou em diferentes fontes, e comunicar os resultados por meio de relatório contendo gráficos e interpretação das medidas de tendência central e das medidas de dispersão (amplitude e desvio padrão), utilizando ou não recursos tecnológicos.",
+      "competencia_especifica": 2,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13MAT203",
+      "descricao": "Aplicar conceitos matemáticos no planejamento, na execução e na análise de ações envolvendo a utilização de aplicativos e a criação de planilhas (para o controle de orçamento familiar, simuladores de cálculos de juros simples e compostos, entre outros), para tomar decisões.",
+      "competencia_especifica": 2,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13MAT301",
+      "descricao": "Resolver e elaborar problemas do cotidiano, da Matemática e de outras áreas do conhecimento, que envolvem equações lineares simultâneas, usando técnicas algébricas e gráficas, com ou sem apoio de tecnologias digitais.",
+      "competencia_especifica": 3,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13MAT302",
+      "descricao": "Construir modelos empregando as funções polinomiais de 1º ou 2º graus, para resolver problemas em contextos diversos, com ou sem apoio de tecnologias digitais.",
+      "competencia_especifica": 3,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13MAT303",
+      "descricao": "Interpretar e comparar situações que envolvam juros simples com as que envolvem juros compostos, por meio de representações gráficas ou análise de planilhas, destacando o crescimento linear ou exponencial de cada caso.",
+      "competencia_especifica": 3,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13MAT304",
+      "descricao": "Resolver e elaborar problemas com funções exponenciais nos quais seja necessário compreender e interpretar a variação das grandezas envolvidas, em contextos como o da Matemática Financeira, entre outros.",
+      "competencia_especifica": 3,
+      "anos": [1, 2, 3]
+    }
+  ]
+}

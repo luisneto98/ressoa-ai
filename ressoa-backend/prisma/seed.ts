@@ -4,6 +4,7 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
 import * as bcrypt from 'bcrypt';
+import { mapAreaToDisciplina } from '../src/common/utils/map-area-to-disciplina';
 
 interface HabilidadeJson {
   codigo: string;
@@ -19,6 +20,19 @@ interface SeedFileData {
   disciplina: string;
   ano?: number;
   habilidades: HabilidadeJson[];
+}
+
+interface HabilidadeEnsinoMedio {
+  codigo: string;
+  descricao: string;
+  competencia_especifica: number;
+  anos: number[];
+}
+
+interface SeedFileEnsinoMedio {
+  area: string;
+  tipo_ensino: string;
+  habilidades: HabilidadeEnsinoMedio[];
 }
 
 const adapter = new PrismaPg({
@@ -42,6 +56,12 @@ async function seedDisciplinas() {
       nome: 'Ciências',
       area: 'Ciências da Natureza',
       ordem: 3,
+    },
+    {
+      codigo: 'CIENCIAS_HUMANAS',
+      nome: 'Ciências Humanas',
+      area: 'Ciências Humanas e Sociais Aplicadas',
+      ordem: 4,
     },
   ];
 
@@ -403,6 +423,106 @@ async function seedTurmas() {
   console.log(`✅ Turmas criadas: ${created}, puladas: ${skipped}`);
 }
 
+// NOTE: mapAreaToDisciplina now imported from src/common/utils/map-area-to-disciplina.ts
+
+/**
+ * Seed BNCC Ensino Médio habilidades from JSON files
+ * Story 10.3: ~53 representative habilidades across 4 areas (LGG, MAT, CNT, CHS)
+ * NOTE: Full BNCC EM has ~500 habilidades - MVP uses representative sample
+ */
+async function seedBNCCEnsinoMedio() {
+  console.log('🌱 Seeding BNCC Ensino Médio...');
+
+  const seedsDir = join(__dirname, 'seeds', 'bncc-ensino-medio');
+
+  let jsonFiles: string[];
+  try {
+    jsonFiles = readdirSync(seedsDir).filter((f) => f.endsWith('.json'));
+  } catch (error) {
+    console.error(`❌ Failed to read seeds directory: ${seedsDir}`, error);
+    throw error;
+  }
+
+  if (jsonFiles.length === 0) {
+    console.warn('⚠️  No JSON files found in bncc-ensino-medio directory');
+    return;
+  }
+
+  let totalHabilidades = 0;
+
+  for (const file of jsonFiles) {
+    console.log(`  📄 Processing ${file}...`);
+
+    try {
+      const content = readFileSync(join(seedsDir, file), 'utf-8');
+      const data: SeedFileEnsinoMedio = JSON.parse(content);
+
+      // Validate JSON structure
+      if (!data.area || !Array.isArray(data.habilidades)) {
+        console.error(`⚠️  Skipping invalid file ${file}: missing 'area' or 'habilidades' array`);
+        continue;
+      }
+
+      for (const hab of data.habilidades) {
+        // Validate required fields
+        if (!hab.codigo || !hab.descricao || hab.competencia_especifica == null) {
+          console.error(`⚠️  Skipping invalid habilidade in ${file}: missing required fields`, hab);
+          continue;
+        }
+
+        const disciplina = mapAreaToDisciplina(data.area);
+
+        // Validate disciplina exists (prevent FK errors)
+        const disciplinaExists = await prisma.disciplina.findFirst({
+          where: { codigo: disciplina }
+        });
+
+        if (!disciplinaExists && disciplina !== 'OUTROS') {
+          console.error(`⚠️  Disciplina '${disciplina}' not found for area '${data.area}' - skipping file ${file}`);
+          console.error(`     Run seedDisciplinas() first or check mapAreaToDisciplina() mapping`);
+          break; // Skip entire file if disciplina missing
+        }
+
+        await prisma.habilidade.upsert({
+          where: { codigo: hab.codigo },
+          update: {
+            descricao: hab.descricao,
+            disciplina: disciplina,
+            tipo_ensino: 'MEDIO',
+            ano_inicio: 1,
+            ano_fim: 3,
+            unidade_tematica: null,
+            competencia_especifica: hab.competencia_especifica,
+            metadata: { area: data.area },
+          },
+          create: {
+            codigo: hab.codigo,
+            descricao: hab.descricao,
+            disciplina: disciplina,
+            tipo_ensino: 'MEDIO',
+            ano_inicio: 1,
+            ano_fim: 3,
+            unidade_tematica: null,
+            competencia_especifica: hab.competencia_especifica,
+            objeto_conhecimento: null,
+            metadata: { area: data.area },
+            versao_bncc: '2018',
+            ativa: true,
+          },
+        });
+
+        totalHabilidades++;
+      }
+    } catch (error) {
+      console.error(`❌ Failed to process ${file}:`, error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Seed failed at file ${file}: ${errorMessage}`);
+    }
+  }
+
+  console.log(`✅ Seeded ${totalHabilidades} habilidades de Ensino Médio`);
+}
+
 async function main() {
   console.log('🚀 Starting seed...');
   console.log(`📦 Database: ${process.env['DATABASE_URL']?.split('@')[1] || 'configured'}`);
@@ -411,6 +531,9 @@ async function main() {
   await seedDisciplinas();
   await seedAnos();
   await seedHabilidades();
+
+  // Seed BNCC Ensino Médio (Story 10.3)
+  await seedBNCCEnsinoMedio();
 
   // Seed Prompts (Story 5.3)
   await seedPrompts();

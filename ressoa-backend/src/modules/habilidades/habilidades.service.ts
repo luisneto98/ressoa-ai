@@ -289,10 +289,13 @@ export class HabilidadesService {
           codigo: true,
           descricao: true,
           disciplina: true,
+          tipo_ensino: true, // Story 10.3: Support Ensino Médio
           ano_inicio: true,
           ano_fim: true,
           unidade_tematica: true,
+          competencia_especifica: true, // Story 10.3: EM competência (1-7)
           objeto_conhecimento: true,
+          metadata: true, // Story 10.3: EM area metadata
           created_at: true,
           updated_at: true,
           versao_bncc: true,

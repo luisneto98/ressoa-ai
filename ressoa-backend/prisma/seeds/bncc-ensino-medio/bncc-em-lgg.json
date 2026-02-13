@@ -1,0 +1,96 @@
+{
+  "area": "Linguagens e suas Tecnologias",
+  "tipo_ensino": "MEDIO",
+  "habilidades": [
+    {
+      "codigo": "EM13LGG101",
+      "descricao": "Compreender e analisar processos de produção e circulação de discursos, nas diferentes linguagens, para fazer escolhas fundamentadas em função de interesses pessoais e coletivos.",
+      "competencia_especifica": 1,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13LGG102",
+      "descricao": "Analisar visões de mundo, conflitos de interesse, preconceitos e ideologias presentes nos discursos veiculados nas diferentes mídias, ampliando suas possibilidades de explicação, interpretação e intervenção crítica da/na realidade.",
+      "competencia_especifica": 1,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13LGG103",
+      "descricao": "Analisar o funcionamento das linguagens, para interpretar e produzir criticamente discursos em textos de diversas semioses (visuais, verbais, sonoras, gestuais).",
+      "competencia_especifica": 1,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13LGG104",
+      "descricao": "Utilizar as diferentes linguagens, levando em conta seus funcionamentos, para a compreensão e produção de textos e discursos em diversos campos de atuação social.",
+      "competencia_especifica": 1,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13LGG201",
+      "descricao": "Utilizar as diversas linguagens (artísticas, corporais e verbais) em diferentes contextos, valorizando-as como fenômeno social, cultural, histórico, variável, heterogêneo e sensível aos contextos de uso.",
+      "competencia_especifica": 2,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13LGG202",
+      "descricao": "Analisar interesses, relações de poder e perspectivas de mundo nos discursos das diversas práticas de linguagem (artísticas, corporais e verbais), compreendendo criticamente o modo como circulam, constituem-se e (re)produzem significação e ideologias.",
+      "competencia_especifica": 2,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13LGG203",
+      "descricao": "Analisar os diálogos e os processos de disputa por legitimidade nas práticas de linguagem e em suas produções (artísticas, corporais e verbais).",
+      "competencia_especifica": 2,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13LGG301",
+      "descricao": "Participar de processos de produção individual e colaborativa em diferentes linguagens (artísticas, corporais e verbais), levando em conta suas formas e seus funcionamentos, para produzir sentidos em diferentes contextos.",
+      "competencia_especifica": 3,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13LGG302",
+      "descricao": "Posicionar-se criticamente diante de diversas visões de mundo presentes nos discursos em diferentes linguagens, levando em conta seus contextos de produção e de circulação.",
+      "competencia_especifica": 3,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13LGG303",
+      "descricao": "Debater questões polêmicas de relevância social, analisando diferentes argumentos e opiniões, para formular, negociar e sustentar posições, frente à análise de perspectivas distintas.",
+      "competencia_especifica": 3,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13LGG401",
+      "descricao": "Analisar criticamente textos de modo a compreender e caracterizar as línguas como fenômeno (geo)político, histórico, social, variável, heterogêneo e sensível aos contextos de uso.",
+      "competencia_especifica": 4,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13LGG402",
+      "descricao": "Empregar, nas interações sociais, a variedade e o estilo de língua adequados à situação comunicativa, ao(s) interlocutor(es) e ao gênero do discurso, respeitando os usos das línguas por esse(s) interlocutor(es) e sem preconceito linguístico.",
+      "competencia_especifica": 4,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13LGG403",
+      "descricao": "Fazer uso do inglês como língua de comunicação global, levando em conta a multiplicidade e variedade de usos, usuários e funções dessa língua no mundo contemporâneo.",
+      "competencia_especifica": 4,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13LGG501",
+      "descricao": "Selecionar e utilizar movimentos corporais de forma consciente e intencional para interagir socialmente em práticas da cultura corporal, de modo a estabelecer relações construtivas, empáticas, éticas e de respeito às diferenças.",
+      "competencia_especifica": 5,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13LGG502",
+      "descricao": "Analisar criticamente preconceitos, estereótipos e relações de poder presentes nas práticas corporais, adotando posicionamento contrário a qualquer manifestação de injustiça e desrespeito a direitos humanos e valores democráticos.",
+      "competencia_especifica": 5,
+      "anos": [1, 2, 3]
+    }
+  ]
+}

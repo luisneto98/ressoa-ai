@@ -113,7 +113,7 @@ development_status:
     epic-10: in-progress
     10-1-backend-expandir-modelo-turma-tipo-ensino-series-em: done # Code review complete - 8/10 issues auto-fixed (CRITICAL multi-tenancy violation, validation, CRUD completion, performance index) - 18/18 unit tests passing - E2E tests deferred to Story 10.9
     10-2-backend-api-crud-turmas-rbac: done # Code review complete - 10 issues found & auto-fixed (8 HIGH: duplicate tests, missing test, uniqueness in update, performance index | 2 MEDIUM: status, docs) - 25/25 tests passing - E2E validation pending (Task 10)
-    10-3-backend-seeding-habilidades-bncc-ensino-medio: backlog
+    10-3-backend-seeding-habilidades-bncc-ensino-medio: done # Code review complete - 10 issues found (7 fixed, 2 false positives, 1 deferred) - 7/7 unit tests passing - Integration tests created
     10-4-frontend-tela-gestao-turmas-crud: backlog
     10-5-frontend-adaptar-seletor-habilidades-ensino-medio: backlog
     10-6-backend-ajustar-prompts-ia-ensino-medio: backlog

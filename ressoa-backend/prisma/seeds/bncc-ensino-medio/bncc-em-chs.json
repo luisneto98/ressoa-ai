@@ -1,0 +1,90 @@
+{
+  "area": "Ciências Humanas e Sociais Aplicadas",
+  "tipo_ensino": "MEDIO",
+  "habilidades": [
+    {
+      "codigo": "EM13CHS101",
+      "descricao": "Identificar, analisar e comparar diferentes fontes e narrativas expressas em diversas linguagens, com vistas à compreensão de ideias filosóficas e de processos e eventos históricos, geográficos, políticos, econômicos, sociais, ambientais e culturais.",
+      "competencia_especifica": 1,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13CHS102",
+      "descricao": "Identificar, analisar e discutir as circunstâncias históricas, geográficas, políticas, econômicas, sociais, ambientais e culturais de matrizes conceituais (etnocentrismo, racismo, evolução, modernidade, cooperativismo/desenvolvimento etc.), avaliando criticamente seu significado histórico e comparando-as a narrativas que contemplem outros agentes e discursos.",
+      "competencia_especifica": 1,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13CHS103",
+      "descricao": "Elaborar hipóteses, selecionar evidências e compor argumentos relativos a processos políticos, econômicos, sociais, ambientais, culturais e epistemológicos, com base na sistematização de dados e informações de diversas naturezas (expressões artísticas, textos filosóficos e sociológicos, documentos históricos e geográficos, gráficos, mapas, tabelas, tradições orais, entre outros).",
+      "competencia_especifica": 1,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13CHS104",
+      "descricao": "Analisar objetos e vestígios da cultura material e imaterial de modo a identificar conhecimentos, valores, crenças e práticas que caracterizam a identidade e a diversidade cultural de diferentes sociedades inseridas no tempo e no espaço.",
+      "competencia_especifica": 1,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13CHS105",
+      "descricao": "Identificar, contextualizar e criticar tipologias evolutivas (populações nômades e sedentárias, entre outras) e oposições dicotômicas (cidade/campo, cultura/natureza, civilizados/bárbaros, razão/emoção, material/virtual etc.), explicitando suas ambiguidades.",
+      "competencia_especifica": 1,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13CHS106",
+      "descricao": "Utilizar as linguagens cartográfica, gráfica e iconográfica, diferentes gêneros textuais e tecnologias digitais de informação e comunicação de forma crítica, significativa, reflexiva e ética nas diversas práticas sociais, incluindo as escolares, para se comunicar, acessar e difundir informações, produzir conhecimentos, resolver problemas e exercer protagonismo e autoria na vida pessoal e coletiva.",
+      "competencia_especifica": 1,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13CHS201",
+      "descricao": "Analisar e caracterizar as dinâmicas das populações, das mercadorias, do capital, da informação e dos padrões de consumo em diferentes sociedades, tendo como referência a perspectiva multicultural do Brasil, articulando o local, o regional, o nacional e o mundial em diferentes tempos e espaços.",
+      "competencia_especifica": 2,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13CHS202",
+      "descricao": "Analisar e avaliar os impactos das tecnologias na estruturação e nas dinâmicas de grupos, povos e sociedades contemporâneos (fluxos populacionais, financeiros, de mercadorias, de informações, de valores éticos e culturais etc.), bem como suas interferências nas decisões políticas, sociais, ambientais, econômicas e culturais.",
+      "competencia_especifica": 2,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13CHS203",
+      "descricao": "Comparar os significados de território, fronteiras e vazio (espacial, temporal e cultural) em diferentes sociedades, contextualizando e relativizando visões dualistas (civilização/barbárie, nomadismo/sedentarismo, esclarecimento/obscurantismo, cidade/campo, entre outras).",
+      "competencia_especifica": 2,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13CHS204",
+      "descricao": "Comparar e avaliar os processos de ocupação do espaço e a formação de territórios, territorialidades e fronteiras, identificando o papel de diferentes agentes (como grupos sociais e culturais, impérios, Estados Nacionais e organismos internacionais) e considerando os conflitos populacionais (internos e externos), a diversidade étnico-cultural e as características socioeconômicas, políticas e tecnológicas.",
+      "competencia_especifica": 2,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13CHS301",
+      "descricao": "Problematizar hábitos e práticas individuais e coletivos de produção, reaproveitamento e descarte de resíduos em metrópoles, áreas urbanas e rurais, e comunidades com diferentes características socioeconômicas, e elaborar e/ou selecionar propostas de ação que promovam a sustentabilidade socioambiental, o combate à poluição sistêmica e o consumo responsável.",
+      "competencia_especifica": 3,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13CHS302",
+      "descricao": "Analisar e avaliar criticamente as relações de diferentes grupos, povos e sociedades com a natureza (produção, distribuição e consumo) e seus impactos econômicos e socioambientais, com vistas à proposição de alternativas que respeitem e promovam a consciência, a ética socioambiental e o consumo responsável em âmbito local, regional, nacional e global.",
+      "competencia_especifica": 3,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13CHS303",
+      "descricao": "Debater e avaliar o papel da indústria cultural e das culturas de massa no estímulo ao consumismo, seus impactos econômicos e socioambientais, com vistas à percepção crítica das necessidades criadas pelo consumo e à adoção de hábitos sustentáveis.",
+      "competencia_especifica": 3,
+      "anos": [1, 2, 3]
+    },
+    {
+      "codigo": "EM13CHS304",
+      "descricao": "Analisar os impactos socioambientais decorrentes de práticas de instituições governamentais, de empresas e de indivíduos, discutindo as origens dessas práticas, selecionando, incorporando e promovendo aquelas que favoreçam a consciência e a ética socioambiental e o consumo responsável.",
+      "competencia_especifica": 3,
+      "anos": [1, 2, 3]
+    }
+  ]
+}

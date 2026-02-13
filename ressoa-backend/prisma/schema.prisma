@@ -165,24 +165,28 @@ model Ano {
 }
 
 model Habilidade {
-  id                  String   @id @default(uuid())
-  codigo              String   @unique // EF06MA01, EF67LP03, EF69LP10, etc.
-  descricao           String   @db.Text
-  disciplina          String // MATEMATICA, LINGUA_PORTUGUESA, CIENCIAS
-  ano_inicio          Int // 6, 7, 8, 9
-  ano_fim             Int? // NULL para habilidades específicas, 7/9 para blocos compartilhados
-  unidade_tematica    String? // Números, Álgebra, Práticas de Linguagem, etc.
-  objeto_conhecimento String?  @db.Text
-  versao_bncc         String   @default("2018") // Versionamento (futuro: 2024?)
-  ativa               Boolean  @default(true) // Soft delete
-  searchable          Unsupported("tsvector")? @default(dbgenerated("(setweight(to_tsvector('portuguese'::regconfig, COALESCE(codigo, ''::text)), 'A'::\"char\") || setweight(to_tsvector('portuguese'::regconfig, COALESCE(descricao, ''::text)), 'B'::\"char\"))"))
-  created_at          DateTime @default(now())
-  updated_at          DateTime @updatedAt
+  id                      String      @id @default(uuid())
+  codigo                  String      @unique // EF06MA01, EF67LP03, EF69LP10, EM13LGG101, etc.
+  descricao               String      @db.Text
+  disciplina              String      // MATEMATICA, LINGUA_PORTUGUESA, CIENCIAS, CIENCIAS_HUMANAS
+  tipo_ensino             TipoEnsino  @default(FUNDAMENTAL) // FUNDAMENTAL or MEDIO
+  ano_inicio              Int         // 6, 7, 8, 9 (Fundamental) or 1 (Médio)
+  ano_fim                 Int?        // NULL para habilidades específicas, 7/9 para blocos compartilhados (Fundamental), 3 (Médio)
+  unidade_tematica        String?     // Números, Álgebra, Práticas de Linguagem, etc. (apenas Fundamental)
+  competencia_especifica  Int?        // 1-7 (apenas Ensino Médio - competência da área BNCC)
+  objeto_conhecimento     String?     @db.Text
+  metadata                Json?       // Additional metadata (e.g., {"area": "Linguagens e suas Tecnologias"} for EM)
+  versao_bncc             String      @default("2018") // Versionamento (futuro: 2024?)
+  ativa                   Boolean     @default(true) // Soft delete
+  searchable              Unsupported("tsvector")? @default(dbgenerated("(setweight(to_tsvector('portuguese'::regconfig, COALESCE(codigo, ''::text)), 'A'::\"char\") || setweight(to_tsvector('portuguese'::regconfig, COALESCE(descricao, ''::text)), 'B'::\"char\"))"))
+  created_at              DateTime    @default(now())
+  updated_at              DateTime    @updatedAt
 
   anos                        HabilidadeAno[]
   planejamentos_habilidades   PlanejamentoHabilidade[]
 
   @@index([disciplina, ano_inicio])
+  @@index([tipo_ensino])
   @@index([codigo])
   @@index([ativa])
   @@index([searchable], map: "idx_habilidade_searchable", type: Gin)

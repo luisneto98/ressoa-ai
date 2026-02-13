@@ -6,11 +6,13 @@ export interface FiltrosCobertura {
   turma_id?: string;
   disciplina?: string;
   bimestre?: number; // 1-4
+  curriculo_tipo?: 'BNCC' | 'CUSTOM'; // Story 11.8: Filter by curriculum type
 }
 
 export interface CoberturaResult {
   turma_id: string;
   turma_nome: string;
+  curriculo_tipo: 'BNCC' | 'CUSTOM'; // Story 11.8: Curriculum type for adaptive rendering
   disciplina: string;
   bimestre: number;
   habilidades_planejadas: number;
@@ -56,6 +58,7 @@ export class ProfessoresService {
       SELECT
         t.id as turma_id,
         t.nome as turma_nome,
+        t.curriculo_tipo::text as curriculo_tipo,
         p.disciplina::text as disciplina,
         p.bimestre,
         COUNT(DISTINCT ph.habilidade_id)::int as habilidades_planejadas,
@@ -97,7 +100,8 @@ export class ProfessoresService {
         ${filtros?.turma_id ? Prisma.sql`AND t.id = ${filtros.turma_id}` : Prisma.empty}
         ${filtros?.disciplina ? Prisma.sql`AND p.disciplina = ${filtros.disciplina}` : Prisma.empty}
         ${filtros?.bimestre ? Prisma.sql`AND p.bimestre = ${filtros.bimestre}` : Prisma.empty}
-      GROUP BY t.id, t.nome, p.disciplina, p.bimestre
+        ${filtros?.curriculo_tipo ? Prisma.sql`AND t.curriculo_tipo = ${filtros.curriculo_tipo}` : Prisma.empty}
+      GROUP BY t.id, t.nome, t.curriculo_tipo, p.disciplina, p.bimestre
       ORDER BY p.bimestre ASC, t.nome ASC;
     `;
 

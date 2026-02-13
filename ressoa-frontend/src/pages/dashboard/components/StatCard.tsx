@@ -1,4 +1,10 @@
 import { Card } from '@/components/ui/card';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import type { ReactNode } from 'react';
 
 interface StatCardProps {
@@ -6,10 +12,11 @@ interface StatCardProps {
   value: string | number;
   icon: ReactNode;
   color: 'blue' | 'green' | 'orange' | 'red' | 'cyan' | 'purple';
-  subtitle?: string; // Optional subtitle (AC #7)
+  subtitle?: string; // Optional subtitle
+  tooltip?: string; // Story 11.8 AC3: Explanatory tooltip for adaptive metrics
 }
 
-export function StatCard({ title, value, icon, color, subtitle }: StatCardProps) {
+export function StatCard({ title, value, icon, color, subtitle, tooltip }: StatCardProps) {
   const colorClasses = {
     blue: 'bg-tech-blue/10 text-tech-blue',
     green: 'bg-green-50 text-green-600',
@@ -19,7 +26,7 @@ export function StatCard({ title, value, icon, color, subtitle }: StatCardProps)
     purple: 'bg-purple-50 text-purple-600',
   };
 
-  return (
+  const content = (
     <Card className="p-6">
       <div className="flex items-center gap-4">
         <div className={`p-3 rounded-lg ${colorClasses[color]}`}>{icon}</div>
@@ -33,4 +40,22 @@ export function StatCard({ title, value, icon, color, subtitle }: StatCardProps)
       </div>
     </Card>
   );
+
+  // Wrap with tooltip if provided
+  if (tooltip) {
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            {content}
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="max-w-xs">{tooltip}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  }
+
+  return content;
 }

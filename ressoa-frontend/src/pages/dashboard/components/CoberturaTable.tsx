@@ -8,10 +8,12 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { CurriculoTypeBadge } from '@/components/CurriculoTypeBadge';
 
 interface CoberturaItem {
   turma_id: string;
   turma_nome: string;
+  curriculo_tipo: 'BNCC' | 'CUSTOM'; // Story 11.8: Curriculum type
   disciplina: string;
   bimestre: number;
   habilidades_planejadas: number;
@@ -58,8 +60,11 @@ export function CoberturaTable({ cobertura }: CoberturaTableProps) {
       <TableBody>
         {cobertura.map((c) => (
           <TableRow key={c.turma_id}>
-            <TableCell className="font-semibold text-deep-navy">
-              {c.turma_nome}
+            <TableCell>
+              <div className="flex flex-col gap-2">
+                <span className="font-semibold text-deep-navy">{c.turma_nome}</span>
+                <CurriculoTypeBadge curriculo_tipo={c.curriculo_tipo} />
+              </div>
             </TableCell>
             <TableCell className="text-center text-deep-navy/80">
               {c.habilidades_planejadas}

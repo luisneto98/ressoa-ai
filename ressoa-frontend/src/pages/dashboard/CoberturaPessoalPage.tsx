@@ -12,25 +12,34 @@ import { TrendingUp, Users, AlertTriangle } from 'lucide-react';
 import { StatCard } from './components/StatCard';
 import { CoberturaTable } from './components/CoberturaTable';
 import { CoberturaChart } from './components/CoberturaChart';
+import { getCoberturaLabel } from '@/lib/cobertura-helpers';
 import api from '@/lib/api';
 
 interface FiltrosCobertura {
   disciplina?: 'MATEMATICA' | 'LINGUA_PORTUGUESA' | 'CIENCIAS';
   bimestre?: number;
+  curriculo_tipo?: 'TODOS' | 'BNCC' | 'CUSTOM'; // Story 11.8: Filter by curriculum type
 }
 
 export function CoberturaPessoalPage() {
   const [filtros, setFiltros] = useState<FiltrosCobertura>({
     disciplina: 'MATEMATICA',
     bimestre: 1,
+    curriculo_tipo: 'TODOS', // Default: show all curriculum types
   });
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['cobertura-pessoal', filtros],
-    queryFn: () =>
-      api
-        .get('/professores/me/cobertura', { params: filtros })
-        .then((res) => res.data),
+    queryFn: () => {
+      // Build API params - exclude 'TODOS' from curriculo_tipo
+      const apiParams = {
+        ...filtros,
+        curriculo_tipo: filtros.curriculo_tipo === 'TODOS' ? undefined : filtros.curriculo_tipo,
+      };
+      return api
+        .get('/professores/me/cobertura', { params: apiParams })
+        .then((res) => res.data);
+    },
   });
 
   if (isLoading) {
@@ -70,6 +79,9 @@ export function CoberturaPessoalPage() {
     );
   }
 
+  // Story 11.8 AC3: Get adaptive label for coverage metric
+  const coberturaLabelConfig = getCoberturaLabel(filtros.curriculo_tipo);
+
   return (
     <div className="min-h-screen bg-ghost-white">
       <div className="max-w-7xl mx-auto p-6">
@@ -79,7 +91,7 @@ export function CoberturaPessoalPage() {
 
       {/* Filtros */}
       <Card className="p-4 mb-6">
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-4">
           <Select
             value={filtros.disciplina}
             onValueChange={(v) =>
@@ -114,16 +126,33 @@ export function CoberturaPessoalPage() {
               <SelectItem value="4">4º Bimestre</SelectItem>
             </SelectContent>
           </Select>
+
+          <Select
+            value={filtros.curriculo_tipo}
+            onValueChange={(v) =>
+              setFiltros({ ...filtros, curriculo_tipo: v as any })
+            }
+          >
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Tipo de Currículo" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="TODOS">Todos</SelectItem>
+              <SelectItem value="BNCC">BNCC</SelectItem>
+              <SelectItem value="CUSTOM">Curso Customizado</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </Card>
 
       {/* Cards de Estatísticas */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <StatCard
-          title="Média de Cobertura"
+          title={coberturaLabelConfig.title}
           value={`${data.stats.media_cobertura.toFixed(1)}%`}
           icon={<TrendingUp className="h-6 w-6" />}
           color="blue"
+          tooltip={coberturaLabelConfig.tooltip}
         />
         <StatCard
           title="Total de Turmas"

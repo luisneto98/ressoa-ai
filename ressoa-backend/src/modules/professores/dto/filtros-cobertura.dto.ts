@@ -26,4 +26,15 @@ export class FiltrosCoberturaDto {
   @Max(4)
   @Type(() => Number)
   bimestre?: number;
+
+  /**
+   * Filtro por tipo de currículo da turma
+   * - BNCC: Turmas baseadas em habilidades BNCC
+   * - CUSTOM: Turmas com objetivos de aprendizagem customizados
+   * - TODOS (default): Retorna ambos os tipos
+   */
+  @IsOptional()
+  @IsString()
+  @IsIn(['BNCC', 'CUSTOM'])
+  curriculo_tipo?: 'BNCC' | 'CUSTOM';
 }

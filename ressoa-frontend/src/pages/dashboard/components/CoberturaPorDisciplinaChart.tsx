@@ -27,7 +27,7 @@ export function CoberturaPorDisciplinaChart({ data }: Props) {
   // Empty state handling
   if (!data || data.length === 0) {
     return (
-      <div className="h-[300px] flex items-center justify-center text-gray-500">
+      <div className="h-[300px] flex items-center justify-center text-deep-navy/80">
         <p>Nenhum dado disponível</p>
       </div>
     );

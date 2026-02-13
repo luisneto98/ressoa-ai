@@ -24,7 +24,7 @@ export function StatCard({ title, value, icon, color }: StatCardProps) {
         <div className={`p-3 rounded-lg ${colorClasses[color]}`}>{icon}</div>
         <div>
           <p className="text-sm text-deep-navy/80 font-medium">{title}</p>
-          <p className="text-2xl font-bold text-deep-navy">{value}</p>
+          <p className="text-2xl font-montserrat font-bold text-deep-navy">{value}</p>
         </div>
       </div>
     </Card>

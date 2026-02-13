@@ -58,13 +58,13 @@ export function CoberturaTable({ cobertura }: CoberturaTableProps) {
       <TableBody>
         {cobertura.map((c) => (
           <TableRow key={c.turma_id}>
-            <TableCell className="font-semibold text-gray-900">
+            <TableCell className="font-semibold text-deep-navy">
               {c.turma_nome}
             </TableCell>
-            <TableCell className="text-center text-gray-700">
+            <TableCell className="text-center text-deep-navy/80">
               {c.habilidades_planejadas}
             </TableCell>
-            <TableCell className="text-center text-gray-700">
+            <TableCell className="text-center text-deep-navy/80">
               {c.habilidades_trabalhadas}
             </TableCell>
             <TableCell>
@@ -73,7 +73,7 @@ export function CoberturaTable({ cobertura }: CoberturaTableProps) {
                   value={Number(c.percentual_cobertura)}
                   className="w-32 h-2"
                 />
-                <span className="font-semibold text-gray-900 min-w-[60px] text-right">
+                <span className="font-semibold text-deep-navy min-w-[60px] text-right">
                   {Number(c.percentual_cobertura).toFixed(1)}%
                 </span>
               </div>

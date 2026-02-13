@@ -31,7 +31,7 @@ export function CoberturaChart({ turmaId, bimestre }: CoberturaChartProps) {
 
   if (isLoading) {
     return (
-      <div className="text-center text-gray-500 py-8">
+      <div className="text-center text-deep-navy/80 py-8">
         Carregando gráfico...
       </div>
     );
@@ -41,7 +41,7 @@ export function CoberturaChart({ turmaId, bimestre }: CoberturaChartProps) {
     return (
       <div className="text-center text-red-600 py-8">
         <p className="font-semibold mb-1">Erro ao carregar gráfico</p>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-deep-navy/80">
           {error instanceof Error ? error.message : 'Erro desconhecido'}
         </p>
       </div>
@@ -50,7 +50,7 @@ export function CoberturaChart({ turmaId, bimestre }: CoberturaChartProps) {
 
   if (!timeline || timeline.length === 0) {
     return (
-      <div className="text-center text-gray-500 py-8">
+      <div className="text-center text-deep-navy/80 py-8">
         <p>Nenhum dado de evolução temporal disponível.</p>
         <p className="text-sm mt-2">
           O gráfico será exibido após a aprovação de aulas ao longo do bimestre.

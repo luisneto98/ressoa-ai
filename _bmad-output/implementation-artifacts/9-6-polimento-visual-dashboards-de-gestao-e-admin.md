@@ -1,6 +1,6 @@
 # Story 9.6: Polimento Visual — Dashboards de Gestão e Admin
 
-Status: review
+Status: done
 
 ## Story
 
@@ -833,3 +833,73 @@ Esta story foi executada em um contexto onde **8 de 10 páginas já estavam poli
 - ressoa-frontend/src/pages/admin/MonitoramentoSTTPage.tsx — Remoção de import não utilizado `X`
 
 **Total:** 5 arquivos modificados (2 polimentos visuais + 3 correções de lint)
+
+---
+
+## Code Review Record (2026-02-12)
+
+### Review Agent Model
+Claude Sonnet 4.5 (claude-sonnet-4-5-20250929)
+
+### Issues Found: 10 CRITICAL/HIGH
+
+**CRITICAL Issues (6):**
+1. ❌ **CoberturaTable.tsx** — Uses `text-gray-900` (lines 61, 76) and `text-gray-700` (lines 64, 67) instead of design system
+2. ❌ **TurmaCard.tsx** — Uses `text-gray-600` (lines 57, 79, 85) instead of `text-deep-navy/80`
+3. ❌ **Task 7.2 marked [x] but NOT DONE** — TurmaCard headers claim "já correto" but had 3 violations
+4. ❌ **Story File List Incomplete** — Missing 5 shared components from File List
+5. ❌ **Grep validation incomplete** — Only checked `text-gray-9`, missed `text-gray-5/6/7`
+6. ❌ **AC #2 Violation** — StatCard missing `font-montserrat` on value (Story claims compliance)
+
+**HIGH Issues (4):**
+7. ⚠️ **CoberturaPorDisciplinaChart.tsx** — Empty state uses `text-gray-500` (line 30)
+8. ⚠️ **EvolucaoTemporalChart.tsx** — Empty state uses `text-gray-500` (line 16)
+9. ⚠️ **CoberturaChart.tsx** — 3 instances of `text-gray-500` in loading/error/empty states (lines 34, 44, 53)
+10. ⚠️ **Shared components not in scope** — Story focused on pages, excluded components used across dashboards
+
+### Auto-Fixes Applied (All 10 issues)
+
+**Files Fixed (6 components):**
+1. ✅ **CoberturaTable.tsx** — Replaced `text-gray-900` → `text-deep-navy`, `text-gray-700` → `text-deep-navy/80`
+2. ✅ **TurmaCard.tsx** — Replaced `text-gray-600` → `text-deep-navy/80` (3 occurrences)
+3. ✅ **CoberturaPorDisciplinaChart.tsx** — Replaced `text-gray-500` → `text-deep-navy/80`
+4. ✅ **EvolucaoTemporalChart.tsx** — Replaced `text-gray-500` → `text-deep-navy/80`
+5. ✅ **CoberturaChart.tsx** — Replaced `text-gray-500` → `text-deep-navy/80` (3 occurrences, loading/error/empty)
+6. ✅ **StatCard.tsx** — Added `font-montserrat` to value (AC #2 compliance)
+
+### Post-Fix Validation
+- ✅ Grep validation: `text-gray-[5679]` → **0 occurrences** in `ressoa-frontend/src/pages/dashboard/**/*.tsx`
+- ✅ Tests: **132/132 passing** (0 regressions)
+- ✅ Build: **SUCCESS** (chunk warning non-critical)
+- ✅ Design System Compliance: All components now use `text-deep-navy` variants
+- ✅ AC #1 (typography): SATISFIED after fixes
+- ✅ AC #2 (StatCard pattern): SATISFIED after `font-montserrat` added
+- ✅ AC #3 (empty states): SATISFIED after fixes
+
+### Updated File List
+
+**Pages Polished (2 - unchanged):**
+- ressoa-frontend/src/pages/admin/QualidadePromptsPage.tsx
+- ressoa-frontend/src/pages/admin/PromptDiffsPage.tsx
+
+**Import Lint Fixes (3 - unchanged):**
+- ressoa-frontend/src/pages/admin/CustosEscolasPage.tsx
+- ressoa-frontend/src/pages/admin/MonitoramentoAnalisePage.tsx
+- ressoa-frontend/src/pages/admin/MonitoramentoSTTPage.tsx
+
+**Shared Components Fixed (6 - NEW):**
+- ressoa-frontend/src/pages/dashboard/components/CoberturaTable.tsx — Typography fixes (`text-gray-*` → `text-deep-navy`)
+- ressoa-frontend/src/pages/dashboard/components/TurmaCard.tsx — Typography fixes (3 instances)
+- ressoa-frontend/src/pages/dashboard/components/CoberturaPorDisciplinaChart.tsx — Empty state fix
+- ressoa-frontend/src/pages/dashboard/components/EvolucaoTemporalChart.tsx — Empty state fix
+- ressoa-frontend/src/pages/dashboard/components/CoberturaChart.tsx — Loading/error/empty state fixes (3 instances)
+- ressoa-frontend/src/pages/dashboard/components/StatCard.tsx — Added `font-montserrat` to value (AC #2)
+
+**Total:** 11 arquivos modificados (2 páginas polidas + 3 correções lint + 6 componentes corrigidos no code review)
+
+### Review Outcome
+- **Status:** ✅ DONE (all issues auto-fixed)
+- **Issues Fixed:** 10 CRITICAL/HIGH
+- **Acceptance Criteria:** All 3 ACs now fully satisfied
+- **Tests:** 132/132 passing ✅
+- **Build:** SUCCESS ✅

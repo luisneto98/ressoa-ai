@@ -54,7 +54,7 @@ export function TurmaCard({ turma }: Props) {
       <div className="flex justify-between items-start mb-3">
         <div>
           <h3 className="font-semibold text-lg">{turma.turma_nome}</h3>
-          <p className="text-sm text-gray-600">{turma.professores}</p>
+          <p className="text-sm text-deep-navy/80">{turma.professores}</p>
         </div>
         {getStatusBadge(Number(turma.percentual_cobertura))}
       </div>
@@ -76,13 +76,13 @@ export function TurmaCard({ turma }: Props) {
       {/* Métricas */}
       <div className="grid grid-cols-2 gap-2 text-sm">
         <div>
-          <p className="text-gray-600">Habilidades</p>
+          <p className="text-deep-navy/80">Habilidades</p>
           <p className="font-semibold">
             {turma.habilidades_trabalhadas}/{turma.habilidades_planejadas}
           </p>
         </div>
         <div>
-          <p className="text-gray-600">Aulas</p>
+          <p className="text-deep-navy/80">Aulas</p>
           <p className="font-semibold">{turma.total_aulas}</p>
         </div>
       </div>

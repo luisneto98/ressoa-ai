@@ -330,7 +330,7 @@ enum TipoFonte {
 /// Design: Framework híbrido onde BNCC é um "provider" de objetivos
 model ObjetivoAprendizagem {
   id              String     @id @default(uuid())
-  codigo          String     @unique // Ex: EF06MA01 (BNCC) ou PM-MAT-01 (custom)
+  codigo          String // Ex: EF06MA01 (BNCC) ou PM-MAT-01 (custom) - uniqueness garantido por @@unique([turma_id, codigo])
   descricao       String     @db.Text
   nivel_cognitivo NivelBloom // Bloom's Taxonomy classification
   tipo_fonte      TipoFonte // Source type: BNCC or CUSTOM
@@ -354,7 +354,7 @@ model ObjetivoAprendizagem {
   planejamentos PlanejamentoObjetivo[]
 
   @@unique([turma_id, codigo]) // Código único por turma para custom (permite reutilização entre turmas)
-  @@index([tipo_fonte, turma_id]) // Query: listar objetivos custom de turma X
+  @@index([tipo_fonte, turma_id, created_at]) // Query: listar objetivos custom de turma X ordenados por created_at (composite index para performance)
   @@index([habilidade_bncc_id]) // Query: join com tabela Habilidade
   @@map("objetivo_aprendizagem")
 }

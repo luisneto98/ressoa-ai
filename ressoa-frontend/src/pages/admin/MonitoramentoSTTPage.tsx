@@ -38,7 +38,7 @@ import {
   Clock,
   Shield,
   DollarSign,
-  X,
+  Loader2,
 } from 'lucide-react';
 import { apiClient } from '@/api/axios';
 import { StatCard } from '@/pages/dashboard/components/StatCard';
@@ -104,43 +104,52 @@ export function MonitoramentoSTTPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
+      <div className="min-h-screen bg-ghost-white flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="h-8 w-8 animate-spin text-deep-navy/40" />
+          <p className="text-sm text-deep-navy/60">Carregando dados de transcrição...</p>
+        </div>
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="min-h-screen bg-ghost-white">
+        <div className="max-w-7xl mx-auto p-6">
         <Card className="p-6 border-red-200 bg-red-50">
           <div className="flex items-center gap-3 text-red-800">
-            <X className="h-5 w-5" />
-            <p className="font-semibold">
-              Erro ao carregar monitoramento: {(error as Error)?.message || 'Erro desconhecido'}
-            </p>
+            <AlertTriangle className="h-5 w-5" />
+            <div>
+              <p className="font-semibold">Erro ao carregar monitoramento</p>
+              <p className="text-sm text-deep-navy/80">{(error as Error)?.message || 'Erro desconhecido'}</p>
+            </div>
           </div>
         </Card>
+        </div>
       </div>
     );
   }
 
   if (!data) {
     return (
-      <div className="max-w-7xl mx-auto p-6">
-        <Card className="p-6">
-          <p className="text-gray-600">Nenhum dado disponível</p>
+      <div className="min-h-screen bg-ghost-white">
+        <div className="max-w-7xl mx-auto p-6">
+        <Card className="p-6 text-center">
+          <p className="text-deep-navy/80">Nenhum dado disponível</p>
         </Card>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">
+    <div className="min-h-screen bg-ghost-white">
+      <div className="max-w-7xl mx-auto p-6">
+      <h1 className="text-3xl md:text-4xl font-montserrat font-bold text-deep-navy mb-2">
         Monitoramento STT
       </h1>
-      <p className="text-gray-600 mb-6">
+      <p className="text-deep-navy/80 mb-6">
         Taxa de erro, performance e custos de transcrições em tempo real
       </p>
 
@@ -159,7 +168,7 @@ export function MonitoramentoSTTPage() {
       {/* Filtro de Período */}
       <Card className="p-4 mb-6">
         <div className="flex items-center gap-4">
-          <label className="text-sm font-medium text-gray-700">Período:</label>
+          <label className="text-sm font-medium text-deep-navy/80">Período:</label>
           <Select value={periodo} onValueChange={setPeriodo}>
             <SelectTrigger className="w-[200px]">
               <SelectValue />
@@ -170,7 +179,7 @@ export function MonitoramentoSTTPage() {
               ))}
             </SelectContent>
           </Select>
-          <span className="text-xs text-gray-500">Auto-refresh a cada 60s</span>
+          <span className="text-xs text-deep-navy/60">Auto-refresh a cada 60s</span>
         </div>
       </Card>
 
@@ -224,7 +233,7 @@ export function MonitoramentoSTTPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* PieChart - Distribuição por Provider */}
         <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-4 text-gray-900">
+          <h2 className="text-xl md:text-2xl font-montserrat font-semibold text-deep-navy mb-4">
             Distribuição por Provider
           </h2>
           {data.por_provider.length > 0 ? (
@@ -251,7 +260,7 @@ export function MonitoramentoSTTPage() {
               </PieChart>
             </ResponsiveContainer>
           ) : (
-            <p className="text-gray-500 text-center py-12">
+            <p className="text-deep-navy/80 text-center py-12">
               Nenhuma transcrição no período
             </p>
           )}
@@ -259,7 +268,7 @@ export function MonitoramentoSTTPage() {
 
         {/* LineChart - Timeline de Erros */}
         <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-4 text-gray-900">
+          <h2 className="text-xl md:text-2xl font-montserrat font-semibold text-deep-navy mb-4">
             Timeline de Erros
           </h2>
           {data.erros_timeline.length > 0 ? (
@@ -293,7 +302,7 @@ export function MonitoramentoSTTPage() {
               </LineChart>
             </ResponsiveContainer>
           ) : (
-            <p className="text-gray-500 text-center py-12">
+            <p className="text-deep-navy/80 text-center py-12">
               Nenhum dado no período
             </p>
           )}
@@ -302,7 +311,7 @@ export function MonitoramentoSTTPage() {
 
       {/* Tabela de Erros Recentes */}
       <Card className="p-6">
-        <h2 className="text-lg font-semibold mb-4 text-gray-900">
+        <h2 className="text-xl md:text-2xl font-montserrat font-semibold text-deep-navy mb-4">
           Erros Recentes (últimos 10)
         </h2>
         {data.erros_recentes.length > 0 ? (
@@ -345,11 +354,12 @@ export function MonitoramentoSTTPage() {
             </TableBody>
           </Table>
         ) : (
-          <p className="text-gray-500 text-center py-8">
+          <p className="text-deep-navy/80 text-center py-8">
             Nenhum erro no período selecionado ({PERIODO_LABELS[periodo]})
           </p>
         )}
       </Card>
+      </div>
     </div>
   );
 }

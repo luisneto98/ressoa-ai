@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/select';
 import { StatCard } from './components/StatCard';
 import { ProfessoresTable } from './components/ProfessoresTable';
-import { TrendingUp, Users, AlertTriangle } from 'lucide-react';
+import { TrendingUp, Users, AlertTriangle, Loader2 } from 'lucide-react';
 
 interface FiltrosCobertura {
   disciplina?: 'MATEMATICA' | 'LINGUA_PORTUGUESA' | 'CIENCIAS';
@@ -40,33 +40,49 @@ export function DashboardCoordenadorProfessoresPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">Carregando...</div>
+      <div className="min-h-screen bg-ghost-white flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="h-8 w-8 animate-spin text-deep-navy/40" />
+          <p className="text-sm text-deep-navy/60">Carregando dados dos professores...</p>
+        </div>
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="p-6 text-center">
-        <p className="text-red-600">
-          Erro ao carregar dashboard: {error.message}
-        </p>
+      <div className="min-h-screen bg-ghost-white">
+        <div className="max-w-7xl mx-auto p-6">
+          <Card className="p-6 border-red-200 bg-red-50">
+            <div className="flex items-center gap-3 text-red-800">
+              <AlertTriangle className="h-5 w-5" />
+              <div>
+                <p className="font-semibold">Erro ao carregar dashboard</p>
+                <p className="text-sm text-deep-navy/80">{error.message}</p>
+              </div>
+            </div>
+          </Card>
+        </div>
       </div>
     );
   }
 
   if (!data) {
     return (
-      <div className="p-6 text-center">
-        <p className="text-muted-foreground">Sem dados disponíveis</p>
+      <div className="min-h-screen bg-ghost-white">
+        <div className="max-w-7xl mx-auto p-6">
+          <Card className="p-6 text-center">
+            <p className="text-deep-navy/80">Sem dados disponíveis</p>
+          </Card>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Dashboard - Professores</h1>
+    <div className="min-h-screen bg-ghost-white">
+      <div className="max-w-7xl mx-auto p-6">
+      <h1 className="text-3xl md:text-4xl font-montserrat font-bold text-deep-navy mb-6">Dashboard - Professores</h1>
 
       {/* Filtros */}
       <Card className="p-4 mb-6">
@@ -143,9 +159,10 @@ export function DashboardCoordenadorProfessoresPage() {
 
       {/* Tabela de Professores */}
       <Card className="p-6">
-        <h2 className="text-lg font-semibold mb-4">Ranking de Professores</h2>
+        <h2 className="text-xl md:text-2xl font-montserrat font-semibold text-deep-navy mb-4">Ranking de Professores</h2>
         <ProfessoresTable metricas={data.metricas} />
       </Card>
+      </div>
     </div>
   );
 }

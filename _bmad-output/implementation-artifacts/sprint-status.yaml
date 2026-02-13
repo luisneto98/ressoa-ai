@@ -107,6 +107,6 @@ development_status:
     9-3-fix-de-rotas-quebradas-e-redirecionamentos: done # Code review complete - 10 issues auto-fixed (3 CRITICAL: Tailwind color+test coverage, 4 HIGH: barrel exports+JSDoc+file list+route tests, 3 MEDIUM: test brittleness+bundle warning+ARIA) - 112/112 tests passing
     9-4-navegacao-cta-botao-nova-aula-destacado: done # Code review complete - 7 issues found (3 HIGH, 2 MEDIUM, 2 LOW) - 6 auto-fixed (semantic HTML, React act() warning, position test, TSDoc) - 132/132 tests passing
     9-5-polimento-visual-pages-do-professor: done # Code review complete - 14 issues found (8 HIGH: text-gray-900, 4 MEDIUM: font-montserrat/responsiveness, 2 LOW) - 12 auto-fixed - 132/132 tests passing
-    9-6-polimento-visual-dashboards-de-gestao-e-admin: backlog
+    9-6-polimento-visual-dashboards-de-gestao-e-admin: review
     9-7-padronizacao-de-icones-substituir-emoticons-por-tabler-icons: backlog
     epic-9-retrospective: optional

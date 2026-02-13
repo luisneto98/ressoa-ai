@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { DollarSign, TrendingUp, Activity, X } from 'lucide-react';
+import { DollarSign, TrendingUp, Activity, Loader2, AlertTriangle } from 'lucide-react';
 import { apiClient } from '@/api/axios';
 import { StatCard } from '@/pages/dashboard/components/StatCard';
 
@@ -58,51 +58,59 @@ export function CustosEscolasPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
+      <div className="min-h-screen bg-ghost-white flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="h-8 w-8 animate-spin text-deep-navy/40" />
+          <p className="text-sm text-deep-navy/60">Carregando custos por escola...</p>
+        </div>
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="min-h-screen bg-ghost-white">
+        <div className="max-w-7xl mx-auto p-6">
         <Card className="p-6 border-red-200 bg-red-50">
           <div className="flex items-center gap-3 text-red-800">
-            <X className="h-5 w-5" />
-            <p className="font-semibold">
-              Erro ao carregar custos:{' '}
-              {(error as Error)?.message || 'Erro desconhecido'}
-            </p>
+            <AlertTriangle className="h-5 w-5" />
+            <div>
+              <p className="font-semibold">Erro ao carregar custos</p>
+              <p className="text-sm text-deep-navy/80">{(error as Error)?.message || 'Erro desconhecido'}</p>
+            </div>
           </div>
         </Card>
+        </div>
       </div>
     );
   }
 
   if (!data) {
     return (
-      <div className="max-w-7xl mx-auto p-6">
-        <Card className="p-6">
-          <p className="text-gray-600">Nenhum dado disponível</p>
+      <div className="min-h-screen bg-ghost-white">
+        <div className="max-w-7xl mx-auto p-6">
+        <Card className="p-6 text-center">
+          <p className="text-deep-navy/80">Nenhum dado disponível</p>
         </Card>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">
+    <div className="min-h-screen bg-ghost-white">
+      <div className="max-w-7xl mx-auto p-6">
+      <h1 className="text-3xl md:text-4xl font-montserrat font-bold text-deep-navy mb-2">
         Custos por Escola
       </h1>
-      <p className="text-gray-600 mb-6">
+      <p className="text-deep-navy/80 mb-6">
         Monitoramento de custos API (STT + LLM) por escola
       </p>
 
       {/* Filtro de Mês */}
       <Card className="p-4 mb-6">
         <div className="flex items-center gap-4">
-          <label className="text-sm font-medium text-gray-700">Mês:</label>
+          <label className="text-sm font-medium text-deep-navy/80">Mês:</label>
           <Input
             type="month"
             value={mes}
@@ -136,7 +144,7 @@ export function CustosEscolasPage() {
 
       {/* Tabela Ranking */}
       <Card className="p-6">
-        <h2 className="text-lg font-semibold mb-4 text-gray-900">
+        <h2 className="text-xl md:text-2xl font-montserrat font-semibold text-deep-navy mb-4">
           Ranking de Custos por Escola
         </h2>
         <Table>
@@ -155,7 +163,7 @@ export function CustosEscolasPage() {
           <TableBody>
             {data.escolas.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="text-center text-gray-500 py-8">
+                <TableCell colSpan={8} className="text-center text-deep-navy/80 py-8">
                   Nenhuma escola encontrada para este mês
                 </TableCell>
               </TableRow>
@@ -198,6 +206,7 @@ export function CustosEscolasPage() {
           </TableBody>
         </Table>
       </Card>
+      </div>
     </div>
   );
 }

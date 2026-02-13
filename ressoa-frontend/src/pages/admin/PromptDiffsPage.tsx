@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { ArrowLeft, ChevronDown, ChevronUp, XCircle } from 'lucide-react';
+import { ArrowLeft, ChevronDown, ChevronUp, AlertTriangle, Loader2 } from 'lucide-react';
 import { apiClient } from '@/api/axios';
 import { DiffViewer } from '@/pages/aulas/components/DiffViewer';
 
@@ -57,24 +57,29 @@ export function PromptDiffsPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
+      <div className="min-h-screen bg-ghost-white flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="h-8 w-8 animate-spin text-deep-navy/40" />
+          <p className="text-sm text-deep-navy/60">Carregando diffs de prompts...</p>
+        </div>
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="min-h-screen bg-ghost-white">
+        <div className="max-w-7xl mx-auto p-6">
         <Card className="p-6 border-red-200 bg-red-50">
           <div className="flex items-center gap-3 text-red-800">
-            <XCircle className="h-5 w-5" />
-            <p className="font-semibold">
-              Erro ao carregar diffs:{' '}
-              {(error as Error)?.message || 'Erro desconhecido'}
-            </p>
+            <AlertTriangle className="h-5 w-5" />
+            <div>
+              <p className="font-semibold">Erro ao carregar diffs</p>
+              <p className="text-sm text-deep-navy/80">{(error as Error)?.message || 'Erro desconhecido'}</p>
+            </div>
           </div>
         </Card>
+        </div>
       </div>
     );
   }
@@ -82,7 +87,8 @@ export function PromptDiffsPage() {
   const displayNome = nome ? (PROMPT_NOMES_DISPLAY[nome] || nome) : '';
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
+    <div className="min-h-screen bg-ghost-white">
+      <div className="max-w-7xl mx-auto p-6">
       <Button
         variant="ghost"
         className="mb-4"
@@ -92,15 +98,15 @@ export function PromptDiffsPage() {
         Voltar para Dashboard
       </Button>
 
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">
+      <h1 className="text-3xl md:text-4xl font-montserrat font-bold text-deep-navy mb-2">
         Diffs: {displayNome}
       </h1>
-      <p className="text-gray-600 mb-6">
+      <p className="text-deep-navy/80 mb-6">
         Top 20 análises mais editadas para <span className="font-mono">{versao}</span>
       </p>
 
       <Card className="p-6">
-        <h2 className="text-lg font-semibold mb-4 text-gray-900">
+        <h2 className="text-xl md:text-2xl font-montserrat font-semibold text-deep-navy mb-4">
           Análises Mais Editadas ({data?.total || 0})
         </h2>
         <Table>
@@ -117,7 +123,7 @@ export function PromptDiffsPage() {
           <TableBody>
             {(!data || data.diffs.length === 0) ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center text-gray-500 py-8">
+                <TableCell colSpan={6} className="text-center text-deep-navy/80 py-8">
                   Nenhuma análise editada encontrada para esta versão
                 </TableCell>
               </TableRow>
@@ -143,24 +149,24 @@ export function PromptDiffsPage() {
                       </Button>
                     </TableCell>
                     <TableCell className="font-medium">{diff.aula_titulo}</TableCell>
-                    <TableCell className="text-right text-sm text-gray-600">
+                    <TableCell className="text-right text-sm text-deep-navy/80">
                       {new Date(diff.data_aula).toLocaleDateString('pt-BR')}
                     </TableCell>
                     <TableCell className="text-right font-mono">
                       {diff.change_count}
                     </TableCell>
-                    <TableCell className="text-right text-sm text-gray-600">
+                    <TableCell className="text-right text-sm text-deep-navy/80">
                       {diff.original_length} chars
                     </TableCell>
-                    <TableCell className="text-right text-sm text-gray-600">
+                    <TableCell className="text-right text-sm text-deep-navy/80">
                       {diff.edited_length} chars
                     </TableCell>
                   </TableRow>
                   {expandedId === diff.analise_id && (
                     <TableRow>
                       <TableCell colSpan={6} className="p-0">
-                        <div className="p-4 bg-gray-50 border-t">
-                          <h3 className="text-sm font-semibold text-gray-700 mb-3">
+                        <div className="p-4 bg-ghost-white border-t">
+                          <h3 className="text-sm font-semibold text-deep-navy/80 mb-3">
                             Diff: {diff.aula_titulo}
                           </h3>
                           <DiffViewer original={diff.original} modified={diff.editado} />
@@ -174,6 +180,7 @@ export function PromptDiffsPage() {
           </TableBody>
         </Table>
       </Card>
+      </div>
     </div>
   );
 }

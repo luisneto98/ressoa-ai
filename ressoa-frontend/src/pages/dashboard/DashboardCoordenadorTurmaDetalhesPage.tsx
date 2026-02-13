@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { HabilidadesTable } from './components/HabilidadesTable';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Loader2, AlertTriangle } from 'lucide-react';
 
 export function DashboardCoordenadorTurmaDetalhesPage() {
   const { turmaId } = useParams<{ turmaId: string }>();
@@ -31,10 +31,10 @@ export function DashboardCoordenadorTurmaDetalhesPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-tech-blue" />
-          <p className="text-muted-foreground">Carregando...</p>
+      <div className="min-h-screen bg-ghost-white flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="h-8 w-8 animate-spin text-deep-navy/40" />
+          <p className="text-sm text-deep-navy/60">Carregando detalhes da turma...</p>
         </div>
       </div>
     );
@@ -42,30 +42,40 @@ export function DashboardCoordenadorTurmaDetalhesPage() {
 
   if (isError) {
     return (
-      <div className="p-6 text-center">
-        <p className="text-red-600">
-          Erro ao carregar detalhes: {error.message}
-        </p>
-        <Button variant="outline" onClick={() => navigate(-1)} className="mt-4">
-          Voltar
-        </Button>
+      <div className="min-h-screen bg-ghost-white">
+        <div className="max-w-7xl mx-auto p-6">
+          <Card className="p-6 border-red-200 bg-red-50">
+            <div className="flex items-center gap-3 text-red-800">
+              <AlertTriangle className="h-5 w-5" />
+              <div>
+                <p className="font-semibold">Erro ao carregar detalhes</p>
+                <p className="text-sm text-deep-navy/80">{error.message}</p>
+              </div>
+            </div>
+          </Card>
+          <Button variant="outline" onClick={() => navigate(-1)} className="mt-4">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Voltar
+          </Button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
+    <div className="min-h-screen bg-ghost-white">
+      <div className="max-w-7xl mx-auto p-6">
       <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6">
         <ArrowLeft className="h-4 w-4 mr-2" />
         Voltar ao Dashboard de Turmas
       </Button>
 
-      <h1 className="text-2xl font-bold mb-6">Detalhes da Turma</h1>
+      <h1 className="text-3xl md:text-4xl font-montserrat font-bold text-deep-navy mb-6">Detalhes da Turma</h1>
 
       {/* Filtro de Bimestre */}
       <Card className="p-4 mb-6">
         <div className="flex gap-4 items-center">
-          <label className="text-sm font-medium">Filtrar por Bimestre:</label>
+          <label className="text-sm font-medium text-deep-navy/80">Filtrar por Bimestre:</label>
           <Select
             value={bimestre?.toString() || 'todos'}
             onValueChange={(v) =>
@@ -88,15 +98,16 @@ export function DashboardCoordenadorTurmaDetalhesPage() {
 
       {/* Tabela de Habilidades */}
       <Card className="p-6">
-        <h2 className="text-lg font-semibold mb-4">Status de Habilidades BNCC</h2>
+        <h2 className="text-xl md:text-2xl font-montserrat font-semibold text-deep-navy mb-4">Status de Habilidades BNCC</h2>
         {!data?.detalhes || data.detalhes.length === 0 ? (
-          <p className="text-gray-600 text-center py-8">
+          <p className="text-deep-navy/80 text-center py-8">
             Nenhuma habilidade planejada para esta turma no bimestre selecionado.
           </p>
         ) : (
           <HabilidadesTable habilidades={data.detalhes} />
         )}
       </Card>
+      </div>
     </div>
   );
 }

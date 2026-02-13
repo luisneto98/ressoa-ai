@@ -29,7 +29,7 @@ import {
   Timer,
   AlertTriangle,
   ExternalLink,
-  X,
+  Loader2,
 } from 'lucide-react';
 import { apiClient } from '@/api/axios';
 import { StatCard } from '@/pages/dashboard/components/StatCard';
@@ -89,34 +89,41 @@ export function MonitoramentoAnalisePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
+      <div className="min-h-screen bg-ghost-white flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="h-8 w-8 animate-spin text-deep-navy/40" />
+          <p className="text-sm text-deep-navy/60">Carregando dados de análise pedagógica...</p>
+        </div>
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="min-h-screen bg-ghost-white">
+        <div className="max-w-7xl mx-auto p-6">
         <Card className="p-6 border-red-200 bg-red-50">
           <div className="flex items-center gap-3 text-red-800">
-            <X className="h-5 w-5" />
-            <p className="font-semibold">
-              Erro ao carregar monitoramento:{' '}
-              {(error as Error)?.message || 'Erro desconhecido'}
-            </p>
+            <AlertTriangle className="h-5 w-5" />
+            <div>
+              <p className="font-semibold">Erro ao carregar monitoramento</p>
+              <p className="text-sm text-deep-navy/80">{(error as Error)?.message || 'Erro desconhecido'}</p>
+            </div>
           </div>
         </Card>
+        </div>
       </div>
     );
   }
 
   if (!data) {
     return (
-      <div className="max-w-7xl mx-auto p-6">
-        <Card className="p-6">
-          <p className="text-gray-600">Nenhum dado disponível</p>
+      <div className="min-h-screen bg-ghost-white">
+        <div className="max-w-7xl mx-auto p-6">
+        <Card className="p-6 text-center">
+          <p className="text-deep-navy/80">Nenhum dado disponível</p>
         </Card>
+        </div>
       </div>
     );
   }
@@ -134,11 +141,12 @@ export function MonitoramentoAnalisePage() {
   }));
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">
+    <div className="min-h-screen bg-ghost-white">
+      <div className="max-w-7xl mx-auto p-6">
+      <h1 className="text-3xl md:text-4xl font-montserrat font-bold text-deep-navy mb-2">
         Monitoramento de Análise Pedagógica
       </h1>
-      <p className="text-gray-600 mb-6">
+      <p className="text-deep-navy/80 mb-6">
         Filas de processamento, tempo de análise e métricas de qualidade
       </p>
 
@@ -157,7 +165,7 @@ export function MonitoramentoAnalisePage() {
       {/* Filtro de Período */}
       <Card className="p-4 mb-6">
         <div className="flex items-center gap-4">
-          <label className="text-sm font-medium text-gray-700">Período:</label>
+          <label className="text-sm font-medium text-deep-navy/80">Período:</label>
           <Select value={periodo} onValueChange={setPeriodo}>
             <SelectTrigger className="w-[200px]">
               <SelectValue />
@@ -170,7 +178,7 @@ export function MonitoramentoAnalisePage() {
               ))}
             </SelectContent>
           </Select>
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-deep-navy/60">
             Auto-refresh a cada 30s
           </span>
         </div>
@@ -205,36 +213,36 @@ export function MonitoramentoAnalisePage() {
       </div>
 
       {/* Queue Status Grid */}
-      <h2 className="text-lg font-semibold mb-4 text-gray-900">
+      <h2 className="text-xl md:text-2xl font-montserrat font-semibold text-deep-navy mb-4">
         Status das Filas (tempo real)
       </h2>
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
         <Card className="p-4 border-l-4 border-l-yellow-400">
-          <p className="text-sm text-gray-600">Aguardando</p>
+          <p className="text-sm text-deep-navy/80">Aguardando</p>
           <p className="text-2xl font-bold text-yellow-600">
             {data.queue_stats.waiting}
           </p>
         </Card>
         <Card className="p-4 border-l-4 border-l-blue-400">
-          <p className="text-sm text-gray-600">Processando</p>
+          <p className="text-sm text-deep-navy/80">Processando</p>
           <p className="text-2xl font-bold text-blue-600">
             {data.queue_stats.active}
           </p>
         </Card>
         <Card className="p-4 border-l-4 border-l-green-400">
-          <p className="text-sm text-gray-600">Completados</p>
+          <p className="text-sm text-deep-navy/80">Completados</p>
           <p className="text-2xl font-bold text-green-600">
             {data.queue_stats.completed}
           </p>
         </Card>
         <Card className="p-4 border-l-4 border-l-red-400">
-          <p className="text-sm text-gray-600">Falhados</p>
+          <p className="text-sm text-deep-navy/80">Falhados</p>
           <p className="text-2xl font-bold text-red-600">
             {data.queue_stats.failed}
           </p>
         </Card>
         <Card className="p-4 border-l-4 border-l-purple-400">
-          <p className="text-sm text-gray-600">Agendados</p>
+          <p className="text-sm text-deep-navy/80">Agendados</p>
           <p className="text-2xl font-bold text-purple-600">
             {data.queue_stats.delayed}
           </p>
@@ -255,7 +263,7 @@ export function MonitoramentoAnalisePage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* BarChart - Análises por Status */}
         <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-4 text-gray-900">
+          <h2 className="text-xl md:text-2xl font-montserrat font-semibold text-deep-navy mb-4">
             Análises por Status
           </h2>
           {barChartData.length > 0 ? (
@@ -273,7 +281,7 @@ export function MonitoramentoAnalisePage() {
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <p className="text-gray-500 text-center py-12">
+            <p className="text-deep-navy/80 text-center py-12">
               Nenhuma análise no período
             </p>
           )}
@@ -281,7 +289,7 @@ export function MonitoramentoAnalisePage() {
 
         {/* PieChart - Distribuição de Status */}
         <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-4 text-gray-900">
+          <h2 className="text-xl md:text-2xl font-montserrat font-semibold text-deep-navy mb-4">
             Distribuição de Status
           </h2>
           {pieChartData.length > 0 ? (
@@ -305,11 +313,12 @@ export function MonitoramentoAnalisePage() {
               </PieChart>
             </ResponsiveContainer>
           ) : (
-            <p className="text-gray-500 text-center py-12">
+            <p className="text-deep-navy/80 text-center py-12">
               Nenhuma análise no período
             </p>
           )}
         </Card>
+      </div>
       </div>
     </div>
   );

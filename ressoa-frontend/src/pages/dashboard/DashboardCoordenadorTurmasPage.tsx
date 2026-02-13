@@ -13,7 +13,7 @@ import {
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { StatCard } from './components/StatCard';
 import { TurmaCard } from './components/TurmaCard';
-import { AlertCircle, AlertTriangle, CheckCircle } from 'lucide-react';
+import { AlertCircle, AlertTriangle, CheckCircle, Loader2 } from 'lucide-react';
 
 interface FiltrosCobertura {
   disciplina?: 'MATEMATICA' | 'LINGUA_PORTUGUESA' | 'CIENCIAS';
@@ -51,10 +51,10 @@ export function DashboardCoordenadorTurmasPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-tech-blue" />
-          <p className="text-muted-foreground">Carregando...</p>
+      <div className="min-h-screen bg-ghost-white flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="h-8 w-8 animate-spin text-deep-navy/40" />
+          <p className="text-sm text-deep-navy/60">Carregando métricas das turmas...</p>
         </div>
       </div>
     );
@@ -62,25 +62,38 @@ export function DashboardCoordenadorTurmasPage() {
 
   if (isError) {
     return (
-      <div className="p-6 text-center">
-        <p className="text-red-600">
-          Erro ao carregar dashboard: {error.message}
-        </p>
+      <div className="min-h-screen bg-ghost-white">
+        <div className="max-w-7xl mx-auto p-6">
+          <Card className="p-6 border-red-200 bg-red-50">
+            <div className="flex items-center gap-3 text-red-800">
+              <AlertTriangle className="h-5 w-5" />
+              <div>
+                <p className="font-semibold">Erro ao carregar dashboard</p>
+                <p className="text-sm text-deep-navy/80">{error.message}</p>
+              </div>
+            </div>
+          </Card>
+        </div>
       </div>
     );
   }
 
   if (!data) {
     return (
-      <div className="p-6 text-center">
-        <p className="text-muted-foreground">Sem dados disponíveis</p>
+      <div className="min-h-screen bg-ghost-white">
+        <div className="max-w-7xl mx-auto p-6">
+          <Card className="p-6 text-center">
+            <p className="text-deep-navy/80">Sem dados disponíveis</p>
+          </Card>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Dashboard - Turmas</h1>
+    <div className="min-h-screen bg-ghost-white">
+      <div className="max-w-7xl mx-auto p-6">
+      <h1 className="text-3xl md:text-4xl font-montserrat font-bold text-deep-navy mb-6">Dashboard - Turmas</h1>
 
       {/* Filtros */}
       <Card className="p-4 mb-6">
@@ -165,7 +178,7 @@ export function DashboardCoordenadorTurmasPage() {
       {/* Grid de Turmas */}
       {data.metricas.length === 0 ? (
         <Card className="p-8 text-center">
-          <p className="text-gray-600">
+          <p className="text-deep-navy/80">
             Nenhuma turma encontrada com os filtros selecionados.
           </p>
           <Button variant="outline" onClick={handleLimparFiltros} className="mt-4">
@@ -179,6 +192,7 @@ export function DashboardCoordenadorTurmasPage() {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }

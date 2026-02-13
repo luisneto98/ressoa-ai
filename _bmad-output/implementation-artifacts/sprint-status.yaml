@@ -118,7 +118,7 @@ development_status:
     10-5-frontend-adaptar-seletor-habilidades-ensino-medio: done
     10-6-backend-ajustar-prompts-ia-ensino-medio: done
     10-7-frontend-filtros-tipo-ensino-dashboards: done
-    10-8-backend-query-optimization-turmas-multi-tipo: backlog
+    10-8-backend-query-optimization-turmas-multi-tipo: done
     10-9-testing-e2e-crud-turmas-analise-em: backlog
     10-10-documentation-guia-migracao-escolas-em: backlog
     epic-10-retrospective: optional

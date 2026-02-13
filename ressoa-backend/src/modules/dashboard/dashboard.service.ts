@@ -77,7 +77,7 @@ export class DashboardService {
 
   async getMetricasPorProfessor(escolaId: string, filtros: FiltrosDashboardDto) {
     // Query raw SQL para agregar dados da materialized view
-    // JOIN with Turma to get tipo_ensino (materialized view doesn't include it yet)
+    // Query optimized: uses turma_tipo_ensino from materialized view (no JOIN needed)
     const metricas = await this.prisma.$queryRaw<MetricasProfessor[]>`
       SELECT
         cb.professor_id,
@@ -90,11 +90,10 @@ export class DashboardService {
         SUM(cb.total_aulas_aprovadas) as total_aulas,
         AVG(cb.tempo_medio_revisao) as tempo_medio_revisao
       FROM cobertura_bimestral cb
-      INNER JOIN turma t ON cb.turma_id = t.id
       WHERE cb.escola_id = ${escolaId}
         ${filtros.bimestre ? Prisma.sql`AND cb.bimestre = ${filtros.bimestre}` : Prisma.empty}
         ${filtros.disciplina ? Prisma.sql`AND cb.disciplina = ${filtros.disciplina}` : Prisma.empty}
-        ${filtros.tipo_ensino ? Prisma.sql`AND t.tipo_ensino = ${filtros.tipo_ensino}` : Prisma.empty}
+        ${filtros.tipo_ensino ? Prisma.sql`AND cb.turma_tipo_ensino = ${filtros.tipo_ensino}` : Prisma.empty}
       GROUP BY cb.professor_id, cb.professor_nome, cb.disciplina
       ORDER BY media_cobertura DESC;
     `;
@@ -133,11 +132,10 @@ export class DashboardService {
         cb.habilidades_trabalhadas,
         cb.total_aulas_aprovadas
       FROM cobertura_bimestral cb
-      INNER JOIN turma t ON cb.turma_id = t.id
       WHERE cb.escola_id = ${escolaId}
         AND cb.professor_id = ${professorId}
         ${filtros.bimestre ? Prisma.sql`AND cb.bimestre = ${filtros.bimestre}` : Prisma.empty}
-        ${filtros.tipo_ensino ? Prisma.sql`AND t.tipo_ensino = ${filtros.tipo_ensino}` : Prisma.empty}
+        ${filtros.tipo_ensino ? Prisma.sql`AND cb.turma_tipo_ensino = ${filtros.tipo_ensino}` : Prisma.empty}
       ORDER BY cb.percentual_cobertura ASC;
     `;
 
@@ -145,7 +143,7 @@ export class DashboardService {
   }
 
   async getMetricasPorTurma(escolaId: string, filtros: FiltrosDashboardDto) {
-    // Query raw SQL para agregar dados da materialized view por turma
+    // Query optimized: uses turma_tipo_ensino from materialized view (no JOIN needed)
     const metricas = await this.prisma.$queryRaw<MetricasTurmaAgregada[]>`
       SELECT
         cb.turma_id,
@@ -159,11 +157,10 @@ export class DashboardService {
         SUM(cb.total_aulas_aprovadas) as total_aulas,
         STRING_AGG(DISTINCT cb.professor_nome, ', ') as professores
       FROM cobertura_bimestral cb
-      INNER JOIN turma t ON cb.turma_id = t.id
       WHERE cb.escola_id = ${escolaId}
         ${filtros.bimestre ? Prisma.sql`AND cb.bimestre = ${filtros.bimestre}` : Prisma.empty}
         ${filtros.disciplina ? Prisma.sql`AND cb.disciplina = ${filtros.disciplina}` : Prisma.empty}
-        ${filtros.tipo_ensino ? Prisma.sql`AND t.tipo_ensino = ${filtros.tipo_ensino}` : Prisma.empty}
+        ${filtros.tipo_ensino ? Prisma.sql`AND cb.turma_tipo_ensino = ${filtros.tipo_ensino}` : Prisma.empty}
       GROUP BY cb.turma_id, cb.turma_nome, cb.turma_serie, cb.disciplina, cb.bimestre
       ORDER BY percentual_cobertura ASC;
     `;
@@ -265,7 +262,7 @@ export class DashboardService {
         ${bimestre ? Prisma.sql`AND cb.bimestre = ${bimestre}` : Prisma.empty}
     `;
 
-    // Breakdown by tipo_ensino (AC #7)
+    // Breakdown by tipo_ensino - optimized: uses turma_tipo_ensino from view (no JOIN)
     const breakdownRaw = await this.prisma.$queryRaw<
       Array<{
         tipo_ensino: string;
@@ -274,14 +271,13 @@ export class DashboardService {
       }>
     >`
       SELECT
-        t.tipo_ensino,
+        cb.turma_tipo_ensino as tipo_ensino,
         AVG(cb.percentual_cobertura) as cobertura_media,
         COUNT(DISTINCT cb.turma_id) as total_turmas
       FROM cobertura_bimestral cb
-      INNER JOIN turma t ON cb.turma_id = t.id
       WHERE cb.escola_id = ${escolaId}
         ${bimestre ? Prisma.sql`AND cb.bimestre = ${bimestre}` : Prisma.empty}
-      GROUP BY t.tipo_ensino
+      GROUP BY cb.turma_tipo_ensino
     `;
 
     // Transform breakdown to object with FUNDAMENTAL and MEDIO keys

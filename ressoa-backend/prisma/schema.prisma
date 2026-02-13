@@ -190,6 +190,8 @@ model Habilidade {
   @@index([codigo])
   @@index([ativa])
   @@index([searchable], map: "idx_habilidade_searchable", type: Gin)
+  @@index([tipo_ensino, disciplina, ativa]) // Query optimization: filter BNCC by type + discipline + active
+  @@index([tipo_ensino, ano_inicio, ano_fim]) // Query optimization: filter by grade/series
   @@map("habilidades")
 }
 
@@ -236,6 +238,9 @@ model Turma {
   @@index([tipo_ensino])
   @@index([deleted_at])
   @@index([escola_id, nome, ano_letivo, turno]) // Uniqueness validation query performance
+  @@index([escola_id, tipo_ensino]) // Dashboard queries: filter by escola + tipo
+  @@index([escola_id, tipo_ensino, serie]) // Detailed filtering with serie
+  @@index([escola_id, tipo_ensino, ano_letivo]) // Dashboard queries with ano_letivo
   @@map("turma")
 }
 

@@ -50,7 +50,7 @@ import {
 
 @ApiTags('admin')
 @ApiBearerAuth()
-@Controller('api/v1/admin')
+@Controller('admin')
 @Roles(RoleUsuario.ADMIN) // Protege TODOS endpoints deste controller
 export class AdminController {
   constructor(

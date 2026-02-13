@@ -25,7 +25,7 @@ import type { AuthenticatedUser } from '../auth/decorators/current-user.decorato
  * All endpoints enforce multi-tenancy via NotificacoesService
  * Code Review MEDIUM-4: Rate limiting added to prevent DoS
  */
-@Controller('api/v1')
+@Controller('notificacoes')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Throttle({ default: { limit: 60, ttl: 60000 } }) // 60 req/min per user
 export class NotificacoesController {
@@ -41,7 +41,7 @@ export class NotificacoesController {
    *
    * @returns Array of notifications (sorted by created_at DESC)
    */
-  @Get('notificacoes')
+  @Get()
   @Roles(RoleUsuario.PROFESSOR, RoleUsuario.COORDENADOR, RoleUsuario.DIRETOR)
   async getNotificacoes(
     @CurrentUser() user: AuthenticatedUser,
@@ -60,7 +60,7 @@ export class NotificacoesController {
    *
    * @returns { count: number }
    */
-  @Get('notificacoes/unread-count')
+  @Get('unread-count')
   @Roles(RoleUsuario.PROFESSOR, RoleUsuario.COORDENADOR, RoleUsuario.DIRETOR)
   async getUnreadCount(@CurrentUser() user: AuthenticatedUser) {
     const count = await this.notificacoesService.getUnreadCount(user.userId);
@@ -76,7 +76,7 @@ export class NotificacoesController {
    * @param id - Notification ID
    * @returns Updated notification
    */
-  @Patch('notificacoes/:id/read')
+  @Patch(':id/read')
   @Roles(RoleUsuario.PROFESSOR, RoleUsuario.COORDENADOR, RoleUsuario.DIRETOR)
   async markAsRead(
     @Param('id') id: string,
@@ -91,7 +91,7 @@ export class NotificacoesController {
    *
    * @returns Update result
    */
-  @Post('notificacoes/mark-all-read')
+  @Post('mark-all-read')
   @Roles(RoleUsuario.PROFESSOR, RoleUsuario.COORDENADOR, RoleUsuario.DIRETOR)
   async markAllAsRead(@CurrentUser() user: AuthenticatedUser) {
     return this.notificacoesService.markAllAsRead(user.userId);

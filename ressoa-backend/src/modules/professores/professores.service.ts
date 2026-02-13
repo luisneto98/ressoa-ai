@@ -95,7 +95,7 @@ export class ProfessoresService {
       WHERE p.professor_id = ${professorId}
         AND p.escola_id = ${escolaId}
         ${filtros?.turma_id ? Prisma.sql`AND t.id = ${filtros.turma_id}` : Prisma.empty}
-        ${filtros?.disciplina ? Prisma.sql`AND p.disciplina = ${filtros.disciplina}::disciplina` : Prisma.empty}
+        ${filtros?.disciplina ? Prisma.sql`AND p.disciplina = ${filtros.disciplina}` : Prisma.empty}
         ${filtros?.bimestre ? Prisma.sql`AND p.bimestre = ${filtros.bimestre}` : Prisma.empty}
       GROUP BY t.id, t.nome, p.disciplina, p.bimestre
       ORDER BY p.bimestre ASC, t.nome ASC;

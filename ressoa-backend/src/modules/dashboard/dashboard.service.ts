@@ -89,9 +89,9 @@ export class DashboardService {
         SUM(total_aulas_aprovadas) as total_aulas,
         AVG(tempo_medio_revisao) as tempo_medio_revisao
       FROM cobertura_bimestral
-      WHERE escola_id = ${escolaId}::uuid
+      WHERE escola_id = ${escolaId}
         ${filtros.bimestre ? Prisma.sql`AND bimestre = ${filtros.bimestre}` : Prisma.empty}
-        ${filtros.disciplina ? Prisma.sql`AND disciplina = ${filtros.disciplina}::disciplina` : Prisma.empty}
+        ${filtros.disciplina ? Prisma.sql`AND disciplina = ${filtros.disciplina}` : Prisma.empty}
       GROUP BY professor_id, professor_nome, disciplina
       ORDER BY media_cobertura DESC;
     `;
@@ -130,8 +130,8 @@ export class DashboardService {
         habilidades_trabalhadas,
         total_aulas_aprovadas
       FROM cobertura_bimestral
-      WHERE escola_id = ${escolaId}::uuid
-        AND professor_id = ${professorId}::uuid
+      WHERE escola_id = ${escolaId}
+        AND professor_id = ${professorId}
         ${filtros.bimestre ? Prisma.sql`AND bimestre = ${filtros.bimestre}` : Prisma.empty}
       ORDER BY percentual_cobertura ASC;
     `;
@@ -154,9 +154,9 @@ export class DashboardService {
         SUM(total_aulas_aprovadas) as total_aulas,
         STRING_AGG(DISTINCT professor_nome, ', ') as professores
       FROM cobertura_bimestral
-      WHERE escola_id = ${escolaId}::uuid
+      WHERE escola_id = ${escolaId}
         ${filtros.bimestre ? Prisma.sql`AND bimestre = ${filtros.bimestre}` : Prisma.empty}
-        ${filtros.disciplina ? Prisma.sql`AND disciplina = ${filtros.disciplina}::disciplina` : Prisma.empty}
+        ${filtros.disciplina ? Prisma.sql`AND disciplina = ${filtros.disciplina}` : Prisma.empty}
       GROUP BY turma_id, turma_nome, turma_serie, disciplina, bimestre
       ORDER BY percentual_cobertura ASC;
     `;
@@ -219,8 +219,8 @@ export class DashboardService {
       INNER JOIN "Habilidade" h ON ph.habilidade_id = h.id
       LEFT JOIN "Aula" au ON au.turma_id = p.turma_id AND au.professor_id = p.professor_id
       LEFT JOIN "Analise" a ON a.aula_id = au.id
-      WHERE p.turma_id = ${turmaId}::uuid
-        AND p.escola_id = ${escolaId}::uuid
+      WHERE p.turma_id = ${turmaId}
+        AND p.escola_id = ${escolaId}
         ${bimestre ? Prisma.sql`AND p.bimestre = ${bimestre}` : Prisma.empty}
       GROUP BY h.codigo, h.descricao
       ORDER BY
@@ -254,7 +254,7 @@ export class DashboardService {
         SUM(total_aulas_aprovadas) as total_aulas,
         AVG(tempo_medio_revisao) as tempo_medio_revisao_geral
       FROM cobertura_bimestral
-      WHERE escola_id = ${escolaId}::uuid
+      WHERE escola_id = ${escolaId}
         ${bimestre ? Prisma.sql`AND bimestre = ${bimestre}` : Prisma.empty}
     `;
 
@@ -290,7 +290,7 @@ export class DashboardService {
         COUNT(DISTINCT turma_id) as total_turmas,
         SUM(total_aulas_aprovadas) as total_aulas
       FROM cobertura_bimestral
-      WHERE escola_id = ${escolaId}::uuid
+      WHERE escola_id = ${escolaId}
         ${bimestre ? Prisma.sql`AND bimestre = ${bimestre}` : Prisma.empty}
       GROUP BY disciplina
       ORDER BY cobertura_media DESC
@@ -315,7 +315,7 @@ export class DashboardService {
         bimestre,
         AVG(percentual_cobertura) as cobertura_media
       FROM cobertura_bimestral
-      WHERE escola_id = ${escolaId}::uuid
+      WHERE escola_id = ${escolaId}
         AND ano_letivo = EXTRACT(YEAR FROM CURRENT_DATE)::integer
       GROUP BY bimestre
       ORDER BY bimestre ASC

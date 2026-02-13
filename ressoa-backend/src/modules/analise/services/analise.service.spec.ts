@@ -810,4 +810,298 @@ describe('AnaliseService', () => {
        */
     });
   });
+
+  /**
+   * STORY 11.7: Tests for buildPlanejamentoContext - BNCC vs Custom curriculum adaptation
+   */
+  describe('buildPlanejamentoContext (Story 11.7)', () => {
+    describe('BNCC curriculum (isCurriculoCustom = false)', () => {
+      it('should format BNCC habilidades context', () => {
+        const buildPlanejamentoContext = (service as any).buildPlanejamentoContext.bind(service);
+
+        const mockPlanejamentoBNCC = {
+          id: 'plan-1',
+          habilidades: [
+            {
+              id: 'ph-1',
+              planejamento_id: 'plan-1',
+              habilidade_id: 'hab-1',
+              peso: 1.0,
+              aulas_previstas: 4,
+              habilidade: {
+                codigo: 'EF06MA01',
+                descricao: 'Comparar, ordenar, ler e escrever números naturais',
+                unidade_tematica: 'Números',
+              },
+            },
+            {
+              id: 'ph-2',
+              planejamento_id: 'plan-1',
+              habilidade_id: 'hab-2',
+              peso: 1.5,
+              aulas_previstas: 5,
+              habilidade: {
+                codigo: 'EF06MA02',
+                descricao: 'Reconhecer o sistema de numeração decimal',
+                unidade_tematica: 'Números',
+              },
+            },
+          ],
+          objetivos: [], // Empty for BNCC
+        };
+
+        const result = buildPlanejamentoContext(mockPlanejamentoBNCC, false);
+
+        expect(result).toEqual({
+          tipo: 'bncc',
+          habilidades: [
+            {
+              codigo: 'EF06MA01',
+              descricao: 'Comparar, ordenar, ler e escrever números naturais',
+              unidade_tematica: 'Números',
+            },
+            {
+              codigo: 'EF06MA02',
+              descricao: 'Reconhecer o sistema de numeração decimal',
+              unidade_tematica: 'Números',
+            },
+          ],
+        });
+      });
+
+      it('should handle empty habilidades array (BNCC)', () => {
+        const buildPlanejamentoContext = (service as any).buildPlanejamentoContext.bind(service);
+
+        const mockPlanejamentoVazio = {
+          id: 'plan-1',
+          habilidades: [],
+          objetivos: [],
+        };
+
+        const result = buildPlanejamentoContext(mockPlanejamentoVazio, false);
+
+        expect(result).toEqual({
+          tipo: 'bncc',
+          habilidades: [],
+        });
+      });
+
+      it('should return null when planejamento is null', () => {
+        const buildPlanejamentoContext = (service as any).buildPlanejamentoContext.bind(service);
+
+        const result = buildPlanejamentoContext(null, false);
+
+        expect(result).toBeNull();
+      });
+
+      it('should return null when planejamento is undefined', () => {
+        const buildPlanejamentoContext = (service as any).buildPlanejamentoContext.bind(service);
+
+        const result = buildPlanejamentoContext(undefined, false);
+
+        expect(result).toBeNull();
+      });
+    });
+
+    describe('Custom curriculum (isCurriculoCustom = true)', () => {
+      it('should format custom objetivos context with all Bloom fields', () => {
+        const buildPlanejamentoContext = (service as any).buildPlanejamentoContext.bind(service);
+
+        const mockPlanejamentoCustom = {
+          id: 'plan-custom-1',
+          habilidades: [], // Legacy empty
+          objetivos: [
+            {
+              id: 'po-1',
+              planejamento_id: 'plan-custom-1',
+              objetivo_id: 'obj-1',
+              peso: 1.5,
+              aulas_previstas: 3,
+              objetivo: {
+                codigo: 'PM-MAT-01',
+                descricao: 'Resolver problemas de razão e proporção',
+                nivel_cognitivo: 'APLICAR',
+                area_conhecimento: 'Matemática - Raciocínio',
+                criterios_evidencia: [
+                  'Identificar dados do problema',
+                  'Aplicar regra de três',
+                  'Interpretar resultado no contexto',
+                ],
+              },
+            },
+            {
+              id: 'po-2',
+              planejamento_id: 'plan-custom-1',
+              objetivo_id: 'obj-2',
+              peso: 1.0,
+              aulas_previstas: 2,
+              objetivo: {
+                codigo: 'PM-MAT-02',
+                descricao: 'Calcular porcentagens em contextos práticos',
+                nivel_cognitivo: 'ENTENDER',
+                area_conhecimento: 'Matemática - Básica',
+                criterios_evidencia: ['Reconhecer situações de porcentagem', 'Calcular valores'],
+              },
+            },
+          ],
+        };
+
+        const result = buildPlanejamentoContext(mockPlanejamentoCustom, true);
+
+        expect(result).toEqual({
+          tipo: 'custom',
+          objetivos: [
+            {
+              codigo: 'PM-MAT-01',
+              descricao: 'Resolver problemas de razão e proporção',
+              nivel_cognitivo: 'APLICAR',
+              area_conhecimento: 'Matemática - Raciocínio',
+              criterios_evidencia: [
+                'Identificar dados do problema',
+                'Aplicar regra de três',
+                'Interpretar resultado no contexto',
+              ],
+              peso: 1.5,
+              aulas_previstas: 3,
+            },
+            {
+              codigo: 'PM-MAT-02',
+              descricao: 'Calcular porcentagens em contextos práticos',
+              nivel_cognitivo: 'ENTENDER',
+              area_conhecimento: 'Matemática - Básica',
+              criterios_evidencia: ['Reconhecer situações de porcentagem', 'Calcular valores'],
+              peso: 1.0,
+              aulas_previstas: 2,
+            },
+          ],
+        });
+      });
+
+      it('should handle empty criterios_evidencia (custom objetivo without criteria)', () => {
+        const buildPlanejamentoContext = (service as any).buildPlanejamentoContext.bind(service);
+
+        const mockPlanejamentoSemCriterios = {
+          id: 'plan-1',
+          habilidades: [],
+          objetivos: [
+            {
+              id: 'po-1',
+              planejamento_id: 'plan-1',
+              objetivo_id: 'obj-1',
+              peso: 1.0,
+              aulas_previstas: 2,
+              objetivo: {
+                codigo: 'CUSTOM-01',
+                descricao: 'Objetivo sem critérios',
+                nivel_cognitivo: 'LEMBRAR',
+                area_conhecimento: 'Geral',
+                criterios_evidencia: null, // May be null in DB
+              },
+            },
+          ],
+        };
+
+        const result = buildPlanejamentoContext(mockPlanejamentoSemCriterios, true);
+
+        expect(result.objetivos[0].criterios_evidencia).toEqual([]);
+      });
+
+      it('should handle empty objetivos array (custom fallback to BNCC)', () => {
+        const buildPlanejamentoContext = (service as any).buildPlanejamentoContext.bind(service);
+
+        const mockPlanejamentoFallback = {
+          id: 'plan-1',
+          habilidades: [
+            {
+              id: 'ph-1',
+              planejamento_id: 'plan-1',
+              habilidade_id: 'hab-1',
+              peso: 1.0,
+              aulas_previstas: 4,
+              habilidade: {
+                codigo: 'EF06MA01',
+                descricao: 'Habilidade BNCC fallback',
+                unidade_tematica: 'Números',
+              },
+            },
+          ],
+          objetivos: [], // Empty custom - should fallback to BNCC
+        };
+
+        const result = buildPlanejamentoContext(mockPlanejamentoFallback, true);
+
+        // Should fallback to BNCC format when custom objetivos empty
+        expect(result).toEqual({
+          tipo: 'bncc',
+          habilidades: [
+            {
+              codigo: 'EF06MA01',
+              descricao: 'Habilidade BNCC fallback',
+              unidade_tematica: 'Números',
+            },
+          ],
+        });
+      });
+    });
+
+    describe('Backward compatibility', () => {
+      it('should use habilidades when curriculo_tipo=CUSTOM but objetivos missing (legacy)', () => {
+        const buildPlanejamentoContext = (service as any).buildPlanejamentoContext.bind(service);
+
+        const mockPlanejamentoLegacy = {
+          id: 'plan-legacy',
+          habilidades: [
+            {
+              id: 'ph-1',
+              planejamento_id: 'plan-legacy',
+              habilidade_id: 'hab-1',
+              peso: 1.0,
+              aulas_previstas: 4,
+              habilidade: {
+                codigo: 'EF07MA15',
+                descricao: 'Legacy habilidade',
+                unidade_tematica: 'Geometria',
+              },
+            },
+          ],
+          // Objetivos undefined (old planejamentos before Story 11.3)
+        };
+
+        const result = buildPlanejamentoContext(mockPlanejamentoLegacy, true);
+
+        // Should fallback to BNCC
+        expect(result.tipo).toBe('bncc');
+        expect(result.habilidades).toHaveLength(1);
+        expect(result.habilidades[0].codigo).toBe('EF07MA15');
+      });
+
+      it('should handle planejamento without objetivos property (legacy schema)', () => {
+        const buildPlanejamentoContext = (service as any).buildPlanejamentoContext.bind(service);
+
+        const mockPlanejamentoOldSchema = {
+          id: 'plan-old',
+          habilidades: [
+            {
+              id: 'ph-1',
+              planejamento_id: 'plan-old',
+              habilidade_id: 'hab-1',
+              peso: 1.0,
+              aulas_previstas: 4,
+              habilidade: {
+                codigo: 'EF08MA12',
+                descricao: 'Old schema habilidade',
+                unidade_tematica: 'Álgebra',
+              },
+            },
+          ],
+          // No 'objetivos' property at all
+        };
+
+        const result = buildPlanejamentoContext(mockPlanejamentoOldSchema, false);
+
+        expect(result.tipo).toBe('bncc');
+        expect(result.habilidades).toHaveLength(1);
+      });
+    });
+  });
 });

@@ -120,12 +120,23 @@ export class AnaliseService {
         transcricao: true,
         planejamento: {
           include: {
+            // LEGACY: Habilidades BNCC (mantém para backward compat)
             habilidades: {
               include: { habilidade: true },
             },
+            // NEW (Story 11.7): Objetivos genéricos (BNCC ou custom)
+            objetivos: {
+              include: {
+                objetivo: true,
+              },
+            },
           },
         },
-        turma: true,
+        turma: {
+          include: {
+            escola: true, // Para obter contexto pedagógico se custom
+          },
+        },
       },
     });
 
@@ -140,6 +151,9 @@ export class AnaliseService {
     }
 
     // 2. Construir contexto inicial (inputs para pipeline)
+    // Determinar tipo de currículo
+    const isCurriculoCustom = aula.turma.curriculo_tipo === 'CUSTOM';
+
     const contexto: any = {
       transcricao: aula.transcricao.texto,
       turma: {
@@ -156,15 +170,29 @@ export class AnaliseService {
       // Templates use {{#if (eq serie 'TERCEIRO_ANO_EM')}} and {{#if (eq disciplina 'LINGUA_PORTUGUESA')}}
       serie: aula.turma.serie,
       disciplina: aula.turma.disciplina,
-      planejamento: aula.planejamento
-        ? {
-            habilidades: aula.planejamento.habilidades.map((ph) => ({
-              codigo: ph.habilidade.codigo,
-              descricao: ph.habilidade.descricao,
-              unidade_tematica: ph.habilidade.unidade_tematica,
-            })),
-          }
-        : null,
+
+      // NEW (Story 11.7): Contexto de currículo
+      curriculo_tipo: aula.turma.curriculo_tipo, // 'BNCC' | 'CUSTOM'
+
+      // Se custom, incluir contexto pedagógico
+      // CRITICAL FIX (Code Review HIGH-3): Validate contexto_pedagogico exists for CUSTOM
+      contexto_pedagogico: isCurriculoCustom ? (() => {
+        if (!aula.turma.contexto_pedagogico) {
+          throw new NotFoundException(
+            `Turma CUSTOM sem contexto_pedagógico definido: ${aula.turma.id}. ` +
+            `Configure objetivo_geral, publico_alvo, metodologia e carga_horaria_total.`
+          );
+        }
+        return {
+          objetivo_geral: aula.turma.contexto_pedagogico.objetivo_geral,
+          publico_alvo: aula.turma.contexto_pedagogico.publico_alvo,
+          metodologia: aula.turma.contexto_pedagogico.metodologia,
+          carga_horaria_total: aula.turma.contexto_pedagogico.carga_horaria_total,
+        };
+      })() : null,
+
+      // Objetivos de aprendizagem (adapta formato BNCC vs custom)
+      planejamento: this.buildPlanejamentoContext(aula.planejamento, isCurriculoCustom),
     };
 
     let custoTotal = 0;
@@ -581,5 +609,53 @@ export class AnaliseService {
       .replace('SETIMO', '7º')
       .replace('OITAVO', '8º')
       .replace('NONO', '9º');
+  }
+
+  /**
+   * Constrói contexto de planejamento adaptado ao tipo de currículo.
+   *
+   * **BNCC:** Usa `habilidades` com estrutura BNCC (codigo, descricao, unidade_tematica)
+   * **Custom:** Usa `objetivos` com estrutura customizada (codigo, descricao, nivel_cognitivo, criterios_evidencia)
+   *
+   * **Backward Compatibility:** Se planejamento não tem objetivos, usa habilidades (legacy)
+   *
+   * **Story 11.7:** Adaptação do pipeline de IA para currículos customizados
+   *
+   * @param planejamento Planejamento com habilidades E objetivos
+   * @param isCurriculoCustom Se true, usa objetivos custom; se false, usa habilidades BNCC
+   * @returns Objeto formatado para prompts IA
+   * @private
+   */
+  private buildPlanejamentoContext(
+    planejamento: any,
+    isCurriculoCustom: boolean,
+  ): any {
+    if (!planejamento) return null;
+
+    // CUSTOM: Usar objetivos customizados
+    if (isCurriculoCustom && planejamento.objetivos?.length > 0) {
+      return {
+        tipo: 'custom',
+        objetivos: planejamento.objetivos.map((po: any) => ({
+          codigo: po.objetivo.codigo,
+          descricao: po.objetivo.descricao,
+          nivel_cognitivo: po.objetivo.nivel_cognitivo, // Bloom: LEMBRAR, ENTENDER, APLICAR...
+          area_conhecimento: po.objetivo.area_conhecimento,
+          criterios_evidencia: po.objetivo.criterios_evidencia || [],
+          peso: po.peso,
+          aulas_previstas: po.aulas_previstas,
+        })),
+      };
+    }
+
+    // BNCC (legacy ou explícito): Usar habilidades BNCC
+    return {
+      tipo: 'bncc',
+      habilidades: (planejamento.habilidades || []).map((ph: any) => ({
+        codigo: ph.habilidade.codigo,
+        descricao: ph.habilidade.descricao,
+        unidade_tematica: ph.habilidade.unidade_tematica,
+      })),
+    };
   }
 }

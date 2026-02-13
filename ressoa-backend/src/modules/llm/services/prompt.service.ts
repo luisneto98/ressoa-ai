@@ -1,6 +1,12 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Prompt, ProviderLLM } from '@prisma/client';
 import { PrismaService } from '../../../prisma/prisma.service';
+import Handlebars from 'handlebars';
+
+// STORY 10.6: Register Handlebars helpers for conditionals in prompts
+Handlebars.registerHelper('eq', (a, b) => a === b);
+Handlebars.registerHelper('and', (a, b) => a && b);
+Handlebars.registerHelper('or', (a, b) => a || b);
 
 /**
  * Service para gerenciar prompts versionados com A/B testing
@@ -13,9 +19,11 @@ import { PrismaService } from '../../../prisma/prisma.service';
  * - Se 2 versões estão ativas E a mais recente tem `ab_testing=true` → split 50/50
  * - Após validação, versão antiga é desativada
  *
- * **Template Rendering:**
+ * **Template Rendering (STORY 10.6):**
+ * - Usa Handlebars para suportar condicionais: {{#if (eq tipo_ensino 'MEDIO')}}...{{/if}}
  * - Substitui {{variavel}} com valores fornecidos
  * - Variáveis faltando são deixadas como {{variavel}} (debugging)
+ * - Helpers disponíveis: eq (igualdade), and (lógico), or (lógico)
  */
 @Injectable()
 export class PromptService {
@@ -78,7 +86,12 @@ export class PromptService {
   }
 
   /**
-   * Renderiza template de prompt substituindo {{variáveis}}
+   * Renderiza template de prompt substituindo {{variáveis}} usando Handlebars
+   *
+   * Suporta:
+   * - Substituição simples: {{variavel}}
+   * - Condicionais: {{#if (eq tipo_ensino 'MEDIO')}}...{{/if}}
+   * - Helpers: eq, and, or
    *
    * @param prompt - Prompt com template
    * @param variaveis - Valores para substituir no template
@@ -86,22 +99,18 @@ export class PromptService {
    *
    * @example
    * ```
-   * prompt.conteudo = "Analise: {{transcricao}} para habilidade {{habilidade}}"
-   * variaveis = { transcricao: "aula sobre frações", habilidade: "EF06MA07" }
-   * // Retorna: "Analise: aula sobre frações para habilidade EF06MA07"
+   * prompt.conteudo = "{{#if (eq tipo_ensino 'MEDIO')}}Ensino Médio{{else}}Fundamental{{/if}}"
+   * variaveis = { tipo_ensino: "MEDIO" }
+   * // Retorna: "Ensino Médio"
    * ```
    */
   async renderPrompt(
     prompt: Prompt,
     variaveis: Record<string, any>,
   ): Promise<string> {
-    let conteudo = prompt.conteudo;
-
-    // Substituir variáveis no template: {{variavel}} → valor
-    for (const [key, value] of Object.entries(variaveis)) {
-      const placeholder = `{{${key}}}`;
-      conteudo = conteudo.replaceAll(placeholder, String(value));
-    }
+    // STORY 10.6: Use Handlebars for conditional template rendering
+    const template = Handlebars.compile(prompt.conteudo);
+    const conteudo = template(variaveis);
 
     // Log warning for missing variables (left as {{key}} in output)
     const missingVars = conteudo.match(/{{([^}]+)}}/g);

@@ -48,8 +48,13 @@ export class AnaliseService {
    * @returns Parsed JSON object
    * @throws Error se JSON inválido
    */
-  private parseMarkdownJSON(output: string): any {
+  private parseMarkdownJSON(output: string | any): any {
     try {
+      // If already an object, return as-is (for tests or pre-parsed data)
+      if (typeof output !== 'string') {
+        return output;
+      }
+
       // Remove markdown code fences if present
       const jsonMatch = output.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
       const jsonString = jsonMatch ? jsonMatch[1].trim() : output.trim();
@@ -58,7 +63,7 @@ export class AnaliseService {
     } catch (error) {
       this.logger.error({
         message: 'Failed to parse LLM JSON output',
-        output: output.substring(0, 500), // Log first 500 chars
+        output: typeof output === 'string' ? output.substring(0, 500) : JSON.stringify(output).substring(0, 500), // Log first 500 chars
         error: error instanceof Error ? error.message : 'Unknown error',
       });
       throw new Error(`Invalid JSON from LLM: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -83,8 +88,11 @@ export class AnaliseService {
    * @throws NotFoundException se aula ou transcrição não existir
    */
   async analisarAula(aulaId: string): Promise<Analise> {
-    this.logger.log(`Iniciando análise pedagógica: aulaId=${aulaId}`);
     const startTime = Date.now();
+    this.logger.log({
+      message: 'Iniciando análise pedagógica',
+      aula_id: aulaId,
+    });
 
     // 0. CRITICAL FIX: Validate all required prompts exist BEFORE executing any
     const requiredPrompts = [
@@ -139,6 +147,15 @@ export class AnaliseService {
         disciplina: aula.turma.disciplina,
         serie: aula.turma.serie,
       },
+      // STORY 10.6: Adicionar contexto de tipo_ensino para adaptar prompts EM vs EF
+      tipo_ensino: aula.turma.tipo_ensino || 'FUNDAMENTAL', // Default EF (backward compat)
+      nivel_ensino: this.getNivelEnsino(aula.turma.tipo_ensino),
+      faixa_etaria: this.getFaixaEtaria(aula.turma.tipo_ensino, aula.turma.serie),
+      ano_serie: this.formatarSerie(aula.turma.serie),
+      // CRITICAL FIX (Code Review): Add top-level serie/disciplina for template conditionals
+      // Templates use {{#if (eq serie 'TERCEIRO_ANO_EM')}} and {{#if (eq disciplina 'LINGUA_PORTUGUESA')}}
+      serie: aula.turma.serie,
+      disciplina: aula.turma.disciplina,
       planejamento: aula.planejamento
         ? {
             habilidades: aula.planejamento.habilidades.map((ph) => ({
@@ -237,9 +254,16 @@ export class AnaliseService {
       });
 
       const tempoTotal = Date.now() - startTime;
-      this.logger.log(
-        `Análise concluída: aulaId=${aulaId}, custo=$${custoTotal.toFixed(4)}, tempo=${tempoTotal}ms`,
-      );
+      this.logger.log({
+        message: 'Análise pedagógica concluída',
+        aula_id: aulaId,
+        tipo_ensino: aula.turma.tipo_ensino || 'FUNDAMENTAL',
+        serie: aula.turma.serie,
+        faixa_etaria: contexto.faixa_etaria,
+        custo_total_usd: parseFloat(custoTotal.toFixed(4)),
+        tempo_total_ms: tempoTotal,
+        prompts_executados: 5,
+      });
 
       return analise;
     } catch (error) {
@@ -484,5 +508,78 @@ export class AnaliseService {
         delay: 2000,
       },
     });
+  }
+
+  /**
+   * Retorna nível de ensino formatado baseado em tipo_ensino.
+   *
+   * **Story 10.6:** Adapta prompts para EM vs EF
+   *
+   * @param tipoEnsino - Tipo de ensino da turma ('FUNDAMENTAL' ou 'MEDIO')
+   * @returns String formatada ("Ensino Médio" ou "Ensino Fundamental")
+   * @private
+   */
+  private getNivelEnsino(tipoEnsino?: string): string {
+    return tipoEnsino === 'MEDIO' ? 'Ensino Médio' : 'Ensino Fundamental';
+  }
+
+  /**
+   * Mapeia serie enum para faixa etária apropriada.
+   *
+   * **Story 10.6:** Usado nos prompts para adaptar linguagem e complexidade
+   *
+   * @param tipoEnsino - Tipo de ensino ('FUNDAMENTAL' ou 'MEDIO')
+   * @param serie - Série enum (ex: 'SEXTO_ANO', 'PRIMEIRO_ANO_EM')
+   * @returns Faixa etária (ex: "14-17 anos", "11-14 anos")
+   * @private
+   */
+  private getFaixaEtaria(tipoEnsino: string | null | undefined, serie: string): string {
+    if (tipoEnsino === 'MEDIO') {
+      const map: Record<string, string> = {
+        PRIMEIRO_ANO_EM: '14-15 anos',
+        SEGUNDO_ANO_EM: '15-16 anos',
+        TERCEIRO_ANO_EM: '16-17 anos',
+      };
+      return map[serie] || '14-17 anos';
+    }
+
+    // Ensino Fundamental
+    const map: Record<string, string> = {
+      SEXTO_ANO: '11-12 anos',
+      SETIMO_ANO: '12-13 anos',
+      OITAVO_ANO: '13-14 anos',
+      NONO_ANO: '14-15 anos',
+    };
+    return map[serie] || '11-14 anos';
+  }
+
+  /**
+   * Formata serie enum para exibição legível nos prompts.
+   *
+   * **Story 10.6:** Usado para contexto nos prompts
+   *
+   * @param serie - Série enum (ex: 'SEXTO_ANO', 'PRIMEIRO_ANO_EM')
+   * @returns String formatada (ex: "6º Ano", "1º Ano (EM)")
+   * @private
+   */
+  private formatarSerie(serie: string): string {
+    if (serie.includes('_EM')) {
+      // Ensino Médio: PRIMEIRO_ANO_EM → "1º Ano (EM)"
+      return (
+        serie
+          .replace('_ANO_EM', '')
+          .replace('PRIMEIRO', '1º')
+          .replace('SEGUNDO', '2º')
+          .replace('TERCEIRO', '3º') + ' (EM)'
+      );
+    }
+
+    // Ensino Fundamental: SEXTO_ANO → "6º Ano"
+    return serie
+      .replace('_ANO', ' Ano')
+      .replace('SEXTO', '6º')
+      .replace('SETIMO', '7º')
+      .replace('OITAVO', '8º')
+      .replace('NONO', '9º');
   }
 }

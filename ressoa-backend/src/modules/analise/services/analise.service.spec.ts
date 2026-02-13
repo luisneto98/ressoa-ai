@@ -179,6 +179,12 @@ describe('AnaliseService', () => {
             getName: jest.fn().mockReturnValue('GPT'),
           },
         },
+        {
+          provide: 'BullQueue_feedback-queue',
+          useValue: {
+            add: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -462,6 +468,346 @@ describe('AnaliseService', () => {
       claudeProvider.generate.mockRejectedValue(providerError);
 
       await expect(service.analisarAula(mockAulaId)).rejects.toThrow('LLM API timeout');
+    });
+  });
+
+  /**
+   * STORY 10.6: Tests for Ensino Médio context extraction
+   */
+  describe('Helper Methods - Ensino Médio Context', () => {
+    describe('getFaixaEtaria', () => {
+      it('should return correct age range for Ensino Médio series', () => {
+        // Access private method via reflection
+        const getFaixaEtaria = (service as any).getFaixaEtaria.bind(service);
+
+        expect(getFaixaEtaria('MEDIO', 'PRIMEIRO_ANO_EM')).toBe('14-15 anos');
+        expect(getFaixaEtaria('MEDIO', 'SEGUNDO_ANO_EM')).toBe('15-16 anos');
+        expect(getFaixaEtaria('MEDIO', 'TERCEIRO_ANO_EM')).toBe('16-17 anos');
+      });
+
+      it('should return default EM age range for unknown EM series', () => {
+        const getFaixaEtaria = (service as any).getFaixaEtaria.bind(service);
+
+        expect(getFaixaEtaria('MEDIO', 'UNKNOWN_SERIES')).toBe('14-17 anos');
+      });
+
+      it('should return correct age range for Ensino Fundamental series', () => {
+        const getFaixaEtaria = (service as any).getFaixaEtaria.bind(service);
+
+        expect(getFaixaEtaria('FUNDAMENTAL', 'SEXTO_ANO')).toBe('11-12 anos');
+        expect(getFaixaEtaria('FUNDAMENTAL', 'SETIMO_ANO')).toBe('12-13 anos');
+        expect(getFaixaEtaria('FUNDAMENTAL', 'OITAVO_ANO')).toBe('13-14 anos');
+        expect(getFaixaEtaria('FUNDAMENTAL', 'NONO_ANO')).toBe('14-15 anos');
+      });
+
+      it('should return default EF age range for unknown EF series', () => {
+        const getFaixaEtaria = (service as any).getFaixaEtaria.bind(service);
+
+        expect(getFaixaEtaria('FUNDAMENTAL', 'UNKNOWN_SERIES')).toBe('11-14 anos');
+        expect(getFaixaEtaria(null, 'SEXTO_ANO')).toBe('11-12 anos');
+        expect(getFaixaEtaria(undefined, 'SETIMO_ANO')).toBe('12-13 anos');
+      });
+    });
+
+    describe('formatarSerie', () => {
+      it('should format Ensino Médio series correctly', () => {
+        const formatarSerie = (service as any).formatarSerie.bind(service);
+
+        expect(formatarSerie('PRIMEIRO_ANO_EM')).toBe('1º (EM)');
+        expect(formatarSerie('SEGUNDO_ANO_EM')).toBe('2º (EM)');
+        expect(formatarSerie('TERCEIRO_ANO_EM')).toBe('3º (EM)');
+      });
+
+      it('should format Ensino Fundamental series correctly', () => {
+        const formatarSerie = (service as any).formatarSerie.bind(service);
+
+        expect(formatarSerie('SEXTO_ANO')).toBe('6º Ano');
+        expect(formatarSerie('SETIMO_ANO')).toBe('7º Ano');
+        expect(formatarSerie('OITAVO_ANO')).toBe('8º Ano');
+        expect(formatarSerie('NONO_ANO')).toBe('9º Ano');
+      });
+    });
+
+    describe('getNivelEnsino', () => {
+      it('should return "Ensino Médio" for MEDIO', () => {
+        const getNivelEnsino = (service as any).getNivelEnsino.bind(service);
+
+        expect(getNivelEnsino('MEDIO')).toBe('Ensino Médio');
+      });
+
+      it('should return "Ensino Fundamental" for FUNDAMENTAL', () => {
+        const getNivelEnsino = (service as any).getNivelEnsino.bind(service);
+
+        expect(getNivelEnsino('FUNDAMENTAL')).toBe('Ensino Fundamental');
+      });
+
+      it('should return "Ensino Fundamental" for null/undefined (backward compat)', () => {
+        const getNivelEnsino = (service as any).getNivelEnsino.bind(service);
+
+        expect(getNivelEnsino(null)).toBe('Ensino Fundamental');
+        expect(getNivelEnsino(undefined)).toBe('Ensino Fundamental');
+      });
+    });
+
+    describe('analisarAula with EM context', () => {
+      it('should pass tipo_ensino, nivel_ensino, faixa_etaria to prompts for EM turma', async () => {
+        const aulaEM = {
+          ...mockAulaCompleta,
+          turma: {
+            ...mockAulaCompleta.turma,
+            tipo_ensino: 'MEDIO',
+            serie: 'PRIMEIRO_ANO_EM',
+          },
+        };
+
+        prisma.aula.findUnique.mockResolvedValue(aulaEM as any);
+        promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
+        promptService.renderPrompt.mockResolvedValue('rendered');
+        claudeProvider.generate.mockResolvedValue(mockLLMResult);
+        gptProvider.generate.mockResolvedValue(mockLLMResult);
+
+        await service.analisarAula(mockAulaId);
+
+        // Verify renderPrompt was called with EM context
+        const firstRenderCall = promptService.renderPrompt.mock.calls[0];
+        const contexto = firstRenderCall[1];
+
+        expect(contexto.tipo_ensino).toBe('MEDIO');
+        expect(contexto.nivel_ensino).toBe('Ensino Médio');
+        expect(contexto.faixa_etaria).toBe('14-15 anos');
+        expect(contexto.ano_serie).toBe('1º (EM)');
+      });
+
+      it('should pass EF context for FUNDAMENTAL turma (backward compat)', async () => {
+        const aulaEF = {
+          ...mockAulaCompleta,
+          turma: {
+            ...mockAulaCompleta.turma,
+            tipo_ensino: 'FUNDAMENTAL',
+            serie: 'SEXTO_ANO',
+          },
+        };
+
+        prisma.aula.findUnique.mockResolvedValue(aulaEF as any);
+        promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
+        promptService.renderPrompt.mockResolvedValue('rendered');
+        claudeProvider.generate.mockResolvedValue(mockLLMResult);
+        gptProvider.generate.mockResolvedValue(mockLLMResult);
+
+        await service.analisarAula(mockAulaId);
+
+        const firstRenderCall = promptService.renderPrompt.mock.calls[0];
+        const contexto = firstRenderCall[1];
+
+        expect(contexto.tipo_ensino).toBe('FUNDAMENTAL');
+        expect(contexto.nivel_ensino).toBe('Ensino Fundamental');
+        expect(contexto.faixa_etaria).toBe('11-12 anos');
+        expect(contexto.ano_serie).toBe('6º Ano');
+      });
+
+      it('should default to FUNDAMENTAL when tipo_ensino is null (backward compat)', async () => {
+        const aulaWithoutTipoEnsino = {
+          ...mockAulaCompleta,
+          turma: {
+            ...mockAulaCompleta.turma,
+            tipo_ensino: null,
+            serie: 'SEXTO_ANO',
+          },
+        };
+
+        prisma.aula.findUnique.mockResolvedValue(aulaWithoutTipoEnsino as any);
+        promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
+        promptService.renderPrompt.mockResolvedValue('rendered');
+        claudeProvider.generate.mockResolvedValue(mockLLMResult);
+        gptProvider.generate.mockResolvedValue(mockLLMResult);
+
+        await service.analisarAula(mockAulaId);
+
+        const firstRenderCall = promptService.renderPrompt.mock.calls[0];
+        const contexto = firstRenderCall[1];
+
+        expect(contexto.tipo_ensino).toBe('FUNDAMENTAL');
+        expect(contexto.nivel_ensino).toBe('Ensino Fundamental');
+      });
+    });
+
+    /**
+     * STORY 10.6: Integration tests comparing EM vs EF analysis outputs
+     * Critical requirement AC#10: Validate that prompts generate different analyses for EM vs EF
+     */
+    describe('Story 10.6: Diferenças entre Ensino Fundamental e Médio', () => {
+      it('should include serie and disciplina in top-level context (CRITICAL FIX)', async () => {
+        const aulaEM = {
+          ...mockAulaCompleta,
+          turma: {
+            ...mockAulaCompleta.turma,
+            tipo_ensino: 'MEDIO',
+            serie: 'TERCEIRO_ANO_EM',
+            disciplina: 'LINGUA_PORTUGUESA',
+          },
+        };
+
+        prisma.aula.findUnique.mockResolvedValue(aulaEM as any);
+        promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
+        promptService.renderPrompt.mockResolvedValue('rendered');
+        claudeProvider.generate.mockResolvedValue(mockLLMResult);
+        gptProvider.generate.mockResolvedValue(mockLLMResult);
+
+        await service.analisarAula(mockAulaId);
+
+        const firstRenderCall = promptService.renderPrompt.mock.calls[0];
+        const contexto = firstRenderCall[1];
+
+        // CRITICAL: serie and disciplina MUST be top-level for template conditionals
+        // Templates use {{#if (eq serie 'TERCEIRO_ANO_EM')}} and {{#if (eq disciplina 'LINGUA_PORTUGUESA')}}
+        expect(contexto.serie).toBe('TERCEIRO_ANO_EM');
+        expect(contexto.disciplina).toBe('LINGUA_PORTUGUESA');
+
+        // Should also exist nested (backward compat)
+        expect(contexto.turma.serie).toBe('TERCEIRO_ANO_EM');
+        expect(contexto.turma.disciplina).toBe('LINGUA_PORTUGUESA');
+      });
+
+      it('should pass different context for EM vs EF (same transcript)', async () => {
+        // This test validates that EM and EF receive different contextual variables
+        // enabling prompts to generate age-appropriate analyses
+
+        const aulaEF = {
+          ...mockAulaCompleta,
+          turma: {
+            ...mockAulaCompleta.turma,
+            tipo_ensino: 'FUNDAMENTAL',
+            serie: 'SEXTO_ANO',
+          },
+        };
+
+        const aulaEM = {
+          ...mockAulaCompleta,
+          turma: {
+            ...mockAulaCompleta.turma,
+            tipo_ensino: 'MEDIO',
+            serie: 'PRIMEIRO_ANO_EM',
+          },
+        };
+
+        // Execute for EF
+        prisma.aula.findUnique.mockResolvedValue(aulaEF as any);
+        promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
+        promptService.renderPrompt.mockResolvedValue('rendered');
+        claudeProvider.generate.mockResolvedValue(mockLLMResult);
+        gptProvider.generate.mockResolvedValue(mockLLMResult);
+
+        await service.analisarAula('aula-ef-id');
+
+        const efContext = promptService.renderPrompt.mock.calls[0][1];
+
+        // Clear mocks
+        jest.clearAllMocks();
+
+        // Execute for EM
+        prisma.aula.findUnique.mockResolvedValue(aulaEM as any);
+        promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
+        promptService.renderPrompt.mockResolvedValue('rendered');
+        claudeProvider.generate.mockResolvedValue(mockLLMResult);
+        gptProvider.generate.mockResolvedValue(mockLLMResult);
+
+        await service.analisarAula('aula-em-id');
+
+        const emContext = promptService.renderPrompt.mock.calls[0][1];
+
+        // Compare contexts
+        expect(efContext.tipo_ensino).toBe('FUNDAMENTAL');
+        expect(emContext.tipo_ensino).toBe('MEDIO');
+
+        expect(efContext.nivel_ensino).toBe('Ensino Fundamental');
+        expect(emContext.nivel_ensino).toBe('Ensino Médio');
+
+        expect(efContext.faixa_etaria).toBe('11-12 anos'); // 6º ano EF
+        expect(emContext.faixa_etaria).toBe('14-15 anos'); // 1º ano EM
+
+        expect(efContext.ano_serie).toBe('6º Ano');
+        expect(emContext.ano_serie).toBe('1º (EM)');
+
+        // This validates that prompts receive different signals to generate:
+        // - Different Bloom Taxonomy expectations (EM: 70%+ higher levels)
+        // - Different exercise complexity (EM: ENEM-style)
+        // - Different alert types (EM: "falta ENEM", EF: "cobertura insuficiente")
+      });
+
+      it('should format serie correctly for EM with (EM) suffix', async () => {
+        const seriesEM = [
+          { input: 'PRIMEIRO_ANO_EM', expected: '1º (EM)' },
+          { input: 'SEGUNDO_ANO_EM', expected: '2º (EM)' },
+          { input: 'TERCEIRO_ANO_EM', expected: '3º (EM)' },
+        ];
+
+        for (const { input, expected } of seriesEM) {
+          const aulaEM = {
+            ...mockAulaCompleta,
+            turma: {
+              ...mockAulaCompleta.turma,
+              tipo_ensino: 'MEDIO',
+              serie: input,
+            },
+          };
+
+          prisma.aula.findUnique.mockResolvedValue(aulaEM as any);
+          promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
+          promptService.renderPrompt.mockResolvedValue('rendered');
+          claudeProvider.generate.mockResolvedValue(mockLLMResult);
+          gptProvider.generate.mockResolvedValue(mockLLMResult);
+
+          await service.analisarAula(mockAulaId);
+
+          const context = promptService.renderPrompt.mock.calls[0][1];
+          expect(context.ano_serie).toBe(expected);
+
+          jest.clearAllMocks();
+        }
+      });
+
+      it('should map faixa_etaria correctly for all EM series', async () => {
+        const faixasEtariasEM = [
+          { serie: 'PRIMEIRO_ANO_EM', expected: '14-15 anos' },
+          { serie: 'SEGUNDO_ANO_EM', expected: '15-16 anos' },
+          { serie: 'TERCEIRO_ANO_EM', expected: '16-17 anos' },
+        ];
+
+        for (const { serie, expected } of faixasEtariasEM) {
+          const aulaEM = {
+            ...mockAulaCompleta,
+            turma: {
+              ...mockAulaCompleta.turma,
+              tipo_ensino: 'MEDIO',
+              serie,
+            },
+          };
+
+          prisma.aula.findUnique.mockResolvedValue(aulaEM as any);
+          promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
+          promptService.renderPrompt.mockResolvedValue('rendered');
+          claudeProvider.generate.mockResolvedValue(mockLLMResult);
+          gptProvider.generate.mockResolvedValue(mockLLMResult);
+
+          await service.analisarAula(mockAulaId);
+
+          const context = promptService.renderPrompt.mock.calls[0][1];
+          expect(context.faixa_etaria).toBe(expected);
+
+          jest.clearAllMocks();
+        }
+      });
+
+      /**
+       * NOTE: Full integration test with actual LLM calls would validate:
+       * - EM reports have professional tone (not infantilized)
+       * - EM exercises are more complex (>= 2 ANALISAR/AVALIAR/CRIAR)
+       * - EM alerts include "metodologia inadequada", "falta ENEM contexto"
+       * - Bloom distribution: EM has higher % in levels 4-6 than EF
+       *
+       * These require end-to-end testing with real/mocked LLM responses.
+       * Current tests validate that CONTEXT is correctly passed to prompts.
+       */
     });
   });
 });

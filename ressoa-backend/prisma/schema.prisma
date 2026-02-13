@@ -22,6 +22,14 @@ enum Serie {
   SETIMO_ANO
   OITAVO_ANO
   NONO_ANO
+  PRIMEIRO_ANO_EM
+  SEGUNDO_ANO_EM
+  TERCEIRO_ANO_EM
+}
+
+enum TipoEnsino {
+  FUNDAMENTAL
+  MEDIO
 }
 
 enum TipoEntrada {
@@ -203,6 +211,7 @@ model Turma {
   nome          String      // ex: "6A", "7B"
   disciplina    String      // Código da disciplina: MATEMATICA, LINGUA_PORTUGUESA, CIENCIAS
   serie         Serie
+  tipo_ensino   TipoEnsino  @default(FUNDAMENTAL)
   ano_letivo    Int
   escola_id     String
   professor_id  String

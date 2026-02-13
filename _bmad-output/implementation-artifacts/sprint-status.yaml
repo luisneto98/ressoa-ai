@@ -110,8 +110,8 @@ development_status:
     9-6-polimento-visual-dashboards-de-gestao-e-admin: done # Code review complete - 10 issues found & auto-fixed (6 CRITICAL, 4 HIGH) - 132/132 tests passing - All shared dashboard components now compliant with design system
     9-7-padronizacao-de-icones-substituir-emoticons-por-tabler-icons: done # Code review complete - 2 CRITICAL + 2 MEDIUM issues auto-fixed (backend scope creep reverted, console.log emoticons removed, architecture AD-3.6 added) - 132/132 tests passing
     epic-9-retrospective: optional
-    epic-10: backlog
-    10-1-backend-expandir-modelo-turma-tipo-ensino-series-em: backlog
+    epic-10: in-progress
+    10-1-backend-expandir-modelo-turma-tipo-ensino-series-em: done # Code review complete - 8/10 issues auto-fixed (CRITICAL multi-tenancy violation, validation, CRUD completion, performance index) - 18/18 unit tests passing - E2E tests deferred to Story 10.9
     10-2-backend-api-crud-turmas-rbac: backlog
     10-3-backend-seeding-habilidades-bncc-ensino-medio: backlog
     10-4-frontend-tela-gestao-turmas-crud: backlog

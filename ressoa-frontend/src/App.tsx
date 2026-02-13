@@ -24,6 +24,7 @@ import { QualidadePromptsPage } from '@/pages/admin/QualidadePromptsPage';
 import { PromptDiffsPage } from '@/pages/admin/PromptDiffsPage';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
+import TurmasListPage from '@/pages/turmas/TurmasListPage';
 
 // Create Query Client
 const queryClient = new QueryClient({
@@ -241,6 +242,16 @@ function App() {
             element={
               <ProtectedRoute>
                 <PlanejamentosListPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Turmas Route - Story 10.4 */}
+          <Route
+            path="/turmas"
+            element={
+              <ProtectedRoute roles={['DIRETOR', 'COORDENADOR']}>
+                <TurmasListPage />
               </ProtectedRoute>
             }
           />

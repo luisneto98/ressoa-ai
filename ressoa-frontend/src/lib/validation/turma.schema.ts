@@ -1,9 +1,10 @@
 import { z } from 'zod';
-import { TipoEnsino, Serie, Turno } from '@/types/turma';
+import { TipoEnsino, Serie, Turno, CurriculoTipo, ContextoPedagogicoDto } from '@/types/turma';
 
 /**
  * Zod validation schema for Turma form
  * Story 10.4 - Frontend Gestão de Turmas
+ * Story 11.5 - Contexto Pedagógico para Cursos Customizados
  *
  * Validations:
  * - nome: required, min 3, max 100 chars
@@ -13,8 +14,12 @@ import { TipoEnsino, Serie, Turno } from '@/types/turma';
  * - ano_letivo: required, number between 2020-2030
  * - turno: required, enum MATUTINO | VESPERTINO | INTEGRAL
  * - professor_id: required, uuid
+ * - curriculo_tipo: optional, default 'BNCC'
+ * - contexto_pedagogico: optional, required if curriculo_tipo = CUSTOM
  *
- * Custom validation: serie must be compatible with tipo_ensino
+ * Custom validations:
+ * 1. serie must be compatible with tipo_ensino
+ * 2. contexto_pedagogico required if curriculo_tipo = CUSTOM
  */
 
 export const turmaFormSchema = z
@@ -61,10 +66,34 @@ export const turmaFormSchema = z
     }),
 
     professor_id: z.string({ message: 'Professor é obrigatório' }).uuid('Professor inválido'),
+
+    curriculo_tipo: z.enum(['BNCC', 'CUSTOM'] as const).optional().default('BNCC'),
+
+    contexto_pedagogico: z
+      .object({
+        objetivo_geral: z
+          .string()
+          .min(100, 'Descreva o objetivo com no mínimo 100 caracteres')
+          .max(500, 'Máximo 500 caracteres permitidos'),
+        publico_alvo: z
+          .string()
+          .min(20, 'Descreva o público com no mínimo 20 caracteres')
+          .max(200, 'Máximo 200 caracteres'),
+        metodologia: z
+          .string()
+          .min(20, 'Descreva a metodologia com no mínimo 20 caracteres')
+          .max(300, 'Máximo 300 caracteres'),
+        carga_horaria_total: z
+          .number({ message: 'Carga horária total é obrigatória' })
+          .int('Informe um número válido')
+          .min(8, 'Carga horária mínima: 8 horas')
+          .max(1000, 'Carga horária máxima: 1000 horas'),
+      })
+      .optional(),
   })
   .refine(
     (data) => {
-      // Validação custom: série compatível com tipo_ensino
+      // Validação custom 1: série compatível com tipo_ensino
       const fundamentalSeries: string[] = [
         Serie.SEXTO_ANO,
         Serie.SETIMO_ANO,
@@ -85,6 +114,26 @@ export const turmaFormSchema = z
       message: 'Série incompatível com o tipo de ensino selecionado',
       path: ['serie'],
     }
+  )
+  .refine(
+    (data) => {
+      // Validação custom 2: contexto pedagógico obrigatório se curriculo_tipo = CUSTOM
+      if (data.curriculo_tipo === 'CUSTOM') {
+        return (
+          !!data.contexto_pedagogico &&
+          !!data.contexto_pedagogico.objetivo_geral &&
+          !!data.contexto_pedagogico.publico_alvo &&
+          !!data.contexto_pedagogico.metodologia &&
+          data.contexto_pedagogico.carga_horaria_total !== undefined &&
+          data.contexto_pedagogico.carga_horaria_total !== null
+        );
+      }
+      return true; // BNCC não requer contexto
+    },
+    {
+      message: 'Contexto pedagógico é obrigatório para cursos customizados',
+      path: ['contexto_pedagogico'],
+    }
   );
 
 export type TurmaFormData = z.infer<typeof turmaFormSchema>;
@@ -103,6 +152,8 @@ export const getTurmaFormDefaults = (turma?: {
   turno: Turno;
   professor_id?: string | null;
   professor?: { id: string; nome: string; email: string } | null;
+  curriculo_tipo?: CurriculoTipo;
+  contexto_pedagogico?: ContextoPedagogicoDto;
 }): TurmaFormData => {
   if (turma) {
     return {
@@ -113,6 +164,8 @@ export const getTurmaFormDefaults = (turma?: {
       ano_letivo: turma.ano_letivo,
       turno: turma.turno,
       professor_id: turma.professor?.id ?? turma.professor_id ?? '',
+      curriculo_tipo: turma.curriculo_tipo ?? 'BNCC',
+      contexto_pedagogico: turma.contexto_pedagogico,
     };
   }
 
@@ -125,5 +178,6 @@ export const getTurmaFormDefaults = (turma?: {
     ano_letivo: new Date().getFullYear(),
     turno: Turno.MATUTINO,
     professor_id: '',
+    curriculo_tipo: 'BNCC',
   };
 };

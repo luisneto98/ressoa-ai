@@ -257,4 +257,308 @@ describe('TurmaFormDialog', () => {
     const submitButton = screen.getByRole('button', { name: /salvar/i });
     expect(submitButton).toBeDisabled();
   });
+
+  // ===== Story 11.5: Contexto Pedagógico Tests =====
+
+  describe('Contexto Pedagógico - Story 11.5', () => {
+    it('should render curriculo tipo radio group with BNCC and CUSTOM options', () => {
+      renderWithProviders(
+        <TurmaFormDialog
+          open={true}
+          onOpenChange={mockOnOpenChange}
+          mode="create"
+          onSubmit={mockOnSubmit}
+        />
+      );
+
+      expect(screen.getByText('Tipo de Currículo *')).toBeInTheDocument();
+      expect(screen.getByLabelText(/BNCC/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/Curso Customizado/i)).toBeInTheDocument();
+    });
+
+    it('should have BNCC selected by default', () => {
+      renderWithProviders(
+        <TurmaFormDialog
+          open={true}
+          onOpenChange={mockOnOpenChange}
+          mode="create"
+          onSubmit={mockOnSubmit}
+        />
+      );
+
+      const bnccRadio = screen.getByRole('radio', { name: /BNCC/i });
+      expect(bnccRadio).toBeChecked();
+    });
+
+    it('should hide contexto pedagogico fields when curriculo_tipo = BNCC', () => {
+      renderWithProviders(
+        <TurmaFormDialog
+          open={true}
+          onOpenChange={mockOnOpenChange}
+          mode="create"
+          onSubmit={mockOnSubmit}
+        />
+      );
+
+      expect(screen.queryByText('Contexto Pedagógico')).not.toBeInTheDocument();
+      expect(screen.queryByLabelText(/Objetivo Geral do Curso/i)).not.toBeInTheDocument();
+    });
+
+    it('should show contexto pedagogico fields when curriculo_tipo = CUSTOM', async () => {
+      const user = userEvent.setup();
+
+      renderWithProviders(
+        <TurmaFormDialog
+          open={true}
+          onOpenChange={mockOnOpenChange}
+          mode="create"
+          onSubmit={mockOnSubmit}
+        />
+      );
+
+      const customRadio = screen.getByRole('radio', { name: /Curso Customizado/i });
+      await user.click(customRadio);
+
+      await waitFor(() => {
+        expect(screen.getByText('Contexto Pedagógico')).toBeInTheDocument();
+        expect(screen.getByLabelText(/Objetivo Geral do Curso/i)).toBeInTheDocument();
+        expect(screen.getByLabelText(/Público-Alvo/i)).toBeInTheDocument();
+        expect(screen.getByLabelText(/Metodologia de Ensino/i)).toBeInTheDocument();
+        expect(screen.getByLabelText(/Carga Horária Total/i)).toBeInTheDocument();
+      });
+    });
+
+    it('should hide contexto when switching from CUSTOM to BNCC', async () => {
+      const user = userEvent.setup();
+
+      renderWithProviders(
+        <TurmaFormDialog
+          open={true}
+          onOpenChange={mockOnOpenChange}
+          mode="create"
+          onSubmit={mockOnSubmit}
+        />
+      );
+
+      const customRadio = screen.getByRole('radio', { name: /Curso Customizado/i });
+      await user.click(customRadio);
+
+      await waitFor(() => {
+        expect(screen.getByText('Contexto Pedagógico')).toBeInTheDocument();
+      });
+
+      const bnccRadio = screen.getByRole('radio', { name: /BNCC/i });
+      await user.click(bnccRadio);
+
+      await waitFor(() => {
+        expect(screen.queryByText('Contexto Pedagógico')).not.toBeInTheDocument();
+      });
+    });
+
+    it('should validate objetivo_geral min/max length', async () => {
+      const user = userEvent.setup();
+
+      renderWithProviders(
+        <TurmaFormDialog
+          open={true}
+          onOpenChange={mockOnOpenChange}
+          mode="create"
+          onSubmit={mockOnSubmit}
+        />
+      );
+
+      await user.click(screen.getByRole('radio', { name: /Curso Customizado/i }));
+
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Objetivo Geral do Curso/i)).toBeInTheDocument();
+      });
+
+      const objetivoInput = screen.getByLabelText(/Objetivo Geral do Curso/i);
+
+      // Test min (less than 100)
+      await user.type(objetivoInput, 'Texto curto');
+      const submitButton = screen.getByRole('button', { name: /salvar/i });
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/no mínimo 100 caracteres/i)).toBeInTheDocument();
+      });
+    });
+
+    it('should show character counter for objetivo_geral', async () => {
+      const user = userEvent.setup();
+
+      renderWithProviders(
+        <TurmaFormDialog
+          open={true}
+          onOpenChange={mockOnOpenChange}
+          mode="create"
+          onSubmit={mockOnSubmit}
+        />
+      );
+
+      await user.click(screen.getByRole('radio', { name: /Curso Customizado/i }));
+
+      await waitFor(() => {
+        expect(screen.getByText(/0\/500 caracteres/i)).toBeInTheDocument();
+      });
+
+      const objetivoInput = screen.getByLabelText(/Objetivo Geral do Curso/i);
+      await user.type(objetivoInput, 'Teste');
+
+      await waitFor(() => {
+        expect(screen.getByText(/5\/500 caracteres/i)).toBeInTheDocument();
+      });
+    });
+
+    it('should validate carga_horaria_total range (8-1000)', async () => {
+      const user = userEvent.setup();
+
+      renderWithProviders(
+        <TurmaFormDialog
+          open={true}
+          onOpenChange={mockOnOpenChange}
+          mode="create"
+          onSubmit={mockOnSubmit}
+        />
+      );
+
+      await user.click(screen.getByRole('radio', { name: /Curso Customizado/i }));
+
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Carga Horária Total/i)).toBeInTheDocument();
+      });
+
+      const cargaInput = screen.getByLabelText(/Carga Horária Total/i) as HTMLInputElement;
+
+      // Verify input has min/max attributes
+      expect(cargaInput).toHaveAttribute('min', '8');
+      expect(cargaInput).toHaveAttribute('max', '1000');
+      expect(cargaInput.type).toBe('number');
+
+      // Verify helper text is present
+      expect(screen.getByText(/min: 8h, max: 1000h/i)).toBeInTheDocument();
+    });
+
+    it('should NOT validate contexto if curriculo_tipo = BNCC', async () => {
+      const user = userEvent.setup();
+
+      renderWithProviders(
+        <TurmaFormDialog
+          open={true}
+          onOpenChange={mockOnOpenChange}
+          mode="create"
+          onSubmit={mockOnSubmit}
+        />
+      );
+
+      // BNCC is selected by default
+      const nameInput = screen.getByLabelText(/nome da turma/i);
+      await user.type(nameInput, 'Matemática 6º A');
+
+      // Contexto should not be visible or validated
+      expect(screen.queryByText('Contexto Pedagógico')).not.toBeInTheDocument();
+    });
+
+    it('should prefill contexto pedagogico when editing CUSTOM turma', () => {
+      const mockCustomTurma: Turma = {
+        ...mockTurma,
+        curriculo_tipo: 'CUSTOM',
+        contexto_pedagogico: {
+          objetivo_geral: 'Preparar candidatos para PM-SP 2026',
+          publico_alvo: 'Jovens 18-25 anos',
+          metodologia: 'Simulados semanais',
+          carga_horaria_total: 120,
+        },
+      };
+
+      renderWithProviders(
+        <TurmaFormDialog
+          open={true}
+          onOpenChange={mockOnOpenChange}
+          mode="edit"
+          defaultValues={mockCustomTurma}
+          onSubmit={mockOnSubmit}
+        />
+      );
+
+      expect(screen.getByRole('radio', { name: /Curso Customizado/i })).toBeChecked();
+      expect(screen.getByDisplayValue('Preparar candidatos para PM-SP 2026')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('Jovens 18-25 anos')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('Simulados semanais')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('120')).toBeInTheDocument();
+    });
+
+    it('should allow switching from CUSTOM to BNCC and hide contexto (AC7)', async () => {
+      const user = userEvent.setup();
+      const mockCustomTurma: Turma = {
+        ...mockTurma,
+        curriculo_tipo: 'CUSTOM',
+        contexto_pedagogico: {
+          objetivo_geral: 'Preparar candidatos para PM-SP 2026',
+          publico_alvo: 'Jovens 18-25 anos',
+          metodologia: 'Simulados semanais',
+          carga_horaria_total: 120,
+        },
+      };
+
+      renderWithProviders(
+        <TurmaFormDialog
+          open={true}
+          onOpenChange={mockOnOpenChange}
+          mode="edit"
+          defaultValues={mockCustomTurma}
+          onSubmit={mockOnSubmit}
+        />
+      );
+
+      // Verify CUSTOM is selected and contexto is visible
+      expect(screen.getByRole('radio', { name: /Curso Customizado/i })).toBeChecked();
+      expect(screen.getByText('Contexto Pedagógico')).toBeInTheDocument();
+
+      // Switch to BNCC
+      const bnccRadio = screen.getByRole('radio', { name: /BNCC/i });
+      await user.click(bnccRadio);
+
+      // Verify contexto is hidden
+      await waitFor(() => {
+        expect(screen.queryByText('Contexto Pedagógico')).not.toBeInTheDocument();
+      });
+
+      // Verify BNCC is selected
+      expect(bnccRadio).toBeChecked();
+    });
+
+    it('should show red character counter when exceeding max length', async () => {
+      const user = userEvent.setup();
+
+      renderWithProviders(
+        <TurmaFormDialog
+          open={true}
+          onOpenChange={mockOnOpenChange}
+          mode="create"
+          onSubmit={mockOnSubmit}
+        />
+      );
+
+      await user.click(screen.getByRole('radio', { name: /Curso Customizado/i }));
+
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Objetivo Geral do Curso/i)).toBeInTheDocument();
+      });
+
+      const objetivoInput = screen.getByLabelText(/Objetivo Geral do Curso/i);
+
+      // Type text exceeding 500 characters (501 'a' characters)
+      const longText = 'a'.repeat(501);
+      await user.type(objetivoInput, longText);
+
+      await waitFor(() => {
+        const counter = screen.getByText(/501\/500 caracteres/i);
+        expect(counter).toBeInTheDocument();
+        expect(counter).toHaveClass('text-red-600');
+        expect(counter).toHaveClass('font-medium');
+      });
+    });
+  });
 });

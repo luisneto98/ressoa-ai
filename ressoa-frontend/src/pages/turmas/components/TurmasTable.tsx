@@ -2,15 +2,18 @@ import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { TipoEnsinoBadge } from './TipoEnsinoBadge';
+import { CurriculoTipoBadge } from './CurriculoTipoBadge';
 import { SERIE_LABELS, TURNO_LABELS } from '@/types/turma';
 import type { Turma } from '@/types/turma';
 
 /**
  * Table component for displaying turmas list
  * Story 10.4 - AC#2, #8, #9, #10
+ * Story 11.5 - AC#6 (Curriculo Tipo Badge)
  *
  * Features:
- * - 8 columns: Nome, Série, Tipo Ensino (badge), Disciplina, Ano Letivo, Turno, Professor, Ações
+ * - 9 columns: Nome, Currículo, Série, Tipo Ensino (badge), Disciplina, Ano Letivo, Turno, Professor, Ações
+ * - Curriculo Tipo badge: BNCC (tech-blue) vs Custom (cyan-ai)
  * - Edit and Delete action buttons
  * - Hover states
  * - Responsive (handled by parent/CSS)
@@ -30,6 +33,7 @@ export function TurmasTable({ turmas, onEdit, onDelete }: TurmasTableProps) {
         <TableHeader>
           <TableRow className="bg-gray-50">
             <TableHead className="font-heading font-semibold text-deep-navy">Nome</TableHead>
+            <TableHead className="font-heading font-semibold text-deep-navy">Currículo</TableHead>
             <TableHead className="font-heading font-semibold text-deep-navy">Série</TableHead>
             <TableHead className="font-heading font-semibold text-deep-navy">Tipo Ensino</TableHead>
             <TableHead className="font-heading font-semibold text-deep-navy">Disciplina</TableHead>
@@ -46,6 +50,9 @@ export function TurmasTable({ turmas, onEdit, onDelete }: TurmasTableProps) {
               className="hover:bg-ghost-white/50 transition-colors"
             >
               <TableCell className="font-medium text-deep-navy">{turma.nome}</TableCell>
+              <TableCell>
+                <CurriculoTipoBadge tipo={turma.curriculo_tipo ?? 'BNCC'} />
+              </TableCell>
               <TableCell className="text-gray-700">{SERIE_LABELS[turma.serie]}</TableCell>
               <TableCell>
                 <TipoEnsinoBadge tipo_ensino={turma.tipo_ensino} />

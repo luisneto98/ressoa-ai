@@ -30,6 +30,20 @@ export const Turno = {
 
 export type Turno = typeof Turno[keyof typeof Turno];
 
+export const CurriculoTipo = {
+  BNCC: 'BNCC',
+  CUSTOM: 'CUSTOM',
+} as const;
+
+export type CurriculoTipo = typeof CurriculoTipo[keyof typeof CurriculoTipo];
+
+export interface ContextoPedagogicoDto {
+  objetivo_geral: string;
+  publico_alvo: string;
+  metodologia: string;
+  carga_horaria_total: number;
+}
+
 export interface Turma {
   id: string;
   nome: string;
@@ -41,6 +55,8 @@ export interface Turma {
   escola_id: string;
   professor_id: string | null;
   professor?: { id: string; nome: string; email: string };
+  curriculo_tipo?: CurriculoTipo;
+  contexto_pedagogico?: ContextoPedagogicoDto;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
@@ -54,6 +70,8 @@ export interface CreateTurmaDto {
   ano_letivo: number;
   turno: Turno;
   professor_id: string;
+  curriculo_tipo?: CurriculoTipo;
+  contexto_pedagogico?: ContextoPedagogicoDto;
 }
 
 export interface UpdateTurmaDto {
@@ -64,6 +82,8 @@ export interface UpdateTurmaDto {
   ano_letivo?: number;
   turno?: Turno;
   professor_id?: string;
+  curriculo_tipo?: CurriculoTipo;
+  contexto_pedagogico?: ContextoPedagogicoDto;
 }
 
 // Display helpers
@@ -87,6 +107,17 @@ export const TIPO_ENSINO_LABELS: Record<TipoEnsino, string> = {
   [TipoEnsino.FUNDAMENTAL]: 'Fundamental',
   [TipoEnsino.MEDIO]: 'Médio',
 };
+
+// Curriculo tipo labels and descriptions
+export const CURRICULO_TIPO_LABELS = {
+  BNCC: 'BNCC',
+  CUSTOM: 'Curso Customizado',
+} as const;
+
+export const CURRICULO_TIPO_DESCRIPTIONS = {
+  BNCC: 'Currículo brasileiro oficial para Ensino Fundamental e Médio',
+  CUSTOM: 'Preparatórios, idiomas, técnicos e outros cursos livres',
+} as const;
 
 // Helper to get series by tipo_ensino
 export const getSeriesByTipoEnsino = (tipoEnsino: TipoEnsino): Serie[] => {

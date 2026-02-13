@@ -589,6 +589,96 @@ async function migrateBNCCToObjetivos() {
   return { migrated, skipped, total: totalObjetivos };
 }
 
+/**
+ * Story 11.3: Migra PlanejamentoHabilidade → PlanejamentoObjetivo
+ * Cria relações N:N entre planejamentos e objetivos genéricos
+ * Idempotente: pode rodar múltiplas vezes sem duplicar dados
+ */
+async function migratePlanejamentoHabilidadeToObjetivos() {
+  console.log('🔄 Migrando PlanejamentoHabilidade → PlanejamentoObjetivo...');
+
+  // 1. Buscar todas relações PlanejamentoHabilidade existentes
+  const planejamentoHabilidades = await prisma.planejamentoHabilidade.findMany({
+    include: {
+      habilidade: true,
+    },
+  });
+
+  if (planejamentoHabilidades.length === 0) {
+    console.log('⏭️  Nenhuma PlanejamentoHabilidade existente, pulando migração');
+    return { migrated: 0, skipped: 0 };
+  }
+
+  console.log(`📚 Found ${planejamentoHabilidades.length} PlanejamentoHabilidade records to migrate`);
+
+  let migrated = 0;
+  let skipped = 0;
+
+  for (const ph of planejamentoHabilidades) {
+    try {
+      // 2. Encontrar ObjetivoAprendizagem correspondente (criado via habilidade_bncc_id)
+      const objetivo = await prisma.objetivoAprendizagem.findFirst({
+        where: {
+          habilidade_bncc_id: ph.habilidade_id,
+          tipo_fonte: 'BNCC',
+        },
+      });
+
+      if (!objetivo) {
+        console.warn(
+          `⚠️  Objetivo não encontrado para habilidade ${ph.habilidade.codigo}`,
+        );
+        skipped++;
+        continue;
+      }
+
+      // 3. Criar PlanejamentoObjetivo (upsert para idempotência)
+      await prisma.planejamentoObjetivo.upsert({
+        where: {
+          planejamento_id_objetivo_id: {
+            planejamento_id: ph.planejamento_id,
+            objetivo_id: objetivo.id,
+          },
+        },
+        update: {}, // Não atualiza se já existe
+        create: {
+          planejamento_id: ph.planejamento_id,
+          objetivo_id: objetivo.id,
+          peso: ph.peso,
+          aulas_previstas: ph.aulas_previstas,
+        },
+      });
+
+      migrated++;
+
+      if (migrated % 50 === 0) {
+        console.log(`  ✓ Migrated ${migrated}/${planejamentoHabilidades.length}...`);
+      }
+    } catch (error) {
+      console.error(
+        `  ❌ Error migrating planejamento_habilidade ${ph.id}:`,
+        error,
+      );
+      skipped++;
+    }
+  }
+
+  console.log(
+    `✅ ${migrated} PlanejamentoHabilidade migrados para PlanejamentoObjetivo`,
+  );
+  if (skipped > 0) {
+    console.log(`⚠️  ${skipped} registros pulados (objetivo não encontrado ou erro)`);
+  }
+
+  // Verify migration
+  const totalPlanejamentoObjetivos = await prisma.planejamentoObjetivo.count();
+  console.log(
+    `📊 Total PlanejamentoObjetivo in database: ${totalPlanejamentoObjetivos}`,
+  );
+
+  return { migrated, skipped };
+}
+
 async function main() {
   console.log('🚀 Starting seed...');
   console.log(`📦 Database: ${process.env['DATABASE_URL']?.split('@')[1] || 'configured'}`);
@@ -613,6 +703,9 @@ async function main() {
 
   // Story 11.1: Migrate BNCC to ObjetivoAprendizagem
   await migrateBNCCToObjetivos();
+
+  // Story 11.3: Migrate PlanejamentoHabilidade to PlanejamentoObjetivo
+  await migratePlanejamentoHabilidadeToObjetivos();
 
   console.log('🎉 Seed completed successfully!');
 }

@@ -32,6 +32,11 @@ enum TipoEnsino {
   MEDIO
 }
 
+enum CurriculoTipo {
+  BNCC
+  CUSTOM
+}
+
 enum TipoEntrada {
   AUDIO
   TRANSCRICAO
@@ -224,8 +229,13 @@ model Turma {
   escola_id    String
   professor_id String
   deleted_at   DateTime? // Soft delete timestamp (LGPD compliance)
-  created_at   DateTime   @default(now())
-  updated_at   DateTime   @updatedAt
+
+  // Story 11.2: Suporte a currículos customizados
+  curriculo_tipo      CurriculoTipo @default(BNCC)
+  contexto_pedagogico Json? // Obrigatório apenas se curriculo_tipo != BNCC
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   // Relations
   escola                 Escola                 @relation(fields: [escola_id], references: [id], onDelete: Cascade)
@@ -243,6 +253,7 @@ model Turma {
   @@index([escola_id, tipo_ensino]) // Dashboard queries: filter by escola + tipo
   @@index([escola_id, tipo_ensino, serie]) // Detailed filtering with serie
   @@index([escola_id, tipo_ensino, ano_letivo]) // Dashboard queries with ano_letivo
+  @@index([escola_id, curriculo_tipo]) // Story 11.2: Filter BNCC vs CUSTOM turmas
   @@map("turma")
 }
 

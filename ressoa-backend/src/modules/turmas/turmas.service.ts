@@ -5,7 +5,7 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Serie, TipoEnsino } from '@prisma/client';
+import { Serie, TipoEnsino, CurriculoTipo, Prisma } from '@prisma/client';
 import { CreateTurmaDto } from './dto/create-turma.dto';
 import { UpdateTurmaDto } from './dto/update-turma.dto';
 
@@ -54,6 +54,34 @@ export class TurmasService {
   }
 
   /**
+   * Valida contexto pedagógico para turmas customizadas
+   * Story 11.2: CUSTOM turmas require contexto_pedagogico
+   *
+   * NOTE: Most validation is handled by DTO decorators (@ValidateIf, @ValidateNested)
+   * This method only provides final safety check for service-level calls
+   *
+   * @param curriculo_tipo - Tipo de currículo (BNCC ou CUSTOM)
+   * @param contexto_pedagogico - Contexto pedagógico (opcional para BNCC, obrigatório para CUSTOM)
+   * @throws BadRequestException se CUSTOM sem contexto
+   */
+  private validateContextoPedagogico(
+    curriculo_tipo: CurriculoTipo | undefined,
+    contexto_pedagogico: any,
+  ): void {
+    // Se não definido, assume BNCC (default) - sem validação necessária
+    if (!curriculo_tipo || curriculo_tipo === CurriculoTipo.BNCC) {
+      return;
+    }
+
+    // CUSTOM requer contexto_pedagogico (field-level validation is in DTO)
+    if (curriculo_tipo === CurriculoTipo.CUSTOM && !contexto_pedagogico) {
+      throw new BadRequestException(
+        'contexto_pedagogico é obrigatório para turmas customizadas',
+      );
+    }
+  }
+
+  /**
    * Cria uma nova turma com validação de compatibilidade serie-tipo_ensino e unicidade
    *
    * @param dto - Dados da turma a ser criada
@@ -66,6 +94,9 @@ export class TurmasService {
 
     // Validar compatibilidade serie-tipo_ensino
     this.validateSerieCompatibility(dto.serie, dto.tipo_ensino);
+
+    // Story 11.2: Validar contexto pedagógico para turmas customizadas
+    this.validateContextoPedagogico(dto.curriculo_tipo, dto.contexto_pedagogico);
 
     // Validar unicidade: nome + ano_letivo + turno + escola_id
     const existing = await this.prisma.turma.findFirst({
@@ -87,8 +118,16 @@ export class TurmasService {
     // Criar turma (lógica existente + novo campo)
     const turma = await this.prisma.turma.create({
       data: {
-        ...dto,
+        nome: dto.nome,
+        disciplina: dto.disciplina,
+        serie: dto.serie,
+        tipo_ensino: dto.tipo_ensino,
+        ano_letivo: dto.ano_letivo,
+        turno: dto.turno,
+        professor_id: dto.professor_id,
         escola_id: escolaId, // ✅ From tenant context, not parameter
+        curriculo_tipo: dto.curriculo_tipo || CurriculoTipo.BNCC, // Default BNCC
+        contexto_pedagogico: dto.contexto_pedagogico as Prisma.InputJsonValue | undefined,
       },
     });
 
@@ -100,15 +139,20 @@ export class TurmasService {
    *
    * @param id - ID da turma
    * @param dto - Dados a serem atualizados
-   * @returns Turma atualizada
+   * @returns Turma atualizada (com warnings se aplicável)
    */
   async update(id: string, dto: UpdateTurmaDto) {
     // ✅ CRITICAL: Get escolaId from tenant context (TenantInterceptor)
     const escolaId = this.prisma.getEscolaIdOrThrow();
 
-    // Buscar turma atual para validações
+    // Buscar turma atual para validações (incluir objetivos_customizados para warning)
     const turmaAtual = await this.prisma.turma.findUnique({
       where: { id, escola_id: escolaId }, // ✅ Tenant isolation
+      include: {
+        objetivos_customizados: {
+          select: { id: true },
+        },
+      },
     });
 
     if (!turmaAtual) {
@@ -121,6 +165,11 @@ export class TurmasService {
       const tipo_ensino = dto.tipo_ensino ?? turmaAtual.tipo_ensino;
 
       this.validateSerieCompatibility(serie, tipo_ensino);
+    }
+
+    // Story 11.2: Validar contexto pedagógico se curriculo_tipo for alterado
+    if (dto.curriculo_tipo) {
+      this.validateContextoPedagogico(dto.curriculo_tipo, dto.contexto_pedagogico);
     }
 
     // ✅ NEW: Validar unicidade se nome, ano_letivo ou turno forem alterados
@@ -147,10 +196,40 @@ export class TurmasService {
       }
     }
 
-    return this.prisma.turma.update({
+    // Story 11.2: Check for CUSTOM → BNCC transition with custom objectives
+    const warnings: string[] = [];
+    if (
+      dto.curriculo_tipo === CurriculoTipo.BNCC &&
+      turmaAtual.curriculo_tipo === CurriculoTipo.CUSTOM &&
+      turmaAtual.objetivos_customizados.length > 0
+    ) {
+      warnings.push(
+        `Turma possui ${turmaAtual.objetivos_customizados.length} objetivos customizados que serão ignorados ao usar currículo BNCC`,
+      );
+    }
+
+    // Build update data with proper type casting for JSON fields
+    const updateData: Prisma.TurmaUpdateInput = {
+      ...dto,
+      contexto_pedagogico: dto.contexto_pedagogico !== undefined
+        ? (dto.contexto_pedagogico as Prisma.InputJsonValue | null)
+        : undefined,
+    };
+
+    const turmaAtualizada = await this.prisma.turma.update({
       where: { id, escola_id: escolaId }, // ✅ Tenant isolation
-      data: dto,
+      data: updateData,
     });
+
+    // Return with warnings if applicable
+    if (warnings.length > 0) {
+      return {
+        ...turmaAtualizada,
+        warnings,
+      };
+    }
+
+    return turmaAtualizada;
   }
 
   /**
@@ -179,6 +258,8 @@ export class TurmasService {
         ano_letivo: true,
         turno: true,
         professor_id: true,
+        curriculo_tipo: true, // Story 11.2
+        contexto_pedagogico: true, // Story 11.2
         created_at: true,
         updated_at: true,
       },
@@ -218,6 +299,8 @@ export class TurmasService {
         tipo_ensino: true,
         ano_letivo: true,
         turno: true,
+        curriculo_tipo: true, // Story 11.2
+        contexto_pedagogico: true, // Story 11.2
       },
       orderBy: [{ ano_letivo: 'desc' }, { nome: 'asc' }],
     });
@@ -245,6 +328,8 @@ export class TurmasService {
         tipo_ensino: true,
         ano_letivo: true,
         turno: true,
+        curriculo_tipo: true, // Story 11.2
+        contexto_pedagogico: true, // Story 11.2
         professor: {
           select: {
             id: true,

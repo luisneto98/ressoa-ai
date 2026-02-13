@@ -6,10 +6,16 @@ import {
   IsUUID,
   Min,
   Max,
+  IsOptional,
+  ValidateIf,
+  ValidateNested,
+  IsObject,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { Serie, TipoEnsino } from '@prisma/client';
+import { Serie, TipoEnsino, CurriculoTipo } from '@prisma/client';
 import { DISCIPLINAS } from '../../../common/constants/disciplinas';
+import { ContextoPedagogicoDto } from './contexto-pedagogico.dto';
 
 export class CreateTurmaDto {
   @ApiProperty({ example: '6A', description: 'Nome da turma' })
@@ -75,6 +81,35 @@ export class CreateTurmaDto {
   @IsUUID()
   @IsNotEmpty()
   professor_id!: string;
+
+  // Story 11.2: Suporte a currículos customizados
+  @ApiProperty({
+    enum: CurriculoTipo,
+    example: 'BNCC',
+    examples: ['BNCC', 'CUSTOM'],
+    default: 'BNCC',
+    description: 'Tipo de currículo: BNCC (padrão baseado na Base Nacional Comum Curricular) ou CUSTOM (cursos livres/técnicos customizados)',
+    required: false,
+  })
+  @IsEnum(CurriculoTipo, {
+    message: 'curriculo_tipo deve ser BNCC ou CUSTOM',
+  })
+  @IsOptional()
+  curriculo_tipo?: CurriculoTipo;
+
+  @ApiProperty({
+    type: () => ContextoPedagogicoDto,
+    required: false,
+    description: 'Contexto pedagógico do curso (obrigatório se curriculo_tipo = CUSTOM)',
+  })
+  @ValidateIf((o) => o.curriculo_tipo === CurriculoTipo.CUSTOM)
+  @IsNotEmpty({
+    message: 'contexto_pedagogico é obrigatório para turmas customizadas',
+  })
+  @IsObject()
+  @ValidateNested()
+  @Type(() => ContextoPedagogicoDto)
+  contexto_pedagogico?: ContextoPedagogicoDto;
 
   // escola_id será injetado pelo CurrentUser decorator no controller (multi-tenancy)
 }

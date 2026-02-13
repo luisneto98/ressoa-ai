@@ -23,14 +23,65 @@ export class PlanejamentoService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
+   * Valida compatibilidade de habilidades com turma (série e disciplina)
+   * @param habilidades Habilidades a validar
+   * @param turma Turma de referência
+   * @throws BadRequestException se habilidades incompatíveis
+   */
+  private validateHabilidadesCompatibilidade(
+    habilidades: Array<{
+      id: string;
+      disciplina: string;
+      ano_inicio: number;
+      ano_fim: number | null;
+    }>,
+    turma: { serie: string; disciplina: string },
+  ): void {
+    const serieMap: Record<string, number> = {
+      SEXTO_ANO: 6,
+      SETIMO_ANO: 7,
+      OITAVO_ANO: 8,
+      NONO_ANO: 9,
+      PRIMEIRO_ANO_EM: 1,
+      SEGUNDO_ANO_EM: 2,
+      TERCEIRO_ANO_EM: 3,
+    };
+    const serieNumero = serieMap[turma.serie];
+
+    const habilidadesIncompativeis = habilidades.filter((hab) => {
+      if (hab.disciplina !== turma.disciplina) {
+        return true;
+      }
+      const anoFim = hab.ano_fim ?? hab.ano_inicio;
+      if (serieNumero < hab.ano_inicio || serieNumero > anoFim) {
+        return true;
+      }
+      return false;
+    });
+
+    if (habilidadesIncompativeis.length > 0) {
+      throw new BadRequestException(
+        'Uma ou mais habilidades não são compatíveis com a disciplina ou série da turma',
+      );
+    }
+  }
+
+  /**
    * Cria um novo planejamento bimestral
-   * @param dto Dados do planejamento
+   * @param dto Dados do planejamento (Story 11.3: suporta habilidades OU objetivos)
    * @param user Usuário autenticado (professor)
-   * @returns Planejamento criado com habilidades
+   * @returns Planejamento criado com habilidades e/ou objetivos
    */
   async create(dto: CreatePlanejamentoDto, user: AuthenticatedUser) {
     // 🔴 CRITICAL: Multi-tenancy - Get escola_id from context
     const escolaId = this.prisma.getEscolaIdOrThrow();
+
+    // Story 11.3: Validar que pelo menos um campo está presente
+    if (!dto.habilidades && !dto.objetivos) {
+      throw new BadRequestException(
+        'Planejamento deve ter habilidade_ids (BNCC) ou objetivos (customizados/BNCC)',
+      );
+    }
 
     // 1️⃣ Validar que turma existe e pertence ao professor E à escola
     const turma = await this.prisma.turma.findUnique({
@@ -51,112 +102,121 @@ export class PlanejamentoService {
       );
     }
 
-    // 3️⃣ Validar que todas habilidades existem no banco (Issue #2: habilidades validation)
-    const habilidadeIds = dto.habilidades.map((h) => h.habilidade_id);
-    const habilidadesExistentes = await this.prisma.habilidade.findMany({
-      where: { id: { in: habilidadeIds } },
-      select: { id: true, disciplina: true, ano_inicio: true, ano_fim: true },
-    });
-
-    if (habilidadesExistentes.length !== habilidadeIds.length) {
+    // Story 11.3 FIX: Validar contexto_pedagogico obrigatório se turma CUSTOM
+    if (turma.curriculo_tipo === 'CUSTOM' && !turma.contexto_pedagogico) {
       throw new BadRequestException(
-        'Uma ou mais habilidades não existem no sistema',
+        'Turma com currículo customizado requer contexto_pedagogico (Story 11.2)',
       );
     }
 
-    // 4️⃣ Validar que habilidades são compatíveis com disciplina e série da turma (Issue #6: cross-disciplina validation)
-    const serieMap: Record<string, number> = {
-      SEXTO_ANO: 6,
-      SETIMO_ANO: 7,
-      OITAVO_ANO: 8,
-      NONO_ANO: 9,
-    };
-    const serieNumero = serieMap[turma.serie];
+    // 3️⃣ Validar habilidades (legado - backward compatibility)
+    let habilidadesComPrevisao: Array<{
+      habilidade_id: string;
+      peso: number;
+      aulas_previstas: number;
+    }> = [];
 
-    const habilidadesIncompativeis = habilidadesExistentes.filter((hab) => {
-      // Disciplina deve ser a mesma
-      if (hab.disciplina !== turma.disciplina) {
-        return true;
+    if (dto.habilidades && dto.habilidades.length > 0) {
+      const habilidadeIds = dto.habilidades.map((h) => h.habilidade_id);
+      const habilidadesExistentes = await this.prisma.habilidade.findMany({
+        where: { id: { in: habilidadeIds } },
+        select: { id: true, disciplina: true, ano_inicio: true, ano_fim: true },
+      });
+
+      if (habilidadesExistentes.length !== habilidadeIds.length) {
+        throw new BadRequestException(
+          'Uma ou mais habilidades não existem no sistema',
+        );
       }
 
-      // Série deve estar no range da habilidade
-      // ano_fim = null → habilidade específica para ano_inicio
-      // ano_fim != null → bloco compartilhado (ex: EF67LP para 6º e 7º)
-      const anoFim = hab.ano_fim ?? hab.ano_inicio;
-      if (serieNumero < hab.ano_inicio || serieNumero > anoFim) {
-        return true;
-      }
+      // Validar compatibilidade com disciplina e série da turma
+      this.validateHabilidadesCompatibilidade(habilidadesExistentes, turma);
 
-      return false;
-    });
+      // Aplicar regras de negócio (peso e aulas previstas)
+      const totalHabilidades = dto.habilidades.length;
+      const pesoDefault = 1.0 / totalHabilidades;
+      const aulasPorBimestre =
+        this.AULAS_POR_BIMESTRE_MAP[turma.disciplina] || 40;
+      const aulasEstimadas = Math.ceil(aulasPorBimestre / totalHabilidades);
 
-    if (habilidadesIncompativeis.length > 0) {
-      throw new BadRequestException(
-        'Uma ou mais habilidades não são compatíveis com a disciplina ou série da turma',
-      );
+      habilidadesComPrevisao = dto.habilidades.map((h) => ({
+        habilidade_id: h.habilidade_id,
+        peso: h.peso ?? pesoDefault,
+        aulas_previstas: h.aulas_previstas ?? aulasEstimadas,
+      }));
     }
 
-    // 5️⃣ Aplicar RN-PLAN-02: Distribuir peso igualmente se não informado
-    const totalHabilidades = dto.habilidades.length;
-    const pesoDefault = 1.0 / totalHabilidades;
+    // Story 11.3: Processar objetivos (novo campo)
+    let objetivosProcessados: Array<{
+      objetivo_id: string;
+      peso: number;
+      aulas_previstas?: number;
+    }> = [];
 
-    const habilidadesComPeso = dto.habilidades.map((h) => ({
-      ...h,
-      peso: h.peso ?? pesoDefault,
-    }));
+    if (dto.objetivos && dto.objetivos.length > 0) {
+      const objetivoIds = dto.objetivos.map((o) => o.objetivo_id);
+      const objetivosExistentes = await this.prisma.objetivoAprendizagem.findMany({
+        where: { id: { in: objetivoIds } },
+        select: { id: true },
+      });
 
-    // 6️⃣ Aplicar RN-PLAN-03: Estimar aulas_previstas se não informado (Issue #8: dynamic calculation)
-    const aulasPorBimestre =
-      this.AULAS_POR_BIMESTRE_MAP[turma.disciplina] || 40;
-    const aulasEstimadas = Math.ceil(aulasPorBimestre / totalHabilidades);
+      if (objetivosExistentes.length !== objetivoIds.length) {
+        throw new BadRequestException(
+          'Um ou mais objetivos não existem no sistema',
+        );
+      }
 
-    const habilidadesComPrevisao = habilidadesComPeso.map((h) => ({
-      ...h,
-      aulas_previstas: h.aulas_previstas ?? aulasEstimadas,
-    }));
+      objetivosProcessados = dto.objetivos.map((o) => ({
+        objetivo_id: o.objetivo_id,
+        peso: o.peso ?? 1.0,
+        aulas_previstas: o.aulas_previstas,
+      }));
+    }
 
     // 7️⃣ Criar planejamento com relacionamentos (transação atômica)
     try {
-      const planejamento = await this.prisma.planejamento.create({
-        data: {
-          turma_id: dto.turma_id,
-          bimestre: dto.bimestre,
-          ano_letivo: dto.ano_letivo,
-          escola_id: escolaId, // ✅ Injetar escola_id do contexto
-          professor_id: user.userId, // ✅ Injetar professor_id do JWT
-          validado_coordenacao: false, // RN-PLAN-01: Flag inicial
-          habilidades: {
-            createMany: {
-              data: habilidadesComPrevisao.map((h) => ({
-                habilidade_id: h.habilidade_id,
-                peso: h.peso,
-                aulas_previstas: h.aulas_previstas,
-              })),
-            },
+      const planejamento = await this.prisma.$transaction(async (tx) => {
+        // Criar planejamento base
+        const plan = await tx.planejamento.create({
+          data: {
+            turma_id: dto.turma_id,
+            bimestre: dto.bimestre,
+            ano_letivo: dto.ano_letivo,
+            escola_id: escolaId,
+            professor_id: user.userId,
+            validado_coordenacao: false,
           },
-        },
-        include: {
-          turma: true,
-          habilidades: {
-            include: {
-              habilidade: {
-                select: {
-                  id: true,
-                  codigo: true,
-                  descricao: true,
-                  disciplina: true,
-                  ano_inicio: true,
-                  ano_fim: true,
-                  unidade_tematica: true,
-                  objeto_conhecimento: true,
-                },
-              },
-            },
-          },
-        },
+        });
+
+        // Criar relações com habilidades (legado - se fornecido)
+        if (habilidadesComPrevisao.length > 0) {
+          await tx.planejamentoHabilidade.createMany({
+            data: habilidadesComPrevisao.map((h) => ({
+              planejamento_id: plan.id,
+              habilidade_id: h.habilidade_id,
+              peso: h.peso,
+              aulas_previstas: h.aulas_previstas,
+            })),
+          });
+        }
+
+        // Story 11.3: Criar relações com objetivos (novo)
+        if (objetivosProcessados.length > 0) {
+          await tx.planejamentoObjetivo.createMany({
+            data: objetivosProcessados.map((o) => ({
+              planejamento_id: plan.id,
+              objetivo_id: o.objetivo_id,
+              peso: o.peso,
+              aulas_previstas: o.aulas_previstas,
+            })),
+          });
+        }
+
+        return plan;
       });
 
-      return planejamento;
+      // Retornar planejamento completo com relações
+      return this.findOne(planejamento.id, user);
     } catch (error: any) {
       // RN-PLAN-04: Capturar erro de unique constraint (duplicata)
       if (error.code === 'P2002') {
@@ -172,7 +232,7 @@ export class PlanejamentoService {
    * Lista planejamentos com filtros e RBAC
    * @param query Filtros opcionais
    * @param user Usuário autenticado
-   * @returns Array de planejamentos
+   * @returns Array de planejamentos (Story 11.3: inclui _count de objetivos)
    */
   async findAll(
     query: {
@@ -201,7 +261,11 @@ export class PlanejamentoService {
         validado_coordenacao: query.validado,
       },
       include: {
-        turma: true,
+        turma: {
+          include: {
+            professor: { select: { id: true, nome: true } },
+          },
+        },
         habilidades: {
           include: {
             habilidade: {
@@ -219,6 +283,13 @@ export class PlanejamentoService {
             },
           },
         },
+        // Story 11.3: Include count of objetivos for summary views
+        _count: {
+          select: {
+            habilidades: true,
+            objetivos: true,
+          },
+        },
       },
       orderBy: [
         { ano_letivo: 'desc' },
@@ -234,7 +305,7 @@ export class PlanejamentoService {
    * Busca planejamento por ID com validações de acesso
    * @param id ID do planejamento
    * @param user Usuário autenticado
-   * @returns Planejamento completo
+   * @returns Planejamento completo (Story 11.3: inclui objetivos)
    */
   async findOne(id: string, user: AuthenticatedUser) {
     // 🔴 CRITICAL: Multi-tenancy - Get escola_id from context
@@ -262,6 +333,12 @@ export class PlanejamentoService {
                 objeto_conhecimento: true,
               },
             },
+          },
+        },
+        // Story 11.3: Include objetivos (dual format for backward compatibility)
+        objetivos: {
+          include: {
+            objetivo: true,
           },
         },
         professor: {
@@ -344,26 +421,7 @@ export class PlanejamentoService {
       });
 
       if (turmaCompleta) {
-        const serieMap: Record<string, number> = {
-          SEXTO_ANO: 6,
-          SETIMO_ANO: 7,
-          OITAVO_ANO: 8,
-          NONO_ANO: 9,
-        };
-        const serieNumero = serieMap[turmaCompleta.serie];
-
-        const habilidadesIncompativeis = habilidadesExistentes.filter((hab) => {
-          if (hab.disciplina !== turmaCompleta.disciplina) return true;
-          const anoFim = hab.ano_fim ?? hab.ano_inicio;
-          if (serieNumero < hab.ano_inicio || serieNumero > anoFim) return true;
-          return false;
-        });
-
-        if (habilidadesIncompativeis.length > 0) {
-          throw new BadRequestException(
-            'Uma ou mais habilidades não são compatíveis com a disciplina ou série da turma',
-          );
-        }
+        this.validateHabilidadesCompatibilidade(habilidadesExistentes, turmaCompleta);
       }
 
       // Aplicar regras de negócio

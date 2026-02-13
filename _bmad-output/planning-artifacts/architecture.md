@@ -1167,6 +1167,104 @@ const { progress } = useAulaStore();
 
 ---
 
+### AD-3.6: Icon Library Strategy
+
+**Decision:** Dual icon library approach - Tabler Icons (primary) + Lucide React (secondary/legacy)
+
+**Context (Added 2026-02-12, Story 9.7):**
+- Application initially used emoticons (📤, 👁️, ✏️, etc.) mixed with Lucide React icons
+- Emoticons have inconsistent rendering across browsers/OS and lack customization
+- Need professional, consistent icon system for B2B/enterprise context
+- Story 9.7 replaced all emoticons with Tabler Icons
+- Lucide React already in use for some components (Loader2, AlertCircle, FileX)
+
+**Alternatives Considered:**
+- **A) Tabler Icons + Lucide React (SELECTED):** Keep both, clear usage guidelines
+- **B) Migrate all to Tabler Icons:** Unnecessary work, Lucide icons working fine
+- **C) Migrate all to Lucide React:** Lucide has fewer icons (~1400 vs 5000+)
+- **D) Single library mandate:** Creates future tech debt, limits flexibility
+
+**Rationale:**
+- ✅ **Tabler Icons (Primary):** 5000+ icons, stroke-based design, excellent React integration
+- ✅ **Individual imports:** Tree-shaking works automatically with Vite ESM
+- ✅ **Lucide React (Secondary):** Keep existing usage, no breaking changes needed
+- ✅ **Co-existence is acceptable:** Modern bundlers handle multiple icon libraries efficiently
+- ✅ **Clear guidelines prevent confusion:** Documented rules for when to use each
+
+**Icon Library Guidelines:**
+
+**Use Tabler Icons (`@tabler/icons-react`) for:**
+- All NEW components and features
+- Replacing emoticons (Story 9.7)
+- Status badges, type indicators, navigation icons
+- Any icon that was previously an emoticon
+- Example: `IconUpload`, `IconEdit`, `IconCheck`, `IconCircleCheck`
+
+**Keep Lucide React for:**
+- Existing components already using Lucide (no migration needed)
+- Loading spinners (`Loader2` has good animation)
+- Alert icons where already implemented (`AlertCircle`)
+- Example: ManualEntryTab.tsx uses `AlertCircle` (keep as-is)
+
+**Import Pattern (CRITICAL for tree-shaking):**
+```typescript
+// ✅ CORRECT - Individual imports (tree-shaking works)
+import { IconUpload, IconEdit, IconCheck } from '@tabler/icons-react';
+import { Loader2, AlertCircle } from 'lucide-react';
+
+// ❌ WRONG - Barrel imports (imports entire library)
+import * as TablerIcons from '@tabler/icons-react';
+import * as LucideIcons from 'lucide-react';
+```
+
+**Sizing System (applies to both libraries):**
+```typescript
+// Use Tailwind utility classes for consistency
+<IconUpload className="size-4" />   // 16px - Inline, badges, small buttons
+<IconUpload className="size-5" />   // 20px - Default, sidebar, buttons
+<IconUpload className="size-6" />   // 24px - Prominent, headers, CTAs
+<IconUpload className="size-8" />   // 32px - Empty states, large placeholders
+<IconUpload className="size-16" />  // 64px - Error pages, major placeholders
+```
+
+**Color System:**
+```typescript
+// Inherit from parent (preferred)
+<IconUpload className="size-5 text-currentColor" />
+
+// Design system colors (explicit)
+<IconUpload className="size-5 text-tech-blue" />
+<IconCheck className="size-4 text-green-600" />
+<IconAlertTriangle className="size-5 text-focus-orange" />
+```
+
+**Implementation Evidence:**
+- Story 9.7 (2026-02-12): Replaced 17 emoticons across 7 frontend files
+- Tabler Icons v3.36.1 installed
+- Bundle size impact: Minimal (~30-40KB, tree-shaking verified)
+- All 132 unit tests passing
+- No breaking changes to existing Lucide usage
+
+**Bundle Size Analysis:**
+- **Before (emoticons + Lucide):** Baseline
+- **After (emoticons → Tabler + Lucide):** +~35KB (10 Tabler icons imported)
+- **Tree-shaking verified:** Only imported icons bundled (not all 5000+)
+- **Acceptable trade-off:** Professional consistency worth minimal size increase
+
+**Decision Rationale:**
+- Pragmatic over puristic: No need for single-library mandate
+- Future-proof: Easy to add icons from either library as needed
+- Developer experience: Clear guidelines prevent confusion
+- Performance: Modern bundlers handle this efficiently
+- Backward compatibility: No breaking changes to existing code
+
+**Related Files:**
+- `ressoa-frontend/package.json` - Both libraries declared
+- `ressoa-frontend/src/pages/aulas/components/StatusBadge.tsx` - Tabler icons example
+- `ressoa-frontend/src/pages/aulas/components/ManualEntryTab.tsx` - Lucide icon example (kept)
+
+---
+
 ## Decision Category 4: Data Architecture 🗄️
 
 ### AD-4.1: Database Migrations

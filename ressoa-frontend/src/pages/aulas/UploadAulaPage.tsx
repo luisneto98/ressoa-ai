@@ -2,6 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { UploadAudioTab } from './components/UploadAudioTab';
 import { UploadTranscriptionTab } from './components/UploadTranscriptionTab';
 import { ManualEntryTab } from './components/ManualEntryTab';
+import { IconMusic, IconFileText, IconPencil } from '@tabler/icons-react';
 
 export default function UploadAulaPage() {
   return (
@@ -11,9 +12,18 @@ export default function UploadAulaPage() {
 
       <Tabs defaultValue="audio" className="w-full">
         <TabsList className="grid w-full grid-cols-1 md:grid-cols-3 gap-2">
-          <TabsTrigger value="audio">🎵 Upload de Áudio</TabsTrigger>
-          <TabsTrigger value="transcription">📝 Colar Transcrição</TabsTrigger>
-          <TabsTrigger value="manual">✍️ Resumo Manual</TabsTrigger>
+          <TabsTrigger value="audio">
+            <IconMusic className="size-4 mr-2" />
+            Upload de Áudio
+          </TabsTrigger>
+          <TabsTrigger value="transcription">
+            <IconFileText className="size-4 mr-2" />
+            Colar Transcrição
+          </TabsTrigger>
+          <TabsTrigger value="manual">
+            <IconPencil className="size-4 mr-2" />
+            Resumo Manual
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="audio" className="mt-6">

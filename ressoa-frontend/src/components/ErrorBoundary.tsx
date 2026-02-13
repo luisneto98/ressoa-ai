@@ -1,5 +1,6 @@
 import { Component, type ReactNode } from 'react';
 import { Button } from './ui/button';
+import { IconAlertTriangle } from '@tabler/icons-react';
 
 interface Props {
   children: ReactNode;
@@ -38,7 +39,9 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="flex min-h-screen items-center justify-center bg-ghost-white px-4">
           <div className="max-w-md rounded-lg border bg-white p-8 text-center shadow-lg">
-            <div className="mb-4 text-6xl">⚠️</div>
+            <div className="mb-4 flex justify-center">
+              <IconAlertTriangle className="size-16 text-focus-orange" />
+            </div>
             <h1 className="mb-2 text-2xl font-bold text-deep-navy">
               Algo deu errado
             </h1>

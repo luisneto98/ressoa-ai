@@ -107,8 +107,8 @@ export function AulaAnalisePage() {
   const { data: analise, isLoading, error } = useQuery<AnaliseResponse>({
     queryKey: ['analise', aulaId],
     queryFn: () => api.get(`/aulas/${aulaId}/analise`).then((res) => {
-      console.log('📊 Análise recebida do backend:', res.data);
-      console.log('📋 Cobertura BNCC:', res.data?.cobertura_bncc);
+      console.log('[Análise] Recebida do backend:', res.data);
+      console.log('[BNCC] Cobertura:', res.data?.cobertura_bncc);
       return res.data;
     }),
   });

@@ -96,7 +96,7 @@ export function ManualEntryTab() {
                           </TooltipTrigger>
                           <TooltipContent className="max-w-xs">
                             <p>
-                              ⚠️ Resumo manual tem confiança menor na análise. Use transcrição completa quando possível.
+                              Resumo manual tem confiança menor na análise. Use transcrição completa quando possível.
                             </p>
                           </TooltipContent>
                         </Tooltip>

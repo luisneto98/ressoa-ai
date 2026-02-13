@@ -11,6 +11,7 @@ import {
 import { toast } from 'sonner';
 import type { Planejamento } from '../hooks/usePlanejamentos';
 import { useDeletePlanejamento } from '../hooks/useDeletePlanejamento';
+import { IconAlertTriangle } from '@tabler/icons-react';
 
 interface DeletePlanejamentoDialogProps {
   planejamento: Planejamento;
@@ -48,8 +49,9 @@ export const DeletePlanejamentoDialog = ({
               {planejamento.bimestre}/{planejamento.ano_letivo}
             </p>
             {/* Warning if there might be linked classes (we don't have this data in list, but backend will validate) */}
-            <p className="text-orange-600 text-sm">
-              ⚠️ Se houver aulas vinculadas a este planejamento, a exclusão falhará.
+            <p className="text-orange-600 text-sm flex items-center gap-2">
+              <IconAlertTriangle className="size-4 flex-shrink-0" />
+              Se houver aulas vinculadas a este planejamento, a exclusão falhará.
             </p>
           </AlertDialogDescription>
         </AlertDialogHeader>

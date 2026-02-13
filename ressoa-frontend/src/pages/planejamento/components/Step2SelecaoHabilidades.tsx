@@ -49,7 +49,7 @@ export const Step2SelecaoHabilidades = () => {
     const serieStr = String(formData.turma.serie);
     const mapped = serieMap[serieStr];
 
-    console.log('🔧 Serie mapping:', {
+    console.log('[Serie Mapping]', {
       original: serieStr,
       mapped: mapped,
       isQueryEnabled: !!formData.turma?.disciplina && !!mapped,
@@ -66,7 +66,7 @@ export const Step2SelecaoHabilidades = () => {
   });
 
   // DEBUG: Log query params for troubleshooting
-  console.log('🔍 Step2 Debug - Full State:', {
+  console.log('[Step2 Debug] Full State:', {
     'formData.turma_id': formData.turma_id,
     'formData.turma': formData.turma,
     'formData.bimestre': formData.bimestre,

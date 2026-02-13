@@ -1,0 +1,111 @@
+{
+  "cobertura_json": {
+    "objetivos_cobertos": [
+      {
+        "objetivo_id": "PM-MAT-01",
+        "codigo_objetivo": "PM-MAT-01",
+        "descricao": "Resolver questões de raciocínio lógico aplicando silogismos",
+        "nivel_cobertura": "ATINGIDO",
+        "nivel_bloom_planejado": "APLICAR",
+        "nivel_bloom_detectado": "APLICAR",
+        "evidencias": [
+          "se todo A é B, e todo B é C, então todo A é C. Vamos resolver alguns exemplos.",
+          "Se todo policial é brasileiro, e todo brasileiro é sul-americano, então todo policial é sul-americano. Vejam, aplicamos a lógica aqui."
+        ],
+        "tempo_dedicado_minutos": 5
+      },
+      {
+        "objetivo_id": "PM-LOG-01",
+        "codigo_objetivo": "PM-LOG-01",
+        "descricao": "Analisar sequências lógicas e padrões",
+        "nivel_cobertura": "PARCIALMENTE_ATINGIDO",
+        "nivel_bloom_planejado": "ANALISAR",
+        "nivel_bloom_detectado": "ENTENDER",
+        "evidencias": [
+          "Identifiquem o próximo número na sequência: 2, 4, 8, 16... qual seria? Isso mesmo, 32! Cada número é o dobro do anterior."
+        ],
+        "tempo_dedicado_minutos": 4,
+        "observacao": "Objetivo abordado mas com profundidade cognitiva menor que o planejado (ENTENDER vs ANALISAR)"
+      },
+      {
+        "objetivo_id": "PM-MAT-02",
+        "codigo_objetivo": "PM-MAT-02",
+        "descricao": "Interpretar problemas matemáticos contextualizados",
+        "nivel_cobertura": "ATINGIDO",
+        "nivel_bloom_planejado": "ENTENDER",
+        "nivel_bloom_detectado": "ENTENDER",
+        "evidencias": [
+          "Um trem sai de São Paulo às 10h com velocidade de 80km/h. Outro trem sai de Rio de Janeiro às 11h com velocidade de 100km/h. A distância entre as cidades é 400km. A que horas os trens se encontram? Leiam com calma, identifiquem os dados, montem as equações."
+        ],
+        "tempo_dedicado_minutos": 6
+      }
+    ],
+    "objetivos_nao_cobertos": [
+      {
+        "objetivo_id": "PM-LOG-02",
+        "codigo_objetivo": "PM-LOG-02",
+        "descricao": "Aplicar técnicas de eliminação em questões de múltipla escolha",
+        "razao": "Não identificado na transcrição da aula"
+      },
+      {
+        "objetivo_id": "PM-POR-01",
+        "codigo_objetivo": "PM-POR-01",
+        "descricao": "Compreender gramática contextualizada em provas",
+        "razao": "Não identificado na transcrição da aula"
+      }
+    ],
+    "cobertura_percentual": 60,
+    "total_objetivos": 5,
+    "objetivos_atingidos": 3
+  },
+  "analise_qualitativa": {
+    "pontos_fortes": [
+      "Uso efetivo de silogismos com exemplos contextualizados (PM)",
+      "Sequências lógicas apresentadas de forma clara",
+      "Problema matemático contextualizado com dados realistas"
+    ],
+    "pontos_melhoria": [
+      "Aprofundar análise de sequências (nível ANALISAR não atingido)",
+      "Incluir técnicas de eliminação em questões de múltipla escolha (PM-LOG-02)",
+      "Trabalhar gramática contextualizada (PM-POR-01)"
+    ]
+  },
+  "relatorio_texto": "# Relatório de Análise Pedagógica\n\n## Cobertura de Objetivos de Aprendizagem\n\nA aula cobriu **3 de 5 objetivos** planejados (60% de cobertura).\n\n### Objetivos Atingidos\n\n**PM-MAT-01: Resolver questões de raciocínio lógico aplicando silogismos** ✅\n- Nível Bloom: APLICAR (planejado) → APLICAR (detectado)\n- Evidências:\n  - \"se todo A é B, e todo B é C, então todo A é C. Vamos resolver alguns exemplos.\"\n  - \"Se todo policial é brasileiro, e todo brasileiro é sul-americano, então todo policial é sul-americano.\"\n\n**PM-LOG-01: Analisar sequências lógicas e padrões** 🟡\n- Nível Bloom: ANALISAR (planejado) → ENTENDER (detectado) ⚠️\n- Evidências:\n  - \"Identifiquem o próximo número na sequência: 2, 4, 8, 16...\"\n- Observação: Profundidade cognitiva menor que o planejado\n\n**PM-MAT-02: Interpretar problemas matemáticos contextualizados** ✅\n- Nível Bloom: ENTENDER (planejado) → ENTENDER (detectado)\n- Evidências:\n  - \"Um trem sai de São Paulo às 10h...\"\n\n### Objetivos Não Cobertos\n\n- PM-LOG-02: Aplicar técnicas de eliminação em questões de múltipla escolha\n- PM-POR-01: Compreender gramática contextualizada em provas\n\n## Sugestões para Próxima Aula\n\n1. Reforçar técnicas de eliminação em questões de múltipla escolha (PM-LOG-02)\n2. Incluir simulado de gramática contextualizada (PM-POR-01)\n3. Aprofundar análise de sequências lógicas para atingir nível ANALISAR",
+  "exercicios_contextuais": [
+    {
+      "objetivo_id": "PM-MAT-01",
+      "enunciado": "Analise o seguinte silogismo: 'Todo candidato aprovado estudou. João foi aprovado. Logo, João estudou.' Este raciocínio está correto?",
+      "resposta_esperada": "Sim, o raciocínio está correto. Se todo aprovado estudou (premissa 1) e João foi aprovado (premissa 2), então necessariamente João estudou (conclusão)."
+    },
+    {
+      "objetivo_id": "PM-LOG-01",
+      "enunciado": "Identifique o padrão e complete a sequência: 3, 6, 12, 24, __",
+      "resposta_esperada": "48. Cada termo é o dobro do anterior."
+    },
+    {
+      "objetivo_id": "PM-MAT-02",
+      "enunciado": "Um ônibus sai de Curitiba às 8h com velocidade de 60km/h. Outro sai de Florianópolis às 9h com velocidade de 80km/h na mesma direção. Sabendo que a distância entre as cidades é 300km, em que momento o segundo ônibus alcança o primeiro?",
+      "resposta_esperada": "Após 2 horas de viagem do segundo ônibus (às 11h). Quando o segundo parte, o primeiro já percorreu 60km. A cada hora, o segundo ganha 20km de vantagem (80-60). Para alcançar 60km de diferença, leva 3 horas (60/20=3). Às 11h ambos estarão a 240km de Curitiba."
+    }
+  ],
+  "alertas": [
+    {
+      "tipo": "BLOOM_MISMATCH",
+      "severidade": "MEDIA",
+      "objetivo_id": "PM-LOG-01",
+      "mensagem": "Nível cognitivo detectado (ENTENDER) está abaixo do planejado (ANALISAR). Considere aprofundar a abordagem deste objetivo."
+    },
+    {
+      "tipo": "OBJETIVO_NAO_COBERTO",
+      "severidade": "ALTA",
+      "objetivo_id": "PM-LOG-02",
+      "mensagem": "Objetivo 'Aplicar técnicas de eliminação' não foi abordado. Representa 20% do planejamento."
+    },
+    {
+      "tipo": "OBJETIVO_NAO_COBERTO",
+      "severidade": "ALTA",
+      "objetivo_id": "PM-POR-01",
+      "mensagem": "Objetivo 'Gramática contextualizada' não foi abordado. Representa 20% do planejamento."
+    }
+  ]
+}

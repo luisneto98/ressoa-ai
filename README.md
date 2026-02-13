@@ -2,7 +2,28 @@
 
 Inteligência de Aula, Análise e Previsão de Conteúdo.
 
-Plataforma de análise pedagógica para escolas brasileiras, utilizando BNCC como benchmark curricular.
+Plataforma de análise pedagógica para escolas brasileiras, suportando tanto BNCC (currículo nacional) quanto cursos customizados (preparatórios, livres, técnicos).
+
+## Tipos de Curso Suportados
+
+### 📚 BNCC (Base Nacional Comum Curricular)
+- **Ensino Fundamental II** (6º ao 9º ano)
+- **Ensino Médio** (1º ao 3º ano)
+- **Disciplinas:** Matemática, Língua Portuguesa, Ciências, História, Geografia e mais
+- **Habilidades:** 369+ habilidades BNCC catalogadas
+- **Análise:** Cobertura de habilidades BNCC com evidências da transcrição
+
+### 🎯 Cursos Customizados (Livres)
+- **Preparatórios:** PM, Concursos Públicos, ENEM, Vestibulares
+- **Idiomas:** Inglês (A1-C2), Espanhol, Francês
+- **Técnicos:** TI, Enfermagem, Administração
+- **Corporativos:** Treinamentos empresariais
+- **Análise:** Objetivos de aprendizagem customizados com níveis de Bloom, critérios de evidência personalizados
+
+**Exemplos:**
+- "Preparatório PM 2026" - Matemática, Lógica, Português para provas da Polícia Militar
+- "Inglês Básico A1/A2" - Conversação, gramática contextualizada
+- "Técnico em TI - Redes" - Conceitos de networking, protocolos, segurança
 
 ## Pré-requisitos
 

@@ -12,14 +12,24 @@ import api from '@/lib/api';
 interface Questao {
   numero: number;
   enunciado: string;
-  alternativas: Array<{
+  alternativas?: Array<{
     letra: string;
     texto: string;
     correta: boolean;
   }>;
-  habilidade_bncc: string;
-  nivel_bloom: string;
-  explicacao: string;
+  gabarito?: {
+    resposta_curta?: string;
+    resolucao_passo_a_passo?: string[];
+    criterios_correcao?: string[];
+    dica_professor?: string;
+  };
+  habilidade_bncc?: string;
+  habilidade_relacionada?: string;
+  nivel_bloom: string | number;
+  nivel_bloom_descricao?: string;
+  explicacao?: string;
+  dificuldade?: string;
+  contexto_aula?: string;
 }
 
 interface Exercicios {
@@ -177,7 +187,7 @@ export function ExerciciosTab({
               <strong>{exercicios.questoes.length}</strong> questões geradas
             </div>
             <div>
-              Baseado em: {[...new Set(exercicios.questoes.map(q => q.habilidade_bncc))].join(', ')}
+              Baseado em: {[...new Set(exercicios.questoes.map(q => q.habilidade_bncc || q.habilidade_relacionada).filter(Boolean))].join(', ')}
             </div>
           </div>
         </div>

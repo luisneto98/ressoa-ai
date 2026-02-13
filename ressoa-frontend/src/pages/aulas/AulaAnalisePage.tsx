@@ -36,10 +36,13 @@ interface AnaliseResponse {
     }>;
   };
   analise_qualitativa: {
-    niveis_bloom: any;
-    metodologias: any;
-    adequacao_cognitiva: any;
-    sinais_engajamento: any;
+    taxonomia_bloom: any;
+    metodologia: any;
+    adequacao_linguistica: any;
+    engajamento: any;
+    clareza_comunicacao: any;
+    coerencia_narrativa: any;
+    resumo_geral: any;
   };
   relatorio: string;
   relatorio_original?: string; // ✅ Story 6.2
@@ -48,16 +51,26 @@ interface AnaliseResponse {
     questoes: Array<{
       numero: number;
       enunciado: string;
-      alternativas: Array<{
+      alternativas?: Array<{
         letra: string;
         texto: string;
         correta: boolean;
       }>;
-      habilidade_bncc: string;
-      nivel_bloom: string;
-      explicacao: string;
+      gabarito?: {
+        resposta_curta?: string;
+        resolucao_passo_a_passo?: string[];
+        criterios_correcao?: string[];
+        dica_professor?: string;
+      };
+      habilidade_bncc?: string;
+      habilidade_relacionada?: string;
+      nivel_bloom: string | number;
+      nivel_bloom_descricao?: string;
+      explicacao?: string;
+      dificuldade?: string;
+      contexto_aula?: string;
     }>;
-  }; // ✅ Story 6.3: Updated structure
+  };
   exercicios_original?: any; // ✅ Story 6.3
   tem_edicao_exercicios?: boolean; // ✅ Story 6.3
   status?: string; // ✅ Story 6.2: For readOnly check
@@ -69,28 +82,15 @@ interface AnaliseResponse {
       titulo: string;
       mensagem: string;
       acoes_sugeridas: string[];
+      metadata?: any;
     }>;
-    sugestoes_proxima?: {
-      prioridades: Array<{
-        tipo: 'gap_curricular' | 'reforco' | 'avanco';
-        habilidade_bncc: string;
-        descricao: string;
-        justificativa: string;
-        recursos_sugeridos: string[];
-      }>;
-      pacing_sugerido: {
-        tempo_estimado: string;
-        distribuicao: {
-          revisao: string;
-          novo_conteudo: string;
-          exercicios: string;
-        };
-      };
-      proxima_aula_planejada?: {
-        titulo: string;
-        habilidades: string[];
-        data_prevista: string;
-      };
+    sugestoes_proxima_aula?: string[];
+    resumo?: {
+      total_alertas: number;
+      alertas_criticos: number;
+      alertas_atencao: number;
+      alertas_informativos: number;
+      status_geral: string;
     };
   };
   metadata: {
@@ -188,9 +188,9 @@ export function AulaAnalisePage() {
         </TabsContent>
 
         <TabsContent value="sugestoes">
-          {/* FIX LOW #1: Improved fallback - let component handle missing data */}
           <SugestoesTab
-            sugestoes={analise.alertas?.sugestoes_proxima || { prioridades: [] }}
+            sugestoes={analise.alertas?.sugestoes_proxima_aula || []}
+            alertas={analise.alertas?.alertas || []}
             planejamentoId={analise.planejamento_id}
           />
         </TabsContent>

@@ -131,6 +131,6 @@ development_status:
     11-6-frontend-gestao-objetivos-customizados: done # Code review complete - 11 issues found (8 HIGH, 3 MEDIUM, 2 LOW) - ALL 11 auto-fixed - 11/12 ACs implemented (AC12 tests pending) - Step3Revisao + batch fallback added
     11-7-backend-adaptar-prompts-ia-objetivos-genericos: done # Code review complete - 10 issues found (7 HIGH, 3 MEDIUM, 0 LOW) - 5/10 auto-fixed - 53/53 unit tests passing - Tasks 1-2 DONE (29%) - Tasks 3-7 PENDING (71%) - Story falsely marked review - BLOCKS MERGE - See 11-7-code-review-fixes.md
     11-8-frontend-dashboard-cobertura-adaptado: done # Code review complete - 10 issues found (3 CRITICAL, 4 MEDIUM, 3 LOW) - 7/10 auto-fixed - 21/21 tests passing - AC3 enhanced (adaptive table headers) - Type safety restored - E2E test skeleton created
-    11-9-frontend-relatorio-aula-turmas-custom: backlog
+    11-9-frontend-relatorio-aula-turmas-custom: done # Code review complete - 16 issues found (5 HIGH, 8 MEDIUM, 3 LOW) - 13/16 auto-fixed - 8/8 unit tests passing - All ACs implemented - E2E manual QA deferred
     11-10-testing-e2e-validacao-qualidade: backlog
     epic-11-retrospective: optional

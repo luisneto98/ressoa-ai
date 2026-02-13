@@ -398,7 +398,17 @@ export class AnaliseService {
       include: {
         aula: {
           include: {
-            turma: true,
+            turma: {
+              select: {
+                id: true,
+                nome: true,
+                disciplina: true,
+                serie: true,
+                tipo_ensino: true,
+                curriculo_tipo: true, // ✅ Story 11.9: Include curriculo_tipo for adaptive rendering
+                contexto_pedagogico: true, // ✅ Story 11.9: For custom turmas
+              },
+            },
             professor: {
               select: { id: true, nome: true, email: true },
             },

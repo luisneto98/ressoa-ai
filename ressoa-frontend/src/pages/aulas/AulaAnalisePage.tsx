@@ -23,6 +23,7 @@ interface AnaliseResponse {
       nome: string;
       serie: string;
       disciplina: string;
+      curriculo_tipo?: 'BNCC' | 'CUSTOM'; // ✅ Story 11.9
     };
     status: string;
     planejamento?: any;
@@ -106,11 +107,7 @@ export function AulaAnalisePage() {
 
   const { data: analise, isLoading, error } = useQuery<AnaliseResponse>({
     queryKey: ['analise', aulaId],
-    queryFn: () => api.get(`/aulas/${aulaId}/analise`).then((res) => {
-      console.log('[Análise] Recebida do backend:', res.data);
-      console.log('[BNCC] Cobertura:', res.data?.cobertura_bncc);
-      return res.data;
-    }),
+    queryFn: () => api.get(`/aulas/${aulaId}/analise`).then((res) => res.data),
   });
 
   if (isLoading) {

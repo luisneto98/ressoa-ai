@@ -8,6 +8,7 @@ import { CoberturaBadge } from './CoberturaBadge';
 import { QualitativaCard } from './QualitativaCard';
 import { useToast } from '@/hooks/use-toast';
 import api from '@/lib/api';
+import { getCoberturaHeaderLabel } from '@/lib/cobertura-helpers';
 import {
   Star,
   ThumbsUp,
@@ -26,6 +27,11 @@ import {
 interface RelatorioTabProps {
   analise: {
     id: string;
+    aula: {
+      turma: {
+        curriculo_tipo?: 'BNCC' | 'CUSTOM';
+      };
+    };
     cobertura_bncc: {
       habilidades: Array<any>;
     };
@@ -130,6 +136,7 @@ export function RelatorioTab({ analise }: RelatorioTabProps) {
 
   const resumo = analise.analise_qualitativa.resumo_geral;
   const qual = analise.analise_qualitativa;
+  const curriculoTipo = analise.aula?.turma?.curriculo_tipo || 'BNCC'; // Default to BNCC for backward compat
 
   return (
     <div className="space-y-6">
@@ -189,15 +196,15 @@ export function RelatorioTab({ analise }: RelatorioTabProps) {
         </Card>
       )}
 
-      {/* Cobertura BNCC */}
+      {/* Cobertura de Objetivos (BNCC ou Custom) - AC1 */}
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-lg">
             <BookOpen className="h-5 w-5 text-cyan-ai" />
-            Cobertura BNCC
+            {getCoberturaHeaderLabel(curriculoTipo)}
             {analise.cobertura_bncc?.habilidades?.length > 0 && (
               <Badge variant="secondary" className="ml-auto text-xs font-normal">
-                {analise.cobertura_bncc.habilidades.length} habilidade{analise.cobertura_bncc.habilidades.length > 1 ? 's' : ''}
+                {analise.cobertura_bncc.habilidades.length} {curriculoTipo === 'CUSTOM' ? 'objetivo' : 'habilidade'}{analise.cobertura_bncc.habilidades.length > 1 ? 's' : ''}
               </Badge>
             )}
           </CardTitle>
@@ -209,15 +216,23 @@ export function RelatorioTab({ analise }: RelatorioTabProps) {
               return (
                 <CoberturaBadge
                   key={normalized.codigo || idx}
+                  curriculo_tipo={curriculoTipo}
                   codigo={normalized.codigo}
                   descricao={normalized.descricao}
                   nivel={normalized.nivel_cobertura}
                   evidencias={normalized.evidencias}
+                  unidade_tematica={hab.unidade_tematica}
+                  nivel_bloom_planejado={hab.nivel_bloom_planejado}
+                  nivel_bloom_detectado={hab.nivel_bloom_detectado}
+                  criterios_evidencia={hab.criterios_evidencia}
+                  criterios_atendidos={hab.criterios_atendidos}
                 />
               );
             })
           ) : (
-            <p className="text-sm text-muted-foreground">Nenhuma habilidade identificada na análise.</p>
+            <p className="text-sm text-muted-foreground">
+              {curriculoTipo === 'CUSTOM' ? 'Nenhum objetivo identificado na análise.' : 'Nenhuma habilidade identificada na análise.'}
+            </p>
           )}
         </CardContent>
       </Card>

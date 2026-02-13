@@ -54,3 +54,56 @@ export function getItensTrabalhadasLabel(curriculo_tipo?: 'BNCC' | 'CUSTOM'): st
     ? 'Objetivos Trabalhados'
     : 'Habilidades Trabalhadas';
 }
+
+/**
+ * Returns header label for coverage section in report view (Story 11.9 AC1)
+ *
+ * @param curriculo_tipo - 'BNCC' or 'CUSTOM'
+ * @returns Header text for coverage section
+ */
+export function getCoberturaHeaderLabel(curriculo_tipo?: 'BNCC' | 'CUSTOM'): string {
+  return curriculo_tipo === 'CUSTOM'
+    ? 'Cobertura de Objetivos de Aprendizagem'
+    : 'Cobertura de Habilidades BNCC';
+}
+
+/**
+ * Returns status label for coverage badge (Story 11.9 AC3)
+ *
+ * @param curriculo_tipo - 'BNCC' or 'CUSTOM'
+ * @param nivel_cobertura - Coverage level enum
+ * @returns Localized status label
+ */
+export function getStatusLabel(
+  curriculo_tipo: 'BNCC' | 'CUSTOM' | undefined,
+  nivel_cobertura: 'COMPLETE' | 'PARTIAL' | 'MENTIONED' | 'NOT_COVERED'
+): string {
+  if (curriculo_tipo === 'CUSTOM') {
+    switch (nivel_cobertura) {
+      case 'COMPLETE':
+        return 'Atingido';
+      case 'PARTIAL':
+        return 'Parcialmente Atingido';
+      case 'MENTIONED':
+        return 'Não Atingido'; // Custom não usa "Mencionado", mapeia para "Não Atingido"
+      case 'NOT_COVERED':
+        return 'Não Atingido';
+      default:
+        return 'Desconhecido';
+    }
+  }
+
+  // BNCC (default)
+  switch (nivel_cobertura) {
+    case 'COMPLETE':
+      return 'Completo';
+    case 'PARTIAL':
+      return 'Parcial';
+    case 'MENTIONED':
+      return 'Mencionado';
+    case 'NOT_COVERED':
+      return 'Não Coberto';
+    default:
+      return 'Desconhecido';
+  }
+}

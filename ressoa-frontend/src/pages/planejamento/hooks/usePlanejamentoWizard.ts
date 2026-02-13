@@ -1,12 +1,12 @@
 import { create } from 'zustand';
+import type { Turma as TurmaGlobal, CurriculoTipo, ContextoPedagogicoDto } from '@/types/turma';
 
-export interface Turma {
-  id: string;
-  nome: string;
-  disciplina: string;
-  serie: string;
+// Extend global Turma type with wizard-specific fields
+export interface Turma extends Omit<TurmaGlobal, 'serie'> {
+  serie: string; // Wizard uses string, not Serie enum
   ano_letivo: number;
-  tipo_ensino?: 'FUNDAMENTAL' | 'MEDIO'; // Story 10.5 - optional for backward compatibility
+  curriculo_tipo?: CurriculoTipo; // Story 11.6 - for conditional Step 2
+  contexto_pedagogico?: ContextoPedagogicoDto; // Story 11.6 - for custom objectives
 }
 
 export interface Habilidade {

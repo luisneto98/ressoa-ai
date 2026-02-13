@@ -5,8 +5,12 @@ import { usePlanejamento } from './hooks/usePlanejamento';
 import { WizardNavigation } from './components/WizardNavigation';
 import { Step1DadosGerais } from './components/Step1DadosGerais';
 import { Step2SelecaoHabilidades } from './components/Step2SelecaoHabilidades';
+import { ObjetivosCustomForm } from './components/ObjetivosCustomForm';
 import { Step3Revisao } from './components/Step3Revisao';
 import { Skeleton } from '@/components/ui/skeleton';
+import { CurriculoTipo } from '@/types/turma';
+import type { CreateObjetivoDto } from '@/types/objetivo';
+import { useCreateObjetivosBatch } from './hooks/useCreateObjetivosBatch';
 
 interface PlanejamentoWizardProps {
   mode?: 'create' | 'edit';
@@ -14,7 +18,7 @@ interface PlanejamentoWizardProps {
 
 export const PlanejamentoWizard = ({ mode = 'create' }: PlanejamentoWizardProps) => {
   const { id: planejamentoId } = useParams<{ id: string }>();
-  const { currentStep, setCurrentStep, reset, setFormData, toggleHabilidade } = usePlanejamentoWizard();
+  const { currentStep, setCurrentStep, reset, setFormData, toggleHabilidade, formData, nextStep } = usePlanejamentoWizard();
 
   // VALIDATION: Edit mode requires planejamentoId
   if (mode === 'edit' && !planejamentoId) {
@@ -78,6 +82,19 @@ export const PlanejamentoWizard = ({ mode = 'create' }: PlanejamentoWizardProps)
     }
   };
 
+  // Mutation para salvar objetivos customizados em batch
+  const createObjetivosBatch = useCreateObjetivosBatch(formData.turma_id);
+
+  const handleObjetivosCustomNext = async (objetivos: CreateObjetivoDto[]) => {
+    try {
+      await createObjetivosBatch.mutateAsync(objetivos);
+      nextStep(); // Avança para Step 3
+    } catch (error) {
+      console.error('Erro ao salvar objetivos:', error);
+      // Erro já tratado pelo hook (invalidation de queries)
+    }
+  };
+
   // Show loading skeleton in edit mode while fetching data
   if (mode === 'edit' && isLoading) {
     return (
@@ -105,7 +122,15 @@ export const PlanejamentoWizard = ({ mode = 'create' }: PlanejamentoWizardProps)
 
       <div>
         {currentStep === 1 && <Step1DadosGerais mode={mode} planejamentoId={planejamentoId} />}
-        {currentStep === 2 && <Step2SelecaoHabilidades />}
+        {currentStep === 2 && formData.turma?.curriculo_tipo === CurriculoTipo.CUSTOM && (
+          <ObjetivosCustomForm
+            turma={formData.turma}
+            onNext={handleObjetivosCustomNext}
+          />
+        )}
+        {currentStep === 2 && formData.turma?.curriculo_tipo !== CurriculoTipo.CUSTOM && (
+          <Step2SelecaoHabilidades />
+        )}
         {currentStep === 3 && <Step3Revisao mode={mode} planejamentoId={planejamentoId} />}
       </div>
     </div>

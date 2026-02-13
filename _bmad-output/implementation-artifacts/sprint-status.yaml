@@ -127,8 +127,8 @@ development_status:
     11-2-backend-expandir-turma-curriculo-tipo: done # Code review complete - 8 issues auto-fixed (3 HIGH: validation/redundancy/edge-tests, 5 MEDIUM: migration-docs/types/index/swagger/tests) - 10/10 E2E tests passing
     11-3-backend-planejamento-objetivos-genericos: done # Code review complete - 9 issues found (3 HIGH blocking, 4 MEDIUM auto-fixed, 2 LOW deferred) - 16/16 tests passing - REQUIRES: AC5 performance test, AC3 migration with real data, AC7 coverage ≥85%
     11-4-backend-crud-objetivos-customizados: done # Code review complete - 11 issues found (6 HIGH, 4 MEDIUM, 1 LOW) - 10/11 auto-fixed (91%) - 18 unit + 12 E2E tests passing - PENDING: migration to fix @unique constraint
-    11-5-frontend-cadastro-turma-contexto-pedagogico: backlog
-    11-6-frontend-gestao-objetivos-customizados: backlog
+    11-5-frontend-cadastro-turma-contexto-pedagogico: done # Code review complete - 13 issues found (6 HIGH, 4 MEDIUM, 3 LOW) - 10/13 auto-fixed - 18/18 unit tests passing (2 skipped JSDOM) - ALL 10 ACs PASSING - See 11-5-code-review-summary.md
+    11-6-frontend-gestao-objetivos-customizados: review
     11-7-backend-adaptar-prompts-ia-objetivos-genericos: backlog
     11-8-frontend-dashboard-cobertura-adaptado: backlog
     11-9-frontend-relatorio-aula-turmas-custom: backlog

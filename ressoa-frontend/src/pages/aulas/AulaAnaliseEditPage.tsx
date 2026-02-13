@@ -11,6 +11,7 @@ import { RichTextEditor } from './components/RichTextEditor';
 import { DiffViewer } from './components/DiffViewer';
 import { RejectReportDialog } from './components/RejectReportDialog';
 import api from '@/lib/api';
+import { normalizeAnaliseV3 } from '@/lib/analise-adapter';
 
 export function AulaAnaliseEditPage() {
   const { aulaId } = useParams<{ aulaId: string }>();
@@ -27,7 +28,7 @@ export function AulaAnaliseEditPage() {
   // Fetch analysis
   const { data: analise, isLoading, error } = useQuery({
     queryKey: ['analise', aulaId],
-    queryFn: () => api.get(`/aulas/${aulaId}/analise`).then((res) => res.data),
+    queryFn: () => api.get(`/aulas/${aulaId}/analise`).then((res) => normalizeAnaliseV3(res.data)),
   });
 
   // Initialize content

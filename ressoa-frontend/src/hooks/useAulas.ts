@@ -17,7 +17,7 @@ export const useAulas = (params: FetchAulasParams) => {
             aula.status_processamento
           )
         );
-        return hasProcessing ? 5000 : false; // 5s if processing, else no polling
+        return hasProcessing ? 15000 : false; // 15s if processing, else no polling (increased from 5s to avoid rate limiting)
       } catch (error) {
         console.error('Error in refetchInterval logic:', error);
         return false; // Stop polling on error

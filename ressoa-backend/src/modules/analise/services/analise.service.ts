@@ -8,6 +8,13 @@ import { GPTProvider } from '../../llm/providers/gpt.provider';
 import { LLMProvider } from '../../llm/interfaces/llm-provider.interface';
 import { Analise, StatusAnalise } from '@prisma/client';
 
+interface ContextoPedagogico {
+  objetivo_geral: string;
+  publico_alvo: string;
+  metodologia: string;
+  carga_horaria_total: number;
+}
+
 /**
  * Orquestrador do pipeline serial de 5 prompts para análise pedagógica.
  *
@@ -183,11 +190,12 @@ export class AnaliseService {
             `Configure objetivo_geral, publico_alvo, metodologia e carga_horaria_total.`
           );
         }
+        const contexto = aula.turma.contexto_pedagogico as unknown as ContextoPedagogico;
         return {
-          objetivo_geral: aula.turma.contexto_pedagogico.objetivo_geral,
-          publico_alvo: aula.turma.contexto_pedagogico.publico_alvo,
-          metodologia: aula.turma.contexto_pedagogico.metodologia,
-          carga_horaria_total: aula.turma.contexto_pedagogico.carga_horaria_total,
+          objetivo_geral: contexto.objetivo_geral,
+          publico_alvo: contexto.publico_alvo,
+          metodologia: contexto.metodologia,
+          carga_horaria_total: contexto.carga_horaria_total,
         };
       })() : null,
 

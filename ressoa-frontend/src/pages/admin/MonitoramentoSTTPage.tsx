@@ -99,7 +99,7 @@ export function MonitoramentoSTTPage() {
       apiClient
         .get('/admin/monitoramento/stt', { params: { periodo } })
         .then((res) => res.data),
-    refetchInterval: 60000,
+    refetchInterval: 90000, // Increased from 60s to 90s to avoid rate limiting
   });
 
   if (isLoading) {

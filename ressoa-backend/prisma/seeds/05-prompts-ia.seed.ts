@@ -38,7 +38,7 @@ export async function seedPrompts() {
       const promptData = JSON.parse(fileContent);
 
       // Upsert: create if not exists, update if exists
-      const result = await prisma.promptIA.upsert({
+      const result = await prisma.prompt.upsert({
         where: {
           nome_versao: {
             nome: promptData.nome,
@@ -82,7 +82,7 @@ export async function seedPrompts() {
   console.log(`   - Total processed: ${promptFiles.length}`);
   console.log(`\n📊 Active prompts in database:`);
 
-  const activePrompts = await prisma.promptIA.findMany({
+  const activePrompts = await prisma.prompt.findMany({
     where: { ativo: true },
     select: { nome: true, versao: true },
     orderBy: [{ nome: 'asc' }, { versao: 'desc' }],
@@ -91,9 +91,9 @@ export async function seedPrompts() {
   console.log(`   Total active: ${activePrompts.length}`);
   console.log(`   Breakdown:`);
 
-  const promptNames = Array.from(new Set(activePrompts.map(p => p.nome)));
+  const promptNames = Array.from(new Set(activePrompts.map((p: any) => p.nome)));
   for (const nome of promptNames) {
-    const versions = activePrompts.filter(p => p.nome === nome).map(p => p.versao);
+    const versions = activePrompts.filter((p: any) => p.nome === nome).map((p: any) => p.versao);
     console.log(`     - ${nome}: ${versions.join(', ')}`);
   }
 }

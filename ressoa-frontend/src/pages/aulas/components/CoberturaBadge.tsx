@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Clock, TrendingDown, TrendingUp, Check } from 'lucide-react';
 import { getStatusLabel } from '@/lib/cobertura-helpers';
 import type { NivelCobertura, NivelBloom } from '@/types/analise';
 import { CriteriosEvidenciaCollapse } from './CriteriosEvidenciaCollapse';
@@ -21,6 +21,10 @@ interface CoberturaBadgeProps {
   nivel_bloom_detectado?: NivelBloom;
   criterios_evidencia?: string[];
   criterios_atendidos?: string[];
+
+  // V3 fields
+  tempo_estimado_minutos?: number;
+  adequacao_nivel_cognitivo?: 'ADEQUADO' | 'ABAIXO' | 'ACIMA';
 }
 
 export function CoberturaBadge({
@@ -34,6 +38,8 @@ export function CoberturaBadge({
   nivel_bloom_detectado,
   criterios_evidencia,
   criterios_atendidos,
+  tempo_estimado_minutos,
+  adequacao_nivel_cognitivo,
 }: CoberturaBadgeProps) {
   const getBadgeConfig = (nivel: NivelCobertura) => {
     const label = getStatusLabel(curriculo_tipo, nivel);
@@ -104,6 +110,60 @@ export function CoberturaBadge({
                     <TooltipContent className="max-w-xs">
                       <p className="text-sm">
                         Nível cognitivo abordado difere do planejado. Considere aprofundar na próxima aula.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+            </>
+          )}
+
+          {/* V3: Tempo estimado */}
+          {tempo_estimado_minutos && (
+            <Badge variant="outline" className="text-xs flex items-center gap-1">
+              <Clock className="h-3 w-3" />
+              {tempo_estimado_minutos} min
+            </Badge>
+          )}
+
+          {/* V3: Adequação do nível cognitivo */}
+          {adequacao_nivel_cognitivo && (
+            <>
+              {adequacao_nivel_cognitivo === 'ADEQUADO' && (
+                <Badge className="bg-green-100 text-green-800 text-xs flex items-center gap-1">
+                  <Check className="h-3 w-3" />
+                  Nível Adequado
+                </Badge>
+              )}
+              {adequacao_nivel_cognitivo === 'ABAIXO' && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Badge className="bg-amber-100 text-amber-800 text-xs flex items-center gap-1 cursor-help">
+                        <TrendingDown className="h-3 w-3" />
+                        Nível Abaixo
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      <p className="text-sm">
+                        O nível cognitivo abordado está abaixo do planejado. Considere aprofundar na próxima aula.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+              {adequacao_nivel_cognitivo === 'ACIMA' && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Badge className="bg-blue-100 text-blue-800 text-xs flex items-center gap-1 cursor-help">
+                        <TrendingUp className="h-3 w-3" />
+                        Nível Acima
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      <p className="text-sm">
+                        O nível cognitivo abordado está acima do planejado. Excelente aprofundamento!
                       </p>
                     </TooltipContent>
                   </Tooltip>

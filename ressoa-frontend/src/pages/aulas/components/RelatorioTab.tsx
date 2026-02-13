@@ -65,51 +65,6 @@ function NotaCircle({ nota }: { nota: number }) {
 
 type NivelCobertura = 'COMPLETE' | 'PARTIAL' | 'MENTIONED' | 'NOT_COVERED';
 
-/**
- * Normaliza nivel_cobertura do backend que pode vir como número (1-3) ou string
- */
-function normalizeNivelCobertura(nivel: unknown): NivelCobertura {
-  if (typeof nivel === 'string') {
-    const upper = nivel.toUpperCase();
-    if (['COMPLETE', 'PARTIAL', 'MENTIONED', 'NOT_COVERED'].includes(upper)) {
-      return upper as NivelCobertura;
-    }
-  }
-  if (typeof nivel === 'number') {
-    if (nivel >= 3) return 'COMPLETE';
-    if (nivel === 2) return 'PARTIAL';
-    if (nivel === 1) return 'MENTIONED';
-    return 'NOT_COVERED';
-  }
-  return 'NOT_COVERED';
-}
-
-/**
- * Normaliza habilidade do backend que pode ter formatos diferentes:
- * - Formato 1: { habilidade_codigo, observacoes, nivel_cobertura: number, evidencias: string[] }
- * - Formato 2: { codigo, descricao, nivel_cobertura: string, evidencias: {texto_literal}[] }
- */
-function normalizeHabilidade(hab: any): {
-  codigo: string;
-  descricao: string;
-  nivel_cobertura: NivelCobertura;
-  evidencias: Array<{ texto_literal: string }>;
-} {
-  const codigo = hab.codigo || hab.habilidade_codigo || 'N/A';
-  const descricao = hab.descricao || hab.observacoes || '';
-  const nivel_cobertura = normalizeNivelCobertura(hab.nivel_cobertura);
-
-  // Evidências podem ser string[] ou {texto_literal: string}[]
-  let evidencias: Array<{ texto_literal: string }> = [];
-  if (Array.isArray(hab.evidencias)) {
-    evidencias = hab.evidencias.map((ev: any) =>
-      typeof ev === 'string' ? { texto_literal: ev } : ev
-    );
-  }
-
-  return { codigo, descricao, nivel_cobertura, evidencias };
-}
-
 export function RelatorioTab({ analise }: RelatorioTabProps) {
   const navigate = useNavigate();
   const { aulaId } = useParams<{ aulaId: string }>();
@@ -137,6 +92,7 @@ export function RelatorioTab({ analise }: RelatorioTabProps) {
   const resumo = analise.analise_qualitativa.resumo_geral;
   const qual = analise.analise_qualitativa;
   const curriculoTipo = analise.aula?.turma?.curriculo_tipo || 'BNCC'; // Default to BNCC for backward compat
+  const comentarioSintetico = (analise.analise_qualitativa as any).comentario_sintetico;
 
   return (
     <div className="space-y-6">
@@ -196,6 +152,21 @@ export function RelatorioTab({ analise }: RelatorioTabProps) {
         </Card>
       )}
 
+      {/* Comentário Sintético (V3) */}
+      {comentarioSintetico && (
+        <Card className="bg-gradient-to-r from-cyan-50 to-blue-50 border-cyan-200">
+          <CardContent className="pt-5 pb-5">
+            <h3 className="text-sm font-semibold text-cyan-900 mb-2 flex items-center gap-2">
+              <MessageCircle className="h-4 w-4" />
+              Resumo da Aula
+            </h3>
+            <p className="text-sm text-gray-700 leading-relaxed italic">
+              "{comentarioSintetico}"
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Cobertura de Objetivos (BNCC ou Custom) - AC1 */}
       <Card>
         <CardHeader className="pb-3">
@@ -211,24 +182,23 @@ export function RelatorioTab({ analise }: RelatorioTabProps) {
         </CardHeader>
         <CardContent className="space-y-3">
           {analise.cobertura_bncc?.habilidades?.length > 0 ? (
-            analise.cobertura_bncc.habilidades.map((hab, idx) => {
-              const normalized = normalizeHabilidade(hab);
-              return (
-                <CoberturaBadge
-                  key={normalized.codigo || idx}
-                  curriculo_tipo={curriculoTipo}
-                  codigo={normalized.codigo}
-                  descricao={normalized.descricao}
-                  nivel={normalized.nivel_cobertura}
-                  evidencias={normalized.evidencias}
-                  unidade_tematica={hab.unidade_tematica}
-                  nivel_bloom_planejado={hab.nivel_bloom_planejado}
-                  nivel_bloom_detectado={hab.nivel_bloom_detectado}
-                  criterios_evidencia={hab.criterios_evidencia}
-                  criterios_atendidos={hab.criterios_atendidos}
-                />
-              );
-            })
+            analise.cobertura_bncc.habilidades.map((hab, idx) => (
+              <CoberturaBadge
+                key={hab.codigo || idx}
+                curriculo_tipo={curriculoTipo}
+                codigo={hab.codigo}
+                descricao={hab.descricao}
+                nivel={hab.nivel_cobertura}
+                evidencias={hab.evidencias}
+                unidade_tematica={hab.unidade_tematica}
+                nivel_bloom_planejado={hab.nivel_bloom_planejado}
+                nivel_bloom_detectado={hab.nivel_bloom_detectado}
+                criterios_evidencia={hab.criterios_evidencia}
+                criterios_atendidos={hab.criterios_atendidos}
+                tempo_estimado_minutos={hab.tempo_estimado_minutos}
+                adequacao_nivel_cognitivo={hab.adequacao_nivel_cognitivo}
+              />
+            ))
           ) : (
             <p className="text-sm text-muted-foreground">
               {curriculoTipo === 'CUSTOM' ? 'Nenhum objetivo identificado na análise.' : 'Nenhuma habilidade identificada na análise.'}
@@ -283,7 +253,7 @@ export function RelatorioTab({ analise }: RelatorioTabProps) {
           <CardTitle className="text-lg">Relatório da Aula</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="prose max-w-none prose-base prose-headings:text-deep-navy prose-headings:font-montserrat prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-3 prose-h2:border-b prose-h2:border-gray-200 prose-h2:pb-2 prose-h3:text-base prose-h3:mt-6 prose-h3:mb-2 prose-p:text-deep-navy/80 prose-p:leading-relaxed prose-p:mb-4 prose-li:text-deep-navy/80 prose-li:leading-relaxed prose-strong:text-deep-navy prose-ul:my-3 prose-ol:my-3 prose-blockquote:border-l-cyan-ai prose-blockquote:text-deep-navy/70">
+          <div className="prose max-w-none">
             <ReactMarkdown>{analise.relatorio}</ReactMarkdown>
           </div>
         </CardContent>

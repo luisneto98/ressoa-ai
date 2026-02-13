@@ -9,8 +9,10 @@ import { RelatorioTab } from './components/RelatorioTab';
 import { ExerciciosTab } from './components/ExerciciosTab';
 import { SugestoesTab } from './components/SugestoesTab';
 import { AlertasSection } from './components/AlertasSection';
+import { AlertasResumo } from './components/AlertasResumo';
 import api from '@/lib/api';
 import { AxiosError } from 'axios';
+import { normalizeAnaliseV3 } from '@/lib/analise-adapter';
 
 // MEDIUM FIX: TypeScript interface for API response (type safety)
 interface AnaliseResponse {
@@ -93,6 +95,7 @@ interface AnaliseResponse {
       alertas_informativos: number;
       status_geral: string;
     };
+    score_geral_aula?: number;
   };
   metadata: {
     tempo_processamento_ms: number;
@@ -107,7 +110,7 @@ export function AulaAnalisePage() {
 
   const { data: analise, isLoading, error } = useQuery<AnaliseResponse>({
     queryKey: ['analise', aulaId],
-    queryFn: () => api.get(`/aulas/${aulaId}/analise`).then((res) => res.data),
+    queryFn: () => api.get(`/aulas/${aulaId}/analise`).then((res) => normalizeAnaliseV3(res.data)),
   });
 
   if (isLoading) {
@@ -192,6 +195,14 @@ export function AulaAnalisePage() {
           />
         </TabsContent>
       </Tabs>
+
+      {/* Resumo de Alertas */}
+      {analise.alertas?.resumo && (
+        <AlertasResumo
+          resumo={analise.alertas.resumo}
+          score_geral={analise.alertas.score_geral_aula}
+        />
+      )}
 
       {/* Alertas (sempre visíveis) - MEDIUM FIX: Optional chaining */}
       {analise.alertas?.alertas && analise.alertas.alertas.length > 0 && (

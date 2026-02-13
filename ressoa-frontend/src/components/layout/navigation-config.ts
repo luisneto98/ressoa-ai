@@ -7,6 +7,7 @@ import {
   Building2,
   Shield,
   Settings,
+  GraduationCap,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -26,12 +27,15 @@ const NAVIGATION: Record<string, NavItem[]> = {
   ],
   COORDENADOR: [
     { label: 'Professores', path: '/dashboard/coordenador/professores', icon: Users },
-    { label: 'Turmas', path: '/dashboard/coordenador/turmas', icon: Building2 },
+    { label: 'Cadastro de Turmas', path: '/turmas', icon: GraduationCap },
+    { label: 'Dashboard Turmas', path: '/dashboard/coordenador/turmas', icon: BarChart3 },
+    { label: 'Planejamentos', path: '/planejamentos', icon: BookOpen },
   ],
   DIRETOR: [
     { label: 'Visão Geral', path: '/dashboard/diretor', icon: Building2 },
     { label: 'Professores', path: '/dashboard/coordenador/professores', icon: Users },
-    { label: 'Turmas', path: '/dashboard/coordenador/turmas', icon: BarChart3 },
+    { label: 'Cadastro de Turmas', path: '/turmas', icon: GraduationCap },
+    { label: 'Dashboard Turmas', path: '/dashboard/coordenador/turmas', icon: BarChart3 },
   ],
   ADMIN: [
     { label: 'Monitoramento STT', path: '/admin/monitoramento/stt', icon: Settings },

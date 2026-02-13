@@ -32,6 +32,9 @@ const queryClient = new QueryClient({
     queries: {
       staleTime: 1000 * 60 * 5, // 5 minutes
       retry: 1,
+      refetchOnWindowFocus: false, // Prevent refetch on window focus to avoid rate limiting
+      refetchOnMount: false, // Prevent refetch on component mount (use cached data)
+      refetchOnReconnect: false, // Prevent refetch on network reconnect
     },
   },
 });
@@ -68,7 +71,7 @@ function App() {
           <Route
             path="/minhas-aulas"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute roles={['PROFESSOR']}>
                 <AulasListPage />
               </ProtectedRoute>
             }
@@ -152,7 +155,7 @@ function App() {
           <Route
             path="/dashboard/cobertura-pessoal"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute roles={['PROFESSOR']}>
                 <CoberturaPessoalPage />
               </ProtectedRoute>
             }
@@ -198,7 +201,7 @@ function App() {
           <Route
             path="/aulas/upload"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute roles={['PROFESSOR']}>
                 <UploadAulaPage />
               </ProtectedRoute>
             }
@@ -206,7 +209,7 @@ function App() {
           <Route
             path="/aulas/:aulaId/analise"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute roles={['PROFESSOR']}>
                 <AulaAnalisePage />
               </ProtectedRoute>
             }
@@ -214,7 +217,7 @@ function App() {
           <Route
             path="/aulas/:aulaId/analise/edit"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute roles={['PROFESSOR']}>
                 <AulaAnaliseEditPage />
               </ProtectedRoute>
             }
@@ -224,7 +227,7 @@ function App() {
           <Route
             path="/planejamentos/novo"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute roles={['PROFESSOR']}>
                 <PlanejamentoWizard mode="create" />
               </ProtectedRoute>
             }
@@ -232,7 +235,7 @@ function App() {
           <Route
             path="/planejamentos/:id/editar"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute roles={['PROFESSOR']}>
                 <PlanejamentoWizard mode="edit" />
               </ProtectedRoute>
             }
@@ -240,7 +243,7 @@ function App() {
           <Route
             path="/planejamentos"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute roles={['PROFESSOR', 'COORDENADOR', 'DIRETOR']}>
                 <PlanejamentosListPage />
               </ProtectedRoute>
             }
@@ -250,7 +253,7 @@ function App() {
           <Route
             path="/turmas"
             element={
-              <ProtectedRoute roles={['DIRETOR', 'COORDENADOR']}>
+              <ProtectedRoute roles={['COORDENADOR', 'DIRETOR']}>
                 <TurmasListPage />
               </ProtectedRoute>
             }

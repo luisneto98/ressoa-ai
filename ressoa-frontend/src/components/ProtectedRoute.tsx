@@ -1,6 +1,9 @@
 import { Navigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { useAuthStore } from '@/stores/auth.store';
+import { getHomeRoute } from '@/utils/routing';
+import { toast } from 'sonner';
+import { useEffect } from 'react';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -23,6 +26,20 @@ function isTokenExpired(token: string): boolean {
   }
 }
 
+/**
+ * Component to handle unauthorized access redirect
+ * Separated to avoid React Hooks violation (useEffect in conditional)
+ */
+function UnauthorizedRedirect({ userRole }: { userRole: string }) {
+  const homePath = getHomeRoute(userRole);
+
+  useEffect(() => {
+    toast.error('Você não tem permissão para acessar esta página');
+  }, []);
+
+  return <Navigate to={homePath} replace />;
+}
+
 export function ProtectedRoute({ children, roles }: ProtectedRouteProps) {
   const { user, accessToken, logout } = useAuthStore();
 
@@ -39,17 +56,8 @@ export function ProtectedRoute({ children, roles }: ProtectedRouteProps) {
   if (roles && roles.length > 0) {
     const userHasRole = roles.includes(user.role);
     if (!userHasRole) {
-      // User authenticated but doesn't have required role
-      return (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold mb-2">Acesso Negado</h1>
-            <p className="text-muted-foreground">
-              Você não tem permissão para acessar esta página.
-            </p>
-          </div>
-        </div>
-      );
+      // User authenticated but doesn't have required role - redirect to home with toast
+      return <UnauthorizedRedirect userRole={user.role} />;
     }
   }
 

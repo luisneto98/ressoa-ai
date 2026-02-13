@@ -133,4 +133,5 @@ development_status:
     11-8-frontend-dashboard-cobertura-adaptado: done # Code review complete - 10 issues found (3 CRITICAL, 4 MEDIUM, 3 LOW) - 7/10 auto-fixed - 21/21 tests passing - AC3 enhanced (adaptive table headers) - Type safety restored - E2E test skeleton created
     11-9-frontend-relatorio-aula-turmas-custom: done # Code review complete - 16 issues found (5 HIGH, 8 MEDIUM, 3 LOW) - 13/16 auto-fixed - 8/8 unit tests passing - All ACs implemented - E2E manual QA deferred
     11-10-testing-e2e-validacao-qualidade: done # Code review complete - 10 issues found (3 CRITICAL, 4 HIGH, 3 MEDIUM), 6 auto-fixed, 4 validated deferrals - E2E infrastructure complete (Playwright + Page Objects + scripts), backend E2E tests (570+461 lines), docs (README + 363L user guide + 475L API + 493L validation report) - Epic 11 GO for merge
+    11-11-alinhamento-permissoes-frontend-backend-rbac: done # Code review complete - 10 issues found, 8 auto-fixed (5 HIGH, 3 MEDIUM) - 13/13 tests passing - BLOCKER: files need commit
     epic-11-retrospective: optional

@@ -209,11 +209,12 @@ export class TurmasService {
     }
 
     // Build update data with proper type casting for JSON fields
+    const { contexto_pedagogico, ...restDto } = dto;
     const updateData: Prisma.TurmaUpdateInput = {
-      ...dto,
-      contexto_pedagogico: dto.contexto_pedagogico !== undefined
-        ? (dto.contexto_pedagogico as Prisma.InputJsonValue | null)
-        : undefined,
+      ...restDto,
+      ...(contexto_pedagogico !== undefined && {
+        contexto_pedagogico: contexto_pedagogico as unknown as Prisma.InputJsonValue,
+      }),
     };
 
     const turmaAtualizada = await this.prisma.turma.update({

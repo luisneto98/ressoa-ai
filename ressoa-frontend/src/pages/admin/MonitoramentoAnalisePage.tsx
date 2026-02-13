@@ -84,7 +84,7 @@ export function MonitoramentoAnalisePage() {
         apiClient
           .get('/admin/monitoramento/analise', { params: { periodo } })
           .then((res) => res.data),
-      refetchInterval: 30000,
+      refetchInterval: 60000, // Increased from 30s to 60s to avoid rate limiting
     });
 
   if (isLoading) {

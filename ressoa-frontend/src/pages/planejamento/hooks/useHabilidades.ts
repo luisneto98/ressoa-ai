@@ -3,6 +3,7 @@ import { apiClient } from '../../../api/axios';
 import type { Habilidade } from './usePlanejamentoWizard';
 
 interface UseHabilidadesParams {
+  tipo_ensino?: 'FUNDAMENTAL' | 'MEDIO'; // Story 10.5
   disciplina?: string;
   serie?: number;
   unidade_tematica?: string;
@@ -26,6 +27,10 @@ export const useHabilidades = (params: UseHabilidadesParams) => {
       // Backend returns pagination response, extract just the array
       return data.data;
     },
-    enabled: !!params.disciplina && !!params.serie,
+    // Story 10.5: Enable query for EM without serie, or for FUNDAMENTAL with serie
+    enabled:
+      !!params.disciplina &&
+      (params.tipo_ensino === 'MEDIO' || !!params.serie),
+    staleTime: 5 * 60 * 1000, // 5 minutes - habilidades are stable
   });
 };

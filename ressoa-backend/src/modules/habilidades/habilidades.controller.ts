@@ -15,8 +15,9 @@ import { RoleUsuario } from '@prisma/client';
  *
  * Features:
  * - Full-text search (PostgreSQL tsvector)
- * - Filtros combinados (disciplina, serie, unidade_tematica)
+ * - Filtros combinados (tipo_ensino, disciplina, serie, unidade_tematica) - Story 10.5
  * - Blocos compartilhados LP (EF67LP, EF69LP, EF89LP)
+ * - Ensino Médio support (tipo_ensino=MEDIO, sem filtro de série)
  * - Pagination (limit 50, max 200)
  * - Redis cache (7 dias TTL)
  *
@@ -32,8 +33,9 @@ export class HabilidadesController {
    * GET /api/v1/habilidades
    *
    * Query params (todos opcionais):
+   * - tipo_ensino: FUNDAMENTAL | MEDIO (Story 10.5 - filtrar por tipo de ensino)
    * - disciplina: MATEMATICA | LINGUA_PORTUGUESA | CIENCIAS
-   * - serie: 6-9 (considera blocos compartilhados LP)
+   * - serie: 6-9 (considera blocos compartilhados LP) - APENAS para FUNDAMENTAL
    * - unidade_tematica: substring match (ex: "Álgebra")
    * - search: full-text search no código + descrição
    * - limit: limite de resultados (default 50, max 200)
@@ -51,6 +53,8 @@ export class HabilidadesController {
    *
    * @example
    * GET /api/v1/habilidades?disciplina=MATEMATICA&serie=6
+   * GET /api/v1/habilidades?tipo_ensino=MEDIO&disciplina=MATEMATICA (Ensino Médio)
+   * GET /api/v1/habilidades?tipo_ensino=MEDIO&disciplina=CIENCIAS_HUMANAS (Ciências Humanas EM)
    * GET /api/v1/habilidades?search=equações&limit=10
    * GET /api/v1/habilidades?disciplina=LINGUA_PORTUGUESA&serie=7 (inclui EF67LP, EF69LP)
    *

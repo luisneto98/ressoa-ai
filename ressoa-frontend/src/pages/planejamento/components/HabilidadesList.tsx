@@ -84,6 +84,20 @@ export const HabilidadesList = ({
                   <p className="line-clamp-2 text-sm text-gray-600">
                     {habilidade.descricao}
                   </p>
+
+                  {/* Story 10.5: Show Ensino Médio metadata */}
+                  {(habilidade.metadata?.area_conhecimento || habilidade.codigo.startsWith('EM13')) && ( /* Fix Issue #11 */
+                    <p className="mt-1 text-xs text-gray-500">
+                      Área: {habilidade.metadata?.area_conhecimento || 'Área não especificada'}
+                    </p>
+                  )}
+                  {habilidade.competencia_especifica && (
+                    <p className="text-xs text-gray-500">
+                      {habilidade.competencia_especifica}
+                    </p>
+                  )}
+
+                  {/* Unidade Temática (Fundamental and some EM) */}
                   {habilidade.unidade_tematica && (
                     <Badge variant="secondary" className="mt-1">
                       {habilidade.unidade_tematica}

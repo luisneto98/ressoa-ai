@@ -6,6 +6,7 @@ export interface Turma {
   disciplina: string;
   serie: string;
   ano_letivo: number;
+  tipo_ensino?: 'FUNDAMENTAL' | 'MEDIO'; // Story 10.5 - optional for backward compatibility
 }
 
 export interface Habilidade {
@@ -13,6 +14,10 @@ export interface Habilidade {
   codigo: string;
   descricao: string;
   unidade_tematica?: string;
+  competencia_especifica?: string; // Story 10.5 - For Ensino Médio
+  metadata?: {
+    area_conhecimento?: string; // Story 10.5 - For Ensino Médio
+  };
 }
 
 interface PlanejamentoWizardState {

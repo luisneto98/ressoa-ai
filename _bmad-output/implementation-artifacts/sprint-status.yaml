@@ -115,7 +115,7 @@ development_status:
     10-2-backend-api-crud-turmas-rbac: done # Code review complete - 10 issues found & auto-fixed (8 HIGH: duplicate tests, missing test, uniqueness in update, performance index | 2 MEDIUM: status, docs) - 25/25 tests passing - E2E validation pending (Task 10)
     10-3-backend-seeding-habilidades-bncc-ensino-medio: done # Code review complete - 10 issues found (7 fixed, 2 false positives, 1 deferred) - 7/7 unit tests passing - Integration tests created
     10-4-frontend-tela-gestao-turmas-crud: done # Code review complete - 10 issues found and auto-fixed (3 HIGH, 5 MEDIUM, 2 LOW) - 13/15 tests passing (2 skipped JSDOM limitation) - See TESTING_NOTES_RADIX_SELECT.md
-    10-5-frontend-adaptar-seletor-habilidades-ensino-medio: backlog
+    10-5-frontend-adaptar-seletor-habilidades-ensino-medio: done
     10-6-backend-ajustar-prompts-ia-ensino-medio: backlog
     10-7-frontend-filtros-tipo-ensino-dashboards: backlog
     10-8-backend-query-optimization-turmas-multi-tipo: backlog

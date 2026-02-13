@@ -1,5 +1,6 @@
 import { IsOptional, IsEnum, IsInt, Min, Max, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
+import { TipoEnsino } from '@prisma/client';
 
 /**
  * Enum para disciplinas BNCC (MVP)
@@ -10,14 +11,16 @@ export enum DisciplinaEnum {
   MATEMATICA = 'MATEMATICA',
   LINGUA_PORTUGUESA = 'LINGUA_PORTUGUESA',
   CIENCIAS = 'CIENCIAS',
+  CIENCIAS_HUMANAS = 'CIENCIAS_HUMANAS', // Story 10.5 - Fix Issue #6: EM support
 }
 
 /**
  * DTO para query params do endpoint GET /api/v1/habilidades
  *
  * Suporta filtros combinados:
+ * - tipo_ensino: filtra por tipo de ensino (FUNDAMENTAL, MEDIO) - Story 10.5
  * - disciplina: filtra por disciplina BNCC
- * - serie: filtra por ano escolar (6-9), considera blocos compartilhados LP
+ * - serie: filtra por ano escolar (6-9), considera blocos compartilhados LP (apenas FUNDAMENTAL)
  * - unidade_tematica: filtra por unidade temática (ex: Álgebra, Números)
  * - search: full-text search no código e descrição (PostgreSQL tsvector)
  * - limit: limite de resultados por página (default 50, max 200)
@@ -25,9 +28,15 @@ export enum DisciplinaEnum {
  */
 export class QueryHabilidadesDto {
   @IsOptional()
+  @IsEnum(TipoEnsino, {
+    message: 'Tipo de ensino inválido. Valores permitidos: FUNDAMENTAL, MEDIO',
+  })
+  tipo_ensino?: TipoEnsino;
+
+  @IsOptional()
   @IsEnum(DisciplinaEnum, {
     message:
-      'Disciplina inválida. Valores permitidos: MATEMATICA, LINGUA_PORTUGUESA, CIENCIAS',
+      'Disciplina inválida. Valores permitidos: MATEMATICA, LINGUA_PORTUGUESA, CIENCIAS, CIENCIAS_HUMANAS',
   })
   disciplina?: DisciplinaEnum;
 

@@ -128,6 +128,12 @@ export class HabilidadesService {
     const conditions: string[] = ['ativa = true'];
     const whereParams: any[] = []; // Parameters for WHERE clause (shared by both queries)
 
+    // Add tipo_ensino filter (Story 10.5)
+    if (where.tipo_ensino) {
+      whereParams.push(where.tipo_ensino);
+      conditions.push(`tipo_ensino = $${whereParams.length}`);
+    }
+
     // Add disciplina filter
     if (where.disciplina) {
       whereParams.push(where.disciplina);
@@ -161,10 +167,10 @@ export class HabilidadesService {
     }
 
     // Add full-text search
-    const searchQuery = search.split(' ').join(' & ');
-    whereParams.push(searchQuery);
+    // Fix Issue #3: Use plainto_tsquery (safer, auto-escapes special chars)
+    whereParams.push(search);
     conditions.push(
-      `searchable @@ to_tsquery('portuguese', $${whereParams.length})`,
+      `searchable @@ plainto_tsquery('portuguese', $${whereParams.length})`,
     );
 
     const whereClause =
@@ -173,7 +179,7 @@ export class HabilidadesService {
     // Query data with pagination (separate parameters for LIMIT/OFFSET)
     const dataParams = [...whereParams, limit, offset];
     const dataQuery = `
-      SELECT id, codigo, descricao, disciplina, ano_inicio, ano_fim, unidade_tematica, objeto_conhecimento
+      SELECT id, codigo, descricao, disciplina, tipo_ensino, ano_inicio, ano_fim, unidade_tematica, objeto_conhecimento, competencia_especifica, metadata
       FROM habilidades
       ${whereClause}
       ORDER BY disciplina ASC, codigo ASC
@@ -208,8 +214,9 @@ export class HabilidadesService {
    * Query database com filtros combinados
    *
    * Filtros suportados:
+   * - tipo_ensino: FUNDAMENTAL | MEDIO (Story 10.5)
    * - disciplina: MATEMATICA | LINGUA_PORTUGUESA | CIENCIAS
-   * - serie: 6-9 (considera blocos compartilhados LP)
+   * - serie: 6-9 (considera blocos compartilhados LP) - APENAS para FUNDAMENTAL
    * - unidade_tematica: substring match (ex: "Álgebra")
    * - search: full-text search no código + descrição (PostgreSQL tsvector)
    * - limit/offset: pagination
@@ -221,6 +228,7 @@ export class HabilidadesService {
     query: QueryHabilidadesDto,
   ): Promise<HabilidadesResponse> {
     const {
+      tipo_ensino,
       disciplina,
       serie,
       unidade_tematica,
@@ -234,13 +242,19 @@ export class HabilidadesService {
       ativa: true, // Exclude soft-deleted
     };
 
+    // Filter: tipo_ensino (Story 10.5 - backward compatible)
+    if (tipo_ensino) {
+      where.tipo_ensino = tipo_ensino;
+    }
+
     // Filter: disciplina
     if (disciplina) {
       where.disciplina = disciplina;
     }
 
     // Filter: serie (CRITICAL: considera blocos compartilhados LP)
-    if (serie) {
+    // APENAS para FUNDAMENTAL - Ensino Médio não filtra por série (é transversal)
+    if (serie && tipo_ensino !== 'MEDIO') {
       // Habilidades que cobrem esta série:
       // - ano_inicio <= serie AND ano_fim >= serie
       // Ex: serie=7 retorna:

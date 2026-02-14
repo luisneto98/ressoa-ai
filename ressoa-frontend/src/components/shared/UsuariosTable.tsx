@@ -26,12 +26,13 @@ import {
 } from '@/components/ui/pagination';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { IconSearch, IconUsers, IconEdit, IconUserOff } from '@tabler/icons-react';
+import { IconSearch, IconUsers, IconEdit, IconUserOff, IconUserCheck } from '@tabler/icons-react';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useUsuarios } from '@/hooks/useUsuarios';
 import { useAuthStore } from '@/stores/auth.store';
 import { EditUsuarioDialog } from './EditUsuarioDialog';
 import { DeactivateUsuarioDialog } from './DeactivateUsuarioDialog';
+import { ReactivateUsuarioDialog } from './ReactivateUsuarioDialog';
 import type { UsuarioListItem } from '@/api/usuarios';
 
 type RoleOption = 'PROFESSOR' | 'COORDENADOR' | 'DIRETOR' | 'ADMIN';
@@ -88,6 +89,7 @@ export function UsuariosTable({
   const [roleFilter, setRoleFilter] = useState<string>('');
   const [editingUsuario, setEditingUsuario] = useState<UsuarioListItem | null>(null);
   const [deactivatingUsuario, setDeactivatingUsuario] = useState<UsuarioListItem | null>(null);
+  const [reactivatingUsuario, setReactivatingUsuario] = useState<UsuarioListItem | null>(null);
   const debouncedSearch = useDebouncedValue(searchValue, 300);
   const callerRole = useAuthStore((s) => s.user?.role);
 
@@ -96,6 +98,7 @@ export function UsuariosTable({
     limit: 20,
     search: debouncedSearch || undefined,
     role: roleFilter || undefined,
+    includeInactive: true,
   });
 
   // Reset page when debounced search or role filter actually changes
@@ -191,6 +194,7 @@ export function UsuariosTable({
                   <TableHead>Email</TableHead>
                   {showRole && <TableHead>Perfil</TableHead>}
                   {showEscola && <TableHead>Escola</TableHead>}
+                  <TableHead>Status</TableHead>
                   <TableHead>Data Cadastro</TableHead>
                   <TableHead className="w-28">Ações</TableHead>
                 </TableRow>
@@ -221,31 +225,55 @@ export function UsuariosTable({
                     {showEscola && (
                       <TableCell>{usuario.escola_nome ?? '—'}</TableCell>
                     )}
+                    <TableCell>
+                      {usuario.deleted_at ? (
+                        <Badge variant="outline" className="text-muted-foreground">
+                          Inativo
+                        </Badge>
+                      ) : (
+                        <Badge variant="default">Ativo</Badge>
+                      )}
+                    </TableCell>
                     <TableCell>{formatDate(usuario.created_at)}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
                         {canEdit(callerRole, usuario.role) && (
                           <>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-11 w-11"
-                              title="Editar usuário"
-                              aria-label={`Editar ${usuario.nome}`}
-                              onClick={() => setEditingUsuario(usuario)}
-                            >
-                              <IconEdit className="size-5" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-11 w-11 text-destructive hover:text-destructive"
-                              title="Desativar usuário"
-                              aria-label={`Desativar ${usuario.nome}`}
-                              onClick={() => setDeactivatingUsuario(usuario)}
-                            >
-                              <IconUserOff className="size-5" />
-                            </Button>
+                            {usuario.deleted_at ? (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-11 w-11"
+                                title="Reativar usuário"
+                                aria-label={`Reativar ${usuario.nome}`}
+                                onClick={() => setReactivatingUsuario(usuario)}
+                              >
+                                <IconUserCheck className="size-5" />
+                              </Button>
+                            ) : (
+                              <>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-11 w-11"
+                                  title="Editar usuário"
+                                  aria-label={`Editar ${usuario.nome}`}
+                                  onClick={() => setEditingUsuario(usuario)}
+                                >
+                                  <IconEdit className="size-5" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-11 w-11 text-destructive hover:text-destructive"
+                                  title="Desativar usuário"
+                                  aria-label={`Desativar ${usuario.nome}`}
+                                  onClick={() => setDeactivatingUsuario(usuario)}
+                                >
+                                  <IconUserOff className="size-5" />
+                                </Button>
+                              </>
+                            )}
                           </>
                         )}
                       </div>
@@ -341,6 +369,19 @@ export function UsuariosTable({
           usuario={{
             id: deactivatingUsuario.id,
             nome: deactivatingUsuario.nome,
+          }}
+        />
+      )}
+
+      {reactivatingUsuario && (
+        <ReactivateUsuarioDialog
+          open={!!reactivatingUsuario}
+          onOpenChange={(open) => {
+            if (!open) setReactivatingUsuario(null);
+          }}
+          usuario={{
+            id: reactivatingUsuario.id,
+            nome: reactivatingUsuario.nome,
           }}
         />
       )}

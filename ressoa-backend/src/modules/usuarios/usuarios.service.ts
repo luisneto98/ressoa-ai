@@ -17,13 +17,15 @@ export class UsuariosService {
     user: { userId: string; role: RoleUsuario },
     query: ListUsuariosQueryDto,
   ) {
-    const { page = 1, limit = 20, search, role } = query;
+    const { page = 1, limit = 20, search, role, includeInactive } = query;
     const skip = (page - 1) * limit;
 
-    // Exclude soft-deleted users
-    const where: Prisma.UsuarioWhereInput = {
-      deleted_at: null,
-    };
+    const where: Prisma.UsuarioWhereInput = {};
+
+    // Only exclude soft-deleted users when includeInactive is not true
+    if (!includeInactive) {
+      where.deleted_at = null;
+    }
 
     // Determine allowed roles based on caller's role hierarchy
     let allowedRoles: RoleUsuario[] | null = null; // null means all roles
@@ -86,6 +88,7 @@ export class UsuariosService {
           nome: true,
           email: true,
           created_at: true,
+          deleted_at: true,
           escola:
             user.role === RoleUsuario.ADMIN
               ? { select: { id: true, nome: true } }
@@ -99,18 +102,19 @@ export class UsuariosService {
 
     // Flatten response (move perfil_usuario.role to top-level)
     const flatData = data.map((u) => {
-      const base = {
+      const base: Record<string, unknown> = {
         id: u.id,
         nome: u.nome,
         email: u.email,
         role: u.perfil_usuario?.role ?? null,
         created_at: u.created_at,
       };
+      if (includeInactive) {
+        base.deleted_at = u.deleted_at ?? null;
+      }
       // escola is only selected for Admin (conditional select)
-      const escola = (u as any).escola as
-        | { id: string; nome: string }
-        | undefined;
-      if (escola) {
+      if ('escola' in u && u.escola) {
+        const escola = u.escola as { id: string; nome: string };
         return { ...base, escola_nome: escola.nome, escola_id: escola.id };
       }
       return base;
@@ -256,6 +260,72 @@ export class UsuariosService {
     const updated = await this.prisma.usuario.update({
       where: { id: targetId },
       data: { deleted_at: new Date() },
+      select: {
+        id: true,
+        nome: true,
+        email: true,
+        deleted_at: true,
+        created_at: true,
+        updated_at: true,
+        perfil_usuario: { select: { role: true } },
+      },
+    });
+
+    return {
+      id: updated.id,
+      nome: updated.nome,
+      email: updated.email,
+      role: updated.perfil_usuario?.role ?? null,
+      deleted_at: updated.deleted_at,
+      created_at: updated.created_at,
+      updated_at: updated.updated_at,
+    };
+  }
+
+  async reactivateUsuario(callerRole: RoleUsuario, targetId: string) {
+    // 1. Build where with tenant isolation
+    const where: Prisma.UsuarioWhereInput = { id: targetId };
+    if (callerRole !== RoleUsuario.ADMIN) {
+      const escolaId = this.prisma.getEscolaIdOrThrow();
+      where.escola_id = escolaId;
+    }
+
+    // 2. Find target
+    const targetUser = await this.prisma.usuario.findFirst({
+      where,
+      select: {
+        id: true,
+        nome: true,
+        email: true,
+        deleted_at: true,
+        perfil_usuario: { select: { role: true } },
+      },
+    });
+    if (!targetUser) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+
+    // 3. Check already active
+    if (!targetUser.deleted_at) {
+      throw new ConflictException('Usuário já está ativo');
+    }
+
+    // 4. Check hierarchy
+    try {
+      this.validateHierarchyPermission(
+        callerRole,
+        targetUser.perfil_usuario?.role,
+      );
+    } catch {
+      throw new ForbiddenException(
+        'Sem permissão para reativar este usuário',
+      );
+    }
+
+    // 5. Reactivate (set deleted_at = null)
+    const updated = await this.prisma.usuario.update({
+      where: { id: targetId },
+      data: { deleted_at: null },
       select: {
         id: true,
         nome: true,

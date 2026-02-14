@@ -153,7 +153,7 @@ development_status:
     13-7-listar-usuarios-cadastrados: done # Code review complete - 15 issues found (1 HIGH, 5 MEDIUM, 9 LOW) - 12 auto-fixed (SkipThrottle removed, DTO validation, type safety, ARIA, UX) - 16 E2E + 6 frontend tests passing
     13-8-editar-dados-usuario: done # Code review complete - 8 issues found (3 HIGH, 3 MEDIUM, 2 LOW) - 6 auto-fixed (useWatch, useEffect deps, isAxiosError, E2E cleanup, story spec alignment) - 15/15 E2E + 6/6 frontend tests passing
     13-9-desativar-usuario-soft-delete: done # Code review complete - 4 issues found & auto-fixed (1 HIGH: updateUsuario rejected deactivated users, 1 HIGH→MEDIUM: perfil_usuario isNot:null preserved, 1 MEDIUM: error message "desativar" vs "editar", 1 MEDIUM: E2E afterEach cleanup) - 16/16 E2E + 6/6 frontend tests
-    13-10-reativar-usuario: backlog # Como Admin/Diretor/Coordenador, reativar usuário desativado
+    13-10-reativar-usuario: done # Code review complete - 7 issues auto-fixed (3 HIGH: type safety, E2E clarity | 4 MEDIUM: file list, toast verification) - 14/14 E2E + 6/6 frontend tests passing
     13-11-cancelar-convite-pendente: backlog # Como Admin/Diretor/Coordenador, cancelar convite pendente
     13-12-reenviar-convite-expirado: backlog # Como Admin/Diretor/Coordenador, reenviar convite expirado
     epic-13-retrospective: optional

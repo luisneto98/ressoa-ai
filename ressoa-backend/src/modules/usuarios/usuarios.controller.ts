@@ -52,6 +52,25 @@ export class UsuariosController {
     );
   }
 
+  @Patch(':id/reativar')
+  @Roles(RoleUsuario.ADMIN, RoleUsuario.DIRETOR, RoleUsuario.COORDENADOR)
+  @ApiOperation({
+    summary: 'Reativar usuário desativado',
+    description: 'Restaura acesso de usuário desativado respeitando hierarquia de roles.',
+  })
+  @ApiParam({ name: 'id', description: 'ID do usuário (UUID)' })
+  @ApiResponse({ status: 200, description: 'Usuário reativado com sucesso' })
+  @ApiResponse({ status: 400, description: 'UUID inválido' })
+  @ApiResponse({ status: 403, description: 'Sem permissão (hierarquia)' })
+  @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
+  @ApiResponse({ status: 409, description: 'Usuário já está ativo' })
+  async reactivateUsuario(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.usuariosService.reactivateUsuario(user.role, id);
+  }
+
   @Patch(':id/desativar')
   @Roles(RoleUsuario.ADMIN, RoleUsuario.DIRETOR, RoleUsuario.COORDENADOR)
   @ApiOperation({

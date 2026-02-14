@@ -8,6 +8,7 @@ export interface UsuarioListItem {
   created_at: string;
   escola_nome?: string;
   escola_id?: string;
+  deleted_at?: string | null;
 }
 
 export interface UsuariosListResponse {
@@ -26,6 +27,7 @@ export interface UsuariosQueryParams {
   search?: string;
   role?: string;
   escola_id?: string;
+  includeInactive?: boolean;
 }
 
 export interface UpdateUsuarioData {
@@ -65,6 +67,21 @@ export async function deactivateUsuario(id: string): Promise<DeactivateUsuarioRe
   return response.data;
 }
 
+export interface ReactivateUsuarioResponse {
+  id: string;
+  nome: string;
+  email: string;
+  role: 'PROFESSOR' | 'COORDENADOR' | 'DIRETOR' | 'ADMIN' | null;
+  deleted_at: null;
+  created_at: string;
+  updated_at: string;
+}
+
+export async function reactivateUsuario(id: string): Promise<ReactivateUsuarioResponse> {
+  const response = await apiClient.patch<ReactivateUsuarioResponse>(`/usuarios/${id}/reativar`);
+  return response.data;
+}
+
 export async function fetchUsuarios(
   params: UsuariosQueryParams,
 ): Promise<UsuariosListResponse> {
@@ -74,6 +91,7 @@ export async function fetchUsuarios(
   if (params.search) queryParams.set('search', params.search);
   if (params.role) queryParams.set('role', params.role);
   if (params.escola_id) queryParams.set('escola_id', params.escola_id);
+  if (params.includeInactive) queryParams.set('includeInactive', 'true');
 
   const { data } = await apiClient.get<UsuariosListResponse>(
     `/usuarios?${queryParams}`,

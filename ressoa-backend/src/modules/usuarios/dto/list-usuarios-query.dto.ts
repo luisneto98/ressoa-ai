@@ -8,8 +8,9 @@ import {
   MinLength,
   MaxLength,
   IsUUID,
+  IsBoolean,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
 import { RoleUsuario } from '@prisma/client';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
@@ -48,4 +49,10 @@ export class ListUsuariosQueryDto {
   @IsOptional()
   @IsUUID('4', { message: 'escola_id deve ser um UUID válido' })
   escola_id?: string;
+
+  @ApiPropertyOptional({ description: 'Incluir usuários inativos (deleted_at não null)', default: false })
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true' || value === true)
+  includeInactive?: boolean;
 }

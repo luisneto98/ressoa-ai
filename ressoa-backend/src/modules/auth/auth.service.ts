@@ -143,6 +143,10 @@ export class AuthService {
       escolaId = parsed.escolaId;
       nome = parsed.nome;
     } catch (error) {
+      this.logger.error(
+        `Failed to parse invite_director token data: ${tokenData}`,
+        error instanceof Error ? error.stack : String(error),
+      );
       throw new UnauthorizedException('Token inválido ou corrompido');
     }
 

@@ -31,6 +31,7 @@ export function AcceptInvitationPage() {
     hasUppercase: false,
     hasLowercase: false,
     hasNumber: false,
+    hasSpecialChar: false,
   });
 
   // Validate token on mount
@@ -59,15 +60,16 @@ export function AcceptInvitationPage() {
   });
 
   // Real-time password strength feedback
+  const senha = form.watch('senha');
   useEffect(() => {
-    const senha = form.watch('senha');
     setPasswordRequirements({
       minLength: senha.length >= 8,
       hasUppercase: /[A-Z]/.test(senha),
       hasLowercase: /[a-z]/.test(senha),
       hasNumber: /\d/.test(senha),
+      hasSpecialChar: /[@$!%*?&]/.test(senha),
     });
-  }, [form.watch('senha')]);
+  }, [senha]);
 
   const handleSubmit = async (data: AcceptInvitationFormData) => {
     try {
@@ -75,8 +77,8 @@ export function AcceptInvitationPage() {
         token: data.token,
         senha: data.senha,
       });
-      toast.success('Convite aceito! Faça login com sua nova senha.');
-      setTimeout(() => navigate('/login'), 2000); // Redirect after 2s
+      toast.success('Convite aceito! Redirecionando para login...');
+      navigate('/login'); // Immediate redirect
     } catch (error: unknown) {
       const message =
         (error as { response?: { data?: { message?: string } } })?.response
@@ -193,6 +195,9 @@ export function AcceptInvitationPage() {
                     </RequirementItem>
                     <RequirementItem met={passwordRequirements.hasNumber}>
                       Pelo menos um número
+                    </RequirementItem>
+                    <RequirementItem met={passwordRequirements.hasSpecialChar}>
+                      Pelo menos um caractere especial (@$!%*?&)
                     </RequirementItem>
                   </div>
                 </FormItem>

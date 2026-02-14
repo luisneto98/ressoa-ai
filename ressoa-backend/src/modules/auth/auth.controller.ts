@@ -516,13 +516,18 @@ export class AuthController {
   async validateToken(
     @Query('token') token: string,
   ): Promise<{ email: string; nome: string; escolaNome: string }> {
-    // 1. Validate token exists in Redis
+    // 1. Validate token format (64 characters hex)
+    if (!token || token.length !== 64) {
+      throw new UnauthorizedException('Token inválido');
+    }
+
+    // 2. Validate token exists in Redis
     const tokenData = await this.redisService.get(`invite_director:${token}`);
     if (!tokenData) {
       throw new UnauthorizedException('Token inválido ou expirado');
     }
 
-    // 2. Parse token data
+    // 3. Parse token data
     let email: string;
     let escolaId: string;
     let nome: string;
@@ -539,7 +544,7 @@ export class AuthController {
       throw new UnauthorizedException('Token inválido ou corrompido');
     }
 
-    // 3. Get escola name
+    // 4. Get escola name
     const escola = await this.prisma.escola.findUnique({
       where: { id: escolaId },
       select: { nome: true },

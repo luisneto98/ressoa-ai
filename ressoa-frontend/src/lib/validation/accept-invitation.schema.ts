@@ -8,8 +8,8 @@ export const acceptInvitationSchema = z
       .string()
       .min(8, 'Senha deve ter no mínimo 8 caracteres')
       .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-        'Senha deve conter pelo menos uma letra maiúscula, uma minúscula e um número',
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/,
+        'Senha deve conter pelo menos uma letra maiúscula, uma minúscula, um número e um caractere especial (@$!%*?&)',
       ),
 
     senhaConfirmacao: z.string(),

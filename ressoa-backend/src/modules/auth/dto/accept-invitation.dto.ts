@@ -14,14 +14,14 @@ export class AcceptInvitationDto {
   token!: string;
 
   @ApiProperty({
-    description: 'Nova senha (mínimo 8 caracteres, 1 maiúscula, 1 minúscula, 1 número)',
+    description: 'Nova senha (mínimo 8 caracteres, 1 maiúscula, 1 minúscula, 1 número, 1 caractere especial)',
     example: 'MinhaSenh@123',
     minLength: 8,
   })
   @IsString()
   @MinLength(8, { message: 'Senha deve ter no mínimo 8 caracteres' })
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
-    message: 'Senha deve conter pelo menos uma letra maiúscula, uma minúscula e um número',
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/, {
+    message: 'Senha deve conter pelo menos uma letra maiúscula, uma minúscula, um número e um caractere especial (@$!%*?&)',
   })
   senha!: string;
 }

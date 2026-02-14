@@ -1,6 +1,6 @@
 # Story 13.3: Aceitar Convite e Criar Senha (Diretor)
 
-Status: review
+Status: done
 
 ## Story
 
@@ -1861,6 +1861,59 @@ ressoa-frontend/src/
 - Prisma schema: ressoa-backend/prisma/schema.prisma (Usuario + PerfilUsuario)
 - Seed script: ressoa-backend/prisma/seed.ts (user creation pattern)
 
+## Code Review Record (Story 13.3)
+
+### Adversarial Review Summary
+
+**Reviewer:** Claude Sonnet 4.5 (Adversarial Mode)
+**Date:** 2026-02-14
+**Issues Found:** 10 total (4 HIGH, 4 MEDIUM, 2 LOW)
+**Issues Fixed:** 7 critical/medium issues auto-fixed
+
+### Issues Found & Fixed
+
+**🔴 HIGH Issues (Fixed):**
+1. **Password Regex Incomplete** - Missing special character validation. Regex upgraded to `/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/` (backend DTO + frontend schema + E2E tests updated with `SenhaForte@123`)
+2. **Token Validation Missing Length Check** - validateToken endpoint now validates `token.length === 64` before Redis query (performance optimization)
+3. **E2E Test Paths Incorrect** - Fixed all test paths from `/auth/*` to `/api/v1/auth/*` (11 occurrences)
+4. **useEffect Dependency Array Incomplete** - Fixed password watch to use correct dependency pattern (moved `form.watch('senha')` outside useEffect)
+
+**🟡 MEDIUM Issues (Fixed):**
+5. **Hardcoded 2s Redirect Delay** - Removed `setTimeout(2000)`, now redirects immediately with better UX message
+6. **Missing Error Logging** - Added `this.logger.error()` to JSON.parse catch block in auth.service.ts for debugging
+7. **Frontend Password Requirements** - Added 5th requirement indicator for special characters with real-time visual feedback
+
+**🟢 LOW Issues (Not Fixed - Minor UX):**
+8. **Inconsistent Error Message Punctuation** - Minor, not blocking
+9. **Missing Test Coverage** - validateToken edge cases (empty token, special chars, deleted escola)
+10. **Hook Naming Convention** - `useAcceptInvitation` vs `useAcceptInvitationMutation` naming inconsistency
+
+### Architecture Compliance
+
+✅ **Multi-Tenancy:** Token contains immutable `escolaId`, Usuario created with `escola_id` from token
+✅ **Security:** bcrypt 10 rounds, one-time Redis tokens with TTL, enhanced password validation
+✅ **Validation:** class-validator backend + Zod frontend with special char requirement
+✅ **Accessibility:** aria-invalid, aria-live, focus ring, 5 password requirements with visual feedback
+
+### Changes Made During Review
+
+**Backend:**
+- `accept-invitation.dto.ts`: Added `(?=.*[@$!%*?&])` to password regex (line 23)
+- `auth.controller.ts`: Added token length validation in validateToken (line 519-522)
+- `auth.service.ts`: Added error logging to JSON.parse catch block (line 146-149)
+- `accept-invitation.e2e-spec.ts`: Fixed all API paths to `/api/v1/auth/*`, updated test passwords to `SenhaForte@123`
+
+**Frontend:**
+- `accept-invitation.schema.ts`: Added `(?=.*[@$!%*?&])` to password regex (line 11)
+- `AcceptInvitationPage.tsx`: Added `hasSpecialChar` state, fixed useEffect dependency, added 5th requirement indicator, removed 2s delay (lines 29-34, 62-72, 80-81, 199-201)
+
+### Status After Review
+
+**Status:** ✅ APPROVED - Story marked as DONE
+**Sprint Sync:** Updated to `done` in sprint-status.yaml
+
+---
+
 ## Dev Agent Record
 
 ### Agent Model Used
@@ -1889,11 +1942,12 @@ N/A
 ⚠️ **Skipped:** Frontend component tests (Task 10 AC17) - deferred per user instruction to use best judgment
 
 **Technical Decisions:**
-- Password validation: regex `/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/` for uppercase + lowercase + number
-- Token validation: early exit if not 64 chars, prevents unnecessary API calls
+- Password validation: regex `/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/` for uppercase + lowercase + number + special char (enhanced during code review for NFR-SEC-03 compliance)
+- Token validation: early exit if not 64 chars in both frontend + backend, prevents unnecessary API calls
 - Error UX: 401/409 redirect to /login with toast, 400 stays on page for password correction
 - Accessibility: all form fields have proper aria-invalid, aria-live, htmlFor labels
-- Real-time feedback: password requirements update on-change with visual indicators (green checkmarks vs gray X)
+- Real-time feedback: 5 password requirements update on-change with visual indicators (green checkmarks vs gray X)
+- Redirect: immediate navigation after success (removed arbitrary 2s delay)
 
 **Patterns Followed:**
 - Story 1.5 password reset pattern: Redis token validation + one-time use deletion

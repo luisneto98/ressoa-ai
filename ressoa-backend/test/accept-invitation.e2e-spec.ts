@@ -76,11 +76,11 @@ describe('POST /api/v1/auth/accept-invitation (Story 13.3)', () => {
   it('should accept invitation and create director user (201)', async () => {
     const dto = {
       token: testToken,
-      senha: 'SenhaForte123',
+      senha: 'SenhaForte@123',
     };
 
     const response = await request(app.getHttpServer())
-      .post('/auth/accept-invitation')
+      .post('/api/v1/auth/accept-invitation')
       .send(dto)
       .expect(201);
 
@@ -102,7 +102,7 @@ describe('POST /api/v1/auth/accept-invitation (Story 13.3)', () => {
 
     // Verify password hashed correctly
     const passwordMatch = await bcrypt.compare(
-      'SenhaForte123',
+      'SenhaForte@123',
       usuario!.senha_hash,
     );
     expect(passwordMatch).toBe(true);
@@ -115,11 +115,11 @@ describe('POST /api/v1/auth/accept-invitation (Story 13.3)', () => {
   it('should reject invalid token (401)', async () => {
     const dto = {
       token: 'a'.repeat(64), // 64-char invalid token
-      senha: 'SenhaForte123',
+      senha: 'SenhaForte@123',
     };
 
     const response = await request(app.getHttpServer())
-      .post('/auth/accept-invitation')
+      .post('/api/v1/auth/accept-invitation')
       .send(dto)
       .expect(401);
 
@@ -141,10 +141,10 @@ describe('POST /api/v1/auth/accept-invitation (Story 13.3)', () => {
 
     await new Promise((resolve) => setTimeout(resolve, 1100)); // Wait 1.1s for expiry
 
-    const dto = { token: expiredToken, senha: 'SenhaForte123' };
+    const dto = { token: expiredToken, senha: 'SenhaForte@123' };
 
     const response = await request(app.getHttpServer())
-      .post('/auth/accept-invitation')
+      .post('/api/v1/auth/accept-invitation')
       .send(dto)
       .expect(401);
 
@@ -165,10 +165,10 @@ describe('POST /api/v1/auth/accept-invitation (Story 13.3)', () => {
       },
     });
 
-    const dto = { token: testToken, senha: 'SenhaForte123' };
+    const dto = { token: testToken, senha: 'SenhaForte@123' };
 
     const response = await request(app.getHttpServer())
-      .post('/auth/accept-invitation')
+      .post('/api/v1/auth/accept-invitation')
       .send(dto)
       .expect(409);
 
@@ -181,10 +181,10 @@ describe('POST /api/v1/auth/accept-invitation (Story 13.3)', () => {
       data: { status: 'inativa' },
     });
 
-    const dto = { token: testToken, senha: 'SenhaForte123' };
+    const dto = { token: testToken, senha: 'SenhaForte@123' };
 
     const response = await request(app.getHttpServer())
-      .post('/auth/accept-invitation')
+      .post('/api/v1/auth/accept-invitation')
       .send(dto)
       .expect(400);
 
@@ -201,7 +201,7 @@ describe('POST /api/v1/auth/accept-invitation (Story 13.3)', () => {
     const dto = { token: testToken, senha: 'weak' }; // Too short, no uppercase, no number
 
     const response = await request(app.getHttpServer())
-      .post('/auth/accept-invitation')
+      .post('/api/v1/auth/accept-invitation')
       .send(dto)
       .expect(400);
 
@@ -210,25 +210,25 @@ describe('POST /api/v1/auth/accept-invitation (Story 13.3)', () => {
 
   it('should reject missing required fields (400)', async () => {
     const response = await request(app.getHttpServer())
-      .post('/auth/accept-invitation')
-      .send({ senha: 'SenhaForte123' }) // Missing token
+      .post('/api/v1/auth/accept-invitation')
+      .send({ senha: 'SenhaForte@123' }) // Missing token
       .expect(400);
 
     expect(response.body.message).toBeDefined();
   });
 
   it('should prevent token reuse (one-time use)', async () => {
-    const dto = { token: testToken, senha: 'SenhaForte123' };
+    const dto = { token: testToken, senha: 'SenhaForte@123' };
 
     // First use: success
     await request(app.getHttpServer())
-      .post('/auth/accept-invitation')
+      .post('/api/v1/auth/accept-invitation')
       .send(dto)
       .expect(201);
 
     // Second use: fail (token deleted)
     const response = await request(app.getHttpServer())
-      .post('/auth/accept-invitation')
+      .post('/api/v1/auth/accept-invitation')
       .send(dto)
       .expect(401);
 
@@ -243,10 +243,10 @@ describe('POST /api/v1/auth/accept-invitation (Story 13.3)', () => {
     // If transaction works correctly, either both Usuario + PerfilUsuario are created,
     // or neither is created (rollback on error)
 
-    const dto = { token: testToken, senha: 'SenhaForte123' };
+    const dto = { token: testToken, senha: 'SenhaForte@123' };
 
     await request(app.getHttpServer())
-      .post('/auth/accept-invitation')
+      .post('/api/v1/auth/accept-invitation')
       .send(dto)
       .expect(201);
 
@@ -331,7 +331,7 @@ describe('GET /api/v1/auth/validate-token (Story 13.3)', () => {
 
   it('should reject invalid token (401)', async () => {
     const response = await request(app.getHttpServer())
-      .get('/auth/validate-token?token=invalid-token')
+      .get('/api/v1/auth/validate-token?token=invalid-token')
       .expect(401);
 
     expect(response.body.message).toContain('Token inválido ou expirado');

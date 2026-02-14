@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { AxiosError } from 'axios';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -16,6 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { Logo } from '@/components/ui/logo';
 import { useAuthStore } from '@/stores/auth.store';
 import { apiClient } from '@/api/axios';
 import { getHomeRoute } from '@/utils/routing';
@@ -83,10 +84,12 @@ export function LoginPage() {
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0A2647] to-[#2563EB] px-4">
       <Card className="w-full max-w-md" role="region" aria-label="Formulário de login">
-        <CardHeader className="text-center">
-          <CardTitle className="text-3xl font-bold font-montserrat">
-            Ressoa AI
-          </CardTitle>
+        <CardHeader className="text-center space-y-4">
+          <Logo
+            variant="full"
+            className="w-full"
+            iconClassName="w-full h-auto max-h-20"
+          />
           <CardDescription className="text-sm">
             Inteligência de Aula, Análise e Previsão de Conteúdo
           </CardDescription>

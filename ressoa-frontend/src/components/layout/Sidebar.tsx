@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
-import { ChevronsLeft, ChevronsRight, AudioWaveform } from 'lucide-react';
+import { ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth.store';
 import { useUIStore } from '@/stores/ui.store';
 import { useIsTablet } from '@/hooks/useMediaQuery';
 import { getNavigationForRole } from './navigation-config';
 import { SidebarNavItem } from './SidebarNavItem';
 import { SidebarCTAItem } from './SidebarCTAItem';
+import { Logo } from '@/components/ui/logo';
 import { cn } from '@/lib/utils';
 
 export function Sidebar() {
@@ -43,14 +44,23 @@ export function Sidebar() {
       aria-label="Navegação principal"
     >
       {/* Logo */}
-      <div className="flex h-16 items-center gap-3 px-4">
-        <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-r from-tech-blue to-cyan-ai">
-          <AudioWaveform className="size-5 text-white" />
-        </div>
-        {!sidebarCollapsed && (
-          <span className="text-lg font-montserrat font-bold text-white truncate">
-            Ressoa AI
-          </span>
+      <div className={cn(
+        "flex h-20 items-center",
+        sidebarCollapsed ? "justify-center" : "gap-3 px-4"
+      )}>
+        {sidebarCollapsed ? (
+          <Logo
+            variant="icon"
+            className="size-14 shrink-0"
+            iconClassName="w-full h-full"
+          />
+        ) : (
+          <Logo
+            variant="full"
+            theme="dark"
+            className="w-full"
+            iconClassName="w-full h-auto max-h-16"
+          />
         )}
       </div>
 

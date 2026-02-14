@@ -5,28 +5,48 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import * as tus from 'tus-js-client';
 import { toast } from 'sonner';
-import { Headphones, X, Upload, Loader2, CheckCircle2, XCircle } from 'lucide-react';
+import { IconUpload, IconX, IconHeadphones } from '@tabler/icons-react';
+import { Loader2, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Card, CardContent } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { AulaFormFields, commonFormSchema } from './AulaFormFields';
+import { UploadProgressBar } from './UploadProgressBar';
+import { ProcessingStatus } from '@/components/ui/processing-status';
+import { UploadErrorCard } from './UploadErrorCard';
 import { createAula } from '@/api/aulas';
 import { useAuthStore } from '@/stores/auth.store';
 import {
-  formatUploadSpeed,
-  formatTimeRemaining,
   formatFileSize,
   isValidAudioFormat,
   isValidFileSize,
 } from '@/lib/upload-utils';
 
+// Constants
+const TUS_UPLOAD_ENDPOINT = `${import.meta.env.VITE_API_URL}/uploads`;
+
 // Form schema for upload audio tab
 const uploadAudioSchema = commonFormSchema.extend({});
 type UploadAudioFormData = z.infer<typeof uploadAudioSchema>;
 
-type UploadStatus = 'idle' | 'uploading' | 'success' | 'error';
+type UploadStatus = 'idle' | 'uploading' | 'transcribing' | 'analyzing' | 'completed' | 'error';
+
+// Helper: Map upload status to ProcessingStatus step (1-4)
+const getCurrentStep = (status: UploadStatus): 1 | 2 | 3 | 4 => {
+  switch (status) {
+    case 'uploading':
+      return 1;
+    case 'transcribing':
+      return 2;
+    case 'analyzing':
+      return 3;
+    case 'completed':
+      return 4;
+    default:
+      return 1;
+  }
+};
 
 export function UploadAudioTab() {
   const navigate = useNavigate();
@@ -50,18 +70,21 @@ export function UploadAudioTab() {
   const [currentUpload, setCurrentUpload] = useState<tus.Upload | null>(null);
   const [uploadSpeed, setUploadSpeed] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
+  const [errorType, setErrorType] = useState<'file-corrupt' | 'network-timeout' | 'invalid-format' | 'generic'>('generic');
 
   // Drag and drop state
   const [isDragging, setIsDragging] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
 
   // Track upload speed calculation
   const uploadTrackingRef = useRef({
     startTime: 0,
     previousBytes: 0,
     previousTime: 0,
+    sampleCount: 0, // Track number of speed samples (for cold start handling)
   });
 
-  // Navigation guard: Warn user if upload in progress
+  // Navigation guard: Warn user if upload in progress AND cleanup on unmount
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (uploadStatus === 'uploading') {
@@ -72,8 +95,16 @@ export function UploadAudioTab() {
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [uploadStatus]);
+
+    // Cleanup: abort upload on component unmount
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      if (currentUpload && uploadStatus === 'uploading') {
+        currentUpload.abort();
+        console.log('Upload aborted on component unmount');
+      }
+    };
+  }, [uploadStatus, currentUpload]);
 
   // Handle file selection
   const handleFileSelect = (file: File) => {
@@ -177,7 +208,7 @@ export function UploadAudioTab() {
 
       // Step 2: Initialize TUS upload
       const upload = new tus.Upload(selectedFile, {
-        endpoint: `${import.meta.env.VITE_API_URL}/uploads`,
+        endpoint: TUS_UPLOAD_ENDPOINT,
         metadata: {
           filename: selectedFile.name,
           filetype: selectedFile.type,
@@ -194,8 +225,28 @@ export function UploadAudioTab() {
         retryDelays: [0, 1000, 3000, 5000], // Retry with backoff
         onError: (error) => {
           console.error('Upload error:', error);
-          toast.error(`Erro no upload: ${error.message}`);
+
+          // Determine error type based on error message
+          let detectedErrorType: typeof errorType = 'generic';
+          if (error.message.includes('timeout') || error.message.includes('network')) {
+            detectedErrorType = 'network-timeout';
+          } else if (error.message.includes('format') || error.message.includes('unsupported') || error.message.includes('mime')) {
+            detectedErrorType = 'invalid-format';
+          } else if (error.message.includes('corrupt') || error.message.includes('invalid')) {
+            detectedErrorType = 'file-corrupt';
+          }
+
+          setErrorType(detectedErrorType);
           setUploadStatus('error');
+
+          // Show empathetic toast (not harsh red alert)
+          if (detectedErrorType === 'network-timeout') {
+            toast.error('Upload interrompido. Tente novamente.');
+          } else if (detectedErrorType === 'invalid-format') {
+            toast.error('Formato de arquivo não suportado.');
+          } else {
+            toast.error('Não conseguimos processar o arquivo.');
+          }
         },
         onProgress: (bytesUploaded, bytesTotal) => {
           const percentage = Math.round((bytesUploaded / bytesTotal) * 100);
@@ -214,10 +265,15 @@ export function UploadAudioTab() {
 
           if (deltaTime > 0) {
             const speed = deltaBytes / deltaTime;
-            setUploadSpeed(speed);
+            uploadTrackingRef.current.sampleCount += 1;
 
-            const remaining = (bytesTotal - bytesUploaded) / speed;
-            setTimeRemaining(remaining);
+            // Only show speed/time after 3 samples (cold start mitigation)
+            if (uploadTrackingRef.current.sampleCount >= 3 && speed > 0) {
+              setUploadSpeed(speed);
+              const remaining = (bytesTotal - bytesUploaded) / speed;
+              // Prevent Infinity if speed is very low
+              setTimeRemaining(isFinite(remaining) ? remaining : null);
+            }
 
             uploadTrackingRef.current.previousBytes = bytesUploaded;
             uploadTrackingRef.current.previousTime = currentTime;
@@ -225,13 +281,14 @@ export function UploadAudioTab() {
         },
         onSuccess: () => {
           toast.success('Upload concluído! Transcrição em andamento...');
-          setUploadStatus('success');
+          setUploadStatus('transcribing');
 
           // Reset tracking
           uploadTrackingRef.current = {
             startTime: 0,
             previousBytes: 0,
             previousTime: 0,
+            sampleCount: 0,
           };
 
           // Redirect after short delay
@@ -268,15 +325,16 @@ export function UploadAudioTab() {
           <CardContent className="pt-6">
             <div
               className={`
-                relative border-2 border-dashed rounded-lg p-8 text-center transition-colors
-                ${isDragging ? 'border-cyan-ai bg-cyan-ai/10' : 'border-gray-300 hover:border-tech-blue'}
+                relative border-2 border-dashed rounded-lg p-8 text-center transition-all duration-200
+                ${isDragging || isHovering ? 'border-tech-blue animate-pulse-subtle' : 'border-gray-300'}
                 ${uploadStatus === 'uploading' ? 'pointer-events-none opacity-60' : 'cursor-pointer'}
               `}
               onDragEnter={handleDragEnter}
               onDragLeave={handleDragLeave}
               onDragOver={handleDragOver}
               onDrop={handleDrop}
-              // eslint-disable-next-line react-hooks/refs
+              onMouseEnter={() => uploadStatus === 'idle' && setIsHovering(true)}
+              onMouseLeave={() => setIsHovering(false)}
               onClick={() => uploadStatus === 'idle' && fileInputRef.current?.click()}
               role="button"
               tabIndex={0}
@@ -284,7 +342,6 @@ export function UploadAudioTab() {
               onKeyDown={(e) => {
                 if ((e.key === 'Enter' || e.key === ' ') && uploadStatus === 'idle') {
                   e.preventDefault();
-                  // eslint-disable-next-line react-hooks/refs
                   fileInputRef.current?.click();
                 }
               }}
@@ -300,7 +357,11 @@ export function UploadAudioTab() {
 
               {!selectedFile && uploadStatus === 'idle' && (
                 <div className="space-y-4">
-                  <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                  <IconUpload
+                    className={`mx-auto h-12 w-12 transition-all duration-200 ${
+                      isDragging || isHovering ? 'text-tech-blue transform scale-105' : 'text-gray-400'
+                    }`}
+                  />
                   <div>
                     <p className="text-lg font-medium text-deep-navy">
                       Arraste áudio aqui ou clique para selecionar
@@ -314,7 +375,7 @@ export function UploadAudioTab() {
 
               {selectedFile && uploadStatus === 'idle' && (
                 <div className="space-y-4">
-                  <Headphones className="mx-auto h-12 w-12 text-tech-blue" />
+                  <IconHeadphones className="mx-auto h-12 w-12 text-tech-blue" />
                   <div>
                     <p className="text-lg font-medium text-deep-navy">{selectedFile.name}</p>
                     <Badge variant="secondary" className="mt-2">
@@ -330,7 +391,7 @@ export function UploadAudioTab() {
                       handleRemoveFile();
                     }}
                   >
-                    <X className="h-4 w-4 mr-2" />
+                    <IconX className="h-4 w-4 mr-2" />
                     Remover
                   </Button>
                 </div>
@@ -339,17 +400,13 @@ export function UploadAudioTab() {
               {uploadStatus === 'uploading' && (
                 <div className="space-y-4">
                   <Loader2 className="mx-auto h-12 w-12 text-tech-blue animate-spin" />
-                  <div>
-                    <p className="text-lg font-medium text-deep-navy">
-                      Enviando: {uploadProgress}%
-                    </p>
-                    <Progress value={uploadProgress} className="mt-2 h-2" />
-                    <div className="mt-2 space-y-1 text-sm text-muted-foreground">
-                      {uploadSpeed > 0 && <p>{formatUploadSpeed(uploadSpeed)}</p>}
-                      {timeRemaining !== null && timeRemaining > 0 && (
-                        <p>{formatTimeRemaining(timeRemaining)} restantes</p>
-                      )}
-                    </div>
+                  <div className="w-full">
+                    <p className="text-lg font-medium text-deep-navy mb-3">Enviando...</p>
+                    <UploadProgressBar
+                      progress={uploadProgress}
+                      uploadSpeed={uploadSpeed}
+                      timeRemaining={timeRemaining}
+                    />
                   </div>
                   <Button
                     type="button"
@@ -365,7 +422,7 @@ export function UploadAudioTab() {
                 </div>
               )}
 
-              {uploadStatus === 'success' && (
+              {uploadStatus === 'completed' && (
                 <div className="space-y-4">
                   <CheckCircle2 className="mx-auto h-12 w-12 text-green-500" />
                   <p className="text-lg font-medium text-deep-navy">Upload concluído!</p>
@@ -373,29 +430,55 @@ export function UploadAudioTab() {
                 </div>
               )}
 
-              {uploadStatus === 'error' && (
-                <div className="space-y-4">
-                  <XCircle className="mx-auto h-12 w-12 text-red-500" />
-                  <p className="text-lg font-medium text-deep-navy">
-                    Erro no upload. Tente novamente.
-                  </p>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setUploadStatus('idle');
-                      setUploadProgress(0);
-                    }}
-                  >
-                    Tentar Novamente
-                  </Button>
-                </div>
-              )}
             </div>
           </CardContent>
         </Card>
+
+        {/* Error Card - shown on upload failure (outside dropzone) */}
+        {uploadStatus === 'error' && (
+          <UploadErrorCard
+            className="mt-6"
+            errorType={errorType}
+            onRetry={() => {
+              setUploadStatus('idle');
+              setUploadProgress(0);
+              // If we have the file, retry upload directly
+              if (selectedFile) {
+                form.handleSubmit(handleUpload)();
+              }
+            }}
+            onChooseAnother={() => {
+              setUploadStatus('idle');
+              setUploadProgress(0);
+              handleRemoveFile();
+            }}
+            onManualEntry={() => {
+              // Navigate to manual entry tab (future: use proper navigation callback)
+              // TODO: Replace with onNavigateToManual callback from parent component
+              const manualTab = document.querySelector('[value="manual"]') as HTMLElement;
+              if (manualTab) {
+                manualTab.click();
+              } else {
+                console.warn('Manual tab not found - navigation failed');
+              }
+            }}
+          />
+        )}
+
+        {/* Processing Status - shown during upload/transcription/analysis */}
+        {(uploadStatus === 'uploading' || uploadStatus === 'transcribing' || uploadStatus === 'analyzing' || uploadStatus === 'completed') && (
+          <div className="mt-6">
+            <ProcessingStatus currentStep={getCurrentStep(uploadStatus)} />
+
+            {/* ARIA live region for screen readers */}
+            <div role="status" aria-live="assertive" aria-atomic="true" className="sr-only">
+              {uploadStatus === 'uploading' && `Enviando ${uploadProgress}%`}
+              {uploadStatus === 'transcribing' && 'Transcrevendo áudio...'}
+              {uploadStatus === 'analyzing' && 'Analisando conteúdo...'}
+              {uploadStatus === 'completed' && 'Upload concluído com sucesso!'}
+            </div>
+          </div>
+        )}
 
         {/* Submit button */}
         {uploadStatus === 'idle' && (

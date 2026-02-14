@@ -88,16 +88,17 @@ export function CoberturaBNCCChart({
   };
 
   // Mapear nível para cor (paleta semântica)
+  // FIX Issue #6: Match legend colors exactly with bar colors
   const getColorByCobertura = (nivel: NivelCobertura): string => {
     switch (nivel) {
       case 'COMPLETE':
-        return '#10B981'; // green-500
+        return '#10B981'; // green-500 (Tailwind exact match)
       case 'PARTIAL':
-        return '#F59E0B'; // yellow-500
+        return '#EAB308'; // yellow-500 (Tailwind exact match) - FIXED from #F59E0B
       case 'MENTIONED':
-        return '#3B82F6'; // blue-500
+        return '#3B82F6'; // blue-500 (Tailwind exact match)
       case 'NOT_COVERED':
-        return '#9CA3AF'; // gray-400
+        return '#9CA3AF'; // gray-400 (Tailwind exact match)
       default:
         return '#9CA3AF';
     }

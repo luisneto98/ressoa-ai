@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -14,6 +15,7 @@ import { usePdfExport } from '@/hooks/usePdfExport';
 import { RelatorioPDF } from '@/lib/pdf/relatorio-pdf';
 import api from '@/lib/api';
 import { getCoberturaHeaderLabel } from '@/lib/cobertura-helpers';
+import type { NivelCobertura } from '@/types/analise';
 import {
   Star,
   ThumbsUp,
@@ -29,7 +31,38 @@ import {
   CheckCircle2,
   Download,
   Sparkles,
+  Loader2,
 } from 'lucide-react';
+
+// FIX Issue #1: Proper TypeScript interfaces for type safety
+interface Habilidade {
+  codigo: string;
+  descricao: string;
+  nivel_cobertura: NivelCobertura;
+  evidencias?: Array<{ texto_literal: string }>;
+  unidade_tematica?: string;
+  nivel_bloom_planejado?: string;
+  nivel_bloom_detectado?: string;
+  criterios_evidencia?: string[];
+  criterios_atendidos?: number;
+  tempo_estimado_minutos?: number;
+  adequacao_nivel_cognitivo?: string;
+}
+
+interface AnaliseQualitativa {
+  taxonomia_bloom: any;
+  metodologia: any;
+  adequacao_linguistica: any;
+  engajamento: any;
+  clareza_comunicacao: any;
+  coerencia_narrativa: any;
+  resumo_geral: {
+    nota_geral: number;
+    pontos_fortes?: string[];
+    pontos_atencao?: string[];
+  };
+  comentario_sintetico?: string; // FIX Issue #3: Explicit optional field
+}
 
 interface RelatorioTabProps {
   analise: {
@@ -46,18 +79,11 @@ interface RelatorioTabProps {
       };
     };
     cobertura_bncc: {
-      habilidades: Array<any>;
+      habilidades: Habilidade[]; // FIX Issue #1: Typed array instead of any[]
     };
-    analise_qualitativa: {
-      taxonomia_bloom: any;
-      metodologia: any;
-      adequacao_linguistica: any;
-      engajamento: any;
-      clareza_comunicacao: any;
-      coerencia_narrativa: any;
-      resumo_geral: any;
-    };
+    analise_qualitativa: AnaliseQualitativa; // FIX Issue #1: Proper interface
     relatorio: string;
+    confianca?: number; // FIX Issue #2: Explicit optional field
   };
 }
 
@@ -101,10 +127,11 @@ export function RelatorioTab({ analise }: RelatorioTabProps) {
     },
   });
 
-  const resumo = analise.analise_qualitativa.resumo_geral;
-  const qual = analise.analise_qualitativa;
-  const curriculoTipo = analise.aula?.turma?.curriculo_tipo || 'BNCC'; // Default to BNCC for backward compat
-  const comentarioSintetico = (analise.analise_qualitativa as any).comentario_sintetico;
+  // FIX Issue #7: Performance optimization - memoize derived values
+  const resumo = useMemo(() => analise.analise_qualitativa.resumo_geral, [analise]);
+  const qual = useMemo(() => analise.analise_qualitativa, [analise]);
+  const curriculoTipo = useMemo(() => analise.aula?.turma?.curriculo_tipo || 'BNCC', [analise]);
+  const comentarioSintetico = useMemo(() => analise.analise_qualitativa.comentario_sintetico, [analise]); // FIX Issue #3: Remove any cast
 
   const handleExportPDF = async () => {
     // Generate safe filename
@@ -128,26 +155,33 @@ export function RelatorioTab({ analise }: RelatorioTabProps) {
     );
   };
 
-  // Format date for display
-  const formattedDate = new Date(analise.aula.data_aula).toLocaleDateString('pt-BR', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+  // FIX Issue #7: Performance optimization - memoize date formatting
+  const formattedDate = useMemo(
+    () =>
+      new Date(analise.aula.data_aula).toLocaleDateString('pt-BR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      }),
+    [analise.aula.data_aula]
+  );
 
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
 
       {/* AC1: Header com GradientCard Premium */}
-      <GradientCard
-        title="Relatório de Análise Pedagógica"
-        description={`Turma: ${analise.aula.turma.nome} | Data: ${formattedDate} | Disciplina: ${analise.aula.turma.disciplina}`}
-        headerActions={
-          <AIBadge variant="processing" size="md">
-            Gerado por IA Ressoa
-          </AIBadge>
-        }
-      />
+      {/* FIX Issue #5: Add ARIA label for accessibility (AC9) */}
+      <div aria-label="Cabeçalho do relatório de análise pedagógica" role="banner">
+        <GradientCard
+          title="Relatório de Análise Pedagógica"
+          description={`Turma: ${analise.aula.turma.nome} | Data: ${formattedDate} | Disciplina: ${analise.aula.turma.disciplina}`}
+          headerActions={
+            <AIBadge variant="processing" size="md">
+              Gerado por IA Ressoa
+            </AIBadge>
+          }
+        />
+      </div>
 
       {/* Resumo Geral - Hero Card */}
       {resumo && (
@@ -335,9 +369,16 @@ export function RelatorioTab({ analise }: RelatorioTabProps) {
               Análise pedagógica baseada em 5 prompts especializados com fundamentos da Taxonomia de Bloom
             </p>
           </div>
-          <AIBadge variant="processing" size="md" className="w-full md:w-auto">
-            Confiança: {Math.round(((analise as any).confianca || 0.92) * 100)}%
-          </AIBadge>
+          {/* FIX Issue #2: Remove hardcoded fallback, use proper null-safety */}
+          {analise.confianca !== undefined ? (
+            <AIBadge variant="processing" size="md" className="w-full md:w-auto">
+              Confiança: {Math.round(analise.confianca * 100)}%
+            </AIBadge>
+          ) : (
+            <AIBadge variant="processing" size="md" className="w-full md:w-auto">
+              Processamento Completo
+            </AIBadge>
+          )}
         </div>
       </div>
 
@@ -357,7 +398,12 @@ export function RelatorioTab({ analise }: RelatorioTabProps) {
           disabled={isGenerating}
           className="gap-2 w-full sm:w-auto"
         >
-          <Download className="h-4 w-4" />
+          {/* FIX Issue #10: Add visual loading icon */}
+          {isGenerating ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Download className="h-4 w-4" />
+          )}
           {isGenerating ? 'Gerando PDF...' : 'Exportar PDF'}
         </Button>
         <Button

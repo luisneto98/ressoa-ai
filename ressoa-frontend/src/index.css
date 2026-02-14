@@ -22,6 +22,28 @@
   --font-size-h3: 24px;
   --font-size-body: 16px;
   --font-size-caption: 14px;
+
+  /* Animations - Epic 12 Design System Enhancements */
+  @keyframes gradient-x {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  @keyframes pulse-subtle {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.85;
+    }
+  }
+
+  --animate-gradient-x: gradient-x 3s ease infinite;
+  --animate-pulse-subtle: pulse-subtle 2s ease-in-out infinite;
 }
 
 @theme inline {
@@ -323,5 +345,16 @@
   /* Remove max-width constraint when specified */
   .prose.max-w-none {
     max-width: none;
+  }
+}
+
+/* Accessibility - Reduced Motion Support (WCAG AAA) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

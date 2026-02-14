@@ -30,7 +30,10 @@ export class AdminService {
     // 1. Normalize CNPJ (remove formatação)
     const cnpjNormalizado = dto.cnpj.replace(/\D/g, ''); // Remove não-dígitos
 
-    // 2. Validar CNPJ único
+    // 2. Normalize email (lowercase para case-insensitive uniqueness)
+    const emailNormalizado = dto.email_contato.toLowerCase().trim();
+
+    // 3. Validar CNPJ único
     const existingEscola = await this.prisma.escola.findUnique({
       where: { cnpj: cnpjNormalizado },
     });
@@ -38,18 +41,18 @@ export class AdminService {
       throw new ConflictException('CNPJ já cadastrado no sistema');
     }
 
-    // 3. Validar email único
+    // 4. Validar email único (case-insensitive)
     const existingEmail = await this.prisma.escola.findFirst({
-      where: { email_contato: dto.email_contato },
+      where: { email_contato: { equals: emailNormalizado, mode: 'insensitive' } },
     });
     if (existingEmail) {
       throw new ConflictException('Email de contato já cadastrado');
     }
 
-    // 4. Normalizar telefone (remover formatação)
+    // 5. Normalizar telefone (remover formatação)
     const telefoneNormalizado = dto.telefone.replace(/\D/g, '');
 
-    // 5. Criar escola com status=ativa
+    // 6. Criar escola com status=ativa
     const escola = await this.prisma.escola.create({
       data: {
         nome: dto.nome,
@@ -57,7 +60,7 @@ export class AdminService {
         tipo: dto.tipo,
         endereco: dto.endereco ?? undefined,
         contato_principal: dto.contato_principal,
-        email_contato: dto.email_contato,
+        email_contato: emailNormalizado, // Salva em lowercase
         telefone: telefoneNormalizado,
         plano: dto.plano,
         limite_horas_mes: dto.limite_horas_mes,
@@ -66,7 +69,7 @@ export class AdminService {
       },
     });
 
-    // 6. Retornar DTO (campos garantidos pela criação acima)
+    // 7. Retornar DTO (campos garantidos pela criação acima)
     return {
       id: escola.id,
       nome: escola.nome,

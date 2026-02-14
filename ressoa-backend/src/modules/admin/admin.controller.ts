@@ -84,9 +84,9 @@ export class AdminController {
   })
   @ApiResponse({
     status: 409,
-    description: 'Conflict - CNPJ já cadastrado',
+    description: 'Conflict - CNPJ ou email já cadastrado',
   })
-  async createSchool(@Body() dto: CreateEscolaDto): Promise<EscolaResponseDto> {
+  async createEscola(@Body() dto: CreateEscolaDto): Promise<EscolaResponseDto> {
     return this.adminService.createEscola(dto);
   }
 

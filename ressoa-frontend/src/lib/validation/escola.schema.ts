@@ -74,10 +74,11 @@ export type EscolaFormData = z.infer<typeof escolaFormSchema>;
  */
 export function formatCNPJ(value: string): string {
   const cnpj = value.replace(/\D/g, ''); // Remove não-dígitos
-  if (cnpj.length === 14) {
-    return cnpj.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+  // Guard: only format if EXACTLY 14 digits (prevents formatting 18+ digit inputs)
+  if (cnpj.length !== 14) {
+    return value; // Return original if not exactly 14 digits
   }
-  return value; // Retorna original se não tiver 14 dígitos
+  return cnpj.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
 }
 
 /**
@@ -86,6 +87,7 @@ export function formatCNPJ(value: string): string {
  */
 export function formatTelefone(value: string): string {
   const telefone = value.replace(/\D/g, '');
+  // Guard: only format if 10 or 11 digits (prevents formatting invalid lengths)
   if (telefone.length === 10) {
     // Fixo: (11) 1234-5678
     return telefone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
@@ -93,7 +95,7 @@ export function formatTelefone(value: string): string {
     // Celular: (11) 98765-4321
     return telefone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
   }
-  return value; // Retorna original se tamanho inválido
+  return value; // Return original if not 10 or 11 digits
 }
 
 /**

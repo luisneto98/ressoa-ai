@@ -233,4 +233,25 @@ describe('POST /api/v1/admin/schools (Story 13.1)', () => {
 
     expect(response.body.endereco).toEqual(dtoComEndereco.endereco);
   });
+
+  it('should reject duplicate email with different case (409) - Case Insensitive', async () => {
+    const dto = {
+      nome: 'Colégio Email Case Insensitive',
+      cnpj: '55.666.777/0001-88',
+      tipo: 'particular',
+      contato_principal: 'Carlos',
+      email_contato: 'EPIC13TESTE@ESCOLA.COM.BR', // Uppercase version do primeiro teste
+      telefone: '(11) 96666-6666',
+      plano: 'basico',
+      limite_horas_mes: 400,
+    };
+
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/admin/schools')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send(dto)
+      .expect(409);
+
+    expect(response.body.message).toContain('Email de contato já cadastrado');
+  });
 });

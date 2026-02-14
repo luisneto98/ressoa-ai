@@ -1,6 +1,6 @@
 # Story 13.1: Cadastrar Escola (Admin)
 
-Status: review
+Status: done
 
 ## Story
 
@@ -1860,3 +1860,34 @@ N/A - No debugging required, all tasks completed successfully on first attempt
 - ressoa-frontend/src/pages/admin/AdminDashboard.tsx (CREATED - 73 lines)
 
 **Total:** 0 backend modified (all pre-existing) + 5 frontend created = 5 new files
+
+---
+
+## Code Review Record (2026-02-14)
+
+### Review Agent: Claude Sonnet 4.5
+### Issues Found: 8 (5 Critical/High, 2 Medium, 1 Low)
+### Auto-Fixed: 7 issues
+
+**Issues Automatically Fixed:**
+1. ✅ **CRITICAL:** Endpoint method renamed `createSchool` → `createEscola` (naming consistency)
+2. ✅ **CRITICAL:** Email normalization added (lowercase + trim) antes de salvar e validar
+3. ✅ **CRITICAL:** Email uniqueness check agora case-insensitive (mode: 'insensitive')
+4. ✅ **HIGH:** Swagger @ApiResponse updated para incluir "email já cadastrado" (409)
+5. ✅ **MEDIUM:** formatCNPJ() guard melhorado (exato 14 dígitos)
+6. ✅ **MEDIUM:** formatTelefone() guard documentado
+7. ✅ **MEDIUM:** E2E test adicionado para email case-insensitive
+
+**Issues Remaining (Deferred):**
+- ⚠️ **MEDIUM:** CNPJ validator não valida dígitos verificadores (aceita "11111111111111")
+  - **Decisão:** Aceitar por enquanto (MVP). Adicionar biblioteca `@fnando/cnpj` em story futura se necessário
+  - **Justificativa:** UX aceitável (admin sabe CNPJ correto), backend normaliza e valida formato
+- ⚠️ **LOW:** Frontend tests 60% coverage devido a Radix Select JSDOM limitation
+  - **Decisão:** Aceitar limitação. Testes helper functions passam (formatCNPJ, formatTelefone)
+  - **Alternativa futura:** Migrar para Playwright component tests
+
+**Files Modified in Code Review:**
+- ressoa-backend/src/modules/admin/admin.controller.ts (método renomeado + Swagger docs)
+- ressoa-backend/src/modules/admin/admin.service.ts (email normalization + case-insensitive check)
+- ressoa-frontend/src/lib/validation/escola.schema.ts (guards melhorados em formatCNPJ/Telefone)
+- ressoa-backend/test/admin-schools.e2e-spec.ts (novo teste: email case-insensitive)

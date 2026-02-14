@@ -23,34 +23,63 @@ export class AdminService {
 
   /**
    * Cria uma nova escola no sistema
-   * Valida CNPJ único antes de criar
+   * Valida CNPJ e email únicos antes de criar
+   * Normaliza CNPJ e telefone (remove formatação)
    */
   async createEscola(dto: CreateEscolaDto): Promise<EscolaResponseDto> {
-    // Validar CNPJ único
-    const existingEscola = await this.prisma.escola.findUnique({
-      where: { cnpj: dto.cnpj },
-    });
+    // 1. Normalize CNPJ (remove formatação)
+    const cnpjNormalizado = dto.cnpj.replace(/\D/g, ''); // Remove não-dígitos
 
+    // 2. Validar CNPJ único
+    const existingEscola = await this.prisma.escola.findUnique({
+      where: { cnpj: cnpjNormalizado },
+    });
     if (existingEscola) {
       throw new ConflictException('CNPJ já cadastrado no sistema');
     }
 
-    // Criar escola
+    // 3. Validar email único
+    const existingEmail = await this.prisma.escola.findFirst({
+      where: { email_contato: dto.email_contato },
+    });
+    if (existingEmail) {
+      throw new ConflictException('Email de contato já cadastrado');
+    }
+
+    // 4. Normalizar telefone (remover formatação)
+    const telefoneNormalizado = dto.telefone.replace(/\D/g, '');
+
+    // 5. Criar escola com status=ativa
     const escola = await this.prisma.escola.create({
       data: {
         nome: dto.nome,
-        cnpj: dto.cnpj,
+        cnpj: cnpjNormalizado, // Salva sem formatação
+        tipo: dto.tipo,
+        endereco: dto.endereco ?? undefined,
+        contato_principal: dto.contato_principal,
         email_contato: dto.email_contato,
-        telefone: dto.telefone,
+        telefone: telefoneNormalizado,
+        plano: dto.plano,
+        limite_horas_mes: dto.limite_horas_mes,
+        status: 'ativa',
+        data_ativacao: new Date(),
       },
     });
 
+    // 6. Retornar DTO (campos garantidos pela criação acima)
     return {
       id: escola.id,
       nome: escola.nome,
-      cnpj: escola.cnpj!, // Safe: came from validated DTO
-      email_contato: escola.email_contato!, // Safe: came from validated DTO
-      telefone: escola.telefone ?? undefined, // Convert null to undefined
+      cnpj: escola.cnpj as string, // Garantido pela criação acima
+      tipo: escola.tipo as 'particular' | 'publica_municipal' | 'publica_estadual',
+      endereco: escola.endereco as object | undefined,
+      contato_principal: escola.contato_principal as string,
+      email_contato: escola.email_contato as string,
+      telefone: escola.telefone as string,
+      plano: escola.plano as string,
+      limite_horas_mes: escola.limite_horas_mes as number,
+      status: escola.status as string,
+      data_ativacao: escola.data_ativacao as Date,
       created_at: escola.created_at,
     };
   }

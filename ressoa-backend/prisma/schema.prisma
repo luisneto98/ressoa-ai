@@ -85,13 +85,20 @@ enum StatusAnalise {
 }
 
 model Escola {
-  id            String   @id @default(uuid())
-  nome          String
-  cnpj          String?  @unique
-  email_contato String?
-  telefone      String?
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
+  id                String    @id @default(uuid())
+  nome              String
+  cnpj              String?   @unique
+  tipo              String?   // 'particular', 'publica_municipal', 'publica_estadual'
+  endereco          Json?     // { rua, numero, bairro, cidade, uf, cep }
+  contato_principal String?   // Nome do responsável principal
+  email_contato     String?
+  telefone          String?
+  plano             String?   // 'trial', 'basico', 'completo', 'enterprise'
+  limite_horas_mes  Int?      // Limite de horas de transcrição por mês
+  status            String?   // 'ativa', 'inativa', 'suspensa'
+  data_ativacao     DateTime? // Data de ativação da escola
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
 
   // Relations
   usuarios      Usuario[]

@@ -28,6 +28,28 @@ export interface UsuariosQueryParams {
   escola_id?: string;
 }
 
+export interface UpdateUsuarioData {
+  nome?: string;
+  email?: string;
+}
+
+export interface UpdateUsuarioResponse {
+  id: string;
+  nome: string;
+  email: string;
+  role: 'PROFESSOR' | 'COORDENADOR' | 'DIRETOR' | 'ADMIN' | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export async function updateUsuario(
+  id: string,
+  data: UpdateUsuarioData,
+): Promise<UpdateUsuarioResponse> {
+  const response = await apiClient.patch<UpdateUsuarioResponse>(`/usuarios/${id}`, data);
+  return response.data;
+}
+
 export async function fetchUsuarios(
   params: UsuariosQueryParams,
 ): Promise<UsuariosListResponse> {

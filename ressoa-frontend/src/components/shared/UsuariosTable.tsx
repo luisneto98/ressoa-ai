@@ -25,11 +25,26 @@ import {
   PaginationNext,
 } from '@/components/ui/pagination';
 import { Skeleton } from '@/components/ui/skeleton';
-import { IconSearch, IconUsers } from '@tabler/icons-react';
+import { Button } from '@/components/ui/button';
+import { IconSearch, IconUsers, IconEdit } from '@tabler/icons-react';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useUsuarios } from '@/hooks/useUsuarios';
+import { useAuthStore } from '@/stores/auth.store';
+import { EditUsuarioDialog } from './EditUsuarioDialog';
+import type { UsuarioListItem } from '@/api/usuarios';
 
 type RoleOption = 'PROFESSOR' | 'COORDENADOR' | 'DIRETOR' | 'ADMIN';
+
+const EDITABLE_ROLES: Record<string, string[]> = {
+  ADMIN: ['PROFESSOR', 'COORDENADOR', 'DIRETOR'],
+  DIRETOR: ['PROFESSOR', 'COORDENADOR'],
+  COORDENADOR: ['PROFESSOR'],
+};
+
+function canEdit(callerRole: string | undefined, targetRole: string | null): boolean {
+  if (!callerRole || !targetRole) return false;
+  return EDITABLE_ROLES[callerRole]?.includes(targetRole) ?? false;
+}
 
 interface UsuariosTableProps {
   showEscola?: boolean;
@@ -70,7 +85,9 @@ export function UsuariosTable({
   const [page, setPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('');
+  const [editingUsuario, setEditingUsuario] = useState<UsuarioListItem | null>(null);
   const debouncedSearch = useDebouncedValue(searchValue, 300);
+  const callerRole = useAuthStore((s) => s.user?.role);
 
   const { data, isLoading, isFetching } = useUsuarios({
     page,
@@ -173,6 +190,7 @@ export function UsuariosTable({
                   {showRole && <TableHead>Perfil</TableHead>}
                   {showEscola && <TableHead>Escola</TableHead>}
                   <TableHead>Data Cadastro</TableHead>
+                  <TableHead className="w-16">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -202,6 +220,20 @@ export function UsuariosTable({
                       <TableCell>{usuario.escola_nome ?? '—'}</TableCell>
                     )}
                     <TableCell>{formatDate(usuario.created_at)}</TableCell>
+                    <TableCell>
+                      {canEdit(callerRole, usuario.role) && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-11 w-11"
+                          title="Editar usuário"
+                          aria-label={`Editar ${usuario.nome}`}
+                          onClick={() => setEditingUsuario(usuario)}
+                        >
+                          <IconEdit className="size-5" />
+                        </Button>
+                      )}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -267,6 +299,21 @@ export function UsuariosTable({
             </Pagination>
           )}
         </>
+      )}
+
+      {editingUsuario && (
+        <EditUsuarioDialog
+          open={!!editingUsuario}
+          onOpenChange={(open) => {
+            if (!open) setEditingUsuario(null);
+          }}
+          usuario={{
+            id: editingUsuario.id,
+            nome: editingUsuario.nome,
+            email: editingUsuario.email,
+            role: editingUsuario.role ?? '',
+          }}
+        />
       )}
     </div>
   );

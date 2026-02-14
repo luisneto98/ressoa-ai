@@ -1,13 +1,14 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Patch, Query, Param, Body, UseGuards, ParseUUIDPipe } from '@nestjs/common';
 import {
   ApiTags,
   ApiBearerAuth,
   ApiOperation,
+  ApiParam,
   ApiResponse,
 } from '@nestjs/swagger';
 import { RoleUsuario } from '@prisma/client';
 import { UsuariosService } from './usuarios.service';
-import { ListUsuariosQueryDto } from './dto';
+import { ListUsuariosQueryDto, UpdateUsuarioDto } from './dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -48,6 +49,30 @@ export class UsuariosController {
         role: user.role,
       },
       query,
+    );
+  }
+
+  @Patch(':id')
+  @Roles(RoleUsuario.ADMIN, RoleUsuario.DIRETOR, RoleUsuario.COORDENADOR)
+  @ApiOperation({
+    summary: 'Editar dados de usuário',
+    description: 'Atualiza nome e/ou email do usuário respeitando hierarquia',
+  })
+  @ApiParam({ name: 'id', description: 'ID do usuário (UUID)' })
+  @ApiResponse({ status: 200, description: 'Usuário atualizado com sucesso' })
+  @ApiResponse({ status: 400, description: 'Validação falhou' })
+  @ApiResponse({ status: 403, description: 'Sem permissão para editar este usuário' })
+  @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
+  @ApiResponse({ status: 409, description: 'Email já cadastrado nesta escola' })
+  async updateUsuario(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateUsuarioDto,
+  ) {
+    return this.usuariosService.updateUsuario(
+      user.role,
+      id,
+      dto,
     );
   }
 }

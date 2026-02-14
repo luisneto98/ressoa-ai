@@ -1,7 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+  ForbiddenException,
+  ConflictException,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { RoleUsuario, Prisma } from '@prisma/client';
-import { ListUsuariosQueryDto } from './dto';
+import { ListUsuariosQueryDto, UpdateUsuarioDto } from './dto';
 
 @Injectable()
 export class UsuariosService {
@@ -116,5 +122,107 @@ export class UsuariosService {
         pages: Math.ceil(total / limit),
       },
     };
+  }
+
+  async updateUsuario(
+    callerRole: RoleUsuario,
+    targetId: string,
+    dto: UpdateUsuarioDto,
+  ) {
+    // 1. Validate at least one field provided
+    if (!dto.nome && !dto.email) {
+      throw new BadRequestException('Pelo menos um campo deve ser fornecido');
+    }
+
+    // 2. Build where clause with tenant isolation
+    const where: Prisma.UsuarioWhereInput = { id: targetId };
+    if (callerRole !== RoleUsuario.ADMIN) {
+      const escolaId = this.prisma.getEscolaIdOrThrow();
+      where.escola_id = escolaId;
+    }
+
+    // 3. Find target user
+    const targetUser = await this.prisma.usuario.findFirst({
+      where,
+      select: {
+        id: true,
+        email: true,
+        escola_id: true,
+        perfil_usuario: { select: { role: true } },
+      },
+    });
+    if (!targetUser) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+
+    // 4. Check hierarchy permission
+    const targetRole = targetUser.perfil_usuario?.role;
+    this.validateHierarchyPermission(callerRole, targetRole);
+
+    // 5. Email uniqueness check (if email is being changed)
+    if (dto.email) {
+      const normalizedEmail = dto.email.toLowerCase().trim();
+      if (normalizedEmail !== targetUser.email.toLowerCase()) {
+        const existing = await this.prisma.usuario.findFirst({
+          where: {
+            email: { equals: normalizedEmail, mode: 'insensitive' },
+            escola_id: targetUser.escola_id,
+            id: { not: targetId },
+          },
+        });
+        if (existing) {
+          throw new ConflictException('Email já cadastrado nesta escola');
+        }
+        dto.email = normalizedEmail;
+      }
+    }
+
+    // 6. Update
+    const updated = await this.prisma.usuario.update({
+      where: { id: targetId },
+      data: {
+        ...(dto.nome && { nome: dto.nome.trim() }),
+        ...(dto.email && { email: dto.email }),
+      },
+      select: {
+        id: true,
+        nome: true,
+        email: true,
+        created_at: true,
+        updated_at: true,
+        perfil_usuario: { select: { role: true } },
+      },
+    });
+
+    return {
+      id: updated.id,
+      nome: updated.nome,
+      email: updated.email,
+      role: updated.perfil_usuario?.role ?? null,
+      created_at: updated.created_at,
+      updated_at: updated.updated_at,
+    };
+  }
+
+  private validateHierarchyPermission(
+    callerRole: RoleUsuario,
+    targetRole: RoleUsuario | undefined,
+  ) {
+    if (callerRole === RoleUsuario.ADMIN) return;
+
+    if (!targetRole) {
+      throw new ForbiddenException('Sem permissão para editar este usuário');
+    }
+
+    const editableRoles: Record<RoleUsuario, RoleUsuario[]> = {
+      [RoleUsuario.DIRETOR]: [RoleUsuario.PROFESSOR, RoleUsuario.COORDENADOR],
+      [RoleUsuario.COORDENADOR]: [RoleUsuario.PROFESSOR],
+      [RoleUsuario.PROFESSOR]: [],
+      [RoleUsuario.ADMIN]: [],
+    };
+
+    if (!editableRoles[callerRole]?.includes(targetRole)) {
+      throw new ForbiddenException('Sem permissão para editar este usuário');
+    }
   }
 }

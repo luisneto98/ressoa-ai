@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
-import { fetchUsuarios } from '@/api/usuarios';
-import type { UsuariosQueryParams } from '@/api/usuarios';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { fetchUsuarios, updateUsuario } from '@/api/usuarios';
+import type { UsuariosQueryParams, UpdateUsuarioData } from '@/api/usuarios';
 
 export const usuariosKeys = {
   all: ['usuarios'] as const,
@@ -14,5 +14,16 @@ export function useUsuarios(params: UsuariosQueryParams) {
     queryKey: usuariosKeys.list(params),
     queryFn: () => fetchUsuarios(params),
     staleTime: 30 * 1000, // 30 seconds
+  });
+}
+
+export function useUpdateUsuario() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateUsuarioData }) =>
+      updateUsuario(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: usuariosKeys.all });
+    },
   });
 }

@@ -5,13 +5,13 @@ import { useReprocessAula } from '@/hooks/useReprocessAula';
 import { useDeleteAula } from '@/hooks/useDeleteAula';
 import { useStartAnalise } from '@/hooks/useStartAnalise';
 import { AulasFilters } from './components/AulasFilters';
-import { AulasTable } from './components/AulasTable';
+import { AulasCardsDesktop } from './components/AulasCardsDesktop';
 import { AulasCards } from './components/AulasCards';
 import { AulaDetailsModal } from './components/AulaDetailsModal';
 import { AulasListSkeleton } from './components/AulasListSkeleton';
 import { AulasListEmpty } from './components/AulasListEmpty';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { IconPlus } from '@tabler/icons-react';
 import type { AulaListItem } from '@/api/aulas';
 import {
   Pagination,
@@ -143,8 +143,8 @@ export default function AulasListPage() {
           <h1 className="text-3xl md:text-4xl font-montserrat font-bold text-deep-navy mb-2">Minhas Aulas</h1>
           <p className="text-deep-navy/80">Visualize e gerencie suas aulas</p>
         </div>
-        <Button onClick={() => navigate('/aulas/upload')}>
-          <Plus className="h-4 w-4 mr-2" />
+        <Button onClick={() => navigate('/aulas/upload')} size="lg">
+          <IconPlus className="h-5 w-5 mr-2" />
           Nova Aula
         </Button>
       </div>
@@ -164,7 +164,8 @@ export default function AulasListPage() {
         <AulasListEmpty />
       ) : (
         <>
-          <AulasTable
+          {/* Desktop: Cards Grid */}
+          <AulasCardsDesktop
             aulas={aulas}
             onViewDetails={handleViewDetails}
             onReview={handleReview}
@@ -172,6 +173,8 @@ export default function AulasListPage() {
             onDelete={handleDelete}
             onStartAnalise={handleStartAnalise}
           />
+
+          {/* Mobile: Cards List */}
           <AulasCards
             aulas={aulas}
             onViewDetails={handleViewDetails}
@@ -272,7 +275,7 @@ export default function AulasListPage() {
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDelete}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-focus-orange hover:bg-focus-orange/90"
             >
               Excluir
             </AlertDialogAction>

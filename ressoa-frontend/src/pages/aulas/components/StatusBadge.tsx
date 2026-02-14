@@ -1,4 +1,4 @@
-import { Badge } from '@/components/ui/badge';
+import { AIBadge } from '@/components/ui/ai-badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import type { StatusProcessamento } from '@/api/aulas';
 import {
@@ -15,64 +15,76 @@ import {
 
 const statusConfig: Record<StatusProcessamento, {
   label: string;
-  color: string;
+  /** AIBadge variant - 'processing' for animated states, 'status' for others */
+  variant: 'status' | 'processing';
+  /** AIBadge status color - only applies when variant="status" */
+  statusColor?: 'default' | 'success' | 'warning' | 'error';
+  /** Custom classes for special cases */
+  customClasses?: string;
   icon: React.ComponentType<{ className?: string }>;
-  animated?: boolean;
   tooltip: string;
 }> = {
   CRIADA: {
     label: 'Criada',
-    color: 'bg-gray-100 text-gray-800',
+    variant: 'status',
+    statusColor: 'default', // Gray
     icon: IconCircle,
     tooltip: 'Aula criada, aguardando upload ou entrada de dados',
   },
   UPLOAD_PROGRESSO: {
     label: 'Enviando...',
-    color: 'bg-blue-100 text-blue-800',
+    variant: 'processing', // Animated with pulse
+    customClasses: 'bg-tech-blue text-white',
     icon: IconRefresh,
-    animated: true,
     tooltip: 'Upload de áudio em progresso',
   },
   AGUARDANDO_TRANSCRICAO: {
     label: 'Aguardando transcrição',
-    color: 'bg-yellow-100 text-yellow-800',
+    variant: 'status',
+    statusColor: 'warning', // Yellow/Amber
     icon: IconClock,
     tooltip: 'Áudio enviado, aguardando transcrição',
   },
   TRANSCRITA: {
     label: 'Transcrita',
-    color: 'bg-cyan-100 text-cyan-800',
+    variant: 'status',
+    customClasses: 'bg-tech-blue text-white', // Tech Blue
     icon: IconFileText,
     tooltip: 'Transcrição completa, aguardando análise',
   },
   ANALISANDO: {
     label: 'Analisando...',
-    color: 'bg-purple-100 text-purple-800',
+    variant: 'processing', // Animated with pulse
+    customClasses: 'bg-tech-blue text-white',
     icon: IconRefresh,
-    animated: true,
     tooltip: 'Análise pedagógica em andamento',
   },
   ANALISADA: {
     label: 'Pronta para revisão',
-    color: 'bg-green-100 text-green-800',
+    variant: 'status',
+    statusColor: 'warning', // Amber (awaiting approval)
     icon: IconCircleCheck,
     tooltip: 'Análise completa, pronta para sua revisão',
   },
   APROVADA: {
     label: 'Aprovada',
-    color: 'bg-green-600 text-white',
+    variant: 'status',
+    statusColor: 'success', // Green
+    customClasses: 'bg-green-600 text-white font-semibold',
     icon: IconCheck,
     tooltip: 'Aula aprovada e finalizada',
   },
   REJEITADA: {
     label: 'Rejeitada',
-    color: 'bg-red-100 text-red-800',
+    variant: 'status',
+    statusColor: 'error',
     icon: IconCircleX,
     tooltip: 'Aula rejeitada, requer reprocessamento',
   },
   ERRO: {
     label: 'Erro',
-    color: 'bg-red-600 text-white',
+    variant: 'status',
+    customClasses: 'bg-focus-orange text-white', // Focus Orange (not red!)
     icon: IconAlertTriangle,
     tooltip: 'Erro no processamento, clique para reprocessar',
   },
@@ -81,7 +93,8 @@ const statusConfig: Record<StatusProcessamento, {
 // Fallback for unknown status
 const UNKNOWN_STATUS_CONFIG = {
   label: 'Desconhecido',
-  color: 'bg-gray-200 text-gray-700',
+  variant: 'status' as const,
+  statusColor: 'default' as const,
   icon: IconHelp,
   tooltip: 'Status desconhecido - entre em contato com o suporte',
 };
@@ -98,10 +111,16 @@ export const StatusBadge = ({ status }: StatusBadgeProps) => {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Badge className={`${config.color} ${config.animated ? 'animate-pulse' : ''}`}>
+          <AIBadge
+            variant={config.variant}
+            status={config.statusColor}
+            className={config.customClasses}
+            role="status"
+            aria-live={config.variant === 'processing' ? 'polite' : undefined}
+          >
             <IconComponent className="size-4 mr-1" />
             {config.label}
-          </Badge>
+          </AIBadge>
         </TooltipTrigger>
         <TooltipContent>
           <p>{config.tooltip}</p>

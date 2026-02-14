@@ -2,7 +2,8 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { X, ChevronsUpDown } from 'lucide-react';
+import { ChevronsUpDown } from 'lucide-react';
+import { IconFilterX } from '@tabler/icons-react';
 import { fetchProfessorTurmas, type Turma } from '@/api/aulas';
 import { useQuery } from '@tanstack/react-query';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -54,11 +55,11 @@ export const AulasFilters = ({ filters, onFilterChange, onStatusChange, onClearF
   };
 
   return (
-    <div className="bg-white p-4 rounded-lg border border-gray-200 mb-6">
+    <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6 shadow-sm">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {/* Turma Filter */}
         <div className="space-y-2">
-          <Label htmlFor="turma-filter">Turma</Label>
+          <Label htmlFor="turma-filter" className="text-deep-navy font-medium">Turma</Label>
           <Select
             value={filters.turma_id || '__all__'}
             onValueChange={(value) => onFilterChange('turma_id', value === '__all__' ? null : value)}
@@ -80,7 +81,7 @@ export const AulasFilters = ({ filters, onFilterChange, onStatusChange, onClearF
 
         {/* Data Início Filter */}
         <div className="space-y-2">
-          <Label htmlFor="data-inicio-filter">Data Início</Label>
+          <Label htmlFor="data-inicio-filter" className="text-deep-navy font-medium">Data Início</Label>
           <Input
             id="data-inicio-filter"
             type="date"
@@ -91,7 +92,7 @@ export const AulasFilters = ({ filters, onFilterChange, onStatusChange, onClearF
 
         {/* Data Fim Filter */}
         <div className="space-y-2">
-          <Label htmlFor="data-fim-filter">Data Fim</Label>
+          <Label htmlFor="data-fim-filter" className="text-deep-navy font-medium">Data Fim</Label>
           <Input
             id="data-fim-filter"
             type="date"
@@ -102,7 +103,7 @@ export const AulasFilters = ({ filters, onFilterChange, onStatusChange, onClearF
 
         {/* Multi-Select Status Filter */}
         <div className="space-y-2">
-          <Label htmlFor="status-filter">Status</Label>
+          <Label htmlFor="status-filter" className="text-deep-navy font-medium">Status</Label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -159,9 +160,9 @@ export const AulasFilters = ({ filters, onFilterChange, onStatusChange, onClearF
             variant="outline"
             size="sm"
             onClick={onClearFilters}
-            className="text-gray-600"
+            className="text-deep-navy/80 hover:text-deep-navy hover:bg-ghost-white"
           >
-            <X className="h-4 w-4 mr-2" />
+            <IconFilterX className="h-4 w-4 mr-2" />
             Limpar Filtros
           </Button>
         </div>

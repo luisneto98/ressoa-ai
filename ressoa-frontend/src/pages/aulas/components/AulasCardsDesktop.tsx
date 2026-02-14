@@ -37,15 +37,13 @@ export const AulasCardsDesktop = ({
               key={aula.id}
               title={aula.turma_nome}
               description={formatDate(aula.data)}
-              className="hover:scale-[1.02] hover:shadow-lg transition-all duration-200"
+              headerActions={<TipoBadge tipo={aula.tipo_entrada} />}
+              className="hover:scale-[1.02] hover:shadow-lg hover:will-change-transform transition-all duration-200"
             >
               {/* Card body */}
               <div className="space-y-4">
-                {/* Status & Type badges */}
-                <div className="flex items-center gap-2 flex-wrap">
-                  <StatusBadge status={aula.status_processamento} />
-                  <TipoBadge tipo={aula.tipo_entrada} />
-                </div>
+                {/* Status badge */}
+                <StatusBadge status={aula.status_processamento} />
 
                 {/* Action buttons */}
                 <div className="flex flex-col gap-2">
@@ -53,7 +51,7 @@ export const AulasCardsDesktop = ({
                     variant="outline"
                     size="default"
                     onClick={() => onViewDetails(aula.id)}
-                    className="w-full justify-start bg-white hover:bg-gray-50"
+                    className="w-full justify-start min-h-[44px] bg-white hover:bg-gray-50"
                     aria-label={`Visualizar detalhes da aula de ${aula.turma_nome} em ${formatDate(aula.data)}`}
                   >
                     <IconEye className="h-4 w-4 mr-2" />
@@ -64,7 +62,7 @@ export const AulasCardsDesktop = ({
                     variant="default"
                     size="default"
                     onClick={() => onReview(aula.id)}
-                    className="w-full justify-start"
+                    className="w-full justify-start min-h-[44px]"
                     aria-label={`Revisar aula de ${aula.turma_nome}`}
                   >
                     <IconFileText className="h-4 w-4 mr-2" />
@@ -80,7 +78,7 @@ export const AulasCardsDesktop = ({
         return (
           <Card
             key={aula.id}
-            className="hover:scale-[1.02] hover:shadow-lg transition-all duration-200"
+            className="hover:scale-[1.02] hover:shadow-lg hover:will-change-transform transition-all duration-200"
           >
             <CardHeader>
               <CardTitle className="font-montserrat font-semibold text-deep-navy">
@@ -105,7 +103,7 @@ export const AulasCardsDesktop = ({
                 variant="outline"
                 size="default"
                 onClick={() => onViewDetails(aula.id)}
-                className="w-full justify-start"
+                className="w-full justify-start min-h-[44px]"
                 aria-label={`Visualizar detalhes da aula de ${aula.turma_nome} em ${formatDate(aula.data)}`}
               >
                 <IconEye className="h-4 w-4 mr-2" />
@@ -118,7 +116,7 @@ export const AulasCardsDesktop = ({
                   variant="default"
                   size="default"
                   onClick={() => onStartAnalise(aula.id)}
-                  className="w-full justify-start"
+                  className="w-full justify-start min-h-[44px]"
                   aria-label={`Iniciar análise da aula de ${aula.turma_nome}`}
                 >
                   <IconSparkles className="h-4 w-4 mr-2" />
@@ -132,7 +130,7 @@ export const AulasCardsDesktop = ({
                   variant="default"
                   size="default"
                   onClick={() => onReview(aula.id)}
-                  className="w-full justify-start"
+                  className="w-full justify-start min-h-[44px]"
                   aria-label={`Revisar aula de ${aula.turma_nome}`}
                 >
                   <IconFileText className="h-4 w-4 mr-2" />
@@ -146,7 +144,7 @@ export const AulasCardsDesktop = ({
                   variant="outline"
                   size="default"
                   onClick={() => onReprocess(aula.id)}
-                  className="w-full justify-start"
+                  className="w-full justify-start min-h-[44px]"
                   aria-label={`Reprocessar aula de ${aula.turma_nome}`}
                 >
                   <IconRefresh className="h-4 w-4 mr-2" />
@@ -160,7 +158,7 @@ export const AulasCardsDesktop = ({
                   variant="destructive"
                   size="default"
                   onClick={() => onDelete(aula.id)}
-                  className="w-full justify-start"
+                  className="w-full justify-start min-h-[44px]"
                   aria-label={`Excluir aula de ${aula.turma_nome}`}
                 >
                   <IconTrash className="h-4 w-4 mr-2" />

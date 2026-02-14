@@ -198,21 +198,29 @@ export default function AulasListPage() {
                 {/* Page numbers */}
                 {page > 1 && (
                   <PaginationItem>
-                    <PaginationLink onClick={() => handlePageChange(page - 1)} className="cursor-pointer">
+                    <PaginationLink
+                      onClick={() => handlePageChange(page - 1)}
+                      className="cursor-pointer"
+                      aria-label={`Ir para página ${page - 1}`}
+                    >
                       {page - 1}
                     </PaginationLink>
                   </PaginationItem>
                 )}
 
                 <PaginationItem>
-                  <PaginationLink isActive className="cursor-default">
+                  <PaginationLink isActive className="cursor-default" aria-label={`Página ${page} (atual)`} aria-current="page">
                     {page}
                   </PaginationLink>
                 </PaginationItem>
 
                 {hasNextPage && (
                   <PaginationItem>
-                    <PaginationLink onClick={() => handlePageChange(page + 1)} className="cursor-pointer">
+                    <PaginationLink
+                      onClick={() => handlePageChange(page + 1)}
+                      className="cursor-pointer"
+                      aria-label={`Ir para página ${page + 1}`}
+                    >
                       {page + 1}
                     </PaginationLink>
                   </PaginationItem>

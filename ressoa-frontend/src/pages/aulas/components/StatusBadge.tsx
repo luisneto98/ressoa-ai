@@ -122,7 +122,7 @@ export const StatusBadge = ({ status }: StatusBadgeProps) => {
             {config.label}
           </AIBadge>
         </TooltipTrigger>
-        <TooltipContent>
+        <TooltipContent side="top" align="center">
           <p>{config.tooltip}</p>
         </TooltipContent>
       </Tooltip>

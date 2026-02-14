@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Patch,
+  Post,
   Param,
   Query,
   ParseUUIDPipe,
@@ -66,5 +67,20 @@ export class ConvitesController {
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     return this.convitesService.cancelarConvite(id, user.role, user.escolaId);
+  }
+
+  @Post(':id/reenviar')
+  @ApiOperation({ summary: 'Reenviar convite expirado/pendente' })
+  @ApiParam({ name: 'id', description: 'UUID do convite' })
+  @ApiResponse({ status: 201, description: 'Convite reenviado com sucesso' })
+  @ApiResponse({ status: 400, description: 'Convite já aceito (não reenviável)' })
+  @ApiResponse({ status: 401, description: 'Não autenticado' })
+  @ApiResponse({ status: 403, description: 'Acesso negado' })
+  @ApiResponse({ status: 404, description: 'Convite não encontrado' })
+  async reenviarConvite(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.convitesService.reenviarConvite(id, user.role, user.escolaId);
   }
 }

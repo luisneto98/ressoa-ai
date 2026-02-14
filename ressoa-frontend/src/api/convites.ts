@@ -52,3 +52,12 @@ export async function cancelarConvite(
   );
   return data;
 }
+
+export async function reenviarConvite(
+  id: string,
+): Promise<{ message: string }> {
+  const { data } = await apiClient.post<{ message: string }>(
+    `/convites/${id}/reenviar`,
+  );
+  return data;
+}

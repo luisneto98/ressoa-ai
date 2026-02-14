@@ -50,6 +50,19 @@ const mockConvites: convitesApi.ConviteListItem[] = [
     aceito_em: '2026-02-12T15:00:00Z',
     dados_extras: null,
   },
+  {
+    id: 'conv-3',
+    email: 'expired@escola.com',
+    nome_completo: 'Expirado Teste',
+    tipo_usuario: 'professor',
+    escola_id: 'escola-1',
+    escola_nome: 'Escola A',
+    status: 'expirado',
+    expira_em: '2026-02-10T10:00:00Z',
+    criado_em: '2026-02-09T10:00:00Z',
+    aceito_em: null,
+    dados_extras: null,
+  },
 ];
 
 describe('ConvitesPendentesPage', () => {
@@ -75,8 +88,9 @@ describe('ConvitesPendentesPage', () => {
     // Badges
     expect(screen.getByText('Pendente')).toBeInTheDocument();
     expect(screen.getByText('Aceito')).toBeInTheDocument();
-    expect(screen.getByText('Professor')).toBeInTheDocument();
+    expect(screen.getAllByText('Professor').length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText('Coordenador')).toBeInTheDocument();
+    expect(screen.getAllByText('Expirado').length).toBeGreaterThanOrEqual(1);
   });
 
   it('should show empty state when no convites exist', async () => {
@@ -88,5 +102,41 @@ describe('ConvitesPendentesPage', () => {
     renderPage();
 
     expect(await screen.findByText('Nenhum convite encontrado')).toBeInTheDocument();
+  });
+
+  it('should enable Reenviar button for expired invites', async () => {
+    vi.mocked(convitesApi.fetchConvites).mockResolvedValue({
+      data: mockConvites,
+      pagination: { page: 1, limit: 20, total: 3, pages: 1 },
+    });
+
+    renderPage();
+
+    await screen.findByText('expired@escola.com');
+
+    // Get all Reenviar buttons
+    const reenviarButtons = screen.getAllByRole('button', { name: 'Reenviar' });
+
+    // The expired invite button (conv-3) should be enabled
+    // The accepted invite button (conv-2) should be disabled
+    const expiredRowButton = reenviarButtons[2]; // conv-3 is last
+    const acceptedRowButton = reenviarButtons[1]; // conv-2 is middle
+
+    expect(expiredRowButton).not.toBeDisabled();
+    expect(acceptedRowButton).toBeDisabled();
+  });
+
+  it('should disable Reenviar button for accepted invites', async () => {
+    vi.mocked(convitesApi.fetchConvites).mockResolvedValue({
+      data: [mockConvites[1]], // only aceito convite
+      pagination: { page: 1, limit: 20, total: 1, pages: 1 },
+    });
+
+    renderPage();
+
+    await screen.findByText('coord@escola.com');
+
+    const reenviarButton = screen.getByRole('button', { name: 'Reenviar' });
+    expect(reenviarButton).toBeDisabled();
   });
 });

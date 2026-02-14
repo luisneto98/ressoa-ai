@@ -3,9 +3,10 @@ import { ConvitesController } from './convites.controller';
 import { ConvitesService } from './convites.service';
 import { PrismaModule } from '../../prisma/prisma.module';
 import { RedisModule } from '../../redis/redis.module';
+import { EmailModule } from '../../common/email/email.module';
 
 @Module({
-  imports: [PrismaModule, RedisModule],
+  imports: [PrismaModule, RedisModule, EmailModule],
   controllers: [ConvitesController],
   providers: [ConvitesService],
   exports: [ConvitesService],

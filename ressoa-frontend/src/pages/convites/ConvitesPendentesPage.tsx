@@ -20,6 +20,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { useConvites } from '@/hooks/useConvites';
 import { CancelConviteDialog } from '@/components/shared/CancelConviteDialog';
+import { ReenviarConviteDialog } from '@/components/shared/ReenviarConviteDialog';
 import type { ConviteListItem } from '@/api/convites';
 
 function getExpirationDisplay(expiraEm: string): {
@@ -57,6 +58,7 @@ export function ConvitesPendentesPage() {
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [cancelingConvite, setCancelingConvite] = useState<ConviteListItem | null>(null);
+  const [resendingConvite, setResendingConvite] = useState<ConviteListItem | null>(null);
 
   const { data, isLoading } = useConvites({
     page,
@@ -131,6 +133,7 @@ export function ConvitesPendentesPage() {
                 const tipoBadge = TIPO_BADGES[convite.tipo_usuario] ?? TIPO_BADGES.professor;
                 const expiration = getExpirationDisplay(convite.expira_em);
                 const canCancel = convite.status === 'pendente' || convite.status === 'expirado';
+                const canResend = convite.status === 'expirado' || convite.status === 'cancelado' || (convite.status === 'pendente' && new Date(convite.expira_em) < new Date());
 
                 return (
                   <TableRow key={convite.id}>
@@ -168,9 +171,9 @@ export function ConvitesPendentesPage() {
                         <Button
                           size="sm"
                           variant="outline"
-                          disabled
+                          disabled={!canResend}
+                          onClick={() => setResendingConvite(convite)}
                           className="min-h-[44px]"
-                          title="Disponível na Story 13.12"
                         >
                           Reenviar
                         </Button>
@@ -221,6 +224,17 @@ export function ConvitesPendentesPage() {
             if (!open) setCancelingConvite(null);
           }}
           convite={cancelingConvite}
+        />
+      )}
+
+      {/* Resend dialog */}
+      {resendingConvite && (
+        <ReenviarConviteDialog
+          open={!!resendingConvite}
+          onOpenChange={(open) => {
+            if (!open) setResendingConvite(null);
+          }}
+          convite={resendingConvite}
         />
       )}
     </div>

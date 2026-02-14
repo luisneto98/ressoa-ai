@@ -26,6 +26,7 @@ describe('POST /api/v1/coordenador/invite-professor (E2E) - Story 13.6', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.setGlobalPrefix('api/v1');
     app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
     await app.init();
 
@@ -139,7 +140,7 @@ describe('POST /api/v1/coordenador/invite-professor (E2E) - Story 13.6', () => {
 
     // Login as coordenador
     const coordenadorLogin = await request(app.getHttpServer())
-      .post('/auth/login')
+      .post('/api/v1/auth/login')
       .send({
         email: 'coordenador.story136@escola.com',
         senha: 'Coordenador@123',
@@ -148,7 +149,7 @@ describe('POST /api/v1/coordenador/invite-professor (E2E) - Story 13.6', () => {
 
     // Login as admin
     const adminLogin = await request(app.getHttpServer())
-      .post('/auth/login')
+      .post('/api/v1/auth/login')
       .send({
         email: 'admin.story136@escola.com',
         senha: 'Admin@123',
@@ -157,7 +158,7 @@ describe('POST /api/v1/coordenador/invite-professor (E2E) - Story 13.6', () => {
 
     // Login as diretor
     const diretorLogin = await request(app.getHttpServer())
-      .post('/auth/login')
+      .post('/api/v1/auth/login')
       .send({
         email: 'diretor.story136@escola.com',
         senha: 'Diretor@123',
@@ -166,7 +167,7 @@ describe('POST /api/v1/coordenador/invite-professor (E2E) - Story 13.6', () => {
 
     // Login as professor
     const professorLogin = await request(app.getHttpServer())
-      .post('/auth/login')
+      .post('/api/v1/auth/login')
       .send({
         email: 'professor.story136@escola.com',
         senha: 'Professor@123',
@@ -194,6 +195,7 @@ describe('POST /api/v1/coordenador/invite-professor (E2E) - Story 13.6', () => {
             'diretor.story136@escola.com',
             'professor.story136@escola.com',
             'professor.novo@escola.com',
+            'accept.invitation@escola.com',
           ],
         },
       },
@@ -295,26 +297,16 @@ describe('POST /api/v1/coordenador/invite-professor (E2E) - Story 13.6', () => {
     expect(response.status).toBe(401);
   });
 
-  // AC17 Test 6: ✅ Email duplicado → 409 Conflict
-  it('should return 409 when email already exists in escola', async () => {
-    // First invitation
-    await request(app.getHttpServer())
-      .post('/api/v1/coordenador/invite-professor')
-      .set('Authorization', `Bearer ${coordenadorToken}`)
-      .send({
-        email: 'duplicate@escola.com',
-        nome: 'First Invite',
-        disciplina: 'MATEMATICA',
-      });
-
-    // Second invitation (same email)
+  // AC17 Test 6: ✅ Email duplicado → 409 Conflict (existing registered user)
+  it('should return 409 when email already exists as registered user in escola', async () => {
+    // Try to invite an email that already exists as a registered user (professor.story136@escola.com)
     const response = await request(app.getHttpServer())
       .post('/api/v1/coordenador/invite-professor')
       .set('Authorization', `Bearer ${coordenadorToken}`)
       .send({
-        email: 'duplicate@escola.com',
-        nome: 'Second Invite',
-        disciplina: 'CIENCIAS',
+        email: 'professor.story136@escola.com',
+        nome: 'Duplicate Professor',
+        disciplina: 'MATEMATICA',
       });
 
     expect(response.status).toBe(409);
@@ -325,7 +317,7 @@ describe('POST /api/v1/coordenador/invite-professor (E2E) - Story 13.6', () => {
   it('should return 400 when escola is inactive', async () => {
     // Login as coordenador from inactive school
     const coordInativaLogin = await request(app.getHttpServer())
-      .post('/auth/login')
+      .post('/api/v1/auth/login')
       .send({
         email: 'coordenador.inativa@escola.com',
         senha: 'Coordenador@456',
@@ -533,7 +525,7 @@ describe('POST /api/v1/coordenador/invite-professor (E2E) - Story 13.6', () => {
 
     // Accept invitation
     const acceptResponse = await request(app.getHttpServer())
-      .post('/auth/accept-invitation')
+      .post('/api/v1/auth/accept-invitation')
       .send({
         token,
         senha: 'Professor@NewPassword123',

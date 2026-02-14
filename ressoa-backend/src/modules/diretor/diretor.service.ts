@@ -87,10 +87,12 @@ export class DiretorService {
       });
     } catch (error) {
       // AC7: Graceful degradation - log error but don't throw
-      this.logger.error(
-        'Failed to send coordenador invitation email',
-        error instanceof Error ? error.stack : String(error),
-      );
+      // MEDIUM-4 FIX: Standardize error logging format
+      this.logger.error('Failed to send coordenador invitation email', {
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+        email: normalizedEmail,
+      });
       // Token remains valid in Redis even if email fails
     }
 
@@ -138,14 +140,15 @@ export class DiretorService {
     const inviteToken = crypto.randomBytes(32).toString('hex');
 
     // AC5: Store token in Redis with 24h TTL
+    // HIGH-2 FIX: Trim optional fields and exclude empty strings
     const tokenPayload = {
       email: emailNormalized,
       escolaId: escola.id,
       nome: dto.nome,
       disciplina: dto.disciplina,
-      ...(dto.formacao && { formacao: dto.formacao }),
-      ...(dto.registro && { registro: dto.registro }),
-      ...(dto.telefone && { telefone: dto.telefone }),
+      ...(dto.formacao?.trim() && { formacao: dto.formacao.trim() }),
+      ...(dto.registro?.trim() && { registro: dto.registro.trim() }),
+      ...(dto.telefone?.trim() && { telefone: dto.telefone.trim() }),
     };
 
     await this.redisService.setex(
@@ -165,8 +168,10 @@ export class DiretorService {
       });
     } catch (error) {
       // AC7: Graceful degradation - log error but don't throw
+      // MEDIUM-4 FIX: Standardize error logging format
       this.logger.error('Failed to send professor invitation email', {
         error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
         email: emailNormalized,
       });
       // Token remains valid in Redis even if email fails

@@ -29,7 +29,7 @@ interface AuthenticatedUser {
 
 @ApiTags('coordenador')
 @ApiBearerAuth()
-@Controller('api/v1/coordenador')
+@Controller('coordenador')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(RoleUsuario.COORDENADOR)
 export class CoordenadorController {

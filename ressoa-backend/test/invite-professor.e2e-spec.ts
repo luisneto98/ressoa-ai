@@ -55,8 +55,10 @@ describe('POST /api/v1/diretor/invite-professor (Story 13.5)', () => {
         email: 'diretor.story135@escola.com',
         nome: 'Diretor Story 135',
         senha_hash: hashedPassword,
-        escola_id: testEscolaId,
-        perfilUsuario: {
+        escola: {
+          connect: { id: testEscolaId },
+        },
+        perfil_usuario: {
           create: {
             role: RoleUsuario.DIRETOR,
           },
@@ -71,8 +73,10 @@ describe('POST /api/v1/diretor/invite-professor (Story 13.5)', () => {
         email: 'coordenador.story135@escola.com',
         nome: 'Coordenador Story 135',
         senha_hash: coordenadorHash,
-        escola_id: testEscolaId,
-        perfilUsuario: {
+        escola: {
+          connect: { id: testEscolaId },
+        },
+        perfil_usuario: {
           create: {
             role: RoleUsuario.COORDENADOR,
           },
@@ -342,8 +346,10 @@ describe('POST /api/v1/diretor/invite-professor (Story 13.5)', () => {
         email: 'professor.duplicado@escola.com',
         nome: 'Professor Existente',
         senha_hash: hashedPassword,
-        escola_id: testEscolaId,
-        perfilUsuario: {
+        escola: {
+          connect: { id: testEscolaId },
+        },
+        perfil_usuario: {
           create: {
             role: RoleUsuario.PROFESSOR,
           },
@@ -456,6 +462,52 @@ describe('POST /api/v1/diretor/invite-professor (Story 13.5)', () => {
       .expect(400);
   });
 
+  // MEDIUM-2 FIX: Add test for invalid email format
+  it('should reject invalid email format (400)', async () => {
+    const dto = {
+      email: 'invalid-email-format',
+      nome: 'Professor Teste',
+      disciplina: 'MATEMATICA',
+    };
+
+    await request(app.getHttpServer())
+      .post('/api/v1/diretor/invite-professor')
+      .set('Authorization', `Bearer ${diretorToken}`)
+      .send(dto)
+      .expect(400);
+  });
+
+  // MEDIUM-3 FIX: Add test for nome too short
+  it('should reject nome too short (400)', async () => {
+    const dto = {
+      email: 'professor.teste@escola.com.br',
+      nome: 'Jo', // 2 chars - below minimum
+      disciplina: 'MATEMATICA',
+    };
+
+    await request(app.getHttpServer())
+      .post('/api/v1/diretor/invite-professor')
+      .set('Authorization', `Bearer ${diretorToken}`)
+      .send(dto)
+      .expect(400);
+  });
+
+  // MEDIUM-1 FIX: Add test for invalid telefone format
+  it('should reject invalid telefone format (400)', async () => {
+    const dto = {
+      email: 'professor.teste@escola.com.br',
+      nome: 'Professor Teste',
+      disciplina: 'MATEMATICA',
+      telefone: 'abc123', // Invalid format
+    };
+
+    await request(app.getHttpServer())
+      .post('/api/v1/diretor/invite-professor')
+      .set('Authorization', `Bearer ${diretorToken}`)
+      .send(dto)
+      .expect(400);
+  });
+
   it('should allow resending invitation (overwrites previous token)', async () => {
     const dto = {
       email: 'professor.reinvite@escola.com',
@@ -474,8 +526,11 @@ describe('POST /api/v1/diretor/invite-professor (Story 13.5)', () => {
     expect(firstTokenKeys.length).toBe(1);
     const firstToken = firstTokenKeys[0].split(':')[1];
 
-    // Wait 100ms to ensure different token
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    // LOW-2 FIX: Extract magic number to constant
+    const TOKEN_GENERATION_DELAY_MS = 100;
+    await new Promise((resolve) =>
+      setTimeout(resolve, TOKEN_GENERATION_DELAY_MS),
+    );
 
     // Second invitation (same email)
     await request(app.getHttpServer())

@@ -280,12 +280,14 @@ export class EmailService {
         `Coordenador invitation email sent to ${to} for school ${escolaNome}`,
       );
     } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Unknown error';
-      // Throw error so DiretorService can log and handle gracefully
-      throw new Error(
-        `Failed to send coordenador invitation email: ${errorMessage}`,
-      );
+      // HIGH-3 FIX: Graceful degradation - DO NOT throw error
+      // Token remains valid in Redis even if email fails
+      this.logger.error('Failed to send coordenador invitation email', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+        to,
+      });
+      // Do NOT throw - graceful degradation
     }
   }
 
@@ -393,11 +395,17 @@ export class EmailService {
 
       this.logger.log(`Professor invitation email sent to ${to}`);
     } catch (error) {
-      this.logger.error('Failed to send professor invitation email via SendGrid', {
-        error: error instanceof Error ? error.message : String(error),
-        to,
-      });
-      throw error; // Será tratado pelo service com graceful degradation
+      // HIGH-3 FIX: Graceful degradation - DO NOT throw error
+      // Token remains valid in Redis even if email fails (AC7)
+      this.logger.error(
+        'Failed to send professor invitation email via SendGrid',
+        {
+          error: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined,
+          to,
+        },
+      );
+      // Do NOT throw - graceful degradation per AC7
     }
   }
 

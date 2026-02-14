@@ -181,7 +181,12 @@ export class AuthService {
       throw new UnauthorizedException('Token inválido ou corrompido');
     }
 
-    // 3. Validate escola exists and is active
+    // 3. Validate escolaId exists and escola is active
+    // LOW-3 FIX: Explicit null check for escolaId
+    if (!escolaId) {
+      throw new BadRequestException('Token inválido: escola não especificada');
+    }
+
     const escola = await this.prisma.escola.findUnique({
       where: { id: escolaId },
     });

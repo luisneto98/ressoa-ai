@@ -4,9 +4,17 @@ import {
   IsEnum,
   IsOptional,
   IsString,
+  Matches,
   MaxLength,
   MinLength,
 } from 'class-validator';
+
+// HIGH-1 FIX: Use TypeScript enum for type safety and refactoring
+export enum Disciplina {
+  MATEMATICA = 'MATEMATICA',
+  LINGUA_PORTUGUESA = 'LINGUA_PORTUGUESA',
+  CIENCIAS = 'CIENCIAS',
+}
 
 export class InviteProfessorDto {
   @ApiProperty({
@@ -27,13 +35,13 @@ export class InviteProfessorDto {
 
   @ApiProperty({
     description: 'Disciplina principal',
-    enum: ['MATEMATICA', 'LINGUA_PORTUGUESA', 'CIENCIAS'],
-    example: 'MATEMATICA',
+    enum: Disciplina,
+    example: Disciplina.MATEMATICA,
   })
-  @IsEnum(['MATEMATICA', 'LINGUA_PORTUGUESA', 'CIENCIAS'], {
+  @IsEnum(Disciplina, {
     message: 'Disciplina inválida',
   })
-  disciplina!: string;
+  disciplina!: Disciplina;
 
   @ApiProperty({
     description: 'Formação acadêmica',
@@ -62,6 +70,8 @@ export class InviteProfessorDto {
   })
   @IsOptional()
   @IsString()
-  @MaxLength(20, { message: 'Telefone deve ter no máximo 20 caracteres' })
+  @Matches(/^\(\d{2}\)\s?\d{4,5}-\d{4}$/, {
+    message: 'Telefone deve estar no formato (XX) XXXXX-XXXX',
+  })
   telefone?: string;
 }

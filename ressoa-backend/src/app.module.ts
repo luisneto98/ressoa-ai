@@ -16,6 +16,7 @@ import { RedisModule } from './redis/redis.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { DiretorModule } from './modules/diretor/diretor.module';
+import { CoordenadorModule } from './modules/coordenador/coordenador.module';
 import { PlanejamentoModule } from './modules/planejamento/planejamento.module';
 import { HabilidadesModule } from './modules/habilidades/habilidades.module';
 import { TurmasModule } from './modules/turmas/turmas.module';
@@ -107,6 +108,7 @@ if (process.env.NODE_ENV !== 'test') {
     AuthModule,
     AdminModule, // Admin endpoints for school/user management (Story 1.6)
     DiretorModule, // Diretor endpoints for coordenador management (Story 13.4)
+    CoordenadorModule, // Coordenador endpoints for professor management (Story 13.6)
     PlanejamentoModule, // Planejamento CRUD API (Story 2.1)
     HabilidadesModule, // Habilidades BNCC Query API (Story 2.2)
     TurmasModule, // Turmas Query API (Story 2.3 - blocker resolution)

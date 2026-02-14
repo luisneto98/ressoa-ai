@@ -27,6 +27,7 @@ import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
 import { AcceptInvitationPage } from '@/pages/AcceptInvitationPage';
 import TurmasListPage from '@/pages/turmas/TurmasListPage';
 import { CoordenadoresPage } from '@/pages/diretor/CoordenadoresPage';
+import { ProfessoresPage } from '@/pages/coordenador/ProfessoresPage';
 
 // Create Query Client
 const queryClient = new QueryClient({
@@ -268,6 +269,16 @@ function App() {
             element={
               <ProtectedRoute roles={['DIRETOR']}>
                 <CoordenadoresPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Professores Route (Coordenador) - Story 13.6 */}
+          <Route
+            path="/coordenador/professores"
+            element={
+              <ProtectedRoute roles={['COORDENADOR']}>
+                <ProfessoresPage />
               </ProtectedRoute>
             }
           />

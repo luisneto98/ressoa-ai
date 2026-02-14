@@ -1,6 +1,6 @@
 # Story 13.5: Convidar Professor por Email (Diretor)
 
-Status: review
+Status: done
 
 ## Story
 
@@ -745,7 +745,18 @@ N/A
   - Added POST /api/v1/diretor/invite-professor endpoint with RBAC (apenas DIRETOR)
   - Implemented EmailService.sendProfessorInvitationEmail with styled HTML template
   - Updated AuthService.acceptInvitation to detect invite_professor tokens and create PROFESSOR users
-  - Created comprehensive E2E test suite with 16 test cases covering all acceptance criteria
+  - Created comprehensive E2E test suite with 19 test cases covering all acceptance criteria
+- ✅ **Code Review Fixes Applied** (Story 13.5 - Code Review 2026-02-14)
+  - **HIGH-1:** Fixed DTO to use TypeScript enum instead of string array for disciplina field
+  - **HIGH-2:** Added trim() validation for optional fields to prevent empty strings in Redis payload
+  - **HIGH-3:** Fixed EmailService graceful degradation - removed throw statements to comply with AC7
+  - **MEDIUM-1:** Added Brazilian phone format validation with regex pattern
+  - **MEDIUM-2:** Added E2E test for invalid email format validation
+  - **MEDIUM-3:** Added E2E test for nome minimum length validation
+  - **MEDIUM-4:** Standardized error logging format across invitation methods
+  - **LOW-1:** Updated comment to include AC6 reference
+  - **LOW-2:** Extracted magic number to named constant TOKEN_GENERATION_DELAY_MS
+  - **LOW-3:** Added explicit escolaId null check in AuthService.acceptInvitation
 - ✅ **Multi-Tenancy Security Enforced**
   - escola_id extracted from JWT payload (@CurrentUser decorator)
   - All database queries include escola_id filter
@@ -783,9 +794,21 @@ N/A
 - ⏸️ `ressoa-frontend/src/components/diretor/__tests__/InviteProfessorDialog.test.tsx` - Pending implementation
 
 **Files Modified:**
-- ✅ `ressoa-backend/src/modules/diretor/diretor.service.ts` - Added inviteProfessor method (lines ~100-177)
+- ✅ `ressoa-backend/src/modules/diretor/diretor.service.ts` - Added inviteProfessor method + code review fixes (lines ~100-177)
+  - HIGH-2: Added trim() validation for optional fields
+  - MEDIUM-4: Standardized error logging format
 - ✅ `ressoa-backend/src/modules/diretor/diretor.controller.ts` - Added POST /invite-professor endpoint (lines ~65-97)
-- ✅ `ressoa-backend/src/common/email/email.service.ts` - Added sendProfessorInvitationEmail method (lines ~292-364)
-- ✅ `ressoa-backend/src/modules/auth/auth.service.ts` - Updated acceptInvitation to support invite_professor tokens (lines ~121-162)
+- ✅ `ressoa-backend/src/common/email/email.service.ts` - Added sendProfessorInvitationEmail method + graceful degradation fix (lines ~292-402)
+  - HIGH-3: Removed throw statements to comply with AC7 graceful degradation
+- ✅ `ressoa-backend/src/modules/auth/auth.service.ts` - Updated acceptInvitation to support invite_professor tokens + null check (lines ~121-195)
+  - LOW-3: Added explicit escolaId null validation
 - ✅ `ressoa-backend/src/modules/diretor/dto/index.ts` - Exported InviteProfessorDto
-- ✅ `_bmad-output/implementation-artifacts/sprint-status.yaml` - Updated story status to in-progress
+- ✅ `ressoa-backend/src/modules/diretor/dto/invite-professor.dto.ts` - Code review fixes applied
+  - HIGH-1: Changed disciplina to use TypeScript enum instead of string array
+  - MEDIUM-1: Added Brazilian phone format validation with regex
+- ✅ `ressoa-backend/test/invite-professor.e2e-spec.ts` - Added 3 missing E2E test cases
+  - MEDIUM-2: Test for invalid email format
+  - MEDIUM-3: Test for nome too short
+  - MEDIUM-1: Test for invalid telefone format
+  - LOW-2: Extracted magic number to constant
+- ✅ `_bmad-output/implementation-artifacts/sprint-status.yaml` - Updated story status to done

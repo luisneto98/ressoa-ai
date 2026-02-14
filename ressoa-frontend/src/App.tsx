@@ -26,6 +26,7 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
 import { AcceptInvitationPage } from '@/pages/AcceptInvitationPage';
 import TurmasListPage from '@/pages/turmas/TurmasListPage';
+import { CoordenadoresPage } from '@/pages/diretor/CoordenadoresPage';
 
 // Create Query Client
 const queryClient = new QueryClient({
@@ -257,6 +258,16 @@ function App() {
             element={
               <ProtectedRoute roles={['COORDENADOR', 'DIRETOR']}>
                 <TurmasListPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Coordenadores Route - Story 13.4 */}
+          <Route
+            path="/coordenadores"
+            element={
+              <ProtectedRoute roles={['DIRETOR']}>
+                <CoordenadoresPage />
               </ProtectedRoute>
             }
           />

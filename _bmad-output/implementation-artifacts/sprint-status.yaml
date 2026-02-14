@@ -147,7 +147,7 @@ development_status:
     13-1-cadastrar-escola-admin: done # Como Admin, cadastrar Escola com validação CNPJ único - Code review complete: 8 issues found (5 CRITICAL/HIGH auto-fixed, 2 MEDIUM deferred, 1 LOW accepted) - 10/10 E2E tests passing - Email case-insensitive check added
     13-2-convidar-diretor-email-admin: done # Como Admin, enviar convite por email para Diretor com token único
     13-3-aceitar-convite-criar-senha: done # Como Diretor convidado, aceitar convite e criar senha forte - Code review complete: 10 issues found (7 auto-fixed: special char validation, token length check, E2E paths, useEffect deps, redirect delay, error logging) - Enhanced password regex with special chars (@$!%*?&) - All E2E tests updated and passing
-    13-4-convidar-coordenador-diretor: backlog # Como Diretor, enviar convite por email para Coordenador
+    13-4-convidar-coordenador-diretor: done # Como Diretor, enviar convite por email para Coordenador - Implementation complete: DiretorModule + invite endpoint + email service + E2E tests (10 test cases) - Reused accept-invitation with token type detection
     13-5-convidar-professor-diretor: backlog # Como Diretor, enviar convite por email para Professor
     13-6-convidar-professor-coordenador: backlog # Como Coordenador, enviar convite por email para Professor
     13-7-listar-usuarios-cadastrados: backlog # Como Admin/Diretor/Coordenador, ver lista de usuários com RLS

@@ -238,6 +238,58 @@ export class EmailService {
   }
 
   /**
+   * Send coordenador invitation email with unique token
+   * Story 13.4 - AC6: Email de convite para coordenador
+   *
+   * @param params - Invitation data (to, nome, escola, token)
+   * @returns Promise<void>
+   */
+  async sendCoordenadorInvitationEmail(params: {
+    to: string;
+    coordenadorNome: string;
+    escolaNome: string;
+    inviteToken: string;
+  }): Promise<void> {
+    const { to, coordenadorNome, escolaNome, inviteToken } = params;
+    const frontendUrl = this.configService.get('FRONTEND_URL');
+    const inviteUrl = `${frontendUrl}/aceitar-convite?token=${inviteToken}`;
+    const from = this.configService.get('EMAIL_FROM') || 'noreply@ressoaai.com';
+
+    const msg = {
+      to,
+      from,
+      subject: `Convite para Coordenador - ${escolaNome}`,
+      html: this.getCoordenadorInvitationTemplate({
+        coordenadorNome,
+        escolaNome,
+        inviteUrl,
+      }),
+    };
+
+    // PRODUCTION SAFETY: Mock emails in development
+    if (this.isDevelopment || !this.emailEnabled) {
+      this.logger.log(
+        `[MOCK EMAIL] Coordenador Invitation\nTo: ${to}\nSchool: ${escolaNome}\nToken: ${inviteToken}\nURL: ${inviteUrl}`,
+      );
+      return;
+    }
+
+    try {
+      await sgMail.send(msg);
+      this.logger.log(
+        `Coordenador invitation email sent to ${to} for school ${escolaNome}`,
+      );
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      // Throw error so DiretorService can log and handle gracefully
+      throw new Error(
+        `Failed to send coordenador invitation email: ${errorMessage}`,
+      );
+    }
+  }
+
+  /**
    * Generate HTML template for password reset email
    * Story 1.5 - Task 5: Email Template
    *
@@ -518,6 +570,68 @@ export class EmailService {
           <p style="color: #94A3B8; font-size: 12px; text-align: center; margin: 15px 0 0 0;">
             © ${currentYear} Ressoa AI. Todos os direitos reservados.
           </p>
+        </div>
+      </body>
+      </html>
+    `;
+  }
+
+  /**
+   * Generate HTML template for coordenador invitation email
+   * Story 13.4 - Task 4.2: Email Template
+   *
+   * @param params - Template parameters (nome, escola, URL)
+   * @returns HTML string
+   */
+  private getCoordenadorInvitationTemplate(params: {
+    coordenadorNome: string;
+    escolaNome: string;
+    inviteUrl: string;
+  }): string {
+    const currentYear = new Date().getFullYear();
+    return `
+      <!DOCTYPE html>
+      <html lang="pt-BR">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Convite para Coordenador - Ressoa AI</title>
+        <style>
+          body { font-family: Inter, sans-serif; background-color: #F8FAFC; padding: 20px; }
+          .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 8px; padding: 40px; }
+          .logo { color: #0A2647; font-size: 24px; font-weight: 700; margin-bottom: 20px; }
+          h1 { color: #0A2647; font-size: 20px; margin-bottom: 16px; }
+          p { color: #475569; line-height: 1.6; margin-bottom: 16px; }
+          .cta-button {
+            display: inline-block;
+            background: #2563EB;
+            color: white !important;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            margin: 20px 0;
+            font-weight: 600;
+          }
+          .warning { background: #FEF3C7; border-left: 4px solid #F59E0B; padding: 12px; margin: 20px 0; }
+          .footer { color: #94A3B8; font-size: 12px; margin-top: 32px; border-top: 1px solid #E2E8F0; padding-top: 20px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="logo">Ressoa AI</div>
+          <h1>Olá, ${params.coordenadorNome}!</h1>
+          <p>Você foi convidado(a) para ser <strong>Coordenador(a)</strong> da escola <strong>${params.escolaNome}</strong> na plataforma Ressoa AI.</p>
+          <p>Clique no botão abaixo para aceitar o convite e criar sua senha de acesso:</p>
+          <a href="${params.inviteUrl}" class="cta-button">Aceitar Convite e Criar Senha</a>
+          <div class="warning">
+            <strong>⚠️ Atenção:</strong> Este link é válido por <strong>24 horas</strong> e pode ser usado apenas uma vez.
+          </div>
+          <p>Se você não solicitou este convite, pode ignorar este email.</p>
+          <div class="footer">
+            <p>Ressoa AI - Inteligência de Aula, Análise e Previsão de Conteúdo<br>
+            Este é um email automático, não responda.</p>
+            <p>© ${currentYear} Ressoa AI. Todos os direitos reservados.</p>
+          </div>
         </div>
       </body>
       </html>

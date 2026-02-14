@@ -121,10 +121,20 @@ export class AuthService {
   async acceptInvitation(
     dto: AcceptInvitationDto,
   ): Promise<{ message: string }> {
-    // 1. Validate token exists in Redis
-    const tokenData = await this.redisService.get(
-      `invite_director:${dto.token}`,
+    // 1. Try coordenador token first, then fallback to diretor token (Story 13.4 - AC6)
+    let tokenData = await this.redisService.get(
+      `invite_coordenador:${dto.token}`,
     );
+    let role: RoleUsuario = RoleUsuario.COORDENADOR;
+    let tokenKey = `invite_coordenador:${dto.token}`;
+
+    // Fallback to diretor token
+    if (!tokenData) {
+      tokenData = await this.redisService.get(`invite_director:${dto.token}`);
+      role = RoleUsuario.DIRETOR;
+      tokenKey = `invite_director:${dto.token}`;
+    }
+
     if (!tokenData) {
       throw new UnauthorizedException('Token inválido ou expirado');
     }
@@ -144,7 +154,7 @@ export class AuthService {
       nome = parsed.nome;
     } catch (error) {
       this.logger.error(
-        `Failed to parse invite_director token data: ${tokenData}`,
+        `Failed to parse invitation token data: ${tokenData}`,
         error instanceof Error ? error.stack : String(error),
       );
       throw new UnauthorizedException('Token inválido ou corrompido');
@@ -192,7 +202,7 @@ export class AuthService {
       await prisma.perfilUsuario.create({
         data: {
           usuario_id: newUsuario.id,
-          role: RoleUsuario.DIRETOR,
+          role, // COORDENADOR or DIRETOR based on token type
         },
       });
 
@@ -200,10 +210,10 @@ export class AuthService {
     });
 
     // 7. Delete token (one-time use)
-    await this.redisService.del(`invite_director:${dto.token}`);
+    await this.redisService.del(tokenKey);
 
     this.logger.log(
-      `Director invitation accepted: ${usuario.email} (escola: ${escola.nome})`,
+      `${role} invitation accepted: ${usuario.email} (escola: ${escola.nome})`,
     );
 
     return { message: 'Convite aceito com sucesso' };

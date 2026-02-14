@@ -28,6 +28,9 @@ import { AcceptInvitationPage } from '@/pages/AcceptInvitationPage';
 import TurmasListPage from '@/pages/turmas/TurmasListPage';
 import { CoordenadoresPage } from '@/pages/diretor/CoordenadoresPage';
 import { ProfessoresPage } from '@/pages/coordenador/ProfessoresPage';
+import { AdminUsuariosPage } from '@/pages/admin/UsuariosPage';
+import { DiretorUsuariosPage } from '@/pages/diretor/UsuariosPage';
+import { CoordenadorUsuariosPage } from '@/pages/coordenador/UsuariosPage';
 
 // Create Query Client
 const queryClient = new QueryClient({
@@ -279,6 +282,32 @@ function App() {
             element={
               <ProtectedRoute roles={['COORDENADOR']}>
                 <ProfessoresPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Usuarios Routes - Story 13.7 */}
+          <Route
+            path="/admin/usuarios"
+            element={
+              <ProtectedRoute roles={['ADMIN']}>
+                <AdminUsuariosPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/diretor/usuarios"
+            element={
+              <ProtectedRoute roles={['DIRETOR']}>
+                <DiretorUsuariosPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/coordenador/usuarios"
+            element={
+              <ProtectedRoute roles={['COORDENADOR']}>
+                <CoordenadorUsuariosPage />
               </ProtectedRoute>
             }
           />

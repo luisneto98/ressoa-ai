@@ -150,7 +150,7 @@ development_status:
     13-4-convidar-coordenador-diretor: done # Como Diretor, enviar convite por email para Coordenador - Implementation complete: DiretorModule + invite endpoint + email service + E2E tests (10 test cases) - Reused accept-invitation with token type detection
     13-5-convidar-professor-diretor: done # Como Diretor, enviar convite por email para Professor - Code review complete: 10 issues found (3 HIGH, 4 MEDIUM, 3 LOW) - ALL 10 auto-fixed - 19/19 E2E tests passing - Backend COMPLETE (DTO w/enum+regex, Service, Controller, Email graceful degradation, AuthService) - Frontend PENDING: InviteProfessorDialog, ProfessoresPage, unit tests
     13-6-convidar-professor-coordenador: done # Como Coordenador, enviar convite por email para Professor - Code review complete: 8 issues found (3 HIGH, 3 MEDIUM, 2 LOW) - 6 auto-fixed (double prefix bug, E2E global prefix, duplicate test, task checkboxes, file list, cleanup) - 2 deferred (AC9 idempotency by-design, AuthenticatedUser duplication)
-    13-7-listar-usuarios-cadastrados: backlog # Como Admin/Diretor/Coordenador, ver lista de usuários com RLS
+    13-7-listar-usuarios-cadastrados: done # Code review complete - 15 issues found (1 HIGH, 5 MEDIUM, 9 LOW) - 12 auto-fixed (SkipThrottle removed, DTO validation, type safety, ARIA, UX) - 16 E2E + 6 frontend tests passing
     13-8-editar-dados-usuario: backlog # Como Admin/Diretor/Coordenador, editar dados de usuário
     13-9-desativar-usuario-soft-delete: backlog # Como Admin/Diretor/Coordenador, desativar usuário (soft delete)
     13-10-reativar-usuario: backlog # Como Admin/Diretor/Coordenador, reativar usuário desativado

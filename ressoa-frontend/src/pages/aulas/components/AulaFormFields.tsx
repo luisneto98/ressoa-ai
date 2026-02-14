@@ -148,7 +148,8 @@ export function AulaFormFields({ form }: AulaFormFieldsProps) {
                 <SelectItem value="__none__">Nenhum planejamento</SelectItem>
                 {planejamentos?.map((planejamento) => (
                   <SelectItem key={planejamento.id} value={planejamento.id}>
-                    {planejamento.titulo} ({planejamento.periodo})
+                    {planejamento.bimestre}º Bimestre {planejamento.ano_letivo}
+                    {planejamento._count && ` (${planejamento._count.habilidades + planejamento._count.objetivos} objetivos)`}
                   </SelectItem>
                 ))}
               </SelectContent>

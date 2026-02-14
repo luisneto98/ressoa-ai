@@ -10,8 +10,26 @@ export interface Turma {
 
 export interface Planejamento {
   id: string;
-  titulo: string;
-  periodo: string;
+  bimestre: number;
+  ano_letivo: number;
+  turma_id: string;
+  turma: {
+    id: string;
+    nome: string;
+    disciplina: string;
+    serie: string;
+  };
+  habilidades?: Array<{
+    id: string;
+    habilidade: {
+      codigo: string;
+      descricao: string;
+    };
+  }>;
+  _count?: {
+    habilidades: number;
+    objetivos: number;
+  };
 }
 
 export interface CreateAulaDto {
@@ -37,6 +55,8 @@ export interface EntradaManualDto {
 
 export interface Aula {
   id: string;
+  escola_id: string;
+  professor_id: string;
   turma_id: string;
   data: string;
   planejamento_id?: string;

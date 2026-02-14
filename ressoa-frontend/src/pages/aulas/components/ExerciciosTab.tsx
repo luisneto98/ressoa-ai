@@ -7,6 +7,8 @@ import { QuestaoCard } from './QuestaoCard';
 import { ExerciciosEditor } from './ExerciciosEditor';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
+import { usePdfExport } from '@/hooks/usePdfExport';
+import { ExerciciosPDF } from '@/lib/pdf/exercicios-pdf';
 import api from '@/lib/api';
 
 interface Questao {
@@ -39,6 +41,16 @@ interface Exercicios {
 interface ExerciciosTabProps {
   analiseId: string;
   aulaId: string;
+  aula?: {
+    id: string;
+    titulo: string;
+    data_aula: string;
+    turma: {
+      nome: string;
+      serie: string;
+      disciplina: string;
+    };
+  };
   exercicios: Exercicios;
   temEdicao: boolean; // Flag: exercícios foram editados?
   readOnly?: boolean; // Se true, não permite edição (análise já aprovada)
@@ -47,6 +59,7 @@ interface ExerciciosTabProps {
 export function ExerciciosTab({
   analiseId,
   aulaId,
+  aula,
   exercicios,
   temEdicao,
   readOnly = false
@@ -54,6 +67,7 @@ export function ExerciciosTab({
   const [editMode, setEditMode] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { exportPDF, isGenerating } = usePdfExport();
 
   // Save mutation
   const saveMutation = useMutation({
@@ -110,19 +124,32 @@ export function ExerciciosTab({
     saveMutation.mutate(exerciciosEditados);
   };
 
-  const handleExport = () => {
-    // TODO: Implementar exportação para PDF/Word (Story futura)
-    toast({
-      title: 'Exportação',
-      description: 'Funcionalidade de exportação será implementada em breve.',
-    });
+  const handleExport = async () => {
+    if (!aula) {
+      toast({
+        title: 'Erro ao exportar',
+        description: 'Informações da aula não disponíveis.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Generate safe filename
+    const aulaTitle = aula.titulo.replace(/[^a-zA-Z0-9]/g, '_');
+    const date = new Date(aula.data_aula).toISOString().split('T')[0];
+    const filename = `Exercicios_${aulaTitle}_${date}.pdf`;
+
+    await exportPDF(
+      <ExerciciosPDF aula={aula} questoes={exercicios.questoes as any} />,
+      filename
+    );
   };
 
   // Modo edição
   if (editMode) {
     return (
       <ExerciciosEditor
-        exercicios={exercicios}
+        exercicios={exercicios as any}
         onSave={handleSave}
         isPending={saveMutation.isPending}
       />
@@ -149,9 +176,9 @@ export function ExerciciosTab({
               Editar Exercícios
             </Button>
           )}
-          <Button variant="ghost" onClick={handleExport}>
+          <Button variant="ghost" onClick={handleExport} disabled={isGenerating}>
             <Download className="mr-2 h-4 w-4" />
-            Exportar
+            {isGenerating ? 'Gerando PDF...' : 'Exportar PDF'}
           </Button>
         </div>
       </div>

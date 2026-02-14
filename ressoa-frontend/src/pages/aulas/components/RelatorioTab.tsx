@@ -7,6 +7,8 @@ import ReactMarkdown from 'react-markdown';
 import { CoberturaBadge } from './CoberturaBadge';
 import { QualitativaCard } from './QualitativaCard';
 import { useToast } from '@/hooks/use-toast';
+import { usePdfExport } from '@/hooks/usePdfExport';
+import { RelatorioPDF } from '@/lib/pdf/relatorio-pdf';
 import api from '@/lib/api';
 import { getCoberturaHeaderLabel } from '@/lib/cobertura-helpers';
 import {
@@ -22,13 +24,20 @@ import {
   Languages,
   Pencil,
   CheckCircle2,
+  Download,
 } from 'lucide-react';
 
 interface RelatorioTabProps {
   analise: {
     id: string;
     aula: {
+      id: string;
+      titulo: string;
+      data_aula: string;
       turma: {
+        nome: string;
+        serie: string;
+        disciplina: string;
         curriculo_tipo?: 'BNCC' | 'CUSTOM';
       };
     };
@@ -63,13 +72,12 @@ function NotaCircle({ nota }: { nota: number }) {
   );
 }
 
-type NivelCobertura = 'COMPLETE' | 'PARTIAL' | 'MENTIONED' | 'NOT_COVERED';
-
 export function RelatorioTab({ analise }: RelatorioTabProps) {
   const navigate = useNavigate();
   const { aulaId } = useParams<{ aulaId: string }>();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { exportPDF, isGenerating } = usePdfExport();
 
   const aprovarMutation = useMutation({
     mutationFn: () => api.post(`/analises/${analise.id}/aprovar`),
@@ -93,6 +101,28 @@ export function RelatorioTab({ analise }: RelatorioTabProps) {
   const qual = analise.analise_qualitativa;
   const curriculoTipo = analise.aula?.turma?.curriculo_tipo || 'BNCC'; // Default to BNCC for backward compat
   const comentarioSintetico = (analise.analise_qualitativa as any).comentario_sintetico;
+
+  const handleExportPDF = async () => {
+    // Generate safe filename
+    const aulaTitle = analise.aula.titulo.replace(/[^a-zA-Z0-9]/g, '_');
+    const date = new Date(analise.aula.data_aula).toISOString().split('T')[0];
+    const filename = `Relatorio_${aulaTitle}_${date}.pdf`;
+
+    await exportPDF(
+      <RelatorioPDF
+        aula={analise.aula}
+        cobertura={analise.cobertura_bncc}
+        qualitativa={analise.analise_qualitativa}
+        relatorio={analise.relatorio}
+        metadata={{
+          tempo_processamento_ms: (analise as any).metadata?.tempo_processamento_ms || 0,
+          custo_total_usd: (analise as any).metadata?.custo_total_usd || 0,
+          created_at: (analise as any).metadata?.created_at || new Date().toISOString(),
+        }}
+      />,
+      filename
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -268,6 +298,15 @@ export function RelatorioTab({ analise }: RelatorioTabProps) {
         >
           <Pencil className="h-4 w-4" />
           Editar Relatório
+        </Button>
+        <Button
+          variant="outline"
+          onClick={handleExportPDF}
+          disabled={isGenerating}
+          className="gap-2"
+        >
+          <Download className="h-4 w-4" />
+          {isGenerating ? 'Gerando PDF...' : 'Exportar PDF'}
         </Button>
         <Button
           variant="default"

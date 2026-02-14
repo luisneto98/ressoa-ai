@@ -74,7 +74,7 @@ interface TurmaFormDialogProps {
   isLoading?: boolean;
 }
 
-// Disciplinas disponíveis (from BNCC)
+// Disciplinas disponíveis (from BNCC - todas as 10 disciplinas do Ensino Fundamental)
 const DISCIPLINAS = [
   { value: 'MATEMATICA', label: 'Matemática' },
   { value: 'LINGUA_PORTUGUESA', label: 'Língua Portuguesa' },
@@ -83,7 +83,9 @@ const DISCIPLINAS = [
   { value: 'GEOGRAFIA', label: 'Geografia' },
   { value: 'ARTE', label: 'Arte' },
   { value: 'EDUCACAO_FISICA', label: 'Educação Física' },
-  { value: 'INGLES', label: 'Inglês' },
+  { value: 'LINGUA_INGLESA', label: 'Língua Inglesa' },
+  { value: 'ENSINO_RELIGIOSO', label: 'Ensino Religioso' },
+  { value: 'COMPUTACAO', label: 'Computação' },
 ];
 
 export function TurmaFormDialog({
@@ -154,7 +156,7 @@ export function TurmaFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px] max-h-[calc(100vh-4rem)] flex flex-col">
         <DialogHeader>
           <DialogTitle className="font-heading text-deep-navy text-2xl font-semibold">
             {mode === 'create' ? 'Nova Turma' : 'Editar Turma'}
@@ -167,7 +169,8 @@ export function TurmaFormDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+            <div className="flex-1 overflow-y-auto pr-2 space-y-6">
             <div className="space-y-4">
               {/* Radio Group: Tipo de Currículo (BNCC vs Customizado) - AC#1 */}
               <FormField
@@ -565,8 +568,9 @@ export function TurmaFormDialog({
               </div>
 
             </div>
+            </div>
 
-            <DialogFooter>
+            <DialogFooter className="mt-4 pt-4 border-t">
               <Button
                 type="button"
                 variant="ghost"

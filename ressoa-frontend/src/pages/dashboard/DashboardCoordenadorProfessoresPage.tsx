@@ -15,7 +15,7 @@ import { ProfessoresTable } from './components/ProfessoresTable';
 import { TrendingUp, Users, AlertTriangle, Loader2 } from 'lucide-react';
 
 interface FiltrosCobertura {
-  disciplina?: 'MATEMATICA' | 'LINGUA_PORTUGUESA' | 'CIENCIAS';
+  disciplina?: 'MATEMATICA' | 'LINGUA_PORTUGUESA' | 'CIENCIAS' | 'HISTORIA' | 'GEOGRAFIA' | 'ARTE' | 'EDUCACAO_FISICA' | 'LINGUA_INGLESA' | 'ENSINO_RELIGIOSO' | 'COMPUTACAO';
   bimestre?: number;
   tipo_ensino?: 'FUNDAMENTAL' | 'MEDIO';
 }
@@ -120,6 +120,13 @@ export function DashboardCoordenadorProfessoresPage() {
                 Língua Portuguesa
               </SelectItem>
               <SelectItem value="CIENCIAS">Ciências</SelectItem>
+              <SelectItem value="HISTORIA">História</SelectItem>
+              <SelectItem value="GEOGRAFIA">Geografia</SelectItem>
+              <SelectItem value="ARTE">Arte</SelectItem>
+              <SelectItem value="EDUCACAO_FISICA">Educação Física</SelectItem>
+              <SelectItem value="LINGUA_INGLESA">Língua Inglesa</SelectItem>
+              <SelectItem value="ENSINO_RELIGIOSO">Ensino Religioso</SelectItem>
+              <SelectItem value="COMPUTACAO">Computação</SelectItem>
             </SelectContent>
           </Select>
 

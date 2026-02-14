@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card } from '@/components/ui/card';
 import {
@@ -13,20 +13,57 @@ import { StatCard } from './components/StatCard';
 import { CoberturaTable } from './components/CoberturaTable';
 import { CoberturaChart } from './components/CoberturaChart';
 import { getCoberturaLabel } from '@/lib/cobertura-helpers';
+import { fetchProfessorTurmas } from '@/api/aulas';
 import api from '@/lib/api';
 
 interface FiltrosCobertura {
-  disciplina?: 'MATEMATICA' | 'LINGUA_PORTUGUESA' | 'CIENCIAS';
+  disciplina?: string;
   bimestre?: number;
   curriculo_tipo?: 'TODOS' | 'BNCC' | 'CUSTOM'; // Story 11.8: Filter by curriculum type
 }
 
+// Mapeamento de códigos de disciplina para nomes legíveis
+const DISCIPLINA_LABELS: Record<string, string> = {
+  MATEMATICA: 'Matemática',
+  LINGUA_PORTUGUESA: 'Língua Portuguesa',
+  CIENCIAS: 'Ciências',
+  HISTORIA: 'História',
+  GEOGRAFIA: 'Geografia',
+  ARTE: 'Arte',
+  EDUCACAO_FISICA: 'Educação Física',
+  LINGUA_INGLESA: 'Língua Inglesa',
+  ENSINO_RELIGIOSO: 'Ensino Religioso',
+  COMPUTACAO: 'Computação',
+  CIENCIAS_HUMANAS: 'Ciências Humanas',
+  CIENCIAS_NATUREZA: 'Ciências da Natureza',
+  LINGUAGENS: 'Linguagens',
+  MATEMATICA_MEDIO: 'Matemática',
+};
+
 export function CoberturaPessoalPage() {
   const [filtros, setFiltros] = useState<FiltrosCobertura>({
-    disciplina: 'MATEMATICA',
+    disciplina: undefined,
     bimestre: 1,
     curriculo_tipo: 'TODOS', // Default: show all curriculum types
   });
+
+  // Buscar turmas do professor para extrair disciplinas disponíveis
+  const { data: turmas } = useQuery({
+    queryKey: ['professor-turmas'],
+    queryFn: fetchProfessorTurmas,
+  });
+
+  // Extrair disciplinas únicas das turmas
+  const disciplinasDisponiveis = turmas
+    ? Array.from(new Set(turmas.map(t => t.disciplina))).sort()
+    : [];
+
+  // Auto-selecionar primeira disciplina quando carregar
+  useEffect(() => {
+    if (disciplinasDisponiveis.length > 0 && !filtros.disciplina) {
+      setFiltros(prev => ({ ...prev, disciplina: disciplinasDisponiveis[0] }));
+    }
+  }, [disciplinasDisponiveis, filtros.disciplina]);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['cobertura-pessoal', filtros],
@@ -40,6 +77,7 @@ export function CoberturaPessoalPage() {
         .get('/professores/me/cobertura', { params: apiParams })
         .then((res) => res.data);
     },
+    enabled: !!filtros.disciplina, // Só executa se tiver disciplina selecionada
   });
 
   if (isLoading) {
@@ -47,7 +85,11 @@ export function CoberturaPessoalPage() {
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
           <div className="text-deep-navy/60 mb-2">Carregando sua cobertura curricular...</div>
-          <p className="text-sm text-deep-navy/40">Buscando dados de {filtros.disciplina} — {filtros.bimestre}º bimestre</p>
+          {filtros.disciplina && (
+            <p className="text-sm text-deep-navy/40">
+              Buscando dados de {DISCIPLINA_LABELS[filtros.disciplina] || filtros.disciplina} — {filtros.bimestre}º bimestre
+            </p>
+          )}
         </div>
       </div>
     );
@@ -97,19 +139,24 @@ export function CoberturaPessoalPage() {
             onValueChange={(v) =>
               setFiltros({
                 ...filtros,
-                disciplina: v as 'MATEMATICA' | 'LINGUA_PORTUGUESA' | 'CIENCIAS'
+                disciplina: v
               })
             }
+            disabled={disciplinasDisponiveis.length === 0}
           >
             <SelectTrigger className="w-[220px]">
-              <SelectValue placeholder="Disciplina" />
+              <SelectValue placeholder={
+                disciplinasDisponiveis.length === 0
+                  ? "Nenhuma turma encontrada"
+                  : "Selecione a disciplina"
+              } />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="MATEMATICA">Matemática</SelectItem>
-              <SelectItem value="LINGUA_PORTUGUESA">
-                Língua Portuguesa
-              </SelectItem>
-              <SelectItem value="CIENCIAS">Ciências</SelectItem>
+              {disciplinasDisponiveis.map(disc => (
+                <SelectItem key={disc} value={disc}>
+                  {DISCIPLINA_LABELS[disc] || disc}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
 

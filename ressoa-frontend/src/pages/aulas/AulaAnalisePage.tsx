@@ -181,6 +181,7 @@ export function AulaAnalisePage() {
           <ExerciciosTab
             analiseId={analise.id}
             aulaId={aulaId!}
+            aula={analise.aula}
             exercicios={analise.exercicios}
             temEdicao={analise.tem_edicao_exercicios || false}
             readOnly={analise.status !== 'AGUARDANDO_REVISAO'}

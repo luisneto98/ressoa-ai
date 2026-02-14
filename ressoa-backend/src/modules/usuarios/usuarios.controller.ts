@@ -52,6 +52,25 @@ export class UsuariosController {
     );
   }
 
+  @Patch(':id/desativar')
+  @Roles(RoleUsuario.ADMIN, RoleUsuario.DIRETOR, RoleUsuario.COORDENADOR)
+  @ApiOperation({
+    summary: 'Desativar usuário (soft delete)',
+    description: 'Marca usuário como inativo respeitando hierarquia de roles. LGPD compliance.',
+  })
+  @ApiParam({ name: 'id', description: 'ID do usuário (UUID)' })
+  @ApiResponse({ status: 200, description: 'Usuário desativado com sucesso' })
+  @ApiResponse({ status: 400, description: 'Auto-desativação ou UUID inválido' })
+  @ApiResponse({ status: 403, description: 'Sem permissão (hierarquia)' })
+  @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
+  @ApiResponse({ status: 409, description: 'Usuário já desativado' })
+  async deactivateUsuario(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.usuariosService.deactivateUsuario(user.role, user.userId, id);
+  }
+
   @Patch(':id')
   @Roles(RoleUsuario.ADMIN, RoleUsuario.DIRETOR, RoleUsuario.COORDENADOR)
   @ApiOperation({

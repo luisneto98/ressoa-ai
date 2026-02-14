@@ -26,11 +26,12 @@ import {
 } from '@/components/ui/pagination';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { IconSearch, IconUsers, IconEdit } from '@tabler/icons-react';
+import { IconSearch, IconUsers, IconEdit, IconUserOff } from '@tabler/icons-react';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useUsuarios } from '@/hooks/useUsuarios';
 import { useAuthStore } from '@/stores/auth.store';
 import { EditUsuarioDialog } from './EditUsuarioDialog';
+import { DeactivateUsuarioDialog } from './DeactivateUsuarioDialog';
 import type { UsuarioListItem } from '@/api/usuarios';
 
 type RoleOption = 'PROFESSOR' | 'COORDENADOR' | 'DIRETOR' | 'ADMIN';
@@ -86,6 +87,7 @@ export function UsuariosTable({
   const [searchValue, setSearchValue] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('');
   const [editingUsuario, setEditingUsuario] = useState<UsuarioListItem | null>(null);
+  const [deactivatingUsuario, setDeactivatingUsuario] = useState<UsuarioListItem | null>(null);
   const debouncedSearch = useDebouncedValue(searchValue, 300);
   const callerRole = useAuthStore((s) => s.user?.role);
 
@@ -190,7 +192,7 @@ export function UsuariosTable({
                   {showRole && <TableHead>Perfil</TableHead>}
                   {showEscola && <TableHead>Escola</TableHead>}
                   <TableHead>Data Cadastro</TableHead>
-                  <TableHead className="w-16">Ações</TableHead>
+                  <TableHead className="w-28">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -221,18 +223,32 @@ export function UsuariosTable({
                     )}
                     <TableCell>{formatDate(usuario.created_at)}</TableCell>
                     <TableCell>
-                      {canEdit(callerRole, usuario.role) && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-11 w-11"
-                          title="Editar usuário"
-                          aria-label={`Editar ${usuario.nome}`}
-                          onClick={() => setEditingUsuario(usuario)}
-                        >
-                          <IconEdit className="size-5" />
-                        </Button>
-                      )}
+                      <div className="flex items-center gap-1">
+                        {canEdit(callerRole, usuario.role) && (
+                          <>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-11 w-11"
+                              title="Editar usuário"
+                              aria-label={`Editar ${usuario.nome}`}
+                              onClick={() => setEditingUsuario(usuario)}
+                            >
+                              <IconEdit className="size-5" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-11 w-11 text-destructive hover:text-destructive"
+                              title="Desativar usuário"
+                              aria-label={`Desativar ${usuario.nome}`}
+                              onClick={() => setDeactivatingUsuario(usuario)}
+                            >
+                              <IconUserOff className="size-5" />
+                            </Button>
+                          </>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -312,6 +328,19 @@ export function UsuariosTable({
             nome: editingUsuario.nome,
             email: editingUsuario.email,
             role: editingUsuario.role ?? '',
+          }}
+        />
+      )}
+
+      {deactivatingUsuario && (
+        <DeactivateUsuarioDialog
+          open={!!deactivatingUsuario}
+          onOpenChange={(open) => {
+            if (!open) setDeactivatingUsuario(null);
+          }}
+          usuario={{
+            id: deactivatingUsuario.id,
+            nome: deactivatingUsuario.nome,
           }}
         />
       )}

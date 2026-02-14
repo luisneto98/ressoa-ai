@@ -20,9 +20,9 @@ export class UsuariosService {
     const { page = 1, limit = 20, search, role } = query;
     const skip = (page - 1) * limit;
 
-    // Exclude users without a perfil_usuario (orphaned records)
+    // Exclude soft-deleted users
     const where: Prisma.UsuarioWhereInput = {
-      perfil_usuario: { isNot: null },
+      deleted_at: null,
     };
 
     // Determine allowed roles based on caller's role hierarchy
@@ -48,21 +48,24 @@ export class UsuariosService {
       }
     }
 
-    // Apply role filter intersected with hierarchy
+    // Apply role filter intersected with hierarchy (always exclude orphaned records without perfil_usuario)
     if (role && allowedRoles) {
       // Intersect: only show if requested role is within allowed hierarchy
       if (allowedRoles.includes(role)) {
-        where.perfil_usuario = { role };
+        where.perfil_usuario = { isNot: null, role };
       } else {
         // Requested role outside hierarchy → guaranteed empty result
-        where.perfil_usuario = { role: { in: [] } };
+        where.perfil_usuario = { isNot: null, role: { in: [] } };
       }
     } else if (role) {
       // Admin or unrestricted: use requested role directly
-      where.perfil_usuario = { role };
+      where.perfil_usuario = { isNot: null, role };
     } else if (allowedRoles) {
       // No explicit role filter, but hierarchy restriction applies
-      where.perfil_usuario = { role: { in: allowedRoles } };
+      where.perfil_usuario = { isNot: null, role: { in: allowedRoles } };
+    } else {
+      // No role filter, no hierarchy restriction: exclude orphaned records
+      where.perfil_usuario = { isNot: null };
     }
 
     // Apply search filter
@@ -141,7 +144,8 @@ export class UsuariosService {
       where.escola_id = escolaId;
     }
 
-    // 3. Find target user
+    // 3. Find target user (exclude deactivated)
+    where.deleted_at = null;
     const targetUser = await this.prisma.usuario.findFirst({
       where,
       select: {
@@ -199,6 +203,76 @@ export class UsuariosService {
       nome: updated.nome,
       email: updated.email,
       role: updated.perfil_usuario?.role ?? null,
+      created_at: updated.created_at,
+      updated_at: updated.updated_at,
+    };
+  }
+
+  async deactivateUsuario(
+    callerRole: RoleUsuario,
+    callerId: string,
+    targetId: string,
+  ) {
+    // 1. Block self-deactivation
+    if (callerId === targetId) {
+      throw new BadRequestException('Não é possível desativar a si mesmo');
+    }
+
+    // 2. Build where with tenant isolation
+    const where: Prisma.UsuarioWhereInput = { id: targetId };
+    if (callerRole !== RoleUsuario.ADMIN) {
+      const escolaId = this.prisma.getEscolaIdOrThrow();
+      where.escola_id = escolaId;
+    }
+
+    // 3. Find target
+    const targetUser = await this.prisma.usuario.findFirst({
+      where,
+      select: {
+        id: true,
+        nome: true,
+        email: true,
+        deleted_at: true,
+        perfil_usuario: { select: { role: true } },
+      },
+    });
+    if (!targetUser) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+
+    // 4. Check already deactivated
+    if (targetUser.deleted_at) {
+      throw new ConflictException('Usuário já está desativado');
+    }
+
+    // 5. Check hierarchy
+    try {
+      this.validateHierarchyPermission(callerRole, targetUser.perfil_usuario?.role);
+    } catch {
+      throw new ForbiddenException('Sem permissão para desativar este usuário');
+    }
+
+    // 6. Soft delete
+    const updated = await this.prisma.usuario.update({
+      where: { id: targetId },
+      data: { deleted_at: new Date() },
+      select: {
+        id: true,
+        nome: true,
+        email: true,
+        deleted_at: true,
+        created_at: true,
+        updated_at: true,
+        perfil_usuario: { select: { role: true } },
+      },
+    });
+
+    return {
+      id: updated.id,
+      nome: updated.nome,
+      email: updated.email,
+      role: updated.perfil_usuario?.role ?? null,
+      deleted_at: updated.deleted_at,
       created_at: updated.created_at,
       updated_at: updated.updated_at,
     };

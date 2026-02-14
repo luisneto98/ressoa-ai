@@ -50,6 +50,21 @@ export async function updateUsuario(
   return response.data;
 }
 
+export interface DeactivateUsuarioResponse {
+  id: string;
+  nome: string;
+  email: string;
+  role: 'PROFESSOR' | 'COORDENADOR' | 'DIRETOR' | 'ADMIN' | null;
+  deleted_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export async function deactivateUsuario(id: string): Promise<DeactivateUsuarioResponse> {
+  const response = await apiClient.patch<DeactivateUsuarioResponse>(`/usuarios/${id}/desativar`);
+  return response.data;
+}
+
 export async function fetchUsuarios(
   params: UsuariosQueryParams,
 ): Promise<UsuariosListResponse> {

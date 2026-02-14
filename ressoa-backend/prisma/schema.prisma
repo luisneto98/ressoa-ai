@@ -115,6 +115,7 @@ model Usuario {
   email      String
   senha_hash String
   escola_id  String? // Nullable para ADMIN (não pertence a escola)
+  deleted_at DateTime? // Soft delete timestamp (LGPD compliance)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
@@ -129,6 +130,7 @@ model Usuario {
   @@unique([email, escola_id]) // PostgreSQL permite múltiplos NULL sem violar unique
   @@index([escola_id])
   @@index([email])
+  @@index([deleted_at])
   @@map("usuario")
 }
 

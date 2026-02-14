@@ -59,7 +59,7 @@ export class DiretorController {
     @CurrentUser() user: AuthenticatedUser,
     @Body() dto: InviteCoordenadorDto,
   ) {
-    return this.diretorService.inviteCoordenador(user.escolaId, dto);
+    return this.diretorService.inviteCoordenador(user.escolaId, dto, user.userId);
   }
 
   /**
@@ -90,6 +90,6 @@ export class DiretorController {
     @CurrentUser() user: AuthenticatedUser,
     @Body() dto: InviteProfessorDto,
   ) {
-    return this.diretorService.inviteProfessor(user.escolaId, dto);
+    return this.diretorService.inviteProfessor(user.escolaId, dto, user.userId);
   }
 }

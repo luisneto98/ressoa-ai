@@ -154,7 +154,7 @@ development_status:
     13-8-editar-dados-usuario: done # Code review complete - 8 issues found (3 HIGH, 3 MEDIUM, 2 LOW) - 6 auto-fixed (useWatch, useEffect deps, isAxiosError, E2E cleanup, story spec alignment) - 15/15 E2E + 6/6 frontend tests passing
     13-9-desativar-usuario-soft-delete: done # Code review complete - 4 issues found & auto-fixed (1 HIGH: updateUsuario rejected deactivated users, 1 HIGH→MEDIUM: perfil_usuario isNot:null preserved, 1 MEDIUM: error message "desativar" vs "editar", 1 MEDIUM: E2E afterEach cleanup) - 16/16 E2E + 6/6 frontend tests
     13-10-reativar-usuario: done # Code review complete - 7 issues auto-fixed (3 HIGH: type safety, E2E clarity | 4 MEDIUM: file list, toast verification) - 14/14 E2E + 6/6 frontend tests passing
-    13-11-cancelar-convite-pendente: backlog # Como Admin/Diretor/Coordenador, cancelar convite pendente
+    13-11-cancelar-convite-pendente: done # Code review complete - 8 issues auto-fixed (3 HIGH: multi-tenancy hardening, 3 MEDIUM: UseGuards, FK onDelete, file list, 2 LOW: redundant index, badge variant) - 16/16 E2E + 8/8 frontend tests
     13-12-reenviar-convite-expirado: backlog # Como Admin/Diretor/Coordenador, reenviar convite expirado
     epic-13-retrospective: optional
     epic-14: backlog # Sistema Configurável de Provider Routing (IA Cost Optimization) - Economia de 89% em custos de IA

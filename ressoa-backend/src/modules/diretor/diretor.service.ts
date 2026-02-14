@@ -32,6 +32,7 @@ export class DiretorService {
   async inviteCoordenador(
     escolaId: string,
     dto: InviteCoordenadorDto,
+    userId?: string,
   ): Promise<{ message: string }> {
     const { email, nome } = dto;
 
@@ -77,6 +78,29 @@ export class DiretorService {
       }),
     );
 
+    // Dual-write: persist to DB for listing/management (Story 13.11)
+    if (userId) {
+      try {
+        await this.prisma.conviteUsuario.create({
+          data: {
+            email: normalizedEmail,
+            nome_completo: nome,
+            tipo_usuario: 'coordenador',
+            escola_id: escolaId,
+            criado_por: userId,
+            token: inviteToken,
+            expira_em: new Date(Date.now() + 86400 * 1000),
+            status: 'pendente',
+          },
+        });
+      } catch (error) {
+        this.logger.error('Failed to persist invite to DB (dual-write)', {
+          error: error instanceof Error ? error.message : String(error),
+          email: normalizedEmail,
+        });
+      }
+    }
+
     // AC6 & AC7: Send invitation email with graceful degradation
     try {
       await this.emailService.sendCoordenadorInvitationEmail({
@@ -108,6 +132,7 @@ export class DiretorService {
   async inviteProfessor(
     escolaId: string,
     dto: InviteProfessorDto,
+    userId?: string,
   ): Promise<{ message: string }> {
     // AC3: Validate escola is active
     const escola = await this.prisma.escola.findUnique({
@@ -156,6 +181,43 @@ export class DiretorService {
       86400, // 24 hours in seconds
       JSON.stringify(tokenPayload),
     );
+
+    // Dual-write: persist to DB for listing/management (Story 13.11)
+    if (userId) {
+      try {
+        await this.prisma.conviteUsuario.create({
+          data: {
+            email: emailNormalized,
+            nome_completo: dto.nome,
+            tipo_usuario: 'professor',
+            escola_id: escolaId,
+            criado_por: userId,
+            token: inviteToken,
+            expira_em: new Date(Date.now() + 86400 * 1000),
+            status: 'pendente',
+            dados_extras: tokenPayload.disciplina
+              ? {
+                  disciplina: tokenPayload.disciplina,
+                  ...(tokenPayload.formacao && {
+                    formacao: tokenPayload.formacao,
+                  }),
+                  ...(tokenPayload.registro && {
+                    registro: tokenPayload.registro,
+                  }),
+                  ...(tokenPayload.telefone && {
+                    telefone: tokenPayload.telefone,
+                  }),
+                }
+              : undefined,
+          },
+        });
+      } catch (error) {
+        this.logger.error('Failed to persist invite to DB (dual-write)', {
+          error: error instanceof Error ? error.message : String(error),
+          email: emailNormalized,
+        });
+      }
+    }
 
     // AC6 & AC7: Send invitation email with graceful degradation
     try {

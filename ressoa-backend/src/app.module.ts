@@ -28,6 +28,7 @@ import { LLMModule } from './modules/llm/llm.module';
 import { AnaliseModule } from './modules/analise/analise.module';
 import { NotificacoesModule } from './modules/notificacoes/notificacoes.module';
 import { ProfessoresModule } from './modules/professores/professores.module';
+import { ConvitesModule } from './modules/convites/convites.module';
 import { TestModule } from './modules/test/test.module';
 import { CoberturaModule } from './cobertura/cobertura.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
@@ -122,6 +123,7 @@ if (process.env.NODE_ENV !== 'test') {
     NotificacoesModule, // Notification System (Story 4.4)
     ProfessoresModule, // Professores API - Dashboard de Cobertura (Story 6.5)
     CoberturaModule, // Cobertura Bimestral Materialized View Management (Story 7.1)
+    ConvitesModule, // Convites listing & cancellation (Story 13.11)
     DashboardModule, // Dashboard Coordenador - Métricas por Professor (Story 7.2)
     // TUS Upload Server (Story 3.2) - dynamically loaded in non-test environments
     ...conditionalImports,

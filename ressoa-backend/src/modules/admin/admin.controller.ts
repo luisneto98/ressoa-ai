@@ -18,7 +18,15 @@ import {
   ApiParam,
 } from '@nestjs/swagger';
 import { Roles } from '../../common/decorators/roles.decorator';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { RoleUsuario } from '@prisma/client';
+
+interface AuthenticatedUser {
+  userId: string;
+  email: string;
+  escolaId: string;
+  role: RoleUsuario;
+}
 import { AdminService } from './admin.service';
 import { CoberturaService } from '../../cobertura/cobertura.service';
 import {
@@ -160,9 +168,10 @@ export class AdminController {
     description: 'Conflict - Email já cadastrado nesta escola',
   })
   async inviteDirector(
+    @CurrentUser() user: AuthenticatedUser,
     @Body() dto: InviteDirectorDto,
   ): Promise<{ message: string }> {
-    return this.adminService.inviteDirector(dto);
+    return this.adminService.inviteDirector(dto, user.userId);
   }
 
   @Post('refresh-cobertura')

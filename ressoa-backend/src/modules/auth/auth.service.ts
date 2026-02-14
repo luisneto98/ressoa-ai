@@ -4,6 +4,7 @@ import {
   ConflictException,
   BadRequestException,
   NotFoundException,
+  GoneException,
   Logger,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -211,6 +212,14 @@ export class AuthService {
       throw new ConflictException('Email já cadastrado nesta escola');
     }
 
+    // 4b. Validate convite not cancelled in DB (Story 13.11 - AC6)
+    const conviteDb = await this.prisma.conviteUsuario.findFirst({
+      where: { token: dto.token },
+    });
+    if (conviteDb && conviteDb.status === 'cancelado') {
+      throw new GoneException('Este convite foi cancelado');
+    }
+
     // 5. Hash password (bcrypt 10 rounds)
     const hashedPassword = await this.hashPassword(dto.senha);
 
@@ -237,6 +246,14 @@ export class AuthService {
 
     // 7. Delete token (one-time use)
     await this.redisService.del(tokenKey);
+
+    // 7b. Update convite status in DB (Story 13.11 - AC13)
+    if (conviteDb) {
+      await this.prisma.conviteUsuario.update({
+        where: { id: conviteDb.id },
+        data: { status: 'aceito', aceito_em: new Date() },
+      });
+    }
 
     this.logger.log(
       `${role} invitation accepted: ${usuario.email} (escola: ${escola.nome})`,

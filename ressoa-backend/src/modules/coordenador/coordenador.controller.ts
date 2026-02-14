@@ -59,6 +59,6 @@ export class CoordenadorController {
     @CurrentUser() user: AuthenticatedUser,
     @Body() dto: InviteProfessorDto,
   ) {
-    return this.coordenadorService.inviteProfessor(user.escolaId, dto);
+    return this.coordenadorService.inviteProfessor(user.escolaId, dto, user.userId);
   }
 }

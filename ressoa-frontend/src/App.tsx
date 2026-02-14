@@ -31,6 +31,7 @@ import { ProfessoresPage } from '@/pages/coordenador/ProfessoresPage';
 import { AdminUsuariosPage } from '@/pages/admin/UsuariosPage';
 import { DiretorUsuariosPage } from '@/pages/diretor/UsuariosPage';
 import { CoordenadorUsuariosPage } from '@/pages/coordenador/UsuariosPage';
+import { ConvitesPendentesPage } from '@/pages/convites/ConvitesPendentesPage';
 
 // Create Query Client
 const queryClient = new QueryClient({
@@ -282,6 +283,16 @@ function App() {
             element={
               <ProtectedRoute roles={['COORDENADOR']}>
                 <ProfessoresPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Convites Route - Story 13.11 */}
+          <Route
+            path="/convites"
+            element={
+              <ProtectedRoute roles={['ADMIN', 'DIRETOR', 'COORDENADOR']}>
+                <ConvitesPendentesPage />
               </ProtectedRoute>
             }
           />

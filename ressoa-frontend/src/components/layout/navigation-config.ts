@@ -8,6 +8,7 @@ import {
   Shield,
   Settings,
   GraduationCap,
+  Mail,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -29,12 +30,14 @@ const NAVIGATION: Record<string, NavItem[]> = {
     { label: 'Professores', path: '/dashboard/coordenador/professores', icon: Users },
     { label: 'Cadastro de Turmas', path: '/turmas', icon: GraduationCap },
     { label: 'Dashboard Turmas', path: '/dashboard/coordenador/turmas', icon: BarChart3 },
+    { label: 'Convites', path: '/convites', icon: Mail },
     { label: 'Planejamentos', path: '/planejamentos', icon: BookOpen },
   ],
   DIRETOR: [
     { label: 'Visão Geral', path: '/dashboard/diretor', icon: Building2 },
     { label: 'Professores', path: '/dashboard/coordenador/professores', icon: Users },
     { label: 'Cadastro de Turmas', path: '/turmas', icon: GraduationCap },
+    { label: 'Convites', path: '/convites', icon: Mail },
     { label: 'Dashboard Turmas', path: '/dashboard/coordenador/turmas', icon: BarChart3 },
   ],
   ADMIN: [
@@ -42,6 +45,7 @@ const NAVIGATION: Record<string, NavItem[]> = {
     { label: 'Monitoramento Análise', path: '/admin/monitoramento/analise', icon: BarChart3 },
     { label: 'Custos', path: '/admin/custos/escolas', icon: Building2 },
     { label: 'Qualidade Prompts', path: '/admin/prompts/qualidade', icon: Shield },
+    { label: 'Convites', path: '/convites', icon: Mail },
   ],
 };
 

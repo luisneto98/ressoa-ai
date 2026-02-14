@@ -168,7 +168,10 @@ export class AdminService {
    * Gera token seguro de 64 caracteres e armazena no Redis com TTL de 24h
    * Graceful degradation: se email falhar, token permanece válido
    */
-  async inviteDirector(dto: InviteDirectorDto): Promise<{ message: string }> {
+  async inviteDirector(
+    dto: InviteDirectorDto,
+    userId?: string,
+  ): Promise<{ message: string }> {
     // 1. Normalize email (lowercase + trim)
     const emailNormalizado = dto.email.toLowerCase().trim();
 
@@ -212,6 +215,29 @@ export class AdminService {
       86400, // 24 hours
       tokenData,
     );
+
+    // 5b. Dual-write: persist to DB for listing/management (Story 13.11)
+    if (userId) {
+      try {
+        await this.prisma.conviteUsuario.create({
+          data: {
+            email: emailNormalizado,
+            nome_completo: dto.nome,
+            tipo_usuario: 'diretor',
+            escola_id: dto.escola_id,
+            criado_por: userId,
+            token: inviteToken,
+            expira_em: new Date(Date.now() + 86400 * 1000),
+            status: 'pendente',
+          },
+        });
+      } catch (error) {
+        this.logger.error('Failed to persist invite to DB (dual-write)', {
+          error: error instanceof Error ? error.message : String(error),
+          email: emailNormalizado,
+        });
+      }
+    }
 
     // 6. Send invitation email (graceful degradation)
     try {

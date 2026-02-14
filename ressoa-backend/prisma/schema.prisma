@@ -84,6 +84,19 @@ enum StatusAnalise {
   REJEITADO // Rejected by professor
 }
 
+enum StatusConvite {
+  pendente
+  aceito
+  expirado
+  cancelado
+}
+
+enum TipoConvite {
+  professor
+  coordenador
+  diretor
+}
+
 model Escola {
   id                String    @id @default(uuid())
   nome              String
@@ -105,6 +118,7 @@ model Escola {
   turmas        Turma[]
   planejamentos Planejamento[]
   aulas         Aula[]
+  convites      ConviteUsuario[]
 
   @@map("escola")
 }
@@ -120,12 +134,13 @@ model Usuario {
   updated_at DateTime @updatedAt
 
   // Relations
-  escola         Escola?        @relation(fields: [escola_id], references: [id], onDelete: Cascade)
-  perfil_usuario PerfilUsuario?
-  turmas         Turma[]
-  planejamentos  Planejamento[]
-  aulas          Aula[]
-  notificacoes   Notificacao[]
+  escola            Escola?          @relation(fields: [escola_id], references: [id], onDelete: Cascade)
+  perfil_usuario    PerfilUsuario?
+  turmas            Turma[]
+  planejamentos     Planejamento[]
+  aulas             Aula[]
+  notificacoes      Notificacao[]
+  convites_enviados ConviteUsuario[] @relation("ConvitesEnviados")
 
   @@unique([email, escola_id]) // PostgreSQL permite múltiplos NULL sem violar unique
   @@index([escola_id])
@@ -528,4 +543,33 @@ model Notificacao {
 
   @@index([usuario_id, lida, created_at])
   @@map("notificacao")
+}
+
+// ============================================
+// Domínio Convites - Gestão de Convites (Story 13.11)
+// ============================================
+
+model ConviteUsuario {
+  id            String        @id @default(uuid())
+  email         String        @db.VarChar(255)
+  nome_completo String        @db.VarChar(200)
+  tipo_usuario  TipoConvite
+  escola_id     String
+  escola        Escola        @relation(fields: [escola_id], references: [id], onDelete: Cascade)
+  criado_por    String?
+  criador       Usuario?      @relation("ConvitesEnviados", fields: [criado_por], references: [id], onDelete: SetNull)
+  token         String        @unique
+  expira_em     DateTime
+  aceito_em     DateTime?
+  status        StatusConvite @default(pendente)
+  dados_extras  Json?
+
+  criado_em     DateTime      @default(now())
+  atualizado_em DateTime      @updatedAt
+
+  @@index([email, escola_id])
+  @@index([status, expira_em])
+  @@index([escola_id, status])
+
+  @@map("convite_usuario")
 }

@@ -16,6 +16,11 @@ export type { ProcessingStatusProps } from './processing-status'
 export { SkeletonLoader } from './skeleton-loader'
 export type { SkeletonLoaderProps } from './skeleton-loader'
 
+// Epic 12 - Form Helpers (Story 12.3.1)
+export { FormFieldWithCounter } from './form-field-with-counter'
+export { FormFieldWithTooltip } from './form-field-with-tooltip'
+export { SubmitButton } from './submit-button'
+
 // Shadcn/UI Base Components (existing)
 export { Alert, AlertDescription, AlertTitle } from './alert'
 export { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './alert-dialog'

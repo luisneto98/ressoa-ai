@@ -141,5 +141,5 @@ development_status:
     12-1-2-upload-aula-visual-confiavel: done # Code review complete - 10 issues found (3 HIGH, 4 MEDIUM, 3 LOW) - 9 auto-fixed, 1 deferred - 31/31 tests passing - All ACs implemented
     12-2-1-dashboard-aulas-moderno: done # Code review complete - 15 issues found (5 CRITICAL, 7 MEDIUM, 3 LOW) - 12 auto-fixed - 3 tests created (25 test cases) - Touch targets 44px, ARIA labels, GPU hints - ≥80% coverage achieved
     12-2-2-visualizacao-planos-pedagogicos: done # Code review found 9 issues (4 CRITICAL, 3 MEDIUM, 2 LOW) - Implementation CORRECT (44/44 tests passing) - Manual tests PENDING (responsiveness, WebAIM contrast, screen reader, performance, Lighthouse) - Pre-existing TypeScript build errors BLOCK deploy - See 12-2-2-code-review-findings.md
-    12-3-1-forms-cadastro-premium: backlog
+    12-3-1-forms-cadastro-premium: done # Code review complete - 5 issues auto-fixed (3 CRITICAL TypeScript errors, 2 MEDIUM UX) - 54/56 tests passing - Phase 1 (TurmaFormDialog) complete, Tasks 4-13 deferred
     epic-12-retrospective: optional

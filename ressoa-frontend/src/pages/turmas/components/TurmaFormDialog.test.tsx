@@ -103,7 +103,7 @@ describe('TurmaFormDialog', () => {
       />
     );
 
-    const submitButton = screen.getByRole('button', { name: /salvar/i });
+    const submitButton = screen.getByRole('button', { name: /criar turma/i });
     await user.click(submitButton);
 
     await waitFor(() => {
@@ -128,7 +128,7 @@ describe('TurmaFormDialog', () => {
     const nameInput = screen.getByLabelText(/nome da turma/i);
     await user.type(nameInput, 'AB'); // Less than 3 characters
 
-    const submitButton = screen.getByRole('button', { name: /salvar/i });
+    const submitButton = screen.getByRole('button', { name: /criar turma/i });
     await user.click(submitButton);
 
     await waitFor(() => {
@@ -254,8 +254,9 @@ describe('TurmaFormDialog', () => {
       />
     );
 
-    const submitButton = screen.getByRole('button', { name: /salvar/i });
+    const submitButton = screen.getByRole('button', { name: /criando/i });
     expect(submitButton).toBeDisabled();
+    expect(submitButton).toHaveAttribute('aria-busy', 'true');
   });
 
   // ===== Story 11.5: Contexto Pedagógico Tests =====
@@ -321,9 +322,10 @@ describe('TurmaFormDialog', () => {
 
       await waitFor(() => {
         expect(screen.getByText('Contexto Pedagógico')).toBeInTheDocument();
-        expect(screen.getByLabelText(/Objetivo Geral do Curso/i)).toBeInTheDocument();
-        expect(screen.getByLabelText(/Público-Alvo/i)).toBeInTheDocument();
-        expect(screen.getByLabelText(/Metodologia de Ensino/i)).toBeInTheDocument();
+        // Use getAllByLabelText since FormFieldWithTooltip may create multiple labels
+        expect(screen.getAllByLabelText(/Objetivo Geral do Curso/i).length).toBeGreaterThan(0);
+        expect(screen.getAllByLabelText(/Público-Alvo/i).length).toBeGreaterThan(0);
+        expect(screen.getAllByLabelText(/Metodologia de Ensino/i).length).toBeGreaterThan(0);
         expect(screen.getByLabelText(/Carga Horária Total/i)).toBeInTheDocument();
       });
     });
@@ -370,14 +372,15 @@ describe('TurmaFormDialog', () => {
       await user.click(screen.getByRole('radio', { name: /Curso Customizado/i }));
 
       await waitFor(() => {
-        expect(screen.getByLabelText(/Objetivo Geral do Curso/i)).toBeInTheDocument();
+        expect(screen.getAllByLabelText(/Objetivo Geral do Curso/i).length).toBeGreaterThan(0);
       });
 
-      const objetivoInput = screen.getByLabelText(/Objetivo Geral do Curso/i);
+      // Get the textarea element (there may be multiple label elements due to tooltip)
+      const objetivoInput = screen.getAllByLabelText(/Objetivo Geral do Curso/i)[0] as HTMLTextAreaElement;
 
       // Test min (less than 100)
       await user.type(objetivoInput, 'Texto curto');
-      const submitButton = screen.getByRole('button', { name: /salvar/i });
+      const submitButton = screen.getByRole('button', { name: /criar turma/i });
       await user.click(submitButton);
 
       await waitFor(() => {
@@ -403,7 +406,8 @@ describe('TurmaFormDialog', () => {
         expect(screen.getByText(/0\/500 caracteres/i)).toBeInTheDocument();
       });
 
-      const objetivoInput = screen.getByLabelText(/Objetivo Geral do Curso/i);
+      // Use getByRole to target the textarea specifically (not the tooltip icon)
+      const objetivoInput = screen.getByRole('textbox', { name: /Objetivo Geral do Curso/i });
       await user.type(objetivoInput, 'Teste');
 
       await waitFor(() => {
@@ -529,7 +533,7 @@ describe('TurmaFormDialog', () => {
       expect(bnccRadio).toBeChecked();
     });
 
-    it('should show red character counter when exceeding max length', async () => {
+    it('should show character counter at max length (maxLength attribute prevents exceeding)', async () => {
       const user = userEvent.setup();
 
       renderWithProviders(
@@ -544,20 +548,23 @@ describe('TurmaFormDialog', () => {
       await user.click(screen.getByRole('radio', { name: /Curso Customizado/i }));
 
       await waitFor(() => {
-        expect(screen.getByLabelText(/Objetivo Geral do Curso/i)).toBeInTheDocument();
+        expect(screen.getAllByLabelText(/Objetivo Geral do Curso/i).length).toBeGreaterThan(0);
       });
 
-      const objetivoInput = screen.getByLabelText(/Objetivo Geral do Curso/i);
+      // Get the textarea element (there may be multiple label elements due to tooltip)
+      const objetivoInput = screen.getAllByLabelText(/Objetivo Geral do Curso/i)[0] as HTMLTextAreaElement;
 
-      // Type text exceeding 500 characters (501 'a' characters)
-      const longText = 'a'.repeat(501);
+      // Type text up to 500 characters (maxLength prevents exceeding)
+      // Note: HTML textarea maxLength attribute prevents typing beyond limit
+      const longText = 'a'.repeat(500);
       await user.type(objetivoInput, longText);
 
       await waitFor(() => {
-        const counter = screen.getByText(/501\/500 caracteres/i);
+        // Counter shows 500/500 (maxLength prevents exceeding)
+        const counter = screen.getByText(/500\/500 caracteres/i);
         expect(counter).toBeInTheDocument();
-        expect(counter).toHaveClass('text-red-600');
-        expect(counter).toHaveClass('font-medium');
+        // At exactly maxLength, counter should still be gray (not exceeding)
+        expect(counter).toHaveClass('text-gray-500');
       });
     });
   });

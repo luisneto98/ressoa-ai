@@ -19,7 +19,6 @@ import {
   FormDescription,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
@@ -29,8 +28,8 @@ import {
 } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { IconLoader2, IconAlertCircle, IconSchool, IconCertificate } from '@tabler/icons-react';
+import { FormFieldWithCounter, SubmitButton } from '@/components/ui';
+import { IconSchool, IconCertificate } from '@tabler/icons-react';
 import { turmaFormSchema, getTurmaFormDefaults, type TurmaFormData } from '@/lib/validation/turma.schema';
 import {
   TipoEnsino,
@@ -45,7 +44,6 @@ import {
 } from '@/types/turma';
 import type { Turma } from '@/types/turma';
 import { useProfessores } from '@/hooks/useTurmas';
-import { cn } from '@/lib/utils';
 
 /**
  * Form dialog for creating/editing turmas
@@ -109,13 +107,6 @@ export function TurmaFormDialog({
   const tipoEnsino = form.watch('tipo_ensino');
   const serieAtual = form.watch('serie');
 
-  // Watch contexto pedagogico fields para character counters (AC#2)
-  // Validação min/max: objetivo_geral (100-500), publico_alvo (20-200), metodologia (20-300), carga_horaria (8-1000)
-  const objetivoGeral = (form.watch('contexto_pedagogico.objetivo_geral' as any) as string) || '';
-  const publicoAlvo = (form.watch('contexto_pedagogico.publico_alvo' as any) as string) || '';
-  const metodologia = (form.watch('contexto_pedagogico.metodologia' as any) as string) || '';
-  const cargaHoraria = form.watch('contexto_pedagogico.carga_horaria_total' as any) as number;
-
   // Reset form when dialog opens/closes or defaultValues change
   useEffect(() => {
     if (open) {
@@ -178,7 +169,7 @@ export function TurmaFormDialog({
                 name="curriculo_tipo"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
-                    <FormLabel className="text-base font-heading text-deep-navy">Tipo de Currículo *</FormLabel>
+                    <FormLabel className="font-medium text-sm text-deep-navy">Tipo de Currículo *</FormLabel>
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
@@ -228,11 +219,12 @@ export function TurmaFormDialog({
                 name="nome"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="nome">Nome da Turma *</FormLabel>
+                    <FormLabel htmlFor="nome" className="font-medium text-sm text-deep-navy">Nome da Turma *</FormLabel>
                     <FormControl>
                       <Input
                         id="nome"
                         placeholder="Ex: 6º Ano A"
+                        className="text-base md:text-sm"
                         aria-invalid={!!form.formState.errors.nome}
                         {...field}
                       />
@@ -248,7 +240,7 @@ export function TurmaFormDialog({
                 name="tipo_ensino"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="tipo_ensino">Tipo de Ensino *</FormLabel>
+                    <FormLabel htmlFor="tipo_ensino" className="font-medium text-sm text-deep-navy">Tipo de Ensino *</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger id="tipo_ensino" aria-invalid={!!form.formState.errors.tipo_ensino}>
@@ -274,7 +266,7 @@ export function TurmaFormDialog({
                 name="serie"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="serie">Série *</FormLabel>
+                    <FormLabel htmlFor="serie" className="font-medium text-sm text-deep-navy">Série *</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger id="serie" aria-invalid={!!form.formState.errors.serie}>
@@ -300,7 +292,7 @@ export function TurmaFormDialog({
                 name="disciplina"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="disciplina">Disciplina *</FormLabel>
+                    <FormLabel htmlFor="disciplina" className="font-medium text-sm text-deep-navy">Disciplina *</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger id="disciplina" aria-invalid={!!form.formState.errors.disciplina}>
@@ -326,7 +318,7 @@ export function TurmaFormDialog({
                 name="professor_id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="professor_id">Professor Responsável *</FormLabel>
+                    <FormLabel htmlFor="professor_id" className="font-medium text-sm text-deep-navy">Professor Responsável *</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger id="professor_id" aria-invalid={!!form.formState.errors.professor_id}>
@@ -356,134 +348,55 @@ export function TurmaFormDialog({
                   </p>
 
                   {/* Objetivo Geral */}
-                  {/* @ts-expect-error: React Hook Form nested field type inference limitation */}
-                  <FormField
+                  <FormFieldWithCounter<TurmaFormData>
                     control={form.control}
-                    name={'contexto_pedagogico.objetivo_geral' as any}
-                    render={({ field }) => (
-                      <FormItem>
-                        <div className="flex items-center gap-2">
-                          <FormLabel htmlFor="objetivo_geral">Objetivo Geral do Curso *</FormLabel>
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <IconAlertCircle
-                                  className="h-4 w-4 text-focus-orange cursor-help"
-                                  aria-label="Informações sobre objetivo geral"
-                                />
-                              </TooltipTrigger>
-                              <TooltipContent className="max-w-xs">
-                                <p>Descreva o propósito do curso de forma clara. Isso ajuda a IA a gerar relatórios relevantes.</p>
-                                <p className="mt-2 text-xs italic">
-                                  Exemplo: "Preparar alunos para ENEM 2026 com foco em redação nota 1000"
-                                </p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </div>
-                        <FormControl>
-                          <Textarea
-                            id="objetivo_geral"
-                            placeholder="Ex: Preparar candidatos para prova da Polícia Militar de São Paulo 2026"
-                            rows={4}
-                            aria-invalid={!!form.formState.errors.contexto_pedagogico?.objetivo_geral}
-                            {...field}
-                          />
-                        </FormControl>
-                        <div className="flex items-center justify-between">
-                          <FormMessage aria-live="polite" />
-                          <p
-                            className={cn(
-                              'text-sm text-gray-500',
-                              objetivoGeral.length > 500 && 'text-red-600 font-medium'
-                            )}
-                          >
-                            {objetivoGeral.length}/500 caracteres
-                          </p>
-                        </div>
-                      </FormItem>
-                    )}
+                    name="contexto_pedagogico.objetivo_geral"
+                    label="Objetivo Geral do Curso"
+                    placeholder="Ex: Preparar candidatos para prova da Polícia Militar de São Paulo 2026"
+                    tooltipContent={
+                      <>
+                        <p>Descreva o propósito do curso de forma clara. Isso ajuda a IA a gerar relatórios relevantes.</p>
+                        <p className="mt-2 text-xs italic">
+                          Exemplo: "Preparar alunos para ENEM 2026 com foco em redação nota 1000"
+                        </p>
+                      </>
+                    }
+                    maxLength={500}
+                    minLength={100}
+                    rows={4}
+                    required
                   />
 
                   {/* Público-Alvo */}
-                  {/* @ts-expect-error: React Hook Form nested field type inference limitation */}
-                  <FormField
+                  <FormFieldWithCounter<TurmaFormData>
                     control={form.control}
-                    name={'contexto_pedagogico.publico_alvo' as any}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel htmlFor="publico_alvo">Público-Alvo *</FormLabel>
-                        <FormControl>
-                          <Input
-                            id="publico_alvo"
-                            placeholder="Ex: Jovens 18-25 anos, Ensino Médio completo"
-                            aria-invalid={!!form.formState.errors.contexto_pedagogico?.publico_alvo}
-                            {...field}
-                          />
-                        </FormControl>
-                        <div className="flex items-center justify-between">
-                          <FormMessage aria-live="polite" />
-                          <p
-                            className={cn(
-                              'text-sm text-gray-500',
-                              publicoAlvo.length > 200 && 'text-red-600 font-medium'
-                            )}
-                          >
-                            {publicoAlvo.length}/200 caracteres
-                          </p>
-                        </div>
-                      </FormItem>
-                    )}
+                    name="contexto_pedagogico.publico_alvo"
+                    label="Público-Alvo"
+                    placeholder="Ex: Jovens 18-25 anos, Ensino Médio completo"
+                    maxLength={200}
+                    minLength={20}
+                    rows={2}
+                    required
                   />
 
                   {/* Metodologia */}
-                  {/* @ts-expect-error: React Hook Form nested field type inference limitation */}
-                  <FormField
+                  <FormFieldWithCounter<TurmaFormData>
                     control={form.control}
-                    name={'contexto_pedagogico.metodologia' as any}
-                    render={({ field }) => (
-                      <FormItem>
-                        <div className="flex items-center gap-2">
-                          <FormLabel htmlFor="metodologia">Metodologia de Ensino *</FormLabel>
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <IconAlertCircle
-                                  className="h-4 w-4 text-focus-orange cursor-help"
-                                  aria-label="Informações sobre metodologia"
-                                />
-                              </TooltipTrigger>
-                              <TooltipContent className="max-w-xs">
-                                <p>Descreva como o curso será ministrado.</p>
-                                <p className="mt-2 text-xs italic">
-                                  Exemplo: "Simulados semanais + revisão teórica focada em questões"
-                                </p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </div>
-                        <FormControl>
-                          <Textarea
-                            id="metodologia"
-                            placeholder="Ex: Simulados semanais + revisão teórica focada em questões"
-                            rows={3}
-                            aria-invalid={!!form.formState.errors.contexto_pedagogico?.metodologia}
-                            {...field}
-                          />
-                        </FormControl>
-                        <div className="flex items-center justify-between">
-                          <FormMessage aria-live="polite" />
-                          <p
-                            className={cn(
-                              'text-sm text-gray-500',
-                              metodologia.length > 300 && 'text-red-600 font-medium'
-                            )}
-                          >
-                            {metodologia.length}/300 caracteres
-                          </p>
-                        </div>
-                      </FormItem>
-                    )}
+                    name="contexto_pedagogico.metodologia"
+                    label="Metodologia de Ensino"
+                    placeholder="Ex: Simulados semanais + revisão teórica focada em questões"
+                    tooltipContent={
+                      <>
+                        <p>Descreva como o curso será ministrado.</p>
+                        <p className="mt-2 text-xs italic">
+                          Exemplo: "Simulados semanais + revisão teórica focada em questões"
+                        </p>
+                      </>
+                    }
+                    maxLength={300}
+                    minLength={20}
+                    rows={3}
+                    required
                   />
 
                   {/* Carga Horária Total */}
@@ -492,7 +405,7 @@ export function TurmaFormDialog({
                     name={'contexto_pedagogico.carga_horaria_total' as any}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="carga_horaria">Carga Horária Total (horas) *</FormLabel>
+                        <FormLabel htmlFor="carga_horaria" className="font-medium text-sm text-deep-navy">Carga Horária Total (horas) *</FormLabel>
                         <FormControl>
                           <Input
                             id="carga_horaria"
@@ -522,7 +435,7 @@ export function TurmaFormDialog({
                   name="ano_letivo"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel htmlFor="ano_letivo">Ano Letivo *</FormLabel>
+                      <FormLabel htmlFor="ano_letivo" className="font-medium text-sm text-deep-navy">Ano Letivo *</FormLabel>
                       <FormControl>
                         <Input
                           id="ano_letivo"
@@ -546,7 +459,7 @@ export function TurmaFormDialog({
                   name="turno"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel htmlFor="turno">Turno *</FormLabel>
+                      <FormLabel htmlFor="turno" className="font-medium text-sm text-deep-navy">Turno *</FormLabel>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger id="turno" aria-invalid={!!form.formState.errors.turno}>
@@ -579,14 +492,12 @@ export function TurmaFormDialog({
               >
                 Cancelar
               </Button>
-              <Button
-                type="submit"
-                disabled={isLoading}
+              <SubmitButton
+                isLoading={isLoading}
+                label={mode === 'create' ? 'Criar Turma' : 'Salvar Alterações'}
+                loadingLabel={mode === 'create' ? 'Criando...' : 'Salvando...'}
                 className="bg-focus-orange hover:bg-focus-orange/90 text-white"
-              >
-                {isLoading && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />}
-                Salvar
-              </Button>
+              />
             </DialogFooter>
           </form>
         </Form>

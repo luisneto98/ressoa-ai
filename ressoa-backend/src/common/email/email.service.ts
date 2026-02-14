@@ -212,7 +212,7 @@ export class EmailService {
     const msg = {
       to: email,
       from,
-      subject: `Convite para Diretor - ${escolaNome}`,
+      subject: `Você foi convidado como Diretor - ${escolaNome}`,
       html: this.getDirectorInvitationTemplate(nome, escolaNome, inviteUrl),
     };
 

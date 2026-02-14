@@ -75,6 +75,9 @@ export function InviteDirectorDialog({
       onOpenChange(false);
       form.reset();
     } catch (error: unknown) {
+      // Log error for debugging (Code Review LOW-2 fix)
+      console.error('Invite director error:', error);
+
       const message = (error as { response?: { data?: { message?: string }; status?: number } })?.response?.data?.message || 'Erro ao enviar convite';
       const status = (error as { response?: { status?: number } })?.response?.status;
 

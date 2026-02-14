@@ -13,8 +13,7 @@ export const inviteDirectorSchema = z.object({
     .string({ required_error: 'Email é obrigatório' })
     .email('Email inválido')
     .trim()
-    .toLowerCase()
-    .min(1, 'Email não pode ser vazio'),
+    .toLowerCase(),
 
   nome: z
     .string({ required_error: 'Nome é obrigatório' })

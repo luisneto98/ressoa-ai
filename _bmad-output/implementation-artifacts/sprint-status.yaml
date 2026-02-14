@@ -145,7 +145,7 @@ development_status:
     epic-12-retrospective: optional
     epic-13: in-progress # Gestão Hierárquica de Cadastros (Admin → Diretor → Coordenador → Professor) - Sistema de convites por email
     13-1-cadastrar-escola-admin: done # Como Admin, cadastrar Escola com validação CNPJ único - Code review complete: 8 issues found (5 CRITICAL/HIGH auto-fixed, 2 MEDIUM deferred, 1 LOW accepted) - 10/10 E2E tests passing - Email case-insensitive check added
-    13-2-convidar-diretor-email-admin: review # Como Admin, enviar convite por email para Diretor com token único
+    13-2-convidar-diretor-email-admin: done # Como Admin, enviar convite por email para Diretor com token único
     13-3-aceitar-convite-criar-senha: backlog # Como Diretor convidado, aceitar convite e criar senha forte
     13-4-convidar-coordenador-diretor: backlog # Como Diretor, enviar convite por email para Coordenador
     13-5-convidar-professor-diretor: backlog # Como Diretor, enviar convite por email para Professor

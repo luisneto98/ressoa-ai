@@ -4,10 +4,14 @@ import type { Planejamento } from './hooks/usePlanejamentos';
 import { useTurmas } from './hooks/useTurmas';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { PlanejamentosTable } from './components/PlanejamentosTable';
 import { PlanejamentoCard } from './components/PlanejamentoCard';
+import { TimelinePlanos } from './components/TimelinePlanos';
 import { EmptyState } from './components/EmptyState';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useUIStore } from '@/stores/ui-store';
+import { IconList, IconTimeline } from '@tabler/icons-react';
 
 export const PlanejamentosListPage = () => {
   const navigate = useNavigate();
@@ -19,6 +23,10 @@ export const PlanejamentosListPage = () => {
   const anoLetivo = searchParams.get('ano_letivo')
     ? Number(searchParams.get('ano_letivo'))
     : new Date().getFullYear();
+
+  // View mode from Zustand store (persisted)
+  const viewMode = useUIStore((state) => state.planejamentosViewMode);
+  const setViewMode = useUIStore((state) => state.setPlanejamentosViewMode);
 
   // Fetch data
   const { data: planejamentos = [], isLoading } = usePlanejamentos({
@@ -56,77 +64,114 @@ export const PlanejamentosListPage = () => {
           </p>
         </div>
 
-        {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-4 mb-6 items-end">
-          {/* Turma Filter */}
-          <div className="flex-1">
-            <label className="text-sm font-medium mb-2 block">Turma</label>
-            <Select
-              value={turmaId || 'all'}
-              onValueChange={(v) => updateFilter('turma_id', v === 'all' ? null : v)}
+        {/* Filters and View Toggle */}
+        <div className="flex flex-col gap-4 mb-6">
+          {/* Filters Row */}
+          <div className="flex flex-col md:flex-row gap-4 items-end">
+            {/* Turma Filter */}
+            <div className="flex-1">
+              <label className="text-sm font-medium mb-2 block">Turma</label>
+              <Select
+                value={turmaId || 'all'}
+                onValueChange={(v) => updateFilter('turma_id', v === 'all' ? null : v)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Todas as turmas" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas as turmas</SelectItem>
+                  {turmas.map((turma) => (
+                    <SelectItem key={turma.id} value={turma.id}>
+                      {turma.nome} - {turma.disciplina} - {turma.serie}º ano
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Bimestre Filter */}
+            <div className="flex-1">
+              <label className="text-sm font-medium mb-2 block">Bimestre</label>
+              <Select
+                value={bimestre ? String(bimestre) : 'all'}
+                onValueChange={(v) => updateFilter('bimestre', v === 'all' ? null : v)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Todos os bimestres" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos os bimestres</SelectItem>
+                  {[1, 2, 3, 4].map((b) => (
+                    <SelectItem key={b} value={String(b)}>
+                      Bimestre {b}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Ano Letivo Filter */}
+            <div className="flex-1">
+              <label className="text-sm font-medium mb-2 block">Ano Letivo</label>
+              <Select
+                value={String(anoLetivo)}
+                onValueChange={(v) => updateFilter('ano_letivo', v)}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {years.map((year) => (
+                    <SelectItem key={year} value={String(year)}>
+                      {year}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* New Button */}
+            <Button
+              onClick={() => navigate('/planejamentos/novo')}
+              className="bg-tech-blue hover:bg-tech-blue/90"
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Todas as turmas" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todas as turmas</SelectItem>
-                {turmas.map((turma) => (
-                  <SelectItem key={turma.id} value={turma.id}>
-                    {turma.nome} - {turma.disciplina} - {turma.serie}º ano
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              Novo Planejamento
+            </Button>
           </div>
 
-          {/* Bimestre Filter */}
-          <div className="flex-1">
-            <label className="text-sm font-medium mb-2 block">Bimestre</label>
-            <Select
-              value={bimestre ? String(bimestre) : 'all'}
-              onValueChange={(v) => updateFilter('bimestre', v === 'all' ? null : v)}
+          {/* View Mode Toggle */}
+          <div className="flex items-center justify-between">
+            <ToggleGroup
+              type="single"
+              value={viewMode}
+              onValueChange={(value) => {
+                if (value) setViewMode(value as 'table' | 'timeline');
+              }}
+              className="justify-start"
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Todos os bimestres" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos os bimestres</SelectItem>
-                {[1, 2, 3, 4].map((b) => (
-                  <SelectItem key={b} value={String(b)}>
-                    Bimestre {b}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              <ToggleGroupItem
+                value="table"
+                aria-label="Visualização em tabela"
+                className="gap-2"
+              >
+                <IconList className="w-4 h-4" />
+                <span className="hidden sm:inline">Tabela</span>
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                value="timeline"
+                aria-label="Visualização em timeline"
+                className="gap-2"
+              >
+                <IconTimeline className="w-4 h-4" />
+                <span className="hidden sm:inline">Timeline</span>
+              </ToggleGroupItem>
+            </ToggleGroup>
+            <p className="text-xs text-gray-500 hidden md:block">
+              {viewMode === 'timeline'
+                ? 'Visão temporal dos 4 bimestres'
+                : 'Listagem completa de planejamentos'}
+            </p>
           </div>
-
-          {/* Ano Letivo Filter */}
-          <div className="flex-1">
-            <label className="text-sm font-medium mb-2 block">Ano Letivo</label>
-            <Select
-              value={String(anoLetivo)}
-              onValueChange={(v) => updateFilter('ano_letivo', v)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {years.map((year) => (
-                  <SelectItem key={year} value={String(year)}>
-                    {year}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* New Button */}
-          <Button
-            onClick={() => navigate('/planejamentos/novo')}
-            className="bg-tech-blue hover:bg-tech-blue/90"
-          >
-            Novo Planejamento
-          </Button>
         </div>
 
         {/* Loading State */}
@@ -141,20 +186,36 @@ export const PlanejamentosListPage = () => {
         {/* Empty State */}
         {!isLoading && planejamentos.length === 0 && <EmptyState />}
 
-        {/* Table (Desktop) */}
+        {/* Content - Table or Timeline View */}
         {!isLoading && planejamentos.length > 0 && (
-          <div className="hidden md:block">
-            <PlanejamentosTable planejamentos={planejamentos} />
-          </div>
-        )}
+          <>
+            {viewMode === 'table' ? (
+              <>
+                {/* Table (Desktop) */}
+                <div className="hidden md:block">
+                  <PlanejamentosTable planejamentos={planejamentos} />
+                </div>
 
-        {/* Cards (Mobile) */}
-        {!isLoading && planejamentos.length > 0 && (
-          <div className="block md:hidden space-y-4">
-            {planejamentos.map((planejamento: Planejamento) => (
-              <PlanejamentoCard key={planejamento.id} planejamento={planejamento} />
-            ))}
-          </div>
+                {/* Cards (Mobile) */}
+                <div className="block md:hidden space-y-4">
+                  {planejamentos.map((planejamento: Planejamento) => (
+                    <PlanejamentoCard
+                      key={planejamento.id}
+                      planejamento={planejamento}
+                    />
+                  ))}
+                </div>
+              </>
+            ) : (
+              /* Timeline View */
+              <TimelinePlanos
+                turmaId={turmaId}
+                anoLetivo={anoLetivo}
+                planejamentos={planejamentos}
+                isLoading={isLoading}
+              />
+            )}
+          </>
         )}
 
         {/* Live region for screen readers */}

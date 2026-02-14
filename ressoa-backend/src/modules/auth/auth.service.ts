@@ -121,12 +121,21 @@ export class AuthService {
   async acceptInvitation(
     dto: AcceptInvitationDto,
   ): Promise<{ message: string }> {
-    // 1. Try coordenador token first, then fallback to diretor token (Story 13.4 - AC6)
+    // 1. Try coordenador token first, then fallback to professor, then diretor (Story 13.5 - AC10)
     let tokenData = await this.redisService.get(
       `invite_coordenador:${dto.token}`,
     );
     let role: RoleUsuario = RoleUsuario.COORDENADOR;
     let tokenKey = `invite_coordenador:${dto.token}`;
+
+    // Fallback to professor token
+    if (!tokenData) {
+      tokenData = await this.redisService.get(`invite_professor:${dto.token}`);
+      if (tokenData) {
+        role = RoleUsuario.PROFESSOR;
+        tokenKey = `invite_professor:${dto.token}`;
+      }
+    }
 
     // Fallback to diretor token
     if (!tokenData) {
@@ -139,19 +148,31 @@ export class AuthService {
       throw new UnauthorizedException('Token inválido ou expirado');
     }
 
-    // 2. Parse token data (email, escolaId, nome)
+    // 2. Parse token data (email, escolaId, nome, and optional professor fields)
     let email: string;
     let escolaId: string;
     let nome: string;
+    let disciplina: string | undefined;
+    let formacao: string | undefined;
+    let registro: string | undefined;
+    let telefone: string | undefined;
     try {
       const parsed = JSON.parse(tokenData) as {
         email: string;
         escolaId: string;
         nome: string;
+        disciplina?: string;
+        formacao?: string;
+        registro?: string;
+        telefone?: string;
       };
       email = parsed.email; // Already normalized (lowercase + trim)
       escolaId = parsed.escolaId;
       nome = parsed.nome;
+      disciplina = parsed.disciplina;
+      formacao = parsed.formacao;
+      registro = parsed.registro;
+      telefone = parsed.telefone;
     } catch (error) {
       this.logger.error(
         `Failed to parse invitation token data: ${tokenData}`,

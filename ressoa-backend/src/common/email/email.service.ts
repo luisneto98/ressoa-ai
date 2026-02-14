@@ -290,6 +290,118 @@ export class EmailService {
   }
 
   /**
+   * Send professor invitation email with unique token
+   * Story 13.5 - AC6: Email de convite para professor
+   *
+   * @param params - Invitation data (to, nome, escola, disciplina, token)
+   * @returns Promise<void>
+   */
+  async sendProfessorInvitationEmail(params: {
+    to: string;
+    professorNome: string;
+    escolaNome: string;
+    disciplina: string;
+    inviteToken: string;
+  }): Promise<void> {
+    const { to, professorNome, escolaNome, disciplina, inviteToken } = params;
+
+    if (this.isDevelopment || !this.emailEnabled) {
+      this.logger.log(
+        `[MOCK EMAIL] Professor invitation sent to ${to} | Token: ${inviteToken}`,
+      );
+      return;
+    }
+
+    const frontendUrl =
+      this.configService.get('FRONTEND_URL') || 'http://localhost:5173';
+    const inviteLink = `${frontendUrl}/aceitar-convite?token=${inviteToken}`;
+
+    const disciplinaLabel =
+      {
+        MATEMATICA: 'Matemática',
+        LINGUA_PORTUGUESA: 'Língua Portuguesa',
+        CIENCIAS: 'Ciências',
+      }[disciplina] || disciplina;
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <style>
+          body { font-family: Inter, sans-serif; background-color: #F8FAFC; padding: 20px; }
+          .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 8px; padding: 32px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+          .header { text-align: center; margin-bottom: 24px; }
+          .logo { font-family: Montserrat, sans-serif; font-size: 28px; font-weight: 700; color: #0A2647; }
+          .gradient-text { background: linear-gradient(135deg, #2563EB, #06B6D4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+          .content { color: #334155; line-height: 1.6; }
+          .cta-button { display: inline-block; background: #2563EB; color: white; padding: 14px 28px; border-radius: 6px; text-decoration: none; font-weight: 600; margin: 24px 0; }
+          .footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid #E2E8F0; color: #64748B; font-size: 14px; }
+          .info-box { background: #F1F5F9; padding: 16px; border-radius: 6px; margin: 16px 0; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="logo">Ressoa<span class="gradient-text">AI</span></div>
+            <p style="color: #64748B; margin-top: 8px;">Inteligência de Aula, Análise e Previsão de Conteúdo</p>
+          </div>
+
+          <div class="content">
+            <h2 style="color: #0A2647;">Olá, ${professorNome}!</h2>
+
+            <p>Você foi convidado(a) para fazer parte do <strong>${escolaNome}</strong> como Professor(a) de <strong>${disciplinaLabel}</strong> na plataforma Ressoa AI.</p>
+
+            <div class="info-box">
+              <p style="margin: 0;"><strong>Escola:</strong> ${escolaNome}</p>
+              <p style="margin: 8px 0 0 0;"><strong>Disciplina Principal:</strong> ${disciplinaLabel}</p>
+            </div>
+
+            <p>Para aceitar o convite e criar sua senha de acesso, clique no botão abaixo:</p>
+
+            <div style="text-align: center;">
+              <a href="${inviteLink}" class="cta-button">Aceitar Convite e Criar Senha</a>
+            </div>
+
+            <p style="font-size: 14px; color: #64748B;">
+              ⏱️ Este link é válido por <strong>24 horas</strong> e pode ser usado apenas uma vez.
+            </p>
+
+            <p style="font-size: 14px; color: #64748B;">
+              Se você não conseguir clicar no botão, copie e cole o link abaixo no seu navegador:
+              <br>
+              <code style="background: #F1F5F9; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-top: 8px;">${inviteLink}</code>
+            </p>
+          </div>
+
+          <div class="footer">
+            <p>Se você não esperava este convite, por favor ignore este email.</p>
+            <p style="margin-top: 8px;">© 2026 Ressoa AI - Todos os direitos reservados</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    try {
+      await sgMail.send({
+        to,
+        from: this.configService.get('EMAIL_FROM') || 'noreply@ressoaai.com',
+        subject: `Convite para Professor - ${escolaNome}`,
+        html: htmlContent,
+      });
+
+      this.logger.log(`Professor invitation email sent to ${to}`);
+    } catch (error) {
+      this.logger.error('Failed to send professor invitation email via SendGrid', {
+        error: error instanceof Error ? error.message : String(error),
+        to,
+      });
+      throw error; // Será tratado pelo service com graceful degradation
+    }
+  }
+
+  /**
    * Generate HTML template for password reset email
    * Story 1.5 - Task 5: Email Template
    *

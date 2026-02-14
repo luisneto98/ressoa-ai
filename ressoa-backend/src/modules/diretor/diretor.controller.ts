@@ -13,7 +13,7 @@ import {
   ApiResponse,
 } from '@nestjs/swagger';
 import { DiretorService } from './diretor.service';
-import { InviteCoordenadorDto } from './dto';
+import { InviteCoordenadorDto, InviteProfessorDto } from './dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { RoleUsuario } from '@prisma/client';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
@@ -60,5 +60,36 @@ export class DiretorController {
     @Body() dto: InviteCoordenadorDto,
   ) {
     return this.diretorService.inviteCoordenador(user.escolaId, dto);
+  }
+
+  /**
+   * Invite a Professor via email (Story 13.5 - AC1)
+   * @param user - Authenticated diretor from JWT
+   * @param dto - Email, name, disciplina, and optional fields for professor
+   * @returns Success message
+   */
+  @Post('invite-professor')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({
+    summary: 'Enviar convite por email para Professor',
+    description:
+      'Diretor envia convite de cadastro para Professor da sua escola',
+  })
+  @ApiResponse({ status: 201, description: 'Convite enviado com sucesso' })
+  @ApiResponse({
+    status: 400,
+    description: 'Escola inativa ou validação inválida',
+  })
+  @ApiResponse({ status: 401, description: 'Não autenticado' })
+  @ApiResponse({ status: 403, description: 'Acesso negado (apenas Diretor)' })
+  @ApiResponse({
+    status: 409,
+    description: 'Email já cadastrado nesta escola',
+  })
+  async inviteProfessor(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: InviteProfessorDto,
+  ) {
+    return this.diretorService.inviteProfessor(user.escolaId, dto);
   }
 }

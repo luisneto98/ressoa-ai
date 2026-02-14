@@ -14,6 +14,8 @@ export interface GradientCardProps extends React.ComponentProps<"div"> {
  * Usa animação gradient-x definida em src/index.css para movimento suave.
  * Background gradient configurado com background-size: 200% para permitir animação.
  *
+ * Accessibility: Animations automatically respect `prefers-reduced-motion` via global CSS in src/index.css
+ *
  * @example
  * <GradientCard
  *   title="Relatório de Aula"
@@ -46,7 +48,7 @@ function GradientCard({
           "relative flex items-center justify-between gap-4 px-6 py-4",
           "bg-gradient-to-r from-deep-navy via-tech-blue to-deep-navy",
           "bg-[length:200%_100%]",
-          "animate-[var(--animate-gradient-x)]"
+          "animate-gradient-x"
         )}
       >
         <div className="flex-1 min-w-0">

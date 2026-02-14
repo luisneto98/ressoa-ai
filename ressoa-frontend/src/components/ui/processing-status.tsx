@@ -33,6 +33,8 @@ export interface ProcessingStatusProps extends React.ComponentProps<"div"> {
  * - Current: Cyan AI com pulse animation
  * - Complete: Tech Blue
  *
+ * Accessibility: Animations automatically respect `prefers-reduced-motion` via global CSS in src/index.css
+ *
  * @example
  * <ProcessingStatus currentStep={2} />
  */
@@ -63,7 +65,7 @@ function ProcessingStatus({ className, currentStep, ...props }: ProcessingStatus
                 className={cn(
                   "flex items-center justify-center rounded-full w-10 h-10 md:w-12 md:h-12 transition-all",
                   isComplete && "bg-tech-blue text-white",
-                  isCurrent && "bg-cyan-ai text-white animate-[var(--animate-pulse-subtle)]",
+                  isCurrent && "bg-cyan-ai text-white animate-pulse-subtle",
                   isPending && "bg-gray-200 text-gray-500"
                 )}
               >

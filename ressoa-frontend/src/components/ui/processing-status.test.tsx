@@ -53,7 +53,7 @@ describe('ProcessingStatus', () => {
 
   it('applies pulse animation to current step icon', () => {
     const { container } = render(<ProcessingStatus currentStep={2} />);
-    const icons = container.querySelectorAll('.animate-\\[var\\(--animate-pulse-subtle\\)\\]');
+    const icons = container.querySelectorAll('.animate-pulse-subtle');
     // Should have exactly 1 pulsing icon (current step)
     expect(icons.length).toBe(1);
   });

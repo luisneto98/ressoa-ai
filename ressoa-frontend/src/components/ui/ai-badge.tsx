@@ -43,6 +43,8 @@ export interface AIBadgeProps
  *
  * @size sm|md|lg - Tamanho do badge
  *
+ * Accessibility: Animations automatically respect `prefers-reduced-motion` via global CSS in src/index.css
+ *
  * @example
  * <AIBadge variant="skill">EF07MA18</AIBadge>
  * <AIBadge variant="processing">Analisando...</AIBadge>
@@ -71,7 +73,7 @@ function AIBadge({ className, variant = "skill", size, status = "default", child
           size,
         }),
         isStatusVariant && statusColors[status],
-        isProcessing && "animate-[var(--animate-pulse-subtle)]",
+        isProcessing && "animate-pulse-subtle",
         className
       )}
       {...props}
@@ -81,4 +83,5 @@ function AIBadge({ className, variant = "skill", size, status = "default", child
   )
 }
 
+// @refresh reset
 export { AIBadge, aiBadgeVariants }

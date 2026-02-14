@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
+import { SkeletonLoader } from '@/components/ui/skeleton-loader';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 import { AulaHeader } from './components/AulaHeader';
@@ -113,11 +114,16 @@ export function AulaAnalisePage() {
     queryFn: () => api.get(`/aulas/${aulaId}/analise`).then((res) => normalizeAnaliseV3(res.data)),
   });
 
+  // AC7: Loading state com SkeletonLoader branded
   if (isLoading) {
     return (
       <div className="max-w-7xl mx-auto p-6 space-y-6">
         <Skeleton className="h-20 w-full" />
-        <Skeleton className="h-96 w-full" />
+        <div className="space-y-6 animate-in fade-in duration-200">
+          <SkeletonLoader variant="card" count={1} />
+          <SkeletonLoader variant="table" count={3} />
+          <SkeletonLoader variant="chart" count={1} />
+        </div>
       </div>
     );
   }

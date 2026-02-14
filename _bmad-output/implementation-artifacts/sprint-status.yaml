@@ -135,3 +135,11 @@ development_status:
     11-10-testing-e2e-validacao-qualidade: done # Code review complete - 10 issues found (3 CRITICAL, 4 HIGH, 3 MEDIUM), 6 auto-fixed, 4 validated deferrals - E2E infrastructure complete (Playwright + Page Objects + scripts), backend E2E tests (570+461 lines), docs (README + 363L user guide + 475L API + 493L validation report) - Epic 11 GO for merge
     11-11-alinhamento-permissoes-frontend-backend-rbac: done # Code review complete - 10 issues found, 8 auto-fixed (5 HIGH, 3 MEDIUM) - 13/13 tests passing - BLOCKER: files need commit
     epic-11-retrospective: optional
+    epic-12: in-progress
+    12-0-design-system-enhancement-setup: review # 4 AI-first components created (AIBadge, GradientCard, ProcessingStatus, SkeletonLoader) + Recharts theme + animations - 60/60 tests passing - Foundation for Epic 12 stories
+    12-1-1-relatorio-aula-premium: backlog
+    12-1-2-upload-aula-visual-confiavel: backlog
+    12-2-1-dashboard-aulas-moderno: backlog
+    12-2-2-visualizacao-planos-pedagogicos: backlog
+    12-3-1-forms-cadastro-premium: backlog
+    epic-12-retrospective: optional

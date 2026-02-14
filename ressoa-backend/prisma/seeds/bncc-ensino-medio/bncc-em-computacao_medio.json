@@ -1,0 +1,266 @@
+{
+  "area": "COMPUTACAO",
+  "tipo_ensino": "MEDIO",
+  "habilidades": [
+    {
+      "codigo": "EM13CO01",
+      "descricao": "Explorar e construir a solução de problemas por meio da reutilização de partes de soluções existentes.",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "codigo": "EM13CO02",
+      "descricao": "Explorar e construir a solução de problemas por meio de refinamentos, utilizando diversos níveis de abstração desde a especificação até a implementação.",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "codigo": "EM13CO03",
+      "descricao": "Identificar o comportamento dos algoritmos no que diz respeito ao consumo de recursos como tempo de execução, espaço de memória e energia, entre outros",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "codigo": "EM13CO04",
+      "descricao": "Reconhecer o conceito de metaprogramação como uma forma de generalização na construção de programas, permitindo que algoritmos sejam entrada ou saída para outros algoritmos.",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "codigo": "EM13CO05",
+      "descricao": "Identificar os limites da Computação para diferenciar o que pode ou não ser automatizado, buscando uma compreensão mais ampla dos limites dos processos mentais envolvidos na resolução de problemas.",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "codigo": "EM13CO06",
+      "descricao": "Avaliar software levando em consideração diferentes características e métricas associadas.",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "codigo": "EM13CO07",
+      "descricao": "Compreender as diferentes tecnologias, bem como equipamentos, protocolos e serviços envolvidos no funcionamento de redes de computadores, identificando suas possibilidades de escala e confiabilidade.",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "codigo": "EM13CO08",
+      "descricao": "Entender como mudanças na tecnologia afetam a segurança, incluindo novas maneiras de preservar sua privacidade e dados pessoais on-line, reportando suspeitas e buscando ajuda em situações de risco",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "codigo": "EM13CO09",
+      "descricao": "Identificar tecnologias digitais, sua presença e formas de uso, nas diferentes atividades no mundo do trabalho.",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "codigo": "EM13CO10",
+      "descricao": "Conhecer os fundamentos da Inteligência Artificial, comparando-a com a inteligência humana, analisando suas potencialidades, riscos e limites.",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "codigo": "EM13CO11",
+      "descricao": "Criar e explorar modelos computacionais simples para simular e fazer previsões, identificando sua importância no desenvolvimento científico.",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "codigo": "EM13CO12",
+      "descricao": "Produzir, analisar, gerir e compartilhar informações a partir de dados, utilizando princípios de ciência de dados.",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "codigo": "EM13CO13",
+      "descricao": "Analisar e utilizar as diferentes formas de representação e consulta a dados em formato digital para pesquisas científicas.",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "codigo": "EM13CO14",
+      "descricao": "Avaliar a confiabilidade das informações encontradas em meio digital, investigando seus modos de construção e considerando a autoria, a estrutura e o propósito da mensagem.",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "codigo": "EM13CO15",
+      "descricao": "Analisar a interação entre usuários e artefatos computacionais, abordando aspectos da experiência do usuário e promovendo reflexão sobre a qualidade do uso dos artefatos nas esferas do trabalho, do lazer e do estudo.",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "codigo": "EM13CO16",
+      "descricao": "Desenvolver projetos com robótica, utilizando artefatos físicos ou simuladores.",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "codigo": "EM13CO17",
+      "descricao": "Construir redes virtuais de interação e colaboração, favorecendo o desenvolvimento de projetos de forma segura, legal e ética.",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "codigo": "EM13CO18",
+      "descricao": "Planejar e gerenciar projetos integrados às áreas de conhecimento de forma colaborativa, solucionando problemas, usando diversos artefatos computacionais.",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "codigo": "EM13CO19",
+      "descricao": "Expor, argumentar e negociar propostas, produtos e serviços, utilizando diferentes mídias e ferramentas digitais.",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "codigo": "EM13CO20",
+      "descricao": "Criar conteúdos, disponibilizando-os em ambientes virtuais para publicação e compartilhamento, avaliando a confiabilidade e as consequências da disseminação dessas informações.",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "codigo": "EM13CO21",
+      "descricao": "Comunicar ideias complexas de forma clara por meio de objetos digitais como mapas conceituais, infográficos, hipertextos e outros.",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "codigo": "EM13CO22",
+      "descricao": "Produzir e publicar conteúdo como textos, imagens, áudios, vídeos e suas associações, bem como ferramentas para sua integração, organização e apresentação, utilizando diferentes mídias digitais.",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "codigo": "EM13CO23",
+      "descricao": "Analisar criticamente as experiências em comunidades virtuais e as relações advindas da interação e comunicação com outras pessoas, bem como seus impactos na sociedade.",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "codigo": "EM13CO24",
+      "descricao": "Identificar e reconhecer como as redes sociais e artefatos computacionais em geral interferem na saúde física e mental de seus usuários.",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "codigo": "EM13CO25",
+      "descricao": "Dialogar em ambientes virtuais com segurança e respeito às diferenças culturais e pessoais, reconhecendo e denunciando atitudes abusivas.",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "codigo": "EM13CO26",
+      "descricao": "Aplicar os conceitos e pressupostos do direito digital em sua conduta e experiências com o cotidiano da cultura digital, bem como na produção e uso de artefatos computacionais.",
+      "competencia_especifica": 1,
+      "anos": [
+        1,
+        2,
+        3
+      ]
+    }
+  ]
+}

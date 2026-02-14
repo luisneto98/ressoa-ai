@@ -1,0 +1,62 @@
+{
+  "disciplina": "ENSINO_RELIGIOSO",
+  "ano": 8,
+  "habilidades": [
+    {
+      "codigo": "EF08ER01",
+      "descricao": "Discutir como as crenças e convicções podem influenciar escolhas e atitudes pessoais e coletivas.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Crenças religiosas e filosofias de vida",
+      "objeto_conhecimento": "Crenças, convicções e atitudes"
+    },
+    {
+      "codigo": "EF08ER02",
+      "descricao": "Analisar filosofias de vida, manifestações e tradições religiosas destacando seus princípios éticos.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Crenças religiosas e filosofias de vida",
+      "objeto_conhecimento": "Crenças, convicções e atitudes"
+    },
+    {
+      "codigo": "EF08ER03",
+      "descricao": "Analisar doutrinas das diferentes tradições religiosas e suas concepções de mundo, vida e morte.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Crenças religiosas e filosofias de vida",
+      "objeto_conhecimento": "Doutrinas religiosas"
+    },
+    {
+      "codigo": "EF08ER04",
+      "descricao": "Discutir como filosofias de vida, tradições e instituições religiosas podem influenciar diferentes campos da esfera pública (política, saúde, educação, economia).",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Crenças religiosas e filosofias de vida",
+      "objeto_conhecimento": "Crenças, filosofias de vida e esfera pública"
+    },
+    {
+      "codigo": "EF08ER05",
+      "descricao": "Debater sobre as possibilidades e os limites da interferência das tradições religiosas na esfera pública.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Crenças religiosas e filosofias de vida",
+      "objeto_conhecimento": "Crenças, filosofias de vida e esfera pública"
+    },
+    {
+      "codigo": "EF08ER06",
+      "descricao": "Analisar práticas, projetos e políticas públicas que contribuem para a promoção da liberdade de pensamento, crenças e convicções.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Crenças religiosas e filosofias de vida",
+      "objeto_conhecimento": "Crenças, filosofias de vida e esfera pública"
+    },
+    {
+      "codigo": "EF08ER07",
+      "descricao": "Analisar as formas de uso das mídias e tecnologias pelas diferentes denominações religiosas.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Crenças religiosas e filosofias de vida",
+      "objeto_conhecimento": "Tradições religiosas, mídias e tecnologias"
+    }
+  ]
+}

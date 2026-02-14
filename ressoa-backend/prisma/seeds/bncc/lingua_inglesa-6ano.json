@@ -1,0 +1,214 @@
+{
+  "disciplina": "LINGUA_INGLESA",
+  "ano": 6,
+  "habilidades": [
+    {
+      "codigo": "EF06LI01",
+      "descricao": "Interagir em situações de intercâmbio oral, demonstrando iniciativa para utilizar a língua inglesa.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Interação discursiva",
+      "objeto_conhecimento": "Construção de laços afetivos e convívio social"
+    },
+    {
+      "codigo": "EF06LI02",
+      "descricao": "Coletar informações do grupo, perguntando e respondendo sobre a família, os amigos, a escola e a comunidade..",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Interação discursiva",
+      "objeto_conhecimento": "Construção de laços afetivos e convívio social"
+    },
+    {
+      "codigo": "EF06LI03",
+      "descricao": "Solicitar esclarecimentos em língua inglesa sobre o que não entendeu e o significado de palavras ou expressões desconhecidas.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Interação discursiva",
+      "objeto_conhecimento": "Funções e usos da língua inglesa em sala de aula (Classroom language)"
+    },
+    {
+      "codigo": "EF06LI04",
+      "descricao": "Reconhecer, com o apoio de palavras cognatas e pistas do contexto discursivo, o assunto e as informações principais em textos orais sobre temas familiares.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Compreensão oral",
+      "objeto_conhecimento": "Estratégias de compreensão de textos orais: palavras cognatas e pistas do contexto discursivo"
+    },
+    {
+      "codigo": "EF06LI05",
+      "descricao": "Aplicar os conhecimentos da língua inglesa para falar de si e de outras pessoas, explicitando informações pessoais e características relacionadas a gostos, preferências e rotinas.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Produção oral",
+      "objeto_conhecimento": "Produção de textos orais, com a mediação do professor"
+    },
+    {
+      "codigo": "EF06LI06",
+      "descricao": "Planejar apresentação sobre a família, a comunidade e a escola, compartilhando-a oralmente com o grupo.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Produção oral",
+      "objeto_conhecimento": "Produção de textos orais, com a mediação do professor"
+    },
+    {
+      "codigo": "EF06LI07",
+      "descricao": "Formular hipóteses sobre a finalidade de um texto em língua inglesa, com base em sua estrutura, organização textual e pistas gráficas.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Estratégias de leitura",
+      "objeto_conhecimento": "Hipóteses sobre a finalidade de um texto"
+    },
+    {
+      "codigo": "EF06LI08",
+      "descricao": "Identificar o assunto de um texto, reconhecendo sua organização textual e palavras cognatas.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Estratégias de leitura",
+      "objeto_conhecimento": "Compreensão geral e específica: leitura rápida (skimming, scanning)"
+    },
+    {
+      "codigo": "EF06LI09",
+      "descricao": "Localizar informações específicas em texto.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Estratégias de leitura",
+      "objeto_conhecimento": "Compreensão geral e específica: leitura rápida (skimming, scanning)"
+    },
+    {
+      "codigo": "EF06LI10",
+      "descricao": "Conhecer a organização de um dicionário bilíngue (impresso e/ou on-line) para construir repertório lexical.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Práticas de leitura e construção de repertório lexical",
+      "objeto_conhecimento": "Construção de repertório lexical e autonomia leitora"
+    },
+    {
+      "codigo": "EF06LI11",
+      "descricao": "Explorar ambientes virtuais e/ou aplicativos para construir repertório lexical na língua inglesa.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Práticas de leitura e construção de repertório lexical",
+      "objeto_conhecimento": "Construção de repertório lexical e autonomia leitora"
+    },
+    {
+      "codigo": "EF06LI12",
+      "descricao": "Interessar-se pelo texto lido, compartilhando suas ideias sobre o que o texto informa/comunica.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Atitudes e disposições favoráveis do leitor",
+      "objeto_conhecimento": "Partilha de leitura, com mediação do professor"
+    },
+    {
+      "codigo": "EF06LI13",
+      "descricao": "Listar ideias para a produção de textos, levando em conta o tema e o assunto.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Estratégias de escrita: pré-escrita",
+      "objeto_conhecimento": "Planejamento do texto: brainstorming"
+    },
+    {
+      "codigo": "EF06LI14",
+      "descricao": "Organizar ideias, selecionando-as em função da estrutura e do objetivo do texto.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Estratégias de escrita: pré-escrita",
+      "objeto_conhecimento": "Planejamento do texto: organização de ideias"
+    },
+    {
+      "codigo": "EF06LI15",
+      "descricao": "Produzir textos escritos em língua inglesa (histórias em quadrinhos, cartazes, chats, blogues, agendas, fotolegendas, entre outros), sobre si mesmo, sua família, seus amigos, gostos, preferências e rotinas, sua comunidade e seu contexto escolar.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Práticas de escrita",
+      "objeto_conhecimento": "Produção de textos escritos, em formatos diversos, com a mediação do professor"
+    },
+    {
+      "codigo": "EF06LI16",
+      "descricao": "Construir repertório relativo às expressões usadas para o convívio social e o uso da língua inglesa em sala de aula.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Estudo do léxico",
+      "objeto_conhecimento": "Construção de repertório lexical"
+    },
+    {
+      "codigo": "EF06LI17",
+      "descricao": "Construir repertório lexical relativo a temas familiares (escola, família, rotina diária, atividades de lazer, esportes, entre outros).",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Estudo do léxico",
+      "objeto_conhecimento": "Construção de repertório lexical"
+    },
+    {
+      "codigo": "EF06LI18",
+      "descricao": "Reconhecer semelhanças e diferenças na pronúncia de palavras da língua inglesa e da língua materna e/ou outras línguas conhecidas.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Estudo do léxico",
+      "objeto_conhecimento": "Pronúncia"
+    },
+    {
+      "codigo": "EF06LI19",
+      "descricao": "Utilizar o presente do indicativo para identificar pessoas (verbo to be) e descrever rotinas diárias.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Gramática",
+      "objeto_conhecimento": "Presente simples e contínuo (formas afirmativa, negativa e interrogativa)"
+    },
+    {
+      "codigo": "EF06LI20",
+      "descricao": "Utilizar o presente contínuo para descrever ações em progresso.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Gramática",
+      "objeto_conhecimento": "Presente simples e contínuo (formas afirmativa, negativa e interrogativa)"
+    },
+    {
+      "codigo": "EF06LI21",
+      "descricao": "Reconhecer o uso do imperativo em enunciados de atividades, comandos e instruções.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Gramática",
+      "objeto_conhecimento": "Imperativo"
+    },
+    {
+      "codigo": "EF06LI22",
+      "descricao": "Descrever relações por meio do uso de apóstrofo (’) + s.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Gramática",
+      "objeto_conhecimento": "Caso genitivo (‘s)"
+    },
+    {
+      "codigo": "EF06LI23",
+      "descricao": "Empregar, de forma inteligível, os adjetivos possessivos.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Gramática",
+      "objeto_conhecimento": "Adjetivos possessivos"
+    },
+    {
+      "codigo": "EF06LI24",
+      "descricao": "Investigar o alcance da língua inglesa no mundo: como língua materna e/ou oficial (primeira ou segunda língua).",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "A língua inglesa no mundo",
+      "objeto_conhecimento": "Países que têm a língua inglesa como língua materna e/ou oficial"
+    },
+    {
+      "codigo": "EF06LI25",
+      "descricao": "Identificar a presença da língua inglesa na sociedade brasileira/comunidade (palavras, expressões, suportes e esferas de circulação e consumo) e seu significado.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "A língua inglesa no cotidiano da sociedade brasileira/comunidade",
+      "objeto_conhecimento": "Presença da língua inglesa no cotidiano"
+    },
+    {
+      "codigo": "EF06LI26",
+      "descricao": "Avaliar, problematizando elementos/produtos culturais de países de língua inglesa absorvidos pela sociedade brasileira/comunidade.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "A língua inglesa no cotidiano da sociedade brasileira/comunidade",
+      "objeto_conhecimento": "Presença da língua inglesa no cotidiano"
+    }
+  ]
+}

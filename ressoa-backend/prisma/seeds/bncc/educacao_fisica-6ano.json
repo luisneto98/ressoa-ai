@@ -1,0 +1,174 @@
+{
+  "disciplina": "EDUCACAO_FISICA",
+  "ano": 6,
+  "habilidades": [
+    {
+      "codigo": "EF67EF01",
+      "descricao": "Experimentar e fruir, na escola e fora dela, jogos eletrônicos diversos, valorizando e respeitando os sentidos e significados atribuídos a eles por diferentes grupos sociais e etários.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Brincadeiras e jogos",
+      "objeto_conhecimento": "Jogos eletrônicos"
+    },
+    {
+      "codigo": "EF67EF02",
+      "descricao": "Identificar as transformações nas características dos jogos eletrônicos em função dos avanços das tecnologias e nas respectivas exigências corporais colocadas por esses diferentes tipos de jogos.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Brincadeiras e jogos",
+      "objeto_conhecimento": "Jogos eletrônicos"
+    },
+    {
+      "codigo": "EF67EF03",
+      "descricao": "Experimentar e fruir esportes de marca, precisão, invasão e técnico-combinatórios, valorizando o trabalho coletivo e o protagonismo.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Esportes",
+      "objeto_conhecimento": "Esportes de marca Esportes de precisão Esportes de invasão Esportes técnico-combinatórios"
+    },
+    {
+      "codigo": "EF67EF04",
+      "descricao": "Praticar um ou mais esportes de marca, precisão, invasão e técnico-combinatórios oferecidos pela escola, usando habilidades técnico-táticas básicas e respeitando regras.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Esportes",
+      "objeto_conhecimento": "Esportes de marca Esportes de precisão Esportes de invasão Esportes técnico-combinatórios"
+    },
+    {
+      "codigo": "EF67EF05",
+      "descricao": "Planejar e utilizar estratégias para solucionar os desafios técnicos e táticos, tanto nos esportes de marca, precisão, invasão e técnico-combinatórios como nas modalidades esportivas escolhidas para praticar de forma específica.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Esportes",
+      "objeto_conhecimento": "Esportes de marca Esportes de precisão Esportes de invasão Esportes técnico-combinatórios"
+    },
+    {
+      "codigo": "EF67EF06",
+      "descricao": "Analisar as transformações na organização e na prática dos esportes em suas diferentes manifestações (profissional e comunitário/lazer).",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Esportes",
+      "objeto_conhecimento": "Esportes de marca Esportes de precisão Esportes de invasão Esportes técnico-combinatórios"
+    },
+    {
+      "codigo": "EF67EF07",
+      "descricao": "Propor e produzir alternativas para experimentação dos esportes não disponíveis e/ou acessíveis na comunidade e das demais práticas corporais tematizadas na escola.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Esportes",
+      "objeto_conhecimento": "Esportes de marca Esportes de precisão Esportes de invasão Esportes técnico-combinatórios"
+    },
+    {
+      "codigo": "EF67EF08",
+      "descricao": "Experimentar e fruir exercícios físicos que solicitem diferentes capacidades físicas, identificando seus tipos (força, velocidade, resistência, flexibilidade) e as sensações corporais provocadas pela sua prática.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Ginásticas",
+      "objeto_conhecimento": "Ginástica de condicionamento físico"
+    },
+    {
+      "codigo": "EF67EF09",
+      "descricao": "Construir, coletivamente, procedimentos e normas de convívio que viabilizem a participação de todos na prática de exercícios físicos, com o objetivo de promover a saúde.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Ginásticas",
+      "objeto_conhecimento": "Ginástica de condicionamento físico"
+    },
+    {
+      "codigo": "EF67EF10",
+      "descricao": "Diferenciar exercício físico de atividade física e propor alternativas para a prática de exercícios físicos dentro e fora do ambiente escolar.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Ginásticas",
+      "objeto_conhecimento": "Ginástica de condicionamento físico"
+    },
+    {
+      "codigo": "EF67EF11",
+      "descricao": "Experimentar, fruir e recriar danças urbanas, identificando seus elementos constitutivos (ritmo, espaço, gestos).",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Danças",
+      "objeto_conhecimento": "Danças urbanas"
+    },
+    {
+      "codigo": "EF67EF12",
+      "descricao": "Planejar e utilizar estratégias para aprender elementos constitutivos das danças urbanas.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Danças",
+      "objeto_conhecimento": "Danças urbanas"
+    },
+    {
+      "codigo": "EF67EF13",
+      "descricao": "Diferenciar as danças urbanas das demais manifestações da dança, valorizando e respeitando os sentidos e significados atribuídos a eles por diferentes grupos sociais.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Danças",
+      "objeto_conhecimento": "Danças urbanas"
+    },
+    {
+      "codigo": "EF67EF14",
+      "descricao": "Experimentar, fruir e recriar diferentes lutas do Brasil, valorizando a própria segurança e integridade física, bem como as dos demais.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Lutas",
+      "objeto_conhecimento": "Lutas do Brasil"
+    },
+    {
+      "codigo": "EF67EF15",
+      "descricao": "Planejar e utilizar estratégias básicas das lutas do Brasil, respeitando o colega como oponente.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Lutas",
+      "objeto_conhecimento": "Lutas do Brasil"
+    },
+    {
+      "codigo": "EF67EF16",
+      "descricao": "Identificar as características (códigos, rituais, elementos técnico-táticos, indumentária, materiais, instalações, instituições) das lutas do Brasil.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Lutas",
+      "objeto_conhecimento": "Lutas do Brasil"
+    },
+    {
+      "codigo": "EF67EF17",
+      "descricao": "Problematizar preconceitos e estereótipos relacionados ao universo das lutas e demais práticas corporais, propondo alternativas para superá-los, com base na solidariedade, na justiça, na equidade e no respeito.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Lutas",
+      "objeto_conhecimento": "Lutas do Brasil"
+    },
+    {
+      "codigo": "EF67EF18",
+      "descricao": "Experimentar e fruir diferentes práticas corporais de aventura urbanas, valorizando a própria segurança e integridade física, bem como as dos demais.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Práticas corporais de aventura",
+      "objeto_conhecimento": "Práticas corporais de aventura urbanas"
+    },
+    {
+      "codigo": "EF67EF19",
+      "descricao": "Identificar os riscos durante a realização de práticas corporais de aventura urbanas e planejar estratégias para sua superação.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Práticas corporais de aventura",
+      "objeto_conhecimento": "Práticas corporais de aventura urbanas"
+    },
+    {
+      "codigo": "EF67EF20",
+      "descricao": "Executar práticas corporais de aventura urbanas, respeitando o patrimônio público e utilizando alternativas para a prática segura em diversos espaços.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Práticas corporais de aventura",
+      "objeto_conhecimento": "Práticas corporais de aventura urbanas"
+    },
+    {
+      "codigo": "EF67EF21",
+      "descricao": "Identificar a origem das práticas corporais de aventura e as possibilidades de recriá-las, reconhecendo as características (instrumentos, equipamentos de segurança, indumentária, organização) e seus tipos de práticas.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Práticas corporais de aventura",
+      "objeto_conhecimento": "Práticas corporais de aventura urbanas"
+    }
+  ]
+}

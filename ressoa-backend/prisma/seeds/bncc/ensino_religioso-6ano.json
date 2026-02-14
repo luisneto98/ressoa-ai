@@ -1,0 +1,62 @@
+{
+  "disciplina": "ENSINO_RELIGIOSO",
+  "ano": 6,
+  "habilidades": [
+    {
+      "codigo": "EF06ER01",
+      "descricao": "Reconhecer o papel da tradição escrita na preservação de memórias, acontecimentos e ensinamentos religiosos.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Crenças religiosas e filosofias de vida",
+      "objeto_conhecimento": "Tradição escrita: registro dos ensinamentos sagrados"
+    },
+    {
+      "codigo": "EF06ER02",
+      "descricao": "Reconhecer e valorizar a diversidade de textos religiosos escritos (textos do Budismo, Cristianismo, Espiritismo, Hinduísmo, Islamismo, Judaísmo, entre outros).",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Crenças religiosas e filosofias de vida",
+      "objeto_conhecimento": "Tradição escrita: registro dos ensinamentos sagrados"
+    },
+    {
+      "codigo": "EF06ER03",
+      "descricao": "Reconhecer, em textos escritos, ensinamentos relacionados a modos de ser e viver.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Crenças religiosas e filosofias de vida",
+      "objeto_conhecimento": "Ensinamentos da tradição escrita"
+    },
+    {
+      "codigo": "EF06ER04",
+      "descricao": "Reconhecer que os textos escritos são utilizados pelas tradições religiosas de maneiras diversas.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Crenças religiosas e filosofias de vida",
+      "objeto_conhecimento": "Ensinamentos da tradição escrita"
+    },
+    {
+      "codigo": "EF06ER05",
+      "descricao": "Discutir como o estudo e a interpretação dos textos religiosos influenciam os adeptos a vivenciarem os ensinamentos das tradições religiosas.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Crenças religiosas e filosofias de vida",
+      "objeto_conhecimento": "Ensinamentos da tradição escrita"
+    },
+    {
+      "codigo": "EF06ER06",
+      "descricao": "Reconhecer a importância dos mitos, ritos, símbolos e textos na estruturação das diferentes crenças, tradições e movimentos religiosos.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Crenças religiosas e filosofias de vida",
+      "objeto_conhecimento": "Símbolos, ritos e mitos religiosos"
+    },
+    {
+      "codigo": "EF06ER07",
+      "descricao": "Exemplificar a relação entre mito, rito e símbolo nas práticas celebrativas de diferentes tradições religiosas.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Crenças religiosas e filosofias de vida",
+      "objeto_conhecimento": "Símbolos, ritos e mitos religiosos"
+    }
+  ]
+}

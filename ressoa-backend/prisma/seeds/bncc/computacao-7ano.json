@@ -1,0 +1,94 @@
+{
+  "disciplina": "COMPUTACAO",
+  "ano": 7,
+  "habilidades": [
+    {
+      "codigo": "EF07CO01",
+      "descricao": "Criar soluções de problemas para os quais seja adequado o uso de registros e matrizes unidimensionais para descrever suas informações e automatizá-las usando uma linguagem de programação. Construir e analisar soluções computacionais de problemas de diferentes áreas do conhecimento, de forma individual ou colaborativa, selecionando as estruturas de dados adequadas (registros, matrizes, listas e grafos), aperfeiçoando e articulando saberes escolares.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Pensamento computacional",
+      "objeto_conhecimento": "Programação - Programação usando registros e matrizes"
+    },
+    {
+      "codigo": "EF07CO02",
+      "descricao": "Analisar programas para detectar e remover erros, ampliando a confiança na sua correção. Construir e analisar soluções computacionais de problemas de diferentes áreas do conhecimento, de forma individual ou colaborativa, selecionando as estruturas de dados adequadas (registros, matrizes, listas e grafos), aperfeiçoando e articulando saberes escolares.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Pensamento computacional",
+      "objeto_conhecimento": "Análise de programas"
+    },
+    {
+      "codigo": "EF07CO03",
+      "descricao": "Construir soluções computacionais de problemas de diferentes áreas do conhecimento, de forma individual e colaborativa, selecionando as estruturas de dados e técnicas adequadas, aperfeiçoando e articulando saberes escolares. Construir e analisar soluções computacionais de problemas de diferentes áreas do conhecimento, de forma individual ou colaborativa, selecionando as estruturas de dados adequadas (registros, matrizes, listas e grafos), aperfeiçoando e articulando saberes escolares.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Pensamento computacional",
+      "objeto_conhecimento": "Programação - Projetos com programação"
+    },
+    {
+      "codigo": "EF07CO04",
+      "descricao": "Explorar propriedades básicas de grafos. Construir e analisar soluções computacionais de problemas de diferentes áreas do conhecimento, de forma individual ou colaborativa, selecionando as estruturas de dados adequadas (registros, matrizes, listas e grafos), aperfeiçoando e articulando saberes escolares.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Pensamento computacional",
+      "objeto_conhecimento": "Programação - Propriedades de grafos"
+    },
+    {
+      "codigo": "EF07CO05",
+      "descricao": "Criar algoritmos fazendo uso da decomposição e do reúso no processo de solução de forma colaborativa e cooperativa e automatizá-los usando uma linguagem de programação. Empregar diferentes estratégias da Computação (decomposição, generalização e reúso) para construir a solução de problemas.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Pensamento computacional",
+      "objeto_conhecimento": "Estratégias de solução de problemas - Reúso"
+    },
+    {
+      "codigo": "EF07CO06",
+      "descricao": "Compreender o papel de protocolos para a transmissão de dados. Entender como os dados são armazenados, processados e transmitidos usando dispositivos computacionais, considerando aspectos da segurança cibernética.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Mundo digital",
+      "objeto_conhecimento": "Armazenamento e Transmissão de dados - Protocolos de comunicação em redes"
+    },
+    {
+      "codigo": "EF07CO07",
+      "descricao": "Identificar problemas de segurança cibernética e experimentar formas de proteção. Entender como os dados são armazenados, processados e transmitidos usando dispositivos computacionais, considerando aspectos da segurança cibernética.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Mundo digital",
+      "objeto_conhecimento": "Armazenamento e Transmissão de dados - Fundamentos de Segurança Cibernética"
+    },
+    {
+      "codigo": "EF07CO08",
+      "descricao": "Demonstrar empatia sobre opiniões divergentes na web. Entender que as tecnologias devem ser utilizadas de maneira segura, ética e responsável, respeitando direitos autorais, de imagem e as leis vigentes.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Cultura digital",
+      "objeto_conhecimento": "Segurança e responsabilidade no uso da tecnologia - Cyberbullying"
+    },
+    {
+      "codigo": "EF07CO09",
+      "descricao": "Reconhecer e debater sobre cyberbullying. Entender que as tecnologias devem ser utilizadas de maneira segura, ética e responsável, respeitando direitos autorais, de imagem e as leis vigentes.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Cultura digital",
+      "objeto_conhecimento": "Segurança e responsabilidade no uso da tecnologia - Cyberbullying"
+    },
+    {
+      "codigo": "EF07CO10",
+      "descricao": "Identificar os impactos ambientais do descarte de peças de computadores e eletrônicos, bem como sua relação com a sustentabilidade. Selecionar e utilizar tecnologias computacionais para se expressar e resolver problemas, analisando criticamente os diferentes impactos na sociedade.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Cultura digital",
+      "objeto_conhecimento": "Uso de tecnologias computacionais - Impactos da tecnologia digital"
+    },
+    {
+      "codigo": "EF07CO11",
+      "descricao": "Criar, documentar e publicar de forma individual ou colaborativa, produtos (vídeos, podcasts, web sites) usando recursos de tecnologia. Selecionar e utilizar tecnologias computacionais para se expressar e resolver problemas, analisando criticamente os diferentes impactos na sociedade.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Cultura digital",
+      "objeto_conhecimento": "Uso de tecnologias computacionais - Produção Digital"
+    }
+  ]
+}

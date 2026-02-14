@@ -58,10 +58,52 @@ async function seedDisciplinas() {
       ordem: 3,
     },
     {
+      codigo: 'HISTORIA',
+      nome: 'História',
+      area: 'Ciências Humanas e Sociais Aplicadas',
+      ordem: 4,
+    },
+    {
+      codigo: 'GEOGRAFIA',
+      nome: 'Geografia',
+      area: 'Ciências Humanas e Sociais Aplicadas',
+      ordem: 5,
+    },
+    {
+      codigo: 'ARTE',
+      nome: 'Arte',
+      area: 'Linguagens',
+      ordem: 6,
+    },
+    {
+      codigo: 'EDUCACAO_FISICA',
+      nome: 'Educação Física',
+      area: 'Linguagens',
+      ordem: 7,
+    },
+    {
+      codigo: 'LINGUA_INGLESA',
+      nome: 'Língua Inglesa',
+      area: 'Linguagens',
+      ordem: 8,
+    },
+    {
+      codigo: 'ENSINO_RELIGIOSO',
+      nome: 'Ensino Religioso',
+      area: 'Ensino Religioso',
+      ordem: 9,
+    },
+    {
+      codigo: 'COMPUTACAO',
+      nome: 'Computação',
+      area: 'Matemática',
+      ordem: 10,
+    },
+    {
       codigo: 'CIENCIAS_HUMANAS',
       nome: 'Ciências Humanas',
       area: 'Ciências Humanas e Sociais Aplicadas',
-      ordem: 4,
+      ordem: 11,
     },
   ];
 

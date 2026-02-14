@@ -1,0 +1,86 @@
+{
+  "disciplina": "COMPUTACAO",
+  "ano": 9,
+  "habilidades": [
+    {
+      "codigo": "EF09CO01",
+      "descricao": "Criar soluções de problemas para os quais seja adequado o uso de árvores e grafos para descrever suas informações e automatizá-las usando uma linguagem de programação. Construir e analisar soluções computacionais de problemas de diferentes áreas do conhecimento de forma individual ou colaborativa selecionando as estruturas de dados adequadas (registros, matrizes, listas e grafos), aperfeiçoando e articulando saberes escolares.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Pensamento computacional",
+      "objeto_conhecimento": "Programação - Programação usando grafos e árvores "
+    },
+    {
+      "codigo": "EF09CO02",
+      "descricao": "Construir soluções computacionais de problemas de diferentes áreas do conhecimento, de forma individual e colaborativa, selecionando as estruturas de dados e técnicas adequadas, aperfeiçoando e articulando saberes escolares. Construir e analisar soluções computacionais de problemas de diferentes áreas do conhecimento de forma individual ou colaborativa selecionando as estruturas de dados adequadas (registros, matrizes, listas e grafos), aperfeiçoando e articulando saberes escolares.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Pensamento computacional",
+      "objeto_conhecimento": "Programação - Projetos com programação"
+    },
+    {
+      "codigo": "EF09CO03",
+      "descricao": "Usar autômatos para descrever comportamentos de forma abstrata automatizando-os através de uma linguagem de programação baseada em eventos. Construir e analisar soluções computacionais de problemas de diferentes áreas do conhecimento de forma individual ou colaborativa selecionando as estruturas de dados adequadas (registros, matrizes, listas e grafos), aperfeiçoando e articulando saberes escolares.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Pensamento computacional",
+      "objeto_conhecimento": "Programação - Autômatos e linguagens baseadas em eventos"
+    },
+    {
+      "codigo": "EF09CO04",
+      "descricao": "Compreender o funcionamento de malwares e outros ataques cibernéticos.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Mundo digital",
+      "objeto_conhecimento": "Sistemas distribuídos e internet - Segurança cibernética"
+    },
+    {
+      "codigo": "EF09CO05",
+      "descricao": "Analisar técnicas de criptografia para armazenamento e transmissão de dados. Entender os fundamentos de sistemas distribuídos e da internet. (cont.)",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Mundo digital",
+      "objeto_conhecimento": "Sistemas distribuídos e internet (cont.) - Segurança cibernética (cont.)"
+    },
+    {
+      "codigo": "EF09CO06",
+      "descricao": "Analisar problemas sociais de sua cidade e estado a partir de ambientes digitais, propondo soluções. Entender que as tecnologias devem ser utilizadas de maneira segura, ética e responsável, respeitando direitos autorais, de imagem e as leis vigentes.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Cultura digital",
+      "objeto_conhecimento": "Segurança e responsabilidade no uso da tecnologia - Tecnologia digital e sociedade"
+    },
+    {
+      "codigo": "EF09CO07",
+      "descricao": "Avaliar aplicações e implicações políticas, socioambientais e culturais das tecnologias digitais para propor alternativas aos desafios do mundo contemporâneo, incluindo aqueles relativos ao mundo do trabalho. Entender que as tecnologias devem ser utilizadas de maneira segura, ética e responsável, respeitando direitos autorais, de imagem e as leis vigentes.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Cultura digital",
+      "objeto_conhecimento": "Segurança e responsabilidade no uso da tecnologia - Tecnologia digital e sociedade"
+    },
+    {
+      "codigo": "EF09CO08",
+      "descricao": "Discutir como a distribuição desigual de recursos de computação em uma economia global levanta questões de equidade, acesso e poder. Entender que as tecnologias devem ser utilizadas de maneira segura, ética e responsável, respeitando direitos autorais, de imagem e as leis vigentes.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Cultura digital",
+      "objeto_conhecimento": "Segurança e responsabilidade no uso da tecnologia - Tecnologia digital e sociedade"
+    },
+    {
+      "codigo": "EF09CO09",
+      "descricao": "Criar ou utilizar conteúdo em meio digital, compreendendo questões éticas relacionadas a direitos autorais e de uso de imagem. Entender que as tecnologias devem ser utilizadas de maneira segura, ética e responsável, respeitando direitos autorais, de imagem e as leis vigentes.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Cultura digital",
+      "objeto_conhecimento": "Segurança e responsabilidade no uso da tecnologia - Autoria em meio digital"
+    },
+    {
+      "codigo": "EF09CO10",
+      "descricao": "Avaliar a veracidade, credibilidade e relevância da informação em seus diferentes formatos, sendo capaz de identificar o propósito pelo qual foi disseminada. Selecionar e utilizar tecnologias computacionais para se expressar e resolver problemas, analisando criticamente os diferentes impactos na sociedade.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Cultura digital",
+      "objeto_conhecimento": "Uso de tecnologias computacionais - Qualidade da informação"
+    }
+  ]
+}

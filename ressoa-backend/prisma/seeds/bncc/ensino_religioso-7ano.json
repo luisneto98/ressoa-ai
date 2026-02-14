@@ -1,0 +1,70 @@
+{
+  "disciplina": "ENSINO_RELIGIOSO",
+  "ano": 7,
+  "habilidades": [
+    {
+      "codigo": "EF07ER01",
+      "descricao": "Reconhecer e respeitar as práticas de comunicação com as divindades em distintas manifestações e tradições religiosas.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Manifestações religiosas",
+      "objeto_conhecimento": "Místicas e espiritualidades"
+    },
+    {
+      "codigo": "EF07ER02",
+      "descricao": "Identificar práticas de espiritualidade utilizadas pelas pessoas em determinadas situações (acidentes, doenças, fenômenos climáticos).",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Manifestações religiosas",
+      "objeto_conhecimento": "Místicas e espiritualidades"
+    },
+    {
+      "codigo": "EF07ER03",
+      "descricao": "Reconhecer os papéis atribuídos às lideranças de diferentes tradições religiosas.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Manifestações religiosas",
+      "objeto_conhecimento": "Lideranças religiosas"
+    },
+    {
+      "codigo": "EF07ER04",
+      "descricao": "Exemplificar líderes religiosos que se destacaram por suas contribuições à sociedade.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Manifestações religiosas",
+      "objeto_conhecimento": "Lideranças religiosas"
+    },
+    {
+      "codigo": "EF07ER05",
+      "descricao": "Discutir estratégias que promovam a convivência ética e respeitosa entre as religiões.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Manifestações religiosas",
+      "objeto_conhecimento": "Lideranças religiosas"
+    },
+    {
+      "codigo": "EF07ER06",
+      "descricao": "Identificar princípios éticos em diferentes tradições religiosas e filosofias de vida, discutindo como podem influenciar condutas pessoais e práticas sociais.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Crenças religiosas e filosofias de vida",
+      "objeto_conhecimento": "Princípios éticos e valores religiosos"
+    },
+    {
+      "codigo": "EF07ER07",
+      "descricao": "Identificar e discutir o papel das lideranças religiosas e seculares na defesa e promoção dos direitos humanos.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Crenças religiosas e filosofias de vida",
+      "objeto_conhecimento": "Liderança e direitos humanos"
+    },
+    {
+      "codigo": "EF07ER08",
+      "descricao": "Reconhecer o direito à liberdade de consciência, crença ou convicção, questionando concepções e práticas sociais que a violam.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Crenças religiosas e filosofias de vida",
+      "objeto_conhecimento": "Liderança e direitos humanos"
+    }
+  ]
+}

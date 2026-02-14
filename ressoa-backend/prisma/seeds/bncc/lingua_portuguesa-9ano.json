@@ -1,0 +1,102 @@
+{
+  "disciplina": "LINGUA_PORTUGUESA",
+  "ano": 9,
+  "habilidades": [
+    {
+      "codigo": "EF09LP01",
+      "descricao": "Analisar o fenômeno da disseminação de notícias falsas nas redes sociais e desenvolver estratégias para reconhecê-las, a partir da verificação/avaliação do veículo, fonte, data e local da publicação, autoria, URL, da análise da formatação, da comparação de diferentes fontes, da consulta a sites de curadoria que atestam a fidedignidade do relato dos fatos e denunciam boatos etc.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Leitura",
+      "objeto_conhecimento": "Reconstrução do contexto de produção, circulação e recepção de textos Caracterização do campo jornalístico e relação entre os gêneros em circulação, mídias e práticas da cultura digital"
+    },
+    {
+      "codigo": "EF09LP02",
+      "descricao": "Analisar e comentar a cobertura da imprensa sobre fatos de relevância social, comparando diferentes enfoques por meio do uso de ferramentas de curadoria.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Leitura",
+      "objeto_conhecimento": "Relação entre textos"
+    },
+    {
+      "codigo": "EF09LP03",
+      "descricao": "Produzir artigos de opinião, tendo em vista o contexto de produção dado, assumindo posição diante de tema polêmico, argumentando de acordo com a estrutura própria desse tipo de texto e utilizando diferentes tipos de argumentos – de autoridade, comprovação, exemplificação princípio etc.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Produção de textos",
+      "objeto_conhecimento": "Textualização de textos argumentativos e apreciativos"
+    },
+    {
+      "codigo": "EF09LP04",
+      "descricao": "Escrever textos corretamente, de acordo com a norma-padrão, com estruturas sintáticas complexas no nível da oração e do período.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Fono-ortografia"
+    },
+    {
+      "codigo": "EF09LP05",
+      "descricao": "Identificar, em textos lidos e em produções próprias, orações com a estrutura sujeito-verbo de ligação-predicativo.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Morfossintaxe"
+    },
+    {
+      "codigo": "EF09LP06",
+      "descricao": "Diferenciar, em textos lidos e em produções próprias, o efeito de sentido do uso dos verbos de ligação “ser”, “estar”, “ficar”, “parecer” e “permanecer”.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Morfossintaxe"
+    },
+    {
+      "codigo": "EF09LP07",
+      "descricao": "Comparar o uso de regência verbal e regência nominal na norma-padrão com seu uso no português brasileiro coloquial oral.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Morfossintaxe"
+    },
+    {
+      "codigo": "EF09LP08",
+      "descricao": "Identificar, em textos lidos e em produções próprias, a relação que conjunções (e locuções conjuntivas) coordenativas e subordinativas estabelecem entre as orações que conectam.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Morfossintaxe"
+    },
+    {
+      "codigo": "EF09LP09",
+      "descricao": "Identificar efeitos de sentido do uso de orações adjetivas restritivas e explicativas em um período composto.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Elementos notacionais da escrita/morfossintaxe"
+    },
+    {
+      "codigo": "EF09LP10",
+      "descricao": "Comparar as regras de colocação pronominal na norma-padrão com o seu uso no português brasileiro coloquial.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Coesão"
+    },
+    {
+      "codigo": "EF09LP11",
+      "descricao": "Inferir efeitos de sentido decorrentes do uso de recursos de coesão sequencial (conjunções e articuladores textuais).",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Coesão"
+    },
+    {
+      "codigo": "EF09LP12",
+      "descricao": "Identificar estrangeirismos, caracterizando-os segundo a conservação, ou não, de sua forma gráfica de origem, avaliando a pertinência, ou não, de seu uso.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Variação linguística"
+    }
+  ]
+}

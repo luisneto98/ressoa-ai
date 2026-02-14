@@ -7,88 +7,88 @@
       "descricao": "Discutir a aplicação, ao longo da história, das máquinas simples e propor soluções e invenções para a realização de tarefas mecânicas cotidianas.",
       "ano_inicio": 7,
       "ano_fim": null,
-      "unidade_tematica": "Matéria e Energia",
-      "objeto_conhecimento": "Máquinas simples"
+      "unidade_tematica": "Matéria e energia",
+      "objeto_conhecimento": "Máquinas simples Formas de propagação do calor Equilíbrio termodinâmico e vida na Terra História dos combustíveis e das máquinas térmicas"
     },
     {
       "codigo": "EF07CI02",
       "descricao": "Diferenciar temperatura, calor e sensação térmica nas diferentes situações de equilíbrio termodinâmico cotidianas.",
       "ano_inicio": 7,
       "ano_fim": null,
-      "unidade_tematica": "Matéria e Energia",
-      "objeto_conhecimento": "Formas de propagação do calor"
+      "unidade_tematica": "Matéria e energia",
+      "objeto_conhecimento": "Máquinas simples Formas de propagação do calor Equilíbrio termodinâmico e vida na Terra História dos combustíveis e das máquinas térmicas"
     },
     {
       "codigo": "EF07CI03",
-      "descricao": "Utilizar o conhecimento das formas de propagação do calor para justificar a utilização de determinados materiais (condutores e isolantes) na vida cotidiana, explicar o princípio de funcionamento de alguns equipamentos (garrafa térmica, coletor solar etc.) e/ou propor soluções tecnológicas a problemas do dia a dia.",
+      "descricao": "Utilizar o conhecimento das formas de propagação do calor para justificar a utilização de determinados materiais (condutores e isolantes) na vida cotidiana, explicar o princípio de funcionamento de alguns equipamentos (garrafa térmica, coletor solar etc.) e/ou construir soluções tecnológicas a partir desse conhecimento.",
       "ano_inicio": 7,
       "ano_fim": null,
-      "unidade_tematica": "Matéria e Energia",
-      "objeto_conhecimento": "Formas de propagação do calor"
+      "unidade_tematica": "Matéria e energia",
+      "objeto_conhecimento": "Máquinas simples Formas de propagação do calor Equilíbrio termodinâmico e vida na Terra História dos combustíveis e das máquinas térmicas"
     },
     {
       "codigo": "EF07CI04",
       "descricao": "Avaliar o papel do equilíbrio termodinâmico para a manutenção da vida na Terra, para o funcionamento de máquinas térmicas e em outras situações cotidianas.",
       "ano_inicio": 7,
       "ano_fim": null,
-      "unidade_tematica": "Matéria e Energia",
-      "objeto_conhecimento": "Equilíbrio termodinâmico e vida na Terra"
+      "unidade_tematica": "Matéria e energia",
+      "objeto_conhecimento": "Máquinas simples Formas de propagação do calor Equilíbrio termodinâmico e vida na Terra História dos combustíveis e das máquinas térmicas"
     },
     {
       "codigo": "EF07CI05",
       "descricao": "Discutir o uso de diferentes tipos de combustível e máquinas térmicas ao longo do tempo, para avaliar avanços, questões econômicas e problemas socioambientais causados pela produção e uso desses materiais e máquinas.",
       "ano_inicio": 7,
       "ano_fim": null,
-      "unidade_tematica": "Matéria e Energia",
-      "objeto_conhecimento": "História dos combustíveis e das máquinas térmicas"
+      "unidade_tematica": "Matéria e energia",
+      "objeto_conhecimento": "Máquinas simples Formas de propagação do calor Equilíbrio termodinâmico e vida na Terra História dos combustíveis e das máquinas térmicas"
     },
     {
       "codigo": "EF07CI06",
       "descricao": "Discutir e avaliar mudanças econômicas, culturais e sociais, tanto na vida cotidiana quanto no mundo do trabalho, decorrentes do desenvolvimento de novos materiais e tecnologias (como automação e informatização).",
       "ano_inicio": 7,
       "ano_fim": null,
-      "unidade_tematica": "Matéria e Energia",
-      "objeto_conhecimento": "História dos combustíveis e das máquinas térmicas"
+      "unidade_tematica": "Matéria e energia",
+      "objeto_conhecimento": "Máquinas simples Formas de propagação do calor Equilíbrio termodinâmico e vida na Terra História dos combustíveis e das máquinas térmicas"
     },
     {
       "codigo": "EF07CI07",
       "descricao": "Caracterizar os principais ecossistemas brasileiros quanto à paisagem, à quantidade de água, ao tipo de solo, à disponibilidade de luz solar, à temperatura etc., correlacionando essas características à flora e fauna específicas.",
       "ano_inicio": 7,
       "ano_fim": null,
-      "unidade_tematica": "Vida e Evolução",
-      "objeto_conhecimento": "Diversidade de ecossistemas"
+      "unidade_tematica": "Vida e evolução",
+      "objeto_conhecimento": "Diversidade de ecossistemas Fenômenos naturais e impactos ambientais Programas e indicadores de saúde pública"
     },
     {
       "codigo": "EF07CI08",
       "descricao": "Avaliar como os impactos provocados por catástrofes naturais ou mudanças nos componentes físicos, biológicos ou sociais de um ecossistema afetam suas populações, podendo ameaçar ou provocar a extinção de espécies, alteração de hábitos, migração etc.",
       "ano_inicio": 7,
       "ano_fim": null,
-      "unidade_tematica": "Vida e Evolução",
-      "objeto_conhecimento": "Fenômenos naturais e impactos ambientais"
+      "unidade_tematica": "Vida e evolução",
+      "objeto_conhecimento": "Diversidade de ecossistemas Fenômenos naturais e impactos ambientais Programas e indicadores de saúde pública"
     },
     {
       "codigo": "EF07CI09",
       "descricao": "Interpretar as condições de saúde da comunidade, cidade ou estado, com base na análise e comparação de indicadores de saúde (como taxa de mortalidade infantil, cobertura de saneamento básico e incidência de doenças de veiculação hídrica, atmosférica entre outras) e dos resultados de políticas públicas destinadas à saúde.",
       "ano_inicio": 7,
       "ano_fim": null,
-      "unidade_tematica": "Vida e Evolução",
-      "objeto_conhecimento": "Programas e indicadores de saúde pública"
+      "unidade_tematica": "Vida e evolução",
+      "objeto_conhecimento": "Diversidade de ecossistemas Fenômenos naturais e impactos ambientais Programas e indicadores de saúde pública"
     },
     {
       "codigo": "EF07CI10",
       "descricao": "Argumentar sobre a importância da vacinação para a saúde pública, com base em informações sobre a maneira como a vacina atua no organismo e o papel histórico da vacinação para a manutenção da saúde individual e coletiva e para a erradicação de doenças.",
       "ano_inicio": 7,
       "ano_fim": null,
-      "unidade_tematica": "Vida e Evolução",
-      "objeto_conhecimento": "Programas e indicadores de saúde pública"
+      "unidade_tematica": "Vida e evolução",
+      "objeto_conhecimento": "Diversidade de ecossistemas Fenômenos naturais e impactos ambientais Programas e indicadores de saúde pública"
     },
     {
       "codigo": "EF07CI11",
       "descricao": "Analisar historicamente o uso da tecnologia, incluindo a digital, nas diferentes dimensões da vida humana, considerando indicadores ambientais e de qualidade de vida.",
       "ano_inicio": 7,
       "ano_fim": null,
-      "unidade_tematica": "Vida e Evolução",
-      "objeto_conhecimento": "Programas e indicadores de saúde pública"
+      "unidade_tematica": "Vida e evolução",
+      "objeto_conhecimento": "Diversidade de ecossistemas Fenômenos naturais e impactos ambientais Programas e indicadores de saúde pública"
     },
     {
       "codigo": "EF07CI12",
@@ -96,7 +96,7 @@
       "ano_inicio": 7,
       "ano_fim": null,
       "unidade_tematica": "Terra e Universo",
-      "objeto_conhecimento": "Composição do ar"
+      "objeto_conhecimento": "Composição do ar Efeito estufa Camada de ozônio Fenômenos naturais (vulcões, terremotos e tsunamis) Placas tectônicas e deriva continental"
     },
     {
       "codigo": "EF07CI13",
@@ -104,7 +104,7 @@
       "ano_inicio": 7,
       "ano_fim": null,
       "unidade_tematica": "Terra e Universo",
-      "objeto_conhecimento": "Efeito estufa"
+      "objeto_conhecimento": "Composição do ar Efeito estufa Camada de ozônio Fenômenos naturais (vulcões, terremotos e tsunamis) Placas tectônicas e deriva continental"
     },
     {
       "codigo": "EF07CI14",
@@ -112,7 +112,7 @@
       "ano_inicio": 7,
       "ano_fim": null,
       "unidade_tematica": "Terra e Universo",
-      "objeto_conhecimento": "Camada de ozônio"
+      "objeto_conhecimento": "Composição do ar Efeito estufa Camada de ozônio Fenômenos naturais (vulcões, terremotos e tsunamis) Placas tectônicas e deriva continental"
     },
     {
       "codigo": "EF07CI15",
@@ -120,7 +120,7 @@
       "ano_inicio": 7,
       "ano_fim": null,
       "unidade_tematica": "Terra e Universo",
-      "objeto_conhecimento": "Fenômenos naturais (vulcões, terremotos e tsunamis)"
+      "objeto_conhecimento": "Composição do ar Efeito estufa Camada de ozônio Fenômenos naturais (vulcões, terremotos e tsunamis) Placas tectônicas e deriva continental"
     },
     {
       "codigo": "EF07CI16",
@@ -128,7 +128,7 @@
       "ano_inicio": 7,
       "ano_fim": null,
       "unidade_tematica": "Terra e Universo",
-      "objeto_conhecimento": "Placas tectônicas e deriva continental"
+      "objeto_conhecimento": "Composição do ar Efeito estufa Camada de ozônio Fenômenos naturais (vulcões, terremotos e tsunamis) Placas tectônicas e deriva continental"
     }
   ]
 }

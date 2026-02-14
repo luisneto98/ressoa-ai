@@ -1,0 +1,158 @@
+{
+  "disciplina": "HISTORIA",
+  "ano": 6,
+  "habilidades": [
+    {
+      "codigo": "EF06HI01",
+      "descricao": "Identificar diferentes formas de compreensão da noção de tempo e de periodização dos processos históricos (continuidades e rupturas).",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "História: tempo, espaço e formas de registros",
+      "objeto_conhecimento": "A questão do tempo, sincronias e diacronias: reflexões sobre o sentido das cronologias"
+    },
+    {
+      "codigo": "EF06HI02",
+      "descricao": "Identificar a gênese da produção do saber histórico e analisar o significado das fontes que originaram determinadas formas de registro em sociedades e épocas distintas.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "História: tempo, espaço e formas de registros",
+      "objeto_conhecimento": "Formas de registro da história e da produção do conhecimento histórico"
+    },
+    {
+      "codigo": "EF06HI03",
+      "descricao": "Identificar as hipóteses científicas sobre o surgimento da espécie humana e sua historicidade e analisar os significados dos mitos de fundação.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "História: tempo, espaço e formas de registros",
+      "objeto_conhecimento": "As origens da humanidade, seus deslocamentos e os processos de sedentarização"
+    },
+    {
+      "codigo": "EF06HI04",
+      "descricao": "Conhecer as teorias sobre a origem do homem americano.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "História: tempo, espaço e formas de registros",
+      "objeto_conhecimento": "As origens da humanidade, seus deslocamentos e os processos de sedentarização"
+    },
+    {
+      "codigo": "EF06HI05",
+      "descricao": "Descrever modificações da natureza e da paisagem realizadas por diferentes tipos de sociedade, com destaque para os povos indígenas originários e povos africanos, e discutir a natureza e a lógica das transformações ocorridas.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "História: tempo, espaço e formas de registros",
+      "objeto_conhecimento": "As origens da humanidade, seus deslocamentos e os processos de sedentarização"
+    },
+    {
+      "codigo": "EF06HI06",
+      "descricao": "Identificar geograficamente as rotas de povoamento no território americano.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "História: tempo, espaço e formas de registros",
+      "objeto_conhecimento": "As origens da humanidade, seus deslocamentos e os processos de sedentarização"
+    },
+    {
+      "codigo": "EF06HI07",
+      "descricao": "Identificar aspectos e formas de registro das sociedades antigas na África, no Oriente Médio e nas Américas, distinguindo alguns significados presentes na cultura material e na tradição oral dessas sociedades.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "A invenção do mundo clássico e o contraponto com outras sociedades",
+      "objeto_conhecimento": "Povos da Antiguidade na África (egípcios), no Oriente Médio (mesopotâmicos) e nas Américas (pré-colombianos) Os povos indígenas originários do atual território brasileiro e seus hábitos culturais e sociais"
+    },
+    {
+      "codigo": "EF06HI08",
+      "descricao": "Identificar os espaços territoriais ocupados e os aportes culturais, científicos, sociais e econômicos dos astecas, maias e incas e dos povos indígenas de diversas regiões brasileiras.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "A invenção do mundo clássico e o contraponto com outras sociedades",
+      "objeto_conhecimento": "Povos da Antiguidade na África (egípcios), no Oriente Médio (mesopotâmicos) e nas Américas (pré-colombianos) Os povos indígenas originários do atual território brasileiro e seus hábitos culturais e sociais"
+    },
+    {
+      "codigo": "EF06HI09",
+      "descricao": "Discutir o conceito de Antiguidade Clássica, seu alcance e limite na tradição ocidental, assim como os impactos sobre outras sociedades e culturas.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "A invenção do mundo clássico e o contraponto com outras sociedades",
+      "objeto_conhecimento": "O Ocidente Clássico: aspectos da cultura na Grécia e em Roma"
+    },
+    {
+      "codigo": "EF06HI10",
+      "descricao": "Explicar a formação da Grécia Antiga, com ênfase na formação da pólis e nas transformações políticas, sociais e culturais.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Lógicas de organização política",
+      "objeto_conhecimento": "As noções de cidadania e política na Grécia e em Roma • Domínios e expansão das culturas grega e romana • Significados do conceito de “império” e as lógicas de conquista, conflito e negociação dessa forma de organização política As diferentes formas de organização política na África: reinos, impérios, cidades-estados e sociedades linhageiras ou aldeias"
+    },
+    {
+      "codigo": "EF06HI11",
+      "descricao": "Caracterizar o processo de formação da Roma Antiga e suas configurações sociais e políticas nos períodos monárquico e republicano.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Lógicas de organização política",
+      "objeto_conhecimento": "As noções de cidadania e política na Grécia e em Roma • Domínios e expansão das culturas grega e romana • Significados do conceito de “império” e as lógicas de conquista, conflito e negociação dessa forma de organização política As diferentes formas de organização política na África: reinos, impérios, cidades-estados e sociedades linhageiras ou aldeias"
+    },
+    {
+      "codigo": "EF06HI12",
+      "descricao": "Associar o conceito de cidadania a dinâmicas de inclusão e exclusão na Grécia e Roma antigas.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Lógicas de organização política",
+      "objeto_conhecimento": "As noções de cidadania e política na Grécia e em Roma • Domínios e expansão das culturas grega e romana • Significados do conceito de “império” e as lógicas de conquista, conflito e negociação dessa forma de organização política As diferentes formas de organização política na África: reinos, impérios, cidades-estados e sociedades linhageiras ou aldeias"
+    },
+    {
+      "codigo": "EF06HI13",
+      "descricao": "Conceituar “império” no mundo antigo, com vistas à análise das diferentes formas de equilíbrio e desequilíbrio entre as partes envolvidas.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Lógicas de organização política",
+      "objeto_conhecimento": "As noções de cidadania e política na Grécia e em Roma • Domínios e expansão das culturas grega e romana • Significados do conceito de “império” e as lógicas de conquista, conflito e negociação dessa forma de organização política As diferentes formas de organização política na África: reinos, impérios, cidades-estados e sociedades linhageiras ou aldeias"
+    },
+    {
+      "codigo": "EF06HI14",
+      "descricao": "Identificar e analisar diferentes formas de contato, adaptação ou exclusão entre populações em diferentes tempos e espaços.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Lógicas de organização política",
+      "objeto_conhecimento": "A passagem do mundo antigo para o mundo medieval A fragmentação do poder político na Idade Média"
+    },
+    {
+      "codigo": "EF06HI15",
+      "descricao": "Descrever as dinâmicas de circulação de pessoas, produtos e culturas no Mediterrâneo e seu significado.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Lógicas de organização política",
+      "objeto_conhecimento": "O Mediterrâneo como espaço de interação entre as sociedades da Europa, da África e do Oriente Médio"
+    },
+    {
+      "codigo": "EF06HI16",
+      "descricao": "Caracterizar e comparar as dinâmicas de abastecimento e as formas de organização do trabalho e da vida social em diferentes sociedades e períodos, com destaque para as relações entre senhores e servos.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Trabalho e formas de organização social e cultural",
+      "objeto_conhecimento": "Senhores e servos no mundo antigo e no medieval Escravidão e trabalho livre em diferentes temporalidades e espaços (Roma Antiga, Europa medieval e África) Lógicas comerciais na Antiguidade romana e no mundo medieval"
+    },
+    {
+      "codigo": "EF06HI17",
+      "descricao": "Diferenciar escravidão, servidão e trabalho livre no mundo antigo.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Trabalho e formas de organização social e cultural",
+      "objeto_conhecimento": "Senhores e servos no mundo antigo e no medieval Escravidão e trabalho livre em diferentes temporalidades e espaços (Roma Antiga, Europa medieval e África) Lógicas comerciais na Antiguidade romana e no mundo medieval"
+    },
+    {
+      "codigo": "EF06HI18",
+      "descricao": "Analisar o papel da religião cristã na cultura e nos modos de organização social no período medieval.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Trabalho e formas de organização social e cultural",
+      "objeto_conhecimento": "O papel da religião cristã, dos mosteiros e da cultura na Idade Média"
+    },
+    {
+      "codigo": "EF06HI19",
+      "descricao": "Descrever e analisar os diferentes papéis sociais das mulheres no mundo antigo e nas sociedades medievais.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Trabalho e formas de organização social e cultural",
+      "objeto_conhecimento": "O papel da mulher na Grécia e em Roma, e no período medieval"
+    }
+  ]
+}

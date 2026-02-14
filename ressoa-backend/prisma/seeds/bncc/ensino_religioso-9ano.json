@@ -1,0 +1,70 @@
+{
+  "disciplina": "ENSINO_RELIGIOSO",
+  "ano": 9,
+  "habilidades": [
+    {
+      "codigo": "EF09ER01",
+      "descricao": "Analisar princípios e orientações para o cuidado da vida e nas diversas tradições religiosas e filosofias de vida.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Crenças religiosas e filosofias de vida",
+      "objeto_conhecimento": "Imanência e transcendência"
+    },
+    {
+      "codigo": "EF09ER02",
+      "descricao": "Discutir as diferentes expressões de valorização e de desrespeito à vida, por meio da análise de matérias nas diferentes mídias.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Crenças religiosas e filosofias de vida",
+      "objeto_conhecimento": "Imanência e transcendência"
+    },
+    {
+      "codigo": "EF09ER03",
+      "descricao": "Identificar sentidos do viver e do morrer em diferentes tradições religiosas, através do estudo de mitos fundantes.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Crenças religiosas e filosofias de vida",
+      "objeto_conhecimento": "Vida e morte"
+    },
+    {
+      "codigo": "EF09ER04",
+      "descricao": "Identificar concepções de vida e morte em diferentes tradições religiosas e filosofias de vida, por meio da análise de diferentes ritos fúnebres.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Crenças religiosas e filosofias de vida",
+      "objeto_conhecimento": "Vida e morte"
+    },
+    {
+      "codigo": "EF09ER05",
+      "descricao": "Analisar as diferentes ideias de imortalidade elaboradas pelas tradições religiosas (ancestralidade, reencarnação, transmigração e ressurreição).",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Crenças religiosas e filosofias de vida",
+      "objeto_conhecimento": "Vida e morte"
+    },
+    {
+      "codigo": "EF09ER06",
+      "descricao": "Reconhecer a coexistência como uma atitude ética de respeito à vida e à dignidade humana.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Crenças religiosas e filosofias de vida",
+      "objeto_conhecimento": "Princípios e valores éticos"
+    },
+    {
+      "codigo": "EF09ER07",
+      "descricao": "Identificar princípios éticos (familiares, religiosos e culturais) que possam alicerçar a construção de projetos de vida.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Crenças religiosas e filosofias de vida",
+      "objeto_conhecimento": "Princípios e valores éticos"
+    },
+    {
+      "codigo": "EF09ER08",
+      "descricao": "Construir projetos de vida assentados em princípios e valores éticos.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Crenças religiosas e filosofias de vida",
+      "objeto_conhecimento": "Princípios e valores éticos"
+    }
+  ]
+}

@@ -3,7 +3,7 @@ import { Type } from 'class-transformer';
 import { TipoEnsino } from '@prisma/client';
 
 /**
- * Enum para disciplinas BNCC (MVP)
+ * Enum para disciplinas BNCC (todas as 10 disciplinas do Ensino Fundamental + EM)
  * Nota: Não usamos Prisma enum porque Habilidade.disciplina é String
  * (compatibilidade com model Disciplina existente)
  */
@@ -11,7 +11,14 @@ export enum DisciplinaEnum {
   MATEMATICA = 'MATEMATICA',
   LINGUA_PORTUGUESA = 'LINGUA_PORTUGUESA',
   CIENCIAS = 'CIENCIAS',
-  CIENCIAS_HUMANAS = 'CIENCIAS_HUMANAS', // Story 10.5 - Fix Issue #6: EM support
+  HISTORIA = 'HISTORIA',
+  GEOGRAFIA = 'GEOGRAFIA',
+  ARTE = 'ARTE',
+  EDUCACAO_FISICA = 'EDUCACAO_FISICA',
+  LINGUA_INGLESA = 'LINGUA_INGLESA',
+  ENSINO_RELIGIOSO = 'ENSINO_RELIGIOSO',
+  COMPUTACAO = 'COMPUTACAO',
+  CIENCIAS_HUMANAS = 'CIENCIAS_HUMANAS', // Ensino Médio
 }
 
 /**
@@ -36,7 +43,7 @@ export class QueryHabilidadesDto {
   @IsOptional()
   @IsEnum(DisciplinaEnum, {
     message:
-      'Disciplina inválida. Valores permitidos: MATEMATICA, LINGUA_PORTUGUESA, CIENCIAS, CIENCIAS_HUMANAS',
+      'Disciplina inválida. Valores permitidos: MATEMATICA, LINGUA_PORTUGUESA, CIENCIAS, HISTORIA, GEOGRAFIA, ARTE, EDUCACAO_FISICA, LINGUA_INGLESA, ENSINO_RELIGIOSO, COMPUTACAO, CIENCIAS_HUMANAS',
   })
   disciplina?: DisciplinaEnum;
 

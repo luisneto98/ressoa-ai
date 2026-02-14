@@ -1,0 +1,166 @@
+{
+  "disciplina": "LINGUA_INGLESA",
+  "ano": 8,
+  "habilidades": [
+    {
+      "codigo": "EF08LI01",
+      "descricao": "Fazer uso da língua inglesa para resolver mal-entendidos, emitir opiniões e esclarecer informações por meio de paráfrases ou justificativas.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Interação discursiva",
+      "objeto_conhecimento": "Negociação de sentidos (mal-entendidos no uso da língua inglesa e conflito de opiniões)"
+    },
+    {
+      "codigo": "EF08LI02",
+      "descricao": "Explorar o uso de recursos linguísticos (frases incompletas, hesitações, entre outros) e paralinguísticos (gestos, expressões faciais, entre outros) em situações de interação oral.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Interação discursiva",
+      "objeto_conhecimento": "Usos de recursos linguísticos e paralinguísticos no intercâmbio oral"
+    },
+    {
+      "codigo": "EF08LI03",
+      "descricao": "Construir o sentido global de textos orais, relacionando suas partes, o assunto principal e informações relevantes.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Compreensão oral",
+      "objeto_conhecimento": "Compreensão de textos orais, multimodais, de cunho informativo/jornalístico"
+    },
+    {
+      "codigo": "EF08LI04",
+      "descricao": "Utilizar recursos e repertório linguísticos apropriados para informar/comunicar/falar do futuro: planos, previsões, possibilidades e probabilidades.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Produção oral",
+      "objeto_conhecimento": "Produção de textos orais com autonomia"
+    },
+    {
+      "codigo": "EF08LI05",
+      "descricao": "Inferir informações e relações que não aparecem de modo explícito no texto para construção de sentidos.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Estratégias de leitura",
+      "objeto_conhecimento": "Construção de sentidos por meio de inferências e reconhecimento de implícitos"
+    },
+    {
+      "codigo": "EF08LI06",
+      "descricao": "Apreciar textos narrativos em língua inglesa (contos, romances, entre outros, em versão original ou simplificada), como forma de valorizar o patrimônio cultural produzido em língua inglesa.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Práticas de leitura e fruição",
+      "objeto_conhecimento": "Leitura de textos de cunho artístico/literário"
+    },
+    {
+      "codigo": "EF08LI07",
+      "descricao": "Explorar ambientes virtuais e/ou aplicativos para acessar e usufruir do patrimônio artístico literário em língua inglesa.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Práticas de leitura e fruição",
+      "objeto_conhecimento": "Leitura de textos de cunho artístico/literário"
+    },
+    {
+      "codigo": "EF08LI08",
+      "descricao": "Analisar, criticamente, o conteúdo de textos, comparando diferentes perspectivas apresentadas sobre um mesmo assunto.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Avaliação dos textos lidos",
+      "objeto_conhecimento": "Reflexão pós-leitura"
+    },
+    {
+      "codigo": "EF08LI09",
+      "descricao": "Avaliar a própria produção escrita e a de colegas, com base no contexto de comunicação (finalidade e adequação ao público, conteúdo a ser comunicado, organização textual, legibilidade, estrutura de frases).",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Estratégias de escrita: escrita e pós- escrita",
+      "objeto_conhecimento": "Revisão de textos com a mediação do professor"
+    },
+    {
+      "codigo": "EF08LI10",
+      "descricao": "Reconstruir o texto, com cortes, acréscimos, reformulações e correções, para aprimoramento, edição e publicação final.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Estratégias de escrita: escrita e pós- escrita",
+      "objeto_conhecimento": "Revisão de textos com a mediação do professor"
+    },
+    {
+      "codigo": "EF08LI11",
+      "descricao": "Produzir textos (comentários em fóruns, relatos pessoais, mensagens instantâneas, tweets, reportagens, histórias de ficção, blogues, entre outros), com o uso de estratégias de escrita (planejamento, produção de rascunho, revisão e edição final), apontando sonhos e projetos para o futuro (pessoal, da família, da comunidade ou do planeta).",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Práticas de escrita",
+      "objeto_conhecimento": "Produção de textos escritos com mediação do professor/colegas"
+    },
+    {
+      "codigo": "EF08LI12",
+      "descricao": "Construir repertório lexical relativo a planos, previsões e expectativas para o futuro.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Estudo do léxico",
+      "objeto_conhecimento": "Construção de repertório lexical"
+    },
+    {
+      "codigo": "EF08LI13",
+      "descricao": "Reconhecer sufixos e prefixos comuns utilizados na formação de palavras em língua inglesa.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Estudo do léxico",
+      "objeto_conhecimento": "Formação de palavras: prefixos e sufixos"
+    },
+    {
+      "codigo": "EF08LI14",
+      "descricao": "Utilizar formas verbais do futuro para descrever planos e expectativas e fazer previsões.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Gramática",
+      "objeto_conhecimento": "Verbos para indicar o futuro"
+    },
+    {
+      "codigo": "EF08LI15",
+      "descricao": "Utilizar, de modo inteligível, as formas comparativas e superlativas de adjetivos para comparar qualidades e quantidades.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Gramática",
+      "objeto_conhecimento": "Comparativos e superlativos"
+    },
+    {
+      "codigo": "EF08LI16",
+      "descricao": "Utilizar, de modo inteligível, corretamente, some, any, many, much.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Gramática",
+      "objeto_conhecimento": "Quantificadores"
+    },
+    {
+      "codigo": "EF08LI17",
+      "descricao": "Empregar, de modo inteligível, os pronomes relativos (who, which, that, whose) para construir períodos compostos por subordinação.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Gramática",
+      "objeto_conhecimento": "Pronomes relativos"
+    },
+    {
+      "codigo": "EF08LI18",
+      "descricao": "Construir repertório cultural por meio do contato com manifestações artístico-culturais vinculadas à língua inglesa (artes plásticas e visuais, literatura, música, cinema, dança, festividades, entre outros), valorizando a diversidade entre culturas.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Manifestações culturais",
+      "objeto_conhecimento": "Construção de repertório artístico-cultural"
+    },
+    {
+      "codigo": "EF08LI19",
+      "descricao": "Investigar de que forma expressões, gestos e comportamentos são interpretados em função de aspectos culturais.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Comunicação intercultural",
+      "objeto_conhecimento": "Impacto de aspectos culturais na comunicação"
+    },
+    {
+      "codigo": "EF08LI20",
+      "descricao": "Examinar fatores que podem impedir o entendimento entre pessoas de culturas diferentes que falam a língua inglesa.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Comunicação intercultural",
+      "objeto_conhecimento": "Impacto de aspectos culturais na comunicação"
+    }
+  ]
+}

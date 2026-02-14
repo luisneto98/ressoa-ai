@@ -20,27 +20,27 @@
     },
     {
       "codigo": "EF06MA03",
-      "descricao": "Resolver e elaborar problemas que envolvam cálculos (mentais ou escritos, exatos ou aproximados) com números naturais, por meio de estratégias variadas, compreendendo e utilizando as propriedades das operações.",
+      "descricao": "Resolver e elaborar problemas que envolvam cálculos (mentais ou escritos, exatos ou aproximados) com números naturais, por meio de estratégias variadas, com compreensão dos processos neles envolvidos com e sem uso de calculadora.",
       "ano_inicio": 6,
       "ano_fim": null,
       "unidade_tematica": "Números",
-      "objeto_conhecimento": "Operações com números naturais: adição, subtração, multiplicação, divisão, potenciação e radiciação"
+      "objeto_conhecimento": "Operações (adição, subtração, multiplicação, divisão e potenciação) com números naturais Divisão euclidiana"
     },
     {
       "codigo": "EF06MA04",
-      "descricao": "Construir algoritmo em linguagem natural e representá-lo por fluxograma que indique a resolução de um problema simples (por exemplo, se um número natural qualquer é par ou ímpar).",
+      "descricao": "Construir algoritmo em linguagem natural e representá-lo por fluxograma que indique a resolução de um problema simples (por exemplo, se um número natural qualquer é par).",
       "ano_inicio": 6,
       "ano_fim": null,
       "unidade_tematica": "Números",
-      "objeto_conhecimento": "Fluxograma para determinar a paridade de um número natural; Múltiplos e divisores de um número natural"
+      "objeto_conhecimento": "Fluxograma para determinar a paridade de um número natural Múltiplos e divisores de um número natural Números primos e compostos"
     },
     {
       "codigo": "EF06MA05",
-      "descricao": "Classificar números naturais em primos e compostos, estabelecer relações entre números, expressas pelos termos \"é múltiplo de\", \"é divisor de\", \"é fator de\", e estabelecer, por meio de investigações, critérios de divisibilidade por 2, 3, 4, 5, 6, 8, 9, 10, 100 e 1000.",
+      "descricao": "Classificar números naturais em primos e compostos, estabelecer relações entre números, expressas pelos termos “é múltiplo de”, “é divisor de”, “é fator de”, e estabelecer, por meio de investigações, critérios de divisibilidade por 2, 3, 4, 5, 6, 8, 9, 10, 100 e 1000.",
       "ano_inicio": 6,
       "ano_fim": null,
       "unidade_tematica": "Números",
-      "objeto_conhecimento": "Múltiplos e divisores de um número natural; Números primos e compostos; Critérios de divisibilidade"
+      "objeto_conhecimento": "Fluxograma para determinar a paridade de um número natural Múltiplos e divisores de um número natural Números primos e compostos"
     },
     {
       "codigo": "EF06MA06",
@@ -48,7 +48,7 @@
       "ano_inicio": 6,
       "ano_fim": null,
       "unidade_tematica": "Números",
-      "objeto_conhecimento": "Múltiplos e divisores de um número natural"
+      "objeto_conhecimento": "Fluxograma para determinar a paridade de um número natural Múltiplos e divisores de um número natural Números primos e compostos"
     },
     {
       "codigo": "EF06MA07",
@@ -72,7 +72,7 @@
       "ano_inicio": 6,
       "ano_fim": null,
       "unidade_tematica": "Números",
-      "objeto_conhecimento": "Cálculo de porcentagens por meio de estratégias diversas, sem fazer uso da \"regra de três\""
+      "objeto_conhecimento": "Frações: significados (parte/todo, quociente), equivalência, comparação, adição e subtração; cálculo da fração de um número natural; adição e subtração de frações"
     },
     {
       "codigo": "EF06MA10",
@@ -92,19 +92,19 @@
     },
     {
       "codigo": "EF06MA12",
-      "descricao": "Fazer estimativas de quantidades e de valores de grandezas verificando, por meio de cálculos, a razoabilidade desses resultados.",
+      "descricao": "Fazer estimativas de quantidades e aproximar números para múltiplos da potência de 10 mais próxima.",
       "ano_inicio": 6,
       "ano_fim": null,
       "unidade_tematica": "Números",
-      "objeto_conhecimento": "Aproximação de números para potências de 10 mais próximas"
+      "objeto_conhecimento": "Aproximação de números para múltiplos de potências de 10"
     },
     {
       "codigo": "EF06MA13",
-      "descricao": "Resolver e elaborar problemas que envolvam porcentagens, com base na ideia de proporcionalidade, sem fazer uso da \"regra de três\", utilizando estratégias pessoais, cálculo mental e calculadora, em contextos de educação financeira, entre outros.",
+      "descricao": "Resolver e elaborar problemas que envolvam porcentagens, com base na ideia de proporcionalidade, sem fazer uso da “regra de três”, utilizando estratégias pessoais, cálculo mental e calculadora, em contextos de educação financeira, entre outros.",
       "ano_inicio": 6,
       "ano_fim": null,
       "unidade_tematica": "Números",
-      "objeto_conhecimento": "Cálculo de porcentagens por meio de estratégias diversas, sem fazer uso da \"regra de três\""
+      "objeto_conhecimento": "Cálculo de porcentagens por meio de estratégias diversas, sem fazer uso da “regra de três”"
     },
     {
       "codigo": "EF06MA14",
@@ -140,7 +140,7 @@
     },
     {
       "codigo": "EF06MA18",
-      "descricao": "Reconhecer, nomear e comparar polígonos, considerando lados, vértices e ângulos, e desenhá-los, utilizando material de desenho ou tecnologias digitais.",
+      "descricao": "Reconhecer, nomear e comparar polígonos, considerando lados, vértices e ângulos, e classificá-los em regulares e não regulares, tanto em suas representações no plano como em faces de poliedros.",
       "ano_inicio": 6,
       "ano_fim": null,
       "unidade_tematica": "Geometria",
@@ -180,7 +180,7 @@
     },
     {
       "codigo": "EF06MA23",
-      "descricao": "Construir algoritmo para resolver situações passo a passo (como na construção de dobraduras ou na indicação de caminhos para a movimentação de um robô).",
+      "descricao": "Construir algoritmo para resolver situações passo a passo (como na construção de dobraduras ou na indicação de deslocamento de um objeto no plano segundo pontos de referência e distâncias fornecidas etc.).",
       "ano_inicio": 6,
       "ano_fim": null,
       "unidade_tematica": "Geometria",
@@ -191,7 +191,7 @@
       "descricao": "Resolver e elaborar problemas que envolvam as grandezas comprimento, massa, tempo, temperatura, área (triângulos e retângulos), capacidade e volume (sólidos formados por blocos retangulares), sem uso de fórmulas, inseridos, sempre que possível, em contextos oriundos de situações reais e/ou relacionadas às outras áreas do conhecimento.",
       "ano_inicio": 6,
       "ano_fim": null,
-      "unidade_tematica": "Grandezas e Medidas",
+      "unidade_tematica": "Grandezas e medidas",
       "objeto_conhecimento": "Problemas sobre medidas envolvendo grandezas como comprimento, massa, tempo, temperatura, área, capacidade e volume"
     },
     {
@@ -199,15 +199,15 @@
       "descricao": "Reconhecer a abertura do ângulo como grandeza associada às figuras geométricas.",
       "ano_inicio": 6,
       "ano_fim": null,
-      "unidade_tematica": "Grandezas e Medidas",
+      "unidade_tematica": "Grandezas e medidas",
       "objeto_conhecimento": "Ângulos: noção, usos e medida"
     },
     {
       "codigo": "EF06MA26",
-      "descricao": "Resolver problemas que envolvam a noção de ângulo em diferentes contextos e em situações reais, como ângulos de visão.",
+      "descricao": "Resolver problemas que envolvam a noção de ângulo em diferentes contextos e em situações reais, como ângulo de visão.",
       "ano_inicio": 6,
       "ano_fim": null,
-      "unidade_tematica": "Grandezas e Medidas",
+      "unidade_tematica": "Grandezas e medidas",
       "objeto_conhecimento": "Ângulos: noção, usos e medida"
     },
     {
@@ -215,7 +215,7 @@
       "descricao": "Determinar medidas da abertura de ângulos, por meio de transferidor e/ou tecnologias digitais.",
       "ano_inicio": 6,
       "ano_fim": null,
-      "unidade_tematica": "Grandezas e Medidas",
+      "unidade_tematica": "Grandezas e medidas",
       "objeto_conhecimento": "Ângulos: noção, usos e medida"
     },
     {
@@ -223,15 +223,15 @@
       "descricao": "Interpretar, descrever e desenhar plantas baixas simples de residências e vistas aéreas.",
       "ano_inicio": 6,
       "ano_fim": null,
-      "unidade_tematica": "Grandezas e Medidas",
+      "unidade_tematica": "Grandezas e medidas",
       "objeto_conhecimento": "Plantas baixas e vistas aéreas"
     },
     {
       "codigo": "EF06MA29",
-      "descricao": "Analisar e descrever mudanças que ocorrem no perímetro e na área de um quadrado ao se alterar a medida de seus lados, para compreender o conceito de equivalência de área.",
+      "descricao": "Analisar e descrever mudanças que ocorrem no perímetro e na área de um quadrado ao se ampliarem ou reduzirem, igualmente, as medidas de seus lados, para compreender que o perímetro é proporcional à medida do lado, o que não ocorre com a área.",
       "ano_inicio": 6,
       "ano_fim": null,
-      "unidade_tematica": "Grandezas e Medidas",
+      "unidade_tematica": "Grandezas e medidas",
       "objeto_conhecimento": "Perímetro de um quadrado como grandeza proporcional à medida do lado"
     },
     {
@@ -239,15 +239,15 @@
       "descricao": "Calcular a probabilidade de um evento aleatório, expressando-a por número racional (forma fracionária, decimal e percentual) e comparar esse número com a probabilidade obtida por meio de experimentos sucessivos.",
       "ano_inicio": 6,
       "ano_fim": null,
-      "unidade_tematica": "Probabilidade e Estatística",
-      "objeto_conhecimento": "Cálculo de probabilidade como a razão entre o número de resultados favoráveis e o total de resultados possíveis em um espaço amostral equiprovável"
+      "unidade_tematica": "Probabilidade e estatística",
+      "objeto_conhecimento": "Cálculo de probabilidade como a razão entre o número de resultados favoráveis e o total de resultados possíveis em um espaço amostral equiprovável Cálculo de probabilidade por meio de muitas repetições de um experimento (frequências de ocorrências e probabilidade frequentista)"
     },
     {
       "codigo": "EF06MA31",
       "descricao": "Identificar as variáveis e suas frequências e os elementos constitutivos (título, eixos, legendas, fontes e datas) em diferentes tipos de gráfico.",
       "ano_inicio": 6,
       "ano_fim": null,
-      "unidade_tematica": "Probabilidade e Estatística",
+      "unidade_tematica": "Probabilidade e estatística",
       "objeto_conhecimento": "Leitura e interpretação de tabelas e gráficos (de colunas ou barras simples ou múltiplas) referentes a variáveis categóricas e variáveis numéricas"
     },
     {
@@ -255,7 +255,7 @@
       "descricao": "Interpretar e resolver situações que envolvam dados de pesquisas sobre contextos ambientais, sustentabilidade, trânsito, consumo responsável, entre outros, apresentadas pela mídia em tabelas e em diferentes tipos de gráficos e redigir textos escritos com o objetivo de sintetizar conclusões.",
       "ano_inicio": 6,
       "ano_fim": null,
-      "unidade_tematica": "Probabilidade e Estatística",
+      "unidade_tematica": "Probabilidade e estatística",
       "objeto_conhecimento": "Leitura e interpretação de tabelas e gráficos (de colunas ou barras simples ou múltiplas) referentes a variáveis categóricas e variáveis numéricas"
     },
     {
@@ -263,16 +263,16 @@
       "descricao": "Planejar e coletar dados de pesquisa referente a práticas sociais escolhidas pelos alunos e fazer uso de planilhas eletrônicas para registro, representação e interpretação das informações, em tabelas, vários tipos de gráficos e texto.",
       "ano_inicio": 6,
       "ano_fim": null,
-      "unidade_tematica": "Probabilidade e Estatística",
-      "objeto_conhecimento": "Coleta de dados, organização e registro; Construção de diferentes tipos de gráficos para representá-los e interpretação das informações"
+      "unidade_tematica": "Probabilidade e estatística",
+      "objeto_conhecimento": "Coleta de dados, organização e registro Construção de diferentes tipos de gráficos para representá-los e interpretação das informações"
     },
     {
       "codigo": "EF06MA34",
-      "descricao": "Interpretar e desenvolver fluxogramas simples, identificando as relações entre os objetos representados (por exemplo, semáforo: sinal verde - Loss; sinal vermelho - Loss parar).",
+      "descricao": "Interpretar e desenvolver fluxogramas simples, identificando as relações entre os objetos representados (por exemplo, posição de cidades considerando as estradas que as unem, hierarquia dos funcionários de uma empresa etc.).",
       "ano_inicio": 6,
       "ano_fim": null,
-      "unidade_tematica": "Probabilidade e Estatística",
-      "objeto_conhecimento": "Leitura, interpretação e representação de dados em tabelas de dupla entrada, gráficos de colunas simples e agrupadas, gráficos de barras e de setores e gráficos pictóricos"
+      "unidade_tematica": "Probabilidade e estatística",
+      "objeto_conhecimento": "Diferentes tipos de representação de informações: gráficos e fluxogramas"
     }
   ]
 }

@@ -1,0 +1,302 @@
+{
+  "disciplina": "LINGUA_PORTUGUESA",
+  "ano": 8,
+  "habilidades": [
+    {
+      "codigo": "EF89LP01",
+      "descricao": "Analisar os interesses que movem o campo jornalístico, os efeitos das novas tecnologias no campo e as condições que fazem da informação uma mercadoria, de forma a poder desenvolver uma atitude crítica frente aos textos jornalísticos.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Leitura",
+      "objeto_conhecimento": "Reconstrução do contexto de produção, circulação e recepção de textos Caracterização do campo jornalístico e relação entre os gêneros em circulação, mídias e práticas da cultura digital"
+    },
+    {
+      "codigo": "EF89LP02",
+      "descricao": "Analisar diferentes práticas (curtir, compartilhar, comentar, curar etc.) e textos pertencentes a diferentes gêneros da cultura digital (meme, gif, comentário, charge digital etc.) envolvidos no trato com a informação e opinião, de forma a possibilitar uma presença mais crítica e ética nas redes.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Leitura",
+      "objeto_conhecimento": "Reconstrução do contexto de produção, circulação e recepção de textos Caracterização do campo jornalístico e relação entre os gêneros em circulação, mídias e práticas da cultura digital"
+    },
+    {
+      "codigo": "EF89LP03",
+      "descricao": "Analisar textos de opinião (artigos de opinião, editoriais, cartas de leitores, comentários, posts de blog e de redes sociais, charges, memes, gifs etc.) e posicionar-se de forma crítica e fundamentada, ética e respeitosa frente a fatos e opiniões relacionados a esses textos.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Leitura",
+      "objeto_conhecimento": "Estratégia de leitura: apreender os sentidos globais do texto Apreciação e réplica"
+    },
+    {
+      "codigo": "EF89LP04",
+      "descricao": "Identificar e avaliar teses/opiniões/posicionamentos explícitos e implícitos, argumentos e contra-argumentos em textos argumentativos do campo (carta de leitor, comentário, artigo de opinião, resenha crítica etc.), posicionando-se frente à questão controversa de forma sustentada.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Leitura",
+      "objeto_conhecimento": "Estratégia de leitura: apreender os sentidos globais do texto Apreciação e réplica"
+    },
+    {
+      "codigo": "EF89LP05",
+      "descricao": "Analisar o efeito de sentido produzido pelo uso, em textos, de recurso a formas de apropriação textual (paráfrases, citações, discurso direto, indireto ou indireto livre).",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Leitura",
+      "objeto_conhecimento": "Efeitos de sentido"
+    },
+    {
+      "codigo": "EF89LP06",
+      "descricao": "Analisar o uso de recursos persuasivos em textos argumentativos diversos (como a elaboração do título, escolhas lexicais, construções metafóricas, a explicitação ou a ocultação de fontes de informação) e seus efeitos de sentido.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Leitura",
+      "objeto_conhecimento": "Efeitos de sentido"
+    },
+    {
+      "codigo": "EF89LP07",
+      "descricao": "Analisar, em notícias, reportagens e peças publicitárias em várias mídias, os efeitos de sentido devidos ao tratamento e à composição dos elementos nas imagens em movimento, à performance, à montagem feita (ritmo, duração e sincronização entre as linguagens – complementaridades, interferências etc.) e ao ritmo, melodia, instrumentos e sampleamentos das músicas e efeitos sonoros.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Leitura",
+      "objeto_conhecimento": "Efeitos de sentido Exploração da multissemiose"
+    },
+    {
+      "codigo": "EF89LP08",
+      "descricao": "Planejar reportagem impressa e em outras mídias (rádio ou TV/vídeo, sites), tendo em vista as condições de produção do texto – objetivo, leitores/espectadores, veículos e mídia de circulação etc. – a partir da escolha do fato a ser aprofundado ou do tema a ser focado (de relevância para a turma, escola ou comunidade), do levantamento de dados e informações sobre o fato ou tema – que pode envolver entrevistas com envolvidos ou com especialistas, consultas a fontes diversas, análise de documentos, cobertura de eventos etc. -, do registro dessas informações e dados, da escolha de fotos ou imagens a produzir ou a utilizar etc., da produção de infográficos, quando for o caso, e da organização hipertextual (no caso a publicação em sites ou blogs noticiosos ou mesmo de jornais impressos, por meio de boxes variados).",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Leitura",
+      "objeto_conhecimento": "Estratégia de produção: planejamento de textos informativos"
+    },
+    {
+      "codigo": "EF89LP09",
+      "descricao": "Produzir reportagem impressa, com título, linha fina (optativa), organização composicional (expositiva, interpretativa e/ou opinativa), progressão temática e uso de recursos linguísticos compatíveis com as escolhas feitas e reportagens multimidiáticas, tendo em vista as condições de produção, as características do gênero, os recursos e mídias disponíveis, sua organização hipertextual e o manejo adequado de recursos de captação e edição de áudio e imagem e adequação à norma-padrão.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Leitura",
+      "objeto_conhecimento": "Estratégia de produção: textualização de textos informativos"
+    },
+    {
+      "codigo": "EF89LP10",
+      "descricao": "Planejar artigos de opinião, tendo em vista as condições de produção do texto – objetivo, leitores/espectadores, veículos e mídia de circulação etc. –, a partir da escolha do tema ou questão a ser discutido(a), da relevância para a turma, escola ou comunidade, do levantamento de dados e informações sobre a questão, de argumentos relacionados a diferentes posicionamentos em jogo, da definição – o que pode envolver consultas a fontes diversas, entrevistas com especialistas, análise de textos, organização esquemática das informações e argumentos – dos (tipos de) argumentos e estratégias que pretende utilizar para convencer os leitores.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Leitura",
+      "objeto_conhecimento": "Estratégia de produção: planejamento de textos argumentativos e apreciativos"
+    },
+    {
+      "codigo": "EF89LP11",
+      "descricao": "Produzir, revisar e editar peças e campanhas publicitárias, envolvendo o uso articulado e complementar de diferentes peças publicitárias: cartaz, banner, indoor, folheto, panfleto, anúncio de jornal/revista, para internet, spot, propaganda de rádio, TV, a partir da escolha da questão/problema/causa significativa para a escola e/ou a comunidade escolar, da definição do público-alvo, das peças que serão produzidas, das estratégias de persuasão e convencimento que serão utilizadas.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Leitura",
+      "objeto_conhecimento": "Estratégias de produção: planejamento, textualização, revisão e edição de textos publicitários"
+    },
+    {
+      "codigo": "EF89LP12",
+      "descricao": "Planejar coletivamente a realização de um debate sobre tema previamente definido, de interesse coletivo, com regras acordadas e planejar, em grupo, participação em debate a partir do levantamento de informações e argumentos que possam sustentar o posicionamento a ser defendido (o que pode envolver entrevistas com especialistas, consultas a fontes diversas, o registro das informações e dados obtidos etc.), tendo em vista as condições de produção do debate – perfil dos ouvintes e demais participantes, objetivos do debate, motivações para sua realização, argumentos e estratégias de convencimento mais eficazes etc. e participar de debates regrados, na condição de membro de uma equipe de debatedor, apresentador/mediador, espectador (com ou sem direito a perguntas), e/ou de juiz/avaliador, como forma de compreender o funcionamento do debate, e poder participar de forma convincente, ética, respeitosa e crítica e desenvolver uma atitude de respeito e diálogo para com as ideias divergentes.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Leitura",
+      "objeto_conhecimento": "Estratégias de produção: planejamento e participação em debates regrados"
+    },
+    {
+      "codigo": "EF89LP13",
+      "descricao": "Planejar entrevistas orais com pessoas ligadas ao fato noticiado, especialistas etc., como forma de obter dados e informações sobre os fatos cobertos sobre o tema ou questão discutida ou temáticas em estudo, levando em conta o gênero e seu contexto de produção, partindo do levantamento de informações sobre o entrevistado e sobre a temática e da elaboração de um roteiro de perguntas, garantindo a relevância das informações mantidas e a continuidade temática, realizar entrevista e fazer edição em áudio ou vídeo, incluindo uma contextualização inicial e uma fala de encerramento para publicação da entrevista isoladamente ou como parte integrante de reportagem multimidiática, adequando-a a seu contexto de publicação e garantindo a relevância das informações mantidas e a continuidade temática.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Leitura",
+      "objeto_conhecimento": "Estratégias de produção: planejamento, realização e edição de entrevistas orais"
+    },
+    {
+      "codigo": "EF89LP14",
+      "descricao": "Analisar, em textos argumentativos e propositivos, os movimentos argumentativos de sustentação, refutação e negociação e os tipos de argumentos, avaliando a força/tipo dos argumentos utilizados.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Leitura",
+      "objeto_conhecimento": "Argumentação: movimentos argumentativos, tipos de argumento e força argumentativa"
+    },
+    {
+      "codigo": "EF89LP15",
+      "descricao": "Utilizar, nos debates, operadores argumentativos que marcam a defesa de ideia e de diálogo com a tese do outro: concordo, discordo, concordo parcialmente, do meu ponto de vista, na perspectiva aqui assumida etc.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Leitura",
+      "objeto_conhecimento": "Estilo"
+    },
+    {
+      "codigo": "EF89LP16",
+      "descricao": "Analisar a modalização realizada em textos noticiosos e argumentativos, por meio das modalidades apreciativas, viabilizadas por classes e estruturas gramaticais como adjetivos, locuções adjetivas, advérbios, locuções adverbiais, orações adjetivas e adverbiais, orações relativas restritivas e explicativas etc., de maneira a perceber a apreciação ideológica sobre os fatos noticiados ou as posições implícitas ou assumidas.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Produção de textos",
+      "objeto_conhecimento": "Modalização"
+    },
+    {
+      "codigo": "EF89LP17",
+      "descricao": "Relacionar textos e documentos legais e normativos de importância universal, nacional ou local que envolvam direitos, em especial, de crianças, adolescentes e jovens – tais como a Declaração dos Direitos Humanos, a Constituição Brasileira, o ECA -, e a regulamentação da organização escolar – por exemplo, regimento escolar -, a seus contextos de produção, reconhecendo e analisando possíveis motivações, finalidades e sua vinculação com experiências humanas e fatos históricos e sociais, como forma de ampliar a compreensão dos direitos e deveres, de fomentar os princípios democráticos e uma atuação pautada pela ética da responsabilidade (o outro tem direito a uma vida digna tanto quanto eu tenho).",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Produção de textos",
+      "objeto_conhecimento": "Reconstrução do contexto de produção, circulação e recepção de textos legais e normativos"
+    },
+    {
+      "codigo": "EF89LP18",
+      "descricao": "Explorar e analisar instâncias e canais de participação disponíveis na escola (conselho de escola, outros colegiados, grêmio livre), na comunidade (associações, coletivos, movimentos, etc.), no munícipio ou no país, incluindo formas de participação digital, como canais e plataformas de participação (como portal e-cidadania), serviços, portais e ferramentas de acompanhamentos do trabalho de políticos e de tramitação de leis, canais de educação política, bem como de propostas e proposições que circulam nesses canais, de forma a participar do debate de ideias e propostas na esfera social e a engajar-se com a busca de soluções para problemas ou questões que envolvam a vida da escola e da comunidade.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Produção de textos",
+      "objeto_conhecimento": "Contexto de produção, circulação e recepção de textos e práticas relacionadas à defesa de direitos e à participação social"
+    },
+    {
+      "codigo": "EF89LP19",
+      "descricao": "Analisar, a partir do contexto de produção, a forma de organização das cartas abertas, abaixo-assinados e petições on-line (identificação dos signatários, explicitação da reivindicação feita, acompanhada ou não de uma breve apresentação da problemática e/ou de justificativas que visam sustentar a reivindicação) e a proposição, discussão e aprovação de propostas políticas ou de soluções para problemas de interesse público, apresentadas ou lidas nos canais digitais de participação, identificando suas marcas linguísticas, como forma de possibilitar a escrita ou subscrição consciente de abaixo-assinados e textos dessa natureza e poder se posicionar de forma crítica e fundamentada frente às propostas",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Produção de textos",
+      "objeto_conhecimento": "Relação entre contexto de produção e características composicionais e estilísticas dos gêneros Apreciação e réplica"
+    },
+    {
+      "codigo": "EF89LP20",
+      "descricao": "Comparar propostas políticas e de solução de problemas, identificando o que se pretende fazer/implementar, por que (motivações, justificativas), para que (objetivos, benefícios e consequências esperados), como (ações e passos), quando etc. e a forma de avaliar a eficácia da proposta/solução, contrastando dados e informações de diferentes fontes, identificando coincidências, complementaridades e contradições, de forma a poder compreender e posicionar-se criticamente sobre os dados e informações usados em fundamentação de propostas e analisar a coerência entre os elementos, de forma a tomar decisões fundamentadas.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Produção de textos",
+      "objeto_conhecimento": "Estratégias e procedimentos de leitura em textos reivindicatórios ou propositivos"
+    },
+    {
+      "codigo": "EF89LP21",
+      "descricao": "Realizar enquetes e pesquisas de opinião, de forma a levantar prioridades, problemas a resolver ou propostas que possam contribuir para melhoria da escola ou da comunidade, caracterizar demanda/necessidade, documentando-a de diferentes maneiras por meio de diferentes procedimentos, gêneros e mídias e, quando for o caso, selecionar informações e dados relevantes de fontes pertinentes diversas (sites, impressos, vídeos etc.), avaliando a qualidade e a utilidade dessas fontes, que possam servir de contextualização e fundamentação de propostas, de forma a justificar a proposição de propostas, projetos culturais e ações de intervenção.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Produção de textos",
+      "objeto_conhecimento": "Estratégia de produção: planejamento de textos reivindicatórios ou propositivos"
+    },
+    {
+      "codigo": "EF89LP22",
+      "descricao": "Compreender e comparar as diferentes posições e interesses em jogo em uma discussão ou apresentação de propostas, avaliando a validade e força dos argumentos e as consequências do que está sendo proposto e, quando for o caso, formular e negociar propostas de diferentes naturezas relativas a interesses coletivos envolvendo a escola ou comunidade escolar.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Produção de textos",
+      "objeto_conhecimento": "Escuta Apreender o sentido geral dos textos Apreciação e réplica Produção/Proposta"
+    },
+    {
+      "codigo": "EF89LP23",
+      "descricao": "Analisar, em textos argumentativos, reivindicatórios e propositivos, os movimentos argumentativos utilizados (sustentação, refutação e negociação), avaliando a força dos argumentos utilizados.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Produção de textos",
+      "objeto_conhecimento": "Movimentos argumentativos e força dos argumentos"
+    },
+    {
+      "codigo": "EF89LP24",
+      "descricao": "Realizar pesquisa, estabelecendo o recorte das questões, usando fontes abertas e confiáveis.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Produção de textos",
+      "objeto_conhecimento": "Curadoria de informação"
+    },
+    {
+      "codigo": "EF89LP25",
+      "descricao": "Divulgar o resultado de pesquisas por meio de apresentações orais, verbetes de enciclopédias colaborativas, reportagens de divulgação científica, vlogs científicos, vídeos de diferentes tipos etc.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Oralidade",
+      "objeto_conhecimento": "Estratégias de escrita: textualização, revisão e edição"
+    },
+    {
+      "codigo": "EF89LP26",
+      "descricao": "Produzir resenhas, a partir das notas e/ou esquemas feitos, com o manejo adequado das vozes envolvidas (do resenhador, do autor da obra e, se for o caso, também dos autores citados na obra resenhada), por meio do uso de paráfrases, marcas do discurso reportado e citações.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Oralidade",
+      "objeto_conhecimento": "Estratégias de escrita: textualização, revisão e edição"
+    },
+    {
+      "codigo": "EF89LP27",
+      "descricao": "Tecer considerações e formular problematizações pertinentes, em momentos oportunos, em situações de aulas, apresentação oral, seminário etc.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Oralidade",
+      "objeto_conhecimento": "Conversação espontânea"
+    },
+    {
+      "codigo": "EF89LP28",
+      "descricao": "Tomar nota de videoaulas, aulas digitais, apresentações multimídias, vídeos de divulgação científica, documentários e afins, identificando, em função dos objetivos, informações principais para apoio ao estudo e realizando, quando necessário, uma síntese final que destaque e reorganize os pontos ou conceitos centrais e suas relações e que, em alguns casos, seja acompanhada de reflexões pessoais, que podem conter dúvidas, questionamentos, considerações etc.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Oralidade",
+      "objeto_conhecimento": "Procedimentos de apoio à compreensão Tomada de nota"
+    },
+    {
+      "codigo": "EF89LP29",
+      "descricao": "Utilizar e perceber mecanismos de progressão temática, tais como retomadas anafóricas (“que, cujo, onde”, pronomes do caso reto e oblíquos, pronomes demonstrativos, nomes correferentes etc.), catáforas (remetendo para adiante ao invés de retomar o já dito), uso de organizadores textuais, de coesivos etc., e analisar os mecanismos de reformulação e paráfrase utilizados nos textos de divulgação do conhecimento.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Oralidade",
+      "objeto_conhecimento": "Textualização Progressão temática"
+    },
+    {
+      "codigo": "EF89LP30",
+      "descricao": "Analisar a estrutura de hipertexto e hiperlinks em textos de divulgação científica que circulam na Web e proceder à remissão a conceitos e relações por meio de links.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Textualização"
+    },
+    {
+      "codigo": "EF89LP31",
+      "descricao": "Analisar e utilizar modalização epistêmica, isto é, modos de indicar uma avaliação sobre o valor de verdade e as condições de verdade de uma proposição, tais como os asseverativos – quando se concorda com (“realmente, evidentemente, naturalmente, efetivamente, claro, certo, lógico, sem dúvida” etc.) ou discorda de (“de jeito nenhum, de forma alguma”) uma ideia; e os quase-asseverativos, que indicam que se considera o conteúdo como quase certo (“talvez, assim, possivelmente, provavelmente, eventualmente”).",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Modalização"
+    },
+    {
+      "codigo": "EF89LP32",
+      "descricao": "Analisar os efeitos de sentido decorrentes do uso de mecanismos de intertextualidade (referências, alusões, retomadas) entre os textos literários, entre esses textos literários e outras manifestações artísticas (cinema, teatro, artes visuais e midiáticas, música), quanto aos temas, personagens, estilos, autores etc., e entre o texto original e paródias, paráfrases, pastiches, trailer honesto, vídeos-minuto, vidding, dentre outros.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Relação entre textos"
+    },
+    {
+      "codigo": "EF89LP33",
+      "descricao": "Ler, de forma autônoma, e compreender – selecionando procedimentos e estratégias de leitura adequados a diferentes objetivos e levando em conta características dos gêneros e suportes – romances, contos contemporâneos, minicontos, fábulas contemporâneas, romances juvenis, biografias romanceadas, novelas, crônicas visuais, narrativas de ficção científica, narrativas de suspense, poemas de forma livre e fixa (como haicai), poema concreto, ciberpoema, dentre outros, expressando avaliação sobre o texto lido e estabelecendo preferências por gêneros, temas, autores.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Relação entre textos"
+    },
+    {
+      "codigo": "EF89LP34",
+      "descricao": "Analisar a organização de texto dramático apresentado em teatro, televisão, cinema, identificando e percebendo os sentidos decorrentes dos recursos linguísticos e semióticos que sustentam sua realização como peça teatral, novela, filme etc.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Estratégias de leitura Apreciação e réplica"
+    },
+    {
+      "codigo": "EF89LP35",
+      "descricao": "Criar contos ou crônicas (em especial, líricas), crônicas visuais, minicontos, narrativas de aventura e de ficção científica, dentre outros, com temáticas próprias ao gênero, usando os conhecimentos sobre os constituintes estruturais e recursos expressivos típicos dos gêneros narrativos pretendidos, e, no caso de produção em grupo, ferramentas de escrita colaborativa.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Reconstrução da textualidade e compreensão dos efeitos de sentidos provocados pelos usos de recursos linguísticos e multissemióticos"
+    },
+    {
+      "codigo": "EF89LP36",
+      "descricao": "Parodiar poemas conhecidos da literatura e criar textos em versos (como poemas concretos, ciberpoemas, haicais, liras, microrroteiros, lambe-lambes e outros tipos de poemas), explorando o uso de recursos sonoros e semânticos (como figuras de linguagem e jogos de palavras) e visuais (como relações entre imagem e texto verbal e distribuição da mancha gráfica), de forma a propiciar diferentes efeitos de sentido.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Construção da textualidade"
+    },
+    {
+      "codigo": "EF89LP37",
+      "descricao": "Analisar os efeitos de sentido do uso de figuras de linguagem como ironia, eufemismo, antítese, aliteração, assonância, dentre outras.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Figuras de linguagem"
+    }
+  ]
+}

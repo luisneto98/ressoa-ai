@@ -1,0 +1,150 @@
+{
+  "disciplina": "GEOGRAFIA",
+  "ano": 9,
+  "habilidades": [
+    {
+      "codigo": "EF09GE01",
+      "descricao": "Analisar criticamente de que forma a hegemonia europeia foi exercida em várias regiões do planeta, notadamente em situações de conflito, intervenções militares e/ou influência cultural em diferentes tempos e lugares.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "O sujeito e seu lugar no mundo",
+      "objeto_conhecimento": "A hegemonia europeia na economia, na política e na cultura"
+    },
+    {
+      "codigo": "EF09GE02",
+      "descricao": "Analisar a atuação das corporações internacionais e das organizações econômicas mundiais na vida da população em relação ao consumo, à cultura e à mobilidade.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "O sujeito e seu lugar no mundo",
+      "objeto_conhecimento": "Corporações e organismos internacionais"
+    },
+    {
+      "codigo": "EF09GE03",
+      "descricao": "Identificar diferentes manifestações culturais de minorias étnicas como forma de compreender a multiplicidade cultural na escala mundial, defendendo o princípio do respeito às diferenças.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "O sujeito e seu lugar no mundo",
+      "objeto_conhecimento": "As manifestações culturais na formação populacional"
+    },
+    {
+      "codigo": "EF09GE04",
+      "descricao": "Relacionar diferenças de paisagens aos modos de viver de diferentes povos na Europa, Ásia e Oceania, valorizando identidades e interculturalidades regionais.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "O sujeito e seu lugar no mundo",
+      "objeto_conhecimento": "As manifestações culturais na formação populacional"
+    },
+    {
+      "codigo": "EF09GE05",
+      "descricao": "Analisar fatos e situações para compreender a integração mundial (econômica, política e cultural), comparando as diferentes interpretações: globalização e mundialização.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Conexões e escalas",
+      "objeto_conhecimento": "Integração mundial e suas interpretações: globalização e mundialização"
+    },
+    {
+      "codigo": "EF09GE06",
+      "descricao": "Associar o critério de divisão do mundo em Ocidente e Oriente com o Sistema Colonial implantado pelas potências europeias.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Conexões e escalas",
+      "objeto_conhecimento": "A divisão do mundo em Ocidente e Oriente"
+    },
+    {
+      "codigo": "EF09GE07",
+      "descricao": "Analisar os componentes físico-naturais da Eurásia e os determinantes histórico-geográficos de sua divisão em Europa e Ásia.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Conexões e escalas",
+      "objeto_conhecimento": "Intercâmbios históricos e culturais entre Europa, Ásia e Oceania"
+    },
+    {
+      "codigo": "EF09GE08",
+      "descricao": "Analisar transformações territoriais, considerando o movimento de fronteiras, tensões, conflitos e múltiplas regionalidades na Europa, na Ásia e na Oceania.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Conexões e escalas",
+      "objeto_conhecimento": "Intercâmbios históricos e culturais entre Europa, Ásia e Oceania"
+    },
+    {
+      "codigo": "EF09GE09",
+      "descricao": "Analisar características de países e grupos de países europeus, asiáticos e da Oceania em seus aspectos populacionais, urbanos, políticos e econômicos, e discutir suas desigualdades sociais e econômicas e pressões sobre seus ambientes físico-naturais.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Conexões e escalas",
+      "objeto_conhecimento": "Intercâmbios históricos e culturais entre Europa, Ásia e Oceania"
+    },
+    {
+      "codigo": "EF09GE10",
+      "descricao": "Analisar os impactos do processo de industrialização na produção e circulação de produtos e culturas na Europa, na Ásia e na Oceania.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Mundo do trabalho",
+      "objeto_conhecimento": "Transformações do espaço na sociedade urbano-industrial"
+    },
+    {
+      "codigo": "EF09GE11",
+      "descricao": "Relacionar as mudanças técnicas e científicas decorrentes do processo de industrialização com as transformações no trabalho em diferentes regiões do mundo e suas consequências no Brasil.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Mundo do trabalho",
+      "objeto_conhecimento": "Transformações do espaço na sociedade urbano-industrial"
+    },
+    {
+      "codigo": "EF09GE12",
+      "descricao": "Relacionar o processo de urbanização às transformações da produção agropecuária, à expansão do desemprego estrutural e ao papel crescente do capital financeiro em diferentes países, com destaque para o Brasil.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Mundo do trabalho",
+      "objeto_conhecimento": "Cadeias industriais e inovação no uso dos recursos naturais e matérias-primas"
+    },
+    {
+      "codigo": "EF09GE13",
+      "descricao": "Analisar a importância da produção agropecuária na sociedade urbano-industrial ante o problema da desigualdade mundial de acesso aos recursos alimentares e à matéria-prima.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Mundo do trabalho",
+      "objeto_conhecimento": "Cadeias industriais e inovação no uso dos recursos naturais e matérias-primas"
+    },
+    {
+      "codigo": "EF09GE14",
+      "descricao": "Elaborar e interpretar gráficos de barras e de setores, mapas temáticos e esquemáticos (croquis) e anamorfoses geográficas para analisar, sintetizar e apresentar dados e informações sobre diversidade, diferenças e desigualdades sociopolíticas e geopolíticas mundiais.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Formas de representação e pensamento espacial",
+      "objeto_conhecimento": "Leitura e elaboração de mapas temáticos, croquis e outras formas de representação para analisar informações geográficas"
+    },
+    {
+      "codigo": "EF09GE15",
+      "descricao": "Comparar e classificar diferentes regiões do mundo com base em informações populacionais, econômicas e socioambientais representadas em mapas temáticos e com diferentes projeções cartográficas.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Formas de representação e pensamento espacial",
+      "objeto_conhecimento": "Leitura e elaboração de mapas temáticos, croquis e outras formas de representação para analisar informações geográficas"
+    },
+    {
+      "codigo": "EF09GE16",
+      "descricao": "Identificar e comparar diferentes domínios morfoclimáticos da Europa, da Ásia e da Oceania.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Natureza, ambientes e qualidade de vida",
+      "objeto_conhecimento": "Diversidade ambiental e as transformações nas paisagens na Europa, na Ásia e na Oceania"
+    },
+    {
+      "codigo": "EF09GE17",
+      "descricao": "Explicar as características físico-naturais e a forma de ocupação e usos da terra em diferentes regiões da Europa, da Ásia e da Oceania.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Natureza, ambientes e qualidade de vida",
+      "objeto_conhecimento": "Diversidade ambiental e as transformações nas paisagens na Europa, na Ásia e na Oceania"
+    },
+    {
+      "codigo": "EF09GE18",
+      "descricao": "Identificar e analisar as cadeias industriais e de inovação e as consequências dos usos de recursos naturais e das diferentes fontes de energia (tais como termoelétrica, hidrelétrica, eólica e nuclear) em diferentes países.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Natureza, ambientes e qualidade de vida",
+      "objeto_conhecimento": "Diversidade ambiental e as transformações nas paisagens na Europa, na Ásia e na Oceania"
+    }
+  ]
+}

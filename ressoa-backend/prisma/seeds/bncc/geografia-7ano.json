@@ -1,0 +1,102 @@
+{
+  "disciplina": "GEOGRAFIA",
+  "ano": 7,
+  "habilidades": [
+    {
+      "codigo": "EF07GE01",
+      "descricao": "Avaliar, por meio de exemplos extraídos dos meios de comunicação, ideias e estereótipos acerca das paisagens e da formação territorial do Brasil.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "O sujeito e seu lugar no mundo",
+      "objeto_conhecimento": "Ideias e concepções sobre a formação territorial do Brasil"
+    },
+    {
+      "codigo": "EF07GE02",
+      "descricao": "Analisar a influência dos fluxos econômicos e populacionais na formação socioeconômica e territorial do Brasil, compreendendo os conflitos e as tensões históricas e contemporâneas.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Conexões e escalas",
+      "objeto_conhecimento": "Formação territorial do Brasil"
+    },
+    {
+      "codigo": "EF07GE03",
+      "descricao": "Selecionar argumentos que reconheçam as territorialidades dos povos indígenas originários, das comunidades remanescentes de quilombos, de povos das florestas e do cerrado, de ribeirinhos e caiçaras, entre outros grupos sociais do campo e da cidade, como direitos legais dessas comunidades.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Conexões e escalas",
+      "objeto_conhecimento": "Formação territorial do Brasil"
+    },
+    {
+      "codigo": "EF07GE04",
+      "descricao": "Analisar a distribuição territorial da população brasileira, considerando a diversidade étnico-cultural (indígena, africana, europeia e asiática), assim como aspectos de renda, sexo e idade nas regiões brasileiras.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Conexões e escalas",
+      "objeto_conhecimento": "Características da população brasileira"
+    },
+    {
+      "codigo": "EF07GE05",
+      "descricao": "Analisar fatos e situações representativas das alterações ocorridas entre o período mercantilista e o advento do capitalismo.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Mundo do trabalho",
+      "objeto_conhecimento": "Produção, circulação e consumo de mercadorias"
+    },
+    {
+      "codigo": "EF07GE06",
+      "descricao": "Discutir em que medida a produção, a circulação e o consumo de mercadorias provocam impactos ambientais, assim como influem na distribuição de riquezas, em diferentes lugares.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Mundo do trabalho",
+      "objeto_conhecimento": "Produção, circulação e consumo de mercadorias"
+    },
+    {
+      "codigo": "EF07GE07",
+      "descricao": "Analisar a influência e o papel das redes de transporte e comunicação na configuração do território brasileiro.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Mundo do trabalho",
+      "objeto_conhecimento": "Desigualdade social e o trabalho"
+    },
+    {
+      "codigo": "EF07GE08",
+      "descricao": "Estabelecer relações entre os processos de industrialização e inovação tecnológica com as transformações socioeconômicas do território brasileiro.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Mundo do trabalho",
+      "objeto_conhecimento": "Desigualdade social e o trabalho"
+    },
+    {
+      "codigo": "EF07GE09",
+      "descricao": "Interpretar e elaborar mapas temáticos e históricos, inclusive utilizando tecnologias digitais, com informações demográficas e econômicas do Brasil (cartogramas), identificando padrões espaciais, regionalizações e analogias espaciais.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Formas de representação e pensamento espacial",
+      "objeto_conhecimento": "Mapas temáticos do Brasil"
+    },
+    {
+      "codigo": "EF07GE10",
+      "descricao": "Elaborar e interpretar gráficos de barras, gráficos de setores e histogramas, com base em dados socioeconômicos das regiões brasileiras.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Formas de representação e pensamento espacial",
+      "objeto_conhecimento": "Mapas temáticos do Brasil"
+    },
+    {
+      "codigo": "EF07GE11",
+      "descricao": "Caracterizar dinâmicas dos componentes físico-naturais no território nacional, bem como sua distribuição e biodiversidade (Florestas Tropicais, Cerrados, Caatingas, Campos Sulinos e Matas de Araucária).",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Natureza, ambientes e qualidade de vida",
+      "objeto_conhecimento": "Biodiversidade brasileira"
+    },
+    {
+      "codigo": "EF07GE12",
+      "descricao": "Comparar unidades de conservação existentes no Município de residência e em outras localidades brasileiras, com base na organização do Sistema Nacional de Unidades de Conservação (SNUC).",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Natureza, ambientes e qualidade de vida",
+      "objeto_conhecimento": "Biodiversidade brasileira"
+    }
+  ]
+}

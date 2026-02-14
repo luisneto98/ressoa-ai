@@ -1,0 +1,174 @@
+{
+  "disciplina": "EDUCACAO_FISICA",
+  "ano": 8,
+  "habilidades": [
+    {
+      "codigo": "EF89EF01",
+      "descricao": "Experimentar diferentes papéis (jogador, árbitro e técnico) e fruir os esportes de rede/parede, campo e taco, invasão e combate, valorizando o trabalho coletivo e o protagonismo.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Esportes",
+      "objeto_conhecimento": "Esportes de rede/parede Esportes de campo e taco Esportes de invasão Esportes de combate"
+    },
+    {
+      "codigo": "EF89EF02",
+      "descricao": "Praticar um ou mais esportes de rede/parede, campo e taco, invasão e combate oferecidos pela escola, usando habilidades técnico-táticas básicas.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Esportes",
+      "objeto_conhecimento": "Esportes de rede/parede Esportes de campo e taco Esportes de invasão Esportes de combate"
+    },
+    {
+      "codigo": "EF89EF03",
+      "descricao": "Formular e utilizar estratégias para solucionar os desafios técnicos e táticos, tanto nos esportes de campo e taco, rede/parede, invasão e combate como nas modalidades esportivas escolhidas para praticar de forma específica.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Esportes",
+      "objeto_conhecimento": "Esportes de rede/parede Esportes de campo e taco Esportes de invasão Esportes de combate"
+    },
+    {
+      "codigo": "EF89EF04",
+      "descricao": "Identificar os elementos técnicos ou técnico-táticos individuais, combinações táticas, sistemas de jogo e regras das modalidades esportivas praticadas, bem como diferenciar as modalidades esportivas com base nos critérios da lógica interna das categorias de esporte: rede/parede, campo e taco, invasão e combate.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Esportes",
+      "objeto_conhecimento": "Esportes de rede/parede Esportes de campo e taco Esportes de invasão Esportes de combate"
+    },
+    {
+      "codigo": "EF89EF05",
+      "descricao": "Identificar as transformações históricas do fenômeno esportivo e discutir alguns de seus problemas (doping, corrupção, violência etc.) e a forma como as mídias os apresentam.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Esportes",
+      "objeto_conhecimento": "Esportes de rede/parede Esportes de campo e taco Esportes de invasão Esportes de combate"
+    },
+    {
+      "codigo": "EF89EF06",
+      "descricao": "Verificar locais disponíveis na comunidade para a prática de esportes e das demais práticas corporais tematizadas na escola, propondo e produzindo alternativas para utilizá-los no tempo livre.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Esportes",
+      "objeto_conhecimento": "Esportes de rede/parede Esportes de campo e taco Esportes de invasão Esportes de combate"
+    },
+    {
+      "codigo": "EF89EF07",
+      "descricao": "Experimentar e fruir um ou mais programas de exercícios físicos, identificando as exigências corporais desses diferentes programas e reconhecendo a importância de uma prática individualizada, adequada às características e necessidades de cada sujeito.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Ginásticas",
+      "objeto_conhecimento": "Ginástica de condicionamento físico Ginástica de conscientização corporal"
+    },
+    {
+      "codigo": "EF89EF08",
+      "descricao": "Discutir as transformações históricas dos padrões de desempenho, saúde e beleza, considerando a forma como são apresentados nos diferentes meios (científico, midiático etc.).",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Ginásticas",
+      "objeto_conhecimento": "Ginástica de condicionamento físico Ginástica de conscientização corporal"
+    },
+    {
+      "codigo": "EF89EF09",
+      "descricao": "Problematizar a prática excessiva de exercícios físicos e o uso de medicamentos para a ampliação do rendimento ou potencialização das transformações corporais.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Ginásticas",
+      "objeto_conhecimento": "Ginástica de condicionamento físico Ginástica de conscientização corporal"
+    },
+    {
+      "codigo": "EF89EF10",
+      "descricao": "Experimentar e fruir um ou mais tipos de ginástica de conscientização corporal, identificando as exigências corporais dos mesmos.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Ginásticas",
+      "objeto_conhecimento": "Ginástica de condicionamento físico Ginástica de conscientização corporal"
+    },
+    {
+      "codigo": "EF89EF11",
+      "descricao": "Identificar as diferenças e semelhanças entre a ginástica de conscientização corporal e as de condicionamento físico e discutir como a prática de cada uma dessas manifestações pode contribuir para a melhoria das condições de vida, saúde, bem-estar e cuidado consigo mesmo.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Ginásticas",
+      "objeto_conhecimento": "Ginástica de condicionamento físico Ginástica de conscientização corporal"
+    },
+    {
+      "codigo": "EF89EF12",
+      "descricao": "Experimentar, fruir e recriar danças de salão, valorizando a diversidade cultural e respeitando a tradição dessas culturas.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Danças",
+      "objeto_conhecimento": "Danças de salão"
+    },
+    {
+      "codigo": "EF89EF13",
+      "descricao": "Planejar e utilizar estratégias para se apropriar dos elementos constitutivos (ritmo, espaço, gestos) das danças de salão.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Danças",
+      "objeto_conhecimento": "Danças de salão"
+    },
+    {
+      "codigo": "EF89EF14",
+      "descricao": "Discutir estereótipos e preconceitos relativos às danças de salão e demais práticas corporais e propor alternativas para sua superação.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Danças",
+      "objeto_conhecimento": "Danças de salão"
+    },
+    {
+      "codigo": "EF89EF15",
+      "descricao": "Analisar as características (ritmos, gestos, coreografias e músicas) das danças de salão, bem como suas transformações históricas e os grupos de origem.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Danças",
+      "objeto_conhecimento": "Danças de salão"
+    },
+    {
+      "codigo": "EF89EF16",
+      "descricao": "Experimentar e fruir a execução dos movimentos pertencentes às lutas do mundo, adotando procedimentos de segurança e respeitando o oponente.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Lutas",
+      "objeto_conhecimento": "Lutas do mundo"
+    },
+    {
+      "codigo": "EF89EF17",
+      "descricao": "Planejar e utilizar estratégias básicas das lutas experimentadas, reconhecendo as suas características técnico-táticas.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Lutas",
+      "objeto_conhecimento": "Lutas do mundo"
+    },
+    {
+      "codigo": "EF89EF18",
+      "descricao": "Discutir as transformações históricas, o processo de esportivização e a midiatização de uma ou mais lutas, valorizando e respeitando as culturas de origem.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Lutas",
+      "objeto_conhecimento": "Lutas do mundo"
+    },
+    {
+      "codigo": "EF89EF19",
+      "descricao": "Experimentar e fruir diferentes práticas corporais de aventura na natureza, valorizando a própria segurança e integridade física, bem como as dos demais, respeitando o patrimônio natural e minimizando os impactos de degradação ambiental.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Práticas corporais de aventura",
+      "objeto_conhecimento": "Práticas corporais de aventura na natureza"
+    },
+    {
+      "codigo": "EF89EF20",
+      "descricao": "Identificar riscos, formular estratégias e observar normas de segurança para superar os desafios na realização de práticas corporais de aventura na natureza.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Práticas corporais de aventura",
+      "objeto_conhecimento": "Práticas corporais de aventura na natureza"
+    },
+    {
+      "codigo": "EF89EF21",
+      "descricao": "Identificar as características (equipamentos de segurança, instrumentos, indumentária, organização) das práticas corporais de aventura na natureza, bem como suas transformações históricas.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Práticas corporais de aventura",
+      "objeto_conhecimento": "Práticas corporais de aventura na natureza"
+    }
+  ]
+}

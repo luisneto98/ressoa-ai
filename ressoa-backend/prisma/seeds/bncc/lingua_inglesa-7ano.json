@@ -1,0 +1,190 @@
+{
+  "disciplina": "LINGUA_INGLESA",
+  "ano": 7,
+  "habilidades": [
+    {
+      "codigo": "EF07LI01",
+      "descricao": "Interagir em situações de intercâmbio oral para realizar as atividades em sala de aula, de forma respeitosa e colaborativa, trocando ideias e engajando-se em brincadeiras e jogos.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Interação discursiva",
+      "objeto_conhecimento": "Funções e usos da língua inglesa: convivência e colaboração em sala de aula"
+    },
+    {
+      "codigo": "EF07LI02",
+      "descricao": "Entrevistar os colegas para conhecer suas histórias de vida.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Interação discursiva",
+      "objeto_conhecimento": "Práticas investigativas"
+    },
+    {
+      "codigo": "EF07LI03",
+      "descricao": "Mobilizar conhecimentos prévios para compreender texto oral.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Compreensão oral",
+      "objeto_conhecimento": "Estratégias de compreensão de textos orais: conhecimentos prévios"
+    },
+    {
+      "codigo": "EF07LI04",
+      "descricao": "Identificar o contexto, a finalidade, o assunto e os interlocutores em textos orais presentes no cinema, na internet, na televisão, entre outros.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Compreensão oral",
+      "objeto_conhecimento": "Compreensão de textos orais de cunho descritivo ou narrativo"
+    },
+    {
+      "codigo": "EF07LI05",
+      "descricao": "Compor, em língua inglesa, narrativas orais sobre fatos, acontecimentos e personalidades marcantes do passado.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Produção oral",
+      "objeto_conhecimento": "Produção de textos orais, com mediação do professor"
+    },
+    {
+      "codigo": "EF07LI06",
+      "descricao": "Antecipar o sentido global de textos em língua inglesa por inferências, com base em leitura rápida, observando títulos, primeiras e últimas frases de parágrafos e palavras-chave repetidas.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Estratégias de leitura",
+      "objeto_conhecimento": "Compreensão geral e específica: leitura rápida (skimming, scanning)"
+    },
+    {
+      "codigo": "EF07LI07",
+      "descricao": "Identificar a(s) informação(ões)-chave de partes de um texto em língua inglesa (parágrafos).",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Estratégias de leitura",
+      "objeto_conhecimento": "Compreensão geral e específica: leitura rápida (skimming, scanning)"
+    },
+    {
+      "codigo": "EF07LI08",
+      "descricao": "Relacionar as partes de um texto (parágrafos) para construir seu sentido global.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Estratégias de leitura",
+      "objeto_conhecimento": "Construção do sentido global do texto"
+    },
+    {
+      "codigo": "EF07LI09",
+      "descricao": "Selecionar, em um texto, a informação desejada como objetivo de leitura.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Práticas de leitura e pesquisa",
+      "objeto_conhecimento": "Objetivos de leitura"
+    },
+    {
+      "codigo": "EF07LI10",
+      "descricao": "Escolher, em ambientes virtuais, textos em língua inglesa, de fontes confiáveis, para estudos/pesquisas escolares.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Práticas de leitura e pesquisa",
+      "objeto_conhecimento": "Leitura de textos digitais para estudo"
+    },
+    {
+      "codigo": "EF07LI11",
+      "descricao": "Participar de troca de opiniões e informações sobre textos, lidos na sala de aula ou em outros ambientes.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Atitudes e disposições favoráveis do leitor",
+      "objeto_conhecimento": "Partilha de leitura"
+    },
+    {
+      "codigo": "EF07LI12",
+      "descricao": "Planejar a escrita de textos em função do contexto (público, finalidade, layout e suporte).",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Estratégias de escrita: pré-escrita e escrita",
+      "objeto_conhecimento": "Pré-escrita: planejamento de produção escrita, com mediação do professor"
+    },
+    {
+      "codigo": "EF07LI13",
+      "descricao": "Organizar texto em unidades de sentido, dividindo-o em parágrafos ou tópicos e subtópicos, explorando as possibilidades de organização gráfica, de suporte e de formato do texto.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Estratégias de escrita: pré-escrita e escrita",
+      "objeto_conhecimento": "Escrita: organização em parágrafos ou tópicos, com mediação do professor"
+    },
+    {
+      "codigo": "EF07LI14",
+      "descricao": "Produzir textos diversos sobre fatos, acontecimentos e personalidades do passado (linha do tempo/ timelines, biografias, verbetes de enciclopédias, blogues, entre outros).",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Práticas de escrita",
+      "objeto_conhecimento": "Produção de textos escritos, em formatos diversos, com mediação do professor"
+    },
+    {
+      "codigo": "EF07LI15",
+      "descricao": "Construir repertório lexical relativo a verbos regulares e irregulares (formas no passado), preposições de tempo (in, on, at) e conectores (and, but, because, then, so, before, after, entre outros).",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Estudo do léxico",
+      "objeto_conhecimento": "Construção de repertório lexical"
+    },
+    {
+      "codigo": "EF07LI16",
+      "descricao": "Reconhecer a pronúncia de verbos regulares no passado (-ed).",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Estudo do léxico",
+      "objeto_conhecimento": "Pronúncia"
+    },
+    {
+      "codigo": "EF07LI17",
+      "descricao": "Explorar o caráter polissêmico de palavras de acordo com o contexto de uso.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Estudo do léxico",
+      "objeto_conhecimento": "Polissemia"
+    },
+    {
+      "codigo": "EF07LI18",
+      "descricao": "Utilizar o passado simples e o passado contínuo para produzir textos orais e escritos, mostrando relações de sequência e causalidade.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Gramática",
+      "objeto_conhecimento": "Passado simples e contínuo (formas afirmativa, negativa e interrogativa)"
+    },
+    {
+      "codigo": "EF07LI19",
+      "descricao": "Discriminar sujeito de objeto utilizando pronomes a eles relacionados.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Gramática",
+      "objeto_conhecimento": "Pronomes do caso reto e do caso oblíquo"
+    },
+    {
+      "codigo": "EF07LI20",
+      "descricao": "Empregar, de forma inteligível, o verbo modal can para descrever habilidades (no presente e no passado).",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Gramática",
+      "objeto_conhecimento": "Verbo modal can (presente e passado)"
+    },
+    {
+      "codigo": "EF07LI21",
+      "descricao": "Analisar o alcance da língua inglesa e os seus contextos de uso no mundo globalizado.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "A língua inglesa no mundo",
+      "objeto_conhecimento": "A língua inglesa como língua global na sociedade contemporânea"
+    },
+    {
+      "codigo": "EF07LI22",
+      "descricao": "Explorar modos de falar em língua inglesa, refutando preconceitos e reconhecendo a variação linguística como fenômeno natural das línguas.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Comunicação intercultural",
+      "objeto_conhecimento": "Variação linguística"
+    },
+    {
+      "codigo": "EF07LI23",
+      "descricao": "Reconhecer a variação linguística como manifestação de formas de pensar e expressar o mundo.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Comunicação intercultural",
+      "objeto_conhecimento": "Variação linguística"
+    }
+  ]
+}

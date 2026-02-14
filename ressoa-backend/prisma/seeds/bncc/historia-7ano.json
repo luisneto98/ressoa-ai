@@ -1,0 +1,142 @@
+{
+  "disciplina": "HISTORIA",
+  "ano": 7,
+  "habilidades": [
+    {
+      "codigo": "EF07HI01",
+      "descricao": "Explicar o significado de “modernidade” e suas lógicas de inclusão e exclusão, com base em uma concepção europeia.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "O mundo moderno e a conexão entre sociedades africanas, americanas e europeias",
+      "objeto_conhecimento": "A construção da ideia de modernidade e seus impactos na concepção de História A ideia de “Novo Mundo” ante o Mundo Antigo: permanências e rupturas de saberes e práticas na emergência do mundo moderno"
+    },
+    {
+      "codigo": "EF07HI02",
+      "descricao": "Identificar conexões e interações entre as sociedades do Novo Mundo, da Europa, da África e da Ásia no contexto das navegações e indicar a complexidade e as interações que ocorrem nos Oceanos Atlântico, Índico e Pacífico.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "O mundo moderno e a conexão entre sociedades africanas, americanas e europeias",
+      "objeto_conhecimento": "A construção da ideia de modernidade e seus impactos na concepção de História A ideia de “Novo Mundo” ante o Mundo Antigo: permanências e rupturas de saberes e práticas na emergência do mundo moderno"
+    },
+    {
+      "codigo": "EF07HI03",
+      "descricao": "Identificar aspectos e processos específicos das sociedades africanas e americanas antes da chegada dos europeus, com destaque para as formas de organização social e o desenvolvimento de saberes e técnicas.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "O mundo moderno e a conexão entre sociedades africanas, americanas e europeias",
+      "objeto_conhecimento": "Saberes dos povos africanos e pré-colombianos expressos na cultura material e imaterial"
+    },
+    {
+      "codigo": "EF07HI04",
+      "descricao": "Identificar as principais características dos Humanismos e dos Renascimentos e analisar seus significados.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Humanismos, Renascimentos e o Novo Mundo",
+      "objeto_conhecimento": "Humanismos: uma nova visão de ser humano e de mundo Renascimentos artísticos e culturais"
+    },
+    {
+      "codigo": "EF07HI05",
+      "descricao": "Identificar e relacionar as vinculações entre as reformas religiosas e os processos culturais e sociais do período moderno na Europa e na América.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Humanismos, Renascimentos e o Novo Mundo",
+      "objeto_conhecimento": "Reformas religiosas: a cristandade fragmentada"
+    },
+    {
+      "codigo": "EF07HI06",
+      "descricao": "Comparar as navegações no Atlântico e no Pacífico entre os séculos XIV e XVI.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Humanismos, Renascimentos e o Novo Mundo",
+      "objeto_conhecimento": "As descobertas científicas e a expansão marítima"
+    },
+    {
+      "codigo": "EF07HI07",
+      "descricao": "Descrever os processos de formação e consolidação das monarquias e suas principais características com vistas à compreensão das razões da centralização política.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "A organização do poder e as dinâmicas do mundo colonial americano",
+      "objeto_conhecimento": "A formação e o funcionamento das monarquias europeias: a lógica da centralização política e os conflitos na Europa"
+    },
+    {
+      "codigo": "EF07HI08",
+      "descricao": "Descrever as formas de organização das sociedades americanas no tempo da conquista com vistas à compreensão dos mecanismos de alianças, confrontos e resistências.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "A organização do poder e as dinâmicas do mundo colonial americano",
+      "objeto_conhecimento": "A conquista da América e as formas de organização política dos indígenas e europeus: conflitos, dominação e conciliação"
+    },
+    {
+      "codigo": "EF07HI09",
+      "descricao": "Analisar os diferentes impactos da conquista europeia da América para as populações ameríndias e identificar as formas de resistência.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "A organização do poder e as dinâmicas do mundo colonial americano",
+      "objeto_conhecimento": "A conquista da América e as formas de organização política dos indígenas e europeus: conflitos, dominação e conciliação"
+    },
+    {
+      "codigo": "EF07HI10",
+      "descricao": "Analisar, com base em documentos históricos, diferentes interpretações sobre as dinâmicas das sociedades americanas no período colonial.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "A organização do poder e as dinâmicas do mundo colonial americano",
+      "objeto_conhecimento": "A estruturação dos vice-reinos nas Américas Resistências indígenas, invasões e expansão na América portuguesa"
+    },
+    {
+      "codigo": "EF07HI11",
+      "descricao": "Analisar a formação histórico-geográfica do território da América portuguesa por meio de mapas históricos.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "A organização do poder e as dinâmicas do mundo colonial americano",
+      "objeto_conhecimento": "A estruturação dos vice-reinos nas Américas Resistências indígenas, invasões e expansão na América portuguesa"
+    },
+    {
+      "codigo": "EF07HI12",
+      "descricao": "Identificar a distribuição territorial da população brasileira em diferentes épocas, considerando a diversidade étnico-racial e étnico-cultural (indígena, africana, europeia e asiática).",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "A organização do poder e as dinâmicas do mundo colonial americano",
+      "objeto_conhecimento": "A estruturação dos vice-reinos nas Américas Resistências indígenas, invasões e expansão na América portuguesa"
+    },
+    {
+      "codigo": "EF07HI13",
+      "descricao": "Caracterizar a ação dos europeus e suas lógicas mercantis visando ao domínio no mundo atlântico.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Lógicas comerciais e mercantis da modernidade",
+      "objeto_conhecimento": "As lógicas mercantis e o domínio europeu sobre os mares e o contraponto Oriental"
+    },
+    {
+      "codigo": "EF07HI14",
+      "descricao": "Descrever as dinâmicas comerciais das sociedades americanas e africanas e analisar suas interações com outras sociedades do Ocidente e do Oriente.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Lógicas comerciais e mercantis da modernidade",
+      "objeto_conhecimento": "As lógicas mercantis e o domínio europeu sobre os mares e o contraponto Oriental"
+    },
+    {
+      "codigo": "EF07HI15",
+      "descricao": "Discutir o conceito de escravidão moderna e suas distinções em relação ao escravismo antigo e à servidão medieval.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Lógicas comerciais e mercantis da modernidade",
+      "objeto_conhecimento": "As lógicas internas das sociedades africanas As formas de organização das sociedades ameríndias A escravidão moderna e o tráfico de escravizados"
+    },
+    {
+      "codigo": "EF07HI16",
+      "descricao": "Analisar os mecanismos e as dinâmicas de comércio de escravizados em suas diferentes fases, identificando os agentes responsáveis pelo tráfico e as regiões e zonas africanas de procedência dos escravizados.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Lógicas comerciais e mercantis da modernidade",
+      "objeto_conhecimento": "As lógicas internas das sociedades africanas As formas de organização das sociedades ameríndias A escravidão moderna e o tráfico de escravizados"
+    },
+    {
+      "codigo": "EF07HI17",
+      "descricao": "Discutir as razões da passagem do mercantilismo para o capitalismo.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Lógicas comerciais e mercantis da modernidade",
+      "objeto_conhecimento": "A emergência do capitalismo"
+    }
+  ]
+}

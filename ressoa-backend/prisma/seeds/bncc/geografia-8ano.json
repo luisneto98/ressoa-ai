@@ -1,0 +1,198 @@
+{
+  "disciplina": "GEOGRAFIA",
+  "ano": 8,
+  "habilidades": [
+    {
+      "codigo": "EF08GE01",
+      "descricao": "Descrever as rotas de dispersão da população humana pelo planeta e os principais fluxos migratórios em diferentes períodos da história, discutindo os fatores históricos e condicionantes físico-naturais associados à distribuição da população humana pelos continentes.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "O sujeito e seu lugar no mundo",
+      "objeto_conhecimento": "Distribuição da população mundial e deslocamentos populacionais"
+    },
+    {
+      "codigo": "EF08GE02",
+      "descricao": "Relacionar fatos e situações representativas da história das famílias do Município em que se localiza a escola, considerando a diversidade e os fluxos migratórios da população mundial.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "O sujeito e seu lugar no mundo",
+      "objeto_conhecimento": "Diversidade e dinâmica da população mundial e local"
+    },
+    {
+      "codigo": "EF08GE03",
+      "descricao": "Analisar aspectos representativos da dinâmica demográfica, considerando características da população (perfil etário, crescimento vegetativo e mobilidade espacial).",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "O sujeito e seu lugar no mundo",
+      "objeto_conhecimento": "Diversidade e dinâmica da população mundial e local"
+    },
+    {
+      "codigo": "EF08GE04",
+      "descricao": "Compreender os fluxos de migração na América Latina (movimentos voluntários e forçados, assim como fatores e áreas de expulsão e atração) e as principais políticas migratórias da região.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "O sujeito e seu lugar no mundo",
+      "objeto_conhecimento": "Diversidade e dinâmica da população mundial e local"
+    },
+    {
+      "codigo": "EF08GE05",
+      "descricao": "Aplicar os conceitos de Estado, nação, território, governo e país para o entendimento de conflitos e tensões na contemporaneidade, com destaque para as situações geopolíticas na América e na África e suas múltiplas regionalizações a partir do pós-guerra.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Conexões e escalas",
+      "objeto_conhecimento": "Corporações e organismos internacionais e do Brasil na ordem econômica mundial"
+    },
+    {
+      "codigo": "EF08GE06",
+      "descricao": "Analisar a atuação das organizações mundiais nos processos de integração cultural e econômica nos contextos americano e africano, reconhecendo, em seus lugares de vivência, marcas desses processos.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Conexões e escalas",
+      "objeto_conhecimento": "Corporações e organismos internacionais e do Brasil na ordem econômica mundial"
+    },
+    {
+      "codigo": "EF08GE07",
+      "descricao": "Analisar os impactos geoeconômicos, geoestratégicos e geopolíticos da ascensão dos Estados Unidos da América no cenário internacional em sua posição de liderança global e na relação com a China e o Brasil.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Conexões e escalas",
+      "objeto_conhecimento": "Corporações e organismos internacionais e do Brasil na ordem econômica mundial"
+    },
+    {
+      "codigo": "EF08GE08",
+      "descricao": "Analisar a situação do Brasil e de outros países da América Latina e da África, assim como da potência estadunidense na ordem mundial do pós-guerra.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Conexões e escalas",
+      "objeto_conhecimento": "Corporações e organismos internacionais e do Brasil na ordem econômica mundial"
+    },
+    {
+      "codigo": "EF08GE09",
+      "descricao": "Analisar os padrões econômicos mundiais de produção, distribuição e intercâmbio dos produtos agrícolas e industrializados, tendo como referência os Estados Unidos da América e os países denominados de Brics (Brasil, Rússia, Índia, China e África do Sul).",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Conexões e escalas",
+      "objeto_conhecimento": "Corporações e organismos internacionais e do Brasil na ordem econômica mundial"
+    },
+    {
+      "codigo": "EF08GE10",
+      "descricao": "Distinguir e analisar conflitos e ações dos movimentos sociais brasileiros, no campo e na cidade, comparando com outros movimentos sociais existentes nos países latino-americanos.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Conexões e escalas",
+      "objeto_conhecimento": "Corporações e organismos internacionais e do Brasil na ordem econômica mundial"
+    },
+    {
+      "codigo": "EF08GE11",
+      "descricao": "Analisar áreas de conflito e tensões nas regiões de fronteira do continente latino-americano e o papel de organismos internacionais e regionais de cooperação nesses cenários.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Conexões e escalas",
+      "objeto_conhecimento": "Corporações e organismos internacionais e do Brasil na ordem econômica mundial"
+    },
+    {
+      "codigo": "EF08GE12",
+      "descricao": "Compreender os objetivos e analisar a importância dos organismos de integração do território americano (Mercosul, OEA, OEI, Nafta, Unasul, Alba, Comunidade Andina, Aladi, entre outros).",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Conexões e escalas",
+      "objeto_conhecimento": "Corporações e organismos internacionais e do Brasil na ordem econômica mundial"
+    },
+    {
+      "codigo": "EF08GE13",
+      "descricao": "Analisar a influência do desenvolvimento científico e tecnológico na caracterização dos tipos de trabalho e na economia dos espaços urbanos e rurais da América e da África.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Mundo do trabalho",
+      "objeto_conhecimento": "Os diferentes contextos e os meios técnico e tecnológico na produção"
+    },
+    {
+      "codigo": "EF08GE14",
+      "descricao": "Analisar os processos de desconcentração, descentralização e recentralização das atividades econômicas a partir do capital estadunidense e chinês em diferentes regiões no mundo, com destaque para o Brasil.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Mundo do trabalho",
+      "objeto_conhecimento": "Os diferentes contextos e os meios técnico e tecnológico na produção"
+    },
+    {
+      "codigo": "EF08GE15",
+      "descricao": "Analisar a importância dos principais recursos hídricos da America Latina (Aquífero Guarani, Bacias do rio da Prata, do Amazonas e do Orinoco, sistemas de nuvens na Amazônia e nos Andes, entre outros) e discutir os desafios relacionados à gestão e comercialização da água.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Mundo do trabalho",
+      "objeto_conhecimento": "Transformações do espaço na sociedade urbano-industrial na América Latina"
+    },
+    {
+      "codigo": "EF08GE16",
+      "descricao": "Analisar as principais problemáticas comuns às grandes cidades latino-americanas, particularmente aquelas relacionadas à distribuição, estrutura e dinâmica da população e às condições de vida e trabalho.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Mundo do trabalho",
+      "objeto_conhecimento": "Transformações do espaço na sociedade urbano-industrial na América Latina"
+    },
+    {
+      "codigo": "EF08GE17",
+      "descricao": "Analisar a segregação socioespacial em ambientes urbanos da América Latina, com atenção especial ao estudo de favelas, alagados e zona de riscos.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Mundo do trabalho",
+      "objeto_conhecimento": "Transformações do espaço na sociedade urbano-industrial na América Latina"
+    },
+    {
+      "codigo": "EF08GE18",
+      "descricao": "Elaborar mapas ou outras formas de representação cartográfica para analisar as redes e as dinâmicas urbanas e rurais, ordenamento territorial, contextos culturais, modo de vida e usos e ocupação de solos da África e América.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Formas de representação e pensamento espacial",
+      "objeto_conhecimento": "Cartografia: anamorfose, croquis e mapas temáticos da América e África"
+    },
+    {
+      "codigo": "EF08GE19",
+      "descricao": "Interpretar cartogramas, mapas esquemáticos (croquis) e anamorfoses geográficas com informações geográficas acerca da África e América.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Formas de representação e pensamento espacial",
+      "objeto_conhecimento": "Cartografia: anamorfose, croquis e mapas temáticos da América e África"
+    },
+    {
+      "codigo": "EF08GE20",
+      "descricao": "Analisar características de países e grupos de países da América e da África no que se refere aos aspectos populacionais, urbanos, políticos e econômicos, e discutir as desigualdades sociais e econômicas e as pressões sobre a natureza e suas riquezas (sua apropriação e valoração na produção e circulação), o que resulta na espoliação desses povos.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Natureza, ambientes e qualidade de vida",
+      "objeto_conhecimento": "Identidades e interculturalidades regionais: Estados Unidos da América, América espanhola e portuguesa e África"
+    },
+    {
+      "codigo": "EF08GE21",
+      "descricao": "Analisar o papel ambiental e territorial da Antártica no contexto geopolítico, sua relevância para os países da América do Sul e seu valor como área destinada à pesquisa e à compreensão do ambiente global.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Natureza, ambientes e qualidade de vida",
+      "objeto_conhecimento": "Identidades e interculturalidades regionais: Estados Unidos da América, América espanhola e portuguesa e África"
+    },
+    {
+      "codigo": "EF08GE22",
+      "descricao": "Identificar os principais recursos naturais dos países da América Latina, analisando seu uso para a produção de matéria-prima e energia e sua relevância para a cooperação entre os países do Mercosul.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Natureza, ambientes e qualidade de vida",
+      "objeto_conhecimento": "Diversidade ambiental e as transformações nas paisagens na América Latina"
+    },
+    {
+      "codigo": "EF08GE23",
+      "descricao": "Identificar paisagens da América Latina e associá-las, por meio da cartografia, aos diferentes povos da região, com base em aspectos da geomorfologia, da biogeografia e da climatologia.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Natureza, ambientes e qualidade de vida",
+      "objeto_conhecimento": "Diversidade ambiental e as transformações nas paisagens na América Latina"
+    },
+    {
+      "codigo": "EF08GE24",
+      "descricao": "Analisar as principais características produtivas dos países latino-americanos (como exploração mineral na Venezuela; agricultura de alta especialização e exploração mineira no Chile; circuito da carne nos pampas argentinos e no Brasil; circuito da cana-de-açúcar em Cuba; polígono industrial do sudeste brasileiro e plantações de soja no centro-oeste; maquiladoras mexicanas, entre outros).",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Natureza, ambientes e qualidade de vida",
+      "objeto_conhecimento": "Diversidade ambiental e as transformações nas paisagens na América Latina"
+    }
+  ]
+}

@@ -7,88 +7,88 @@
       "descricao": "Identificar e classificar diferentes fontes (renováveis e não renováveis) e tipos de energia utilizados em residências, comunidades ou cidades.",
       "ano_inicio": 8,
       "ano_fim": null,
-      "unidade_tematica": "Matéria e Energia",
-      "objeto_conhecimento": "Fontes e tipos de energia"
+      "unidade_tematica": "Matéria e energia",
+      "objeto_conhecimento": "Fontes e tipos de energia Transformação de energia Cálculo de consumo de energia elétrica Circuitos elétricos Uso consciente de energia elétrica"
     },
     {
       "codigo": "EF08CI02",
       "descricao": "Construir circuitos elétricos com pilha/bateria, fios e lâmpada ou outros dispositivos e compará-los a circuitos elétricos residenciais.",
       "ano_inicio": 8,
       "ano_fim": null,
-      "unidade_tematica": "Matéria e Energia",
-      "objeto_conhecimento": "Transformação de energia"
+      "unidade_tematica": "Matéria e energia",
+      "objeto_conhecimento": "Fontes e tipos de energia Transformação de energia Cálculo de consumo de energia elétrica Circuitos elétricos Uso consciente de energia elétrica"
     },
     {
       "codigo": "EF08CI03",
-      "descricao": "Classificar equipamentos elétricos residenciais (chuveiro, ferro, lâmpadas, TV, rádio, geladeira etc.) de acordo com o tipo de transformação de energia (elétrica em térmica, luminosa, sonora e mecânica).",
+      "descricao": "Classificar equipamentos elétricos residenciais (chuveiro, ferro, lâmpadas, TV, rádio, geladeira etc.) de acordo com o tipo de transformação de energia (da energia elétrica para a térmica, luminosa, sonora e mecânica, por exemplo).",
       "ano_inicio": 8,
       "ano_fim": null,
-      "unidade_tematica": "Matéria e Energia",
-      "objeto_conhecimento": "Transformação de energia"
+      "unidade_tematica": "Matéria e energia",
+      "objeto_conhecimento": "Fontes e tipos de energia Transformação de energia Cálculo de consumo de energia elétrica Circuitos elétricos Uso consciente de energia elétrica"
     },
     {
       "codigo": "EF08CI04",
       "descricao": "Calcular o consumo de eletrodomésticos a partir dos dados de potência (descritos no próprio equipamento) e tempo médio de uso para avaliar o impacto de cada equipamento no consumo doméstico mensal.",
       "ano_inicio": 8,
       "ano_fim": null,
-      "unidade_tematica": "Matéria e Energia",
-      "objeto_conhecimento": "Cálculo de consumo de energia elétrica"
+      "unidade_tematica": "Matéria e energia",
+      "objeto_conhecimento": "Fontes e tipos de energia Transformação de energia Cálculo de consumo de energia elétrica Circuitos elétricos Uso consciente de energia elétrica"
     },
     {
       "codigo": "EF08CI05",
       "descricao": "Propor ações coletivas para otimizar o uso de energia elétrica em sua escola e/ou comunidade, com base na seleção de equipamentos segundo critérios de sustentabilidade (consumo de energia e eficiência energética) e hábitos de consumo responsável.",
       "ano_inicio": 8,
       "ano_fim": null,
-      "unidade_tematica": "Matéria e Energia",
-      "objeto_conhecimento": "Uso consciente de energia elétrica"
+      "unidade_tematica": "Matéria e energia",
+      "objeto_conhecimento": "Fontes e tipos de energia Transformação de energia Cálculo de consumo de energia elétrica Circuitos elétricos Uso consciente de energia elétrica"
     },
     {
       "codigo": "EF08CI06",
       "descricao": "Discutir e avaliar usinas de geração de energia elétrica (termelétricas, hidrelétricas, eólicas etc.), suas semelhanças e diferenças, seus impactos socioambientais, e como essa energia chega e é usada em sua cidade, comunidade, casa ou escola.",
       "ano_inicio": 8,
       "ano_fim": null,
-      "unidade_tematica": "Matéria e Energia",
-      "objeto_conhecimento": "Uso consciente de energia elétrica"
+      "unidade_tematica": "Matéria e energia",
+      "objeto_conhecimento": "Fontes e tipos de energia Transformação de energia Cálculo de consumo de energia elétrica Circuitos elétricos Uso consciente de energia elétrica"
     },
     {
       "codigo": "EF08CI07",
       "descricao": "Comparar diferentes processos reprodutivos em plantas e animais em relação aos mecanismos adaptativos e evolutivos.",
       "ano_inicio": 8,
       "ano_fim": null,
-      "unidade_tematica": "Vida e Evolução",
-      "objeto_conhecimento": "Mecanismos reprodutivos"
+      "unidade_tematica": "Vida e evolução",
+      "objeto_conhecimento": "Mecanismos reprodutivos Sexualidade"
     },
     {
       "codigo": "EF08CI08",
       "descricao": "Analisar e explicar as transformações que ocorrem na puberdade considerando a atuação dos hormônios sexuais e do sistema nervoso.",
       "ano_inicio": 8,
       "ano_fim": null,
-      "unidade_tematica": "Vida e Evolução",
-      "objeto_conhecimento": "Sexualidade"
+      "unidade_tematica": "Vida e evolução",
+      "objeto_conhecimento": "Mecanismos reprodutivos Sexualidade"
     },
     {
       "codigo": "EF08CI09",
       "descricao": "Comparar o modo de ação e a eficácia dos diversos métodos contraceptivos e justificar a necessidade de compartilhar a responsabilidade na escolha e na utilização do método mais adequado à prevenção da gravidez precoce e indesejada e de Doenças Sexualmente Transmissíveis (DST).",
       "ano_inicio": 8,
       "ano_fim": null,
-      "unidade_tematica": "Vida e Evolução",
-      "objeto_conhecimento": "Sexualidade"
+      "unidade_tematica": "Vida e evolução",
+      "objeto_conhecimento": "Mecanismos reprodutivos Sexualidade"
     },
     {
       "codigo": "EF08CI10",
       "descricao": "Identificar os principais sintomas, modos de transmissão e tratamento de algumas DST (com ênfase na AIDS), e discutir estratégias e métodos de prevenção.",
       "ano_inicio": 8,
       "ano_fim": null,
-      "unidade_tematica": "Vida e Evolução",
-      "objeto_conhecimento": "Sexualidade"
+      "unidade_tematica": "Vida e evolução",
+      "objeto_conhecimento": "Mecanismos reprodutivos Sexualidade"
     },
     {
       "codigo": "EF08CI11",
       "descricao": "Selecionar argumentos que evidenciem as múltiplas dimensões da sexualidade humana (biológica, sociocultural, afetiva e ética).",
       "ano_inicio": 8,
       "ano_fim": null,
-      "unidade_tematica": "Vida e Evolução",
-      "objeto_conhecimento": "Sexualidade"
+      "unidade_tematica": "Vida e evolução",
+      "objeto_conhecimento": "Mecanismos reprodutivos Sexualidade"
     },
     {
       "codigo": "EF08CI12",
@@ -96,7 +96,7 @@
       "ano_inicio": 8,
       "ano_fim": null,
       "unidade_tematica": "Terra e Universo",
-      "objeto_conhecimento": "Sistema Sol, Terra e Lua"
+      "objeto_conhecimento": "Sistema Sol, Terra e Lua Clima"
     },
     {
       "codigo": "EF08CI13",
@@ -104,7 +104,7 @@
       "ano_inicio": 8,
       "ano_fim": null,
       "unidade_tematica": "Terra e Universo",
-      "objeto_conhecimento": "Sistema Sol, Terra e Lua"
+      "objeto_conhecimento": "Sistema Sol, Terra e Lua Clima"
     },
     {
       "codigo": "EF08CI14",
@@ -112,7 +112,7 @@
       "ano_inicio": 8,
       "ano_fim": null,
       "unidade_tematica": "Terra e Universo",
-      "objeto_conhecimento": "Clima"
+      "objeto_conhecimento": "Sistema Sol, Terra e Lua Clima"
     },
     {
       "codigo": "EF08CI15",
@@ -120,7 +120,7 @@
       "ano_inicio": 8,
       "ano_fim": null,
       "unidade_tematica": "Terra e Universo",
-      "objeto_conhecimento": "Clima"
+      "objeto_conhecimento": "Sistema Sol, Terra e Lua Clima"
     },
     {
       "codigo": "EF08CI16",
@@ -128,7 +128,7 @@
       "ano_inicio": 8,
       "ano_fim": null,
       "unidade_tematica": "Terra e Universo",
-      "objeto_conhecimento": "Clima"
+      "objeto_conhecimento": "Sistema Sol, Terra e Lua Clima"
     }
   ]
 }

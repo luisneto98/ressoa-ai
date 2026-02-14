@@ -1,0 +1,102 @@
+{
+  "disciplina": "COMPUTACAO",
+  "ano": 6,
+  "habilidades": [
+    {
+      "codigo": "EF69CO01",
+      "descricao": "Classificar informações, agrupando-as em coleções (conjuntos) e associando cada coleção a um ‘tipo de dado’. Construir e analisar soluções computacionais de problemas de diferentes áreas do conhecimento, de forma individual ou colaborativa, selecionando as estruturas de dados adequadas (registros, matrizes, listas e grafos), aperfeiçoando e articulando saberes escolares.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Pensamento computacional",
+      "objeto_conhecimento": "Programação -Tipos de dados"
+    },
+    {
+      "codigo": "EF69CO02",
+      "descricao": "Elaborar algoritmos que envolvam instruções sequenciais, de repetição e de seleção usando uma linguagem de programação. Construir e analisar soluções computacionais de problemas de diferentes áreas do conhecimento, de forma individual ou colaborativa, selecionando as estruturas de dados adequadas (registros, matrizes, listas e grafos), aperfeiçoando e articulando saberes escolares.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Pensamento computacional",
+      "objeto_conhecimento": "Programação - Linguagem de Programação"
+    },
+    {
+      "codigo": "EF69CO03",
+      "descricao": "Descrever com precisão a solução de um problema, construindo o programa que implementa a solução descrita. Construir e analisar soluções computacionais de problemas de diferentes áreas do conhecimento, de forma individual ou colaborativa, selecionando as estruturas de dados adequadas (registros, matrizes, listas e grafos), aperfeiçoando e articulando saberes escolares.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Pensamento computacional",
+      "objeto_conhecimento": "Programação - Linguagem de Programação"
+    },
+    {
+      "codigo": "EF69CO04",
+      "descricao": "Construir soluções de problemas usando a técnica de decomposição e automatizar tais soluções usando uma linguagem de programação. Empregar diferentes estratégias da Computação (decomposição, generalização e reúso) para construir a solução de problemas.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Pensamento computacional",
+      "objeto_conhecimento": "Estratégias de solução de problemas - Decomposição"
+    },
+    {
+      "codigo": "EF69CO05",
+      "descricao": "Identificar os recursos ou insumos necessários (entradas) para a resolução de problemas, bem como os resultados esperados (saídas), determinando os respectivos tipos de dados, e estabelecendo a definição de problema como uma relação entre entrada e saída. Empregar diferentes estratégias da Computação (decomposição, generalização e reúso) para construir a solução de problemas.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Pensamento computacional",
+      "objeto_conhecimento": "Estratégias de solução de problemas - Generalização"
+    },
+    {
+      "codigo": "EF69CO06",
+      "descricao": "Comparar diferentes casos particulares (instâncias) de um mesmo problema, identificando as semelhanças e diferenças entre eles, e criar um algoritmo para resolver todos, fazendo uso de variáveis (parâmetros) para permitir o tratamento de todos os casos de forma genérica. Empregar diferentes estratégias da Computação (decomposição, generalização e reúso) para construir a solução de problemas.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Pensamento computacional",
+      "objeto_conhecimento": "Estratégias de solução de problemas - Generalização"
+    },
+    {
+      "codigo": "EF69CO07",
+      "descricao": "Entender o processo de transmissão de dados, como a informação é quebrada em pedaços, transmitida em pacotes através de múltiplos equipamentos, e reconstruída no destino. Entender como os dados são armazenados, processados e transmitidos usando dispositivos computacionais, considerando aspectos da segurança cibernética.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Mundo digital",
+      "objeto_conhecimento": "Armazenamento e Transmissão de dados - Fundamentos de transmissão de dados"
+    },
+    {
+      "codigo": "EF69CO08",
+      "descricao": "Compreender e utilizar diferentes formas de armazenar, manipular, compactar e recuperar arquivos, documentos e metadados. Entender como os dados são armazenados, processados e transmitidos usando dispositivos computacionais, considerando aspectos da segurança cibernética.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Mundo digital",
+      "objeto_conhecimento": "Armazenamento e Transmissão de dados - Gestão de dados"
+    },
+    {
+      "codigo": "EF69CO09",
+      "descricao": "Compreender os conceitos de paralelismo, concorrência e armazenamento/ processamento distribuídos. Entender os fundamentos de sistemas distribuídos e da internet.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Mundo digital",
+      "objeto_conhecimento": "Sistemas distribuídos e internet - Fundamentos de sistemas distribuídos"
+    },
+    {
+      "codigo": "EF69CO10",
+      "descricao": "Entender como é a estrutura e funcionamento da internet. Entender os fundamentos de sistemas distribuídos e da internet.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Mundo digital",
+      "objeto_conhecimento": "Sistemas distribuídos e internet - Internet"
+    },
+    {
+      "codigo": "EF69CO11",
+      "descricao": "Apresentar conduta e linguagem apropriadas ao se comunicar em ambiente digital, considerando a ética e o respeito. Entender que as tecnologias devem ser utilizadas de maneira segura, ética e responsável, respeitando direitos autorais, de imagem e as leis vigentes.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Cultura digital",
+      "objeto_conhecimento": "Segurança e responsabilidade no uso da tecnologia - Tecnologia digital e sociedade -"
+    },
+    {
+      "codigo": "EF69CO12",
+      "descricao": "Analisar o consumo de tecnologia na sociedade, compreendendo criticamente o caminho da produção dos recursos bem como aspectos ligados à obsolescência e a sustentabilidade. Selecionar e utilizar tecnologias computacionais para se expressar e resolver problemas, analisando criticamente os diferentes impactos na sociedade.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Cultura digital",
+      "objeto_conhecimento": "Uso de tecnologias computacionais - Tecnologia digital e sustentabilidade"
+    }
+  ]
+}

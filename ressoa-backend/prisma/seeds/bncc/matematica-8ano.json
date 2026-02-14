@@ -8,7 +8,7 @@
       "ano_inicio": 8,
       "ano_fim": null,
       "unidade_tematica": "Números",
-      "objeto_conhecimento": "Notação científica; Potenciação e radiciação"
+      "objeto_conhecimento": "Notação científica"
     },
     {
       "codigo": "EF08MA02",
@@ -20,11 +20,11 @@
     },
     {
       "codigo": "EF08MA03",
-      "descricao": "Resolver e elaborar problemas de contagem cuja resolução envolve a aplicação do princípio multiplicativo.",
+      "descricao": "Resolver e elaborar problemas de contagem cuja resolução envolva a aplicação do princípio multiplicativo.",
       "ano_inicio": 8,
       "ano_fim": null,
       "unidade_tematica": "Números",
-      "objeto_conhecimento": "Princípio multiplicativo da contagem"
+      "objeto_conhecimento": "O princípio multiplicativo da contagem"
     },
     {
       "codigo": "EF08MA04",
@@ -40,7 +40,7 @@
       "ano_inicio": 8,
       "ano_fim": null,
       "unidade_tematica": "Números",
-      "objeto_conhecimento": "Dízimas periódicas; Fração geratriz"
+      "objeto_conhecimento": "Dízimas periódicas: fração geratriz"
     },
     {
       "codigo": "EF08MA06",
@@ -56,7 +56,7 @@
       "ano_inicio": 8,
       "ano_fim": null,
       "unidade_tematica": "Álgebra",
-      "objeto_conhecimento": "Equação do 1º grau; Plano cartesiano"
+      "objeto_conhecimento": "Associação de uma equação linear de 1º grau a uma reta no plano cartesiano"
     },
     {
       "codigo": "EF08MA08",
@@ -64,15 +64,15 @@
       "ano_inicio": 8,
       "ano_fim": null,
       "unidade_tematica": "Álgebra",
-      "objeto_conhecimento": "Sistema de equações do 1º grau; Plano cartesiano"
+      "objeto_conhecimento": "Sistema de equações polinomiais de 1º grau: resolução algébrica e representação no plano cartesiano"
     },
     {
       "codigo": "EF08MA09",
-      "descricao": "Resolver e elaborar, com e sem uso de tecnologias, problemas que possam ser representados por equações polinomiais de 2º grau do tipo ax² = b.",
+      "descricao": "Resolver e elaborar, com e sem uso de tecnologias, problemas que possam ser representados por equações polinomiais de 2º grau do tipo ax2 = b.",
       "ano_inicio": 8,
       "ano_fim": null,
       "unidade_tematica": "Álgebra",
-      "objeto_conhecimento": "Equação polinomial de 2º grau do tipo ax² = b"
+      "objeto_conhecimento": "Equação polinomial de 2º grau do tipo ax2 = b"
     },
     {
       "codigo": "EF08MA10",
@@ -116,11 +116,11 @@
     },
     {
       "codigo": "EF08MA15",
-      "descricao": "Reconhecer e construir figuras obtidas por composições de transformações geométricas (translação, reflexão e rotação), com o uso de instrumentos de desenho ou de softwares de geometria dinâmica.",
+      "descricao": "Construir, utilizando instrumentos de desenho ou softwares de geometria dinâmica, mediatriz, bissetriz, ângulos de 90°, 60°, 45° e 30° e polígonos regulares.",
       "ano_inicio": 8,
       "ano_fim": null,
       "unidade_tematica": "Geometria",
-      "objeto_conhecimento": "Transformações geométricas: simetrias de translação, reflexão e rotação"
+      "objeto_conhecimento": "Construções geométricas: ângulos de 90°, 60°, 45° e 30° e polígonos regulares"
     },
     {
       "codigo": "EF08MA16",
@@ -140,7 +140,7 @@
     },
     {
       "codigo": "EF08MA18",
-      "descricao": "Reconhecer e construir figuras obtidas por simetrias de translação, reflexão e rotação no plano cartesiano e no plano em geral, com o uso de instrumentos de desenho ou de softwares de geometria dinâmica.",
+      "descricao": "Reconhecer e construir figuras obtidas por composições de transformações geométricas (translação, reflexão e rotação), com o uso de instrumentos de desenho ou de softwares de geometria dinâmica.",
       "ano_inicio": 8,
       "ano_fim": null,
       "unidade_tematica": "Geometria",
@@ -152,7 +152,7 @@
       "ano_inicio": 8,
       "ano_fim": null,
       "unidade_tematica": "Grandezas e medidas",
-      "objeto_conhecimento": "Área de figuras planas; Área do círculo e comprimento de sua circunferência"
+      "objeto_conhecimento": "Área de figuras planas Área do círculo e comprimento de sua circunferência"
     },
     {
       "codigo": "EF08MA20",
@@ -160,7 +160,7 @@
       "ano_inicio": 8,
       "ano_fim": null,
       "unidade_tematica": "Grandezas e medidas",
-      "objeto_conhecimento": "Volume de cilindro reto; Medidas de capacidade"
+      "objeto_conhecimento": "Volume de bloco retangular Medidas de capacidade"
     },
     {
       "codigo": "EF08MA21",
@@ -168,7 +168,7 @@
       "ano_inicio": 8,
       "ano_fim": null,
       "unidade_tematica": "Grandezas e medidas",
-      "objeto_conhecimento": "Volume de cilindro reto; Medidas de capacidade"
+      "objeto_conhecimento": "Volume de bloco retangular Medidas de capacidade"
     },
     {
       "codigo": "EF08MA22",
@@ -176,7 +176,7 @@
       "ano_inicio": 8,
       "ano_fim": null,
       "unidade_tematica": "Probabilidade e estatística",
-      "objeto_conhecimento": "Princípio multiplicativo da contagem; Soma das probabilidades de todos os elementos de um espaço amostral"
+      "objeto_conhecimento": "Princípio multiplicativo da contagem Soma das probabilidades de todos os elementos de um espaço amostral"
     },
     {
       "codigo": "EF08MA23",
@@ -204,11 +204,11 @@
     },
     {
       "codigo": "EF08MA26",
-      "descricao": "Selecionar razões, de diferentes naturezas (física, ética ou econômica), que justificam a realização de pesquisas amostrais e não censitárias, e reconhecer que a seleção aleatória de membros de uma população garante que a amostra seja representativa.",
+      "descricao": "Selecionar razões, de diferentes naturezas (física, ética ou econômica), que justificam a realização de pesquisas amostrais e não censitárias, e reconhecer que a seleção da amostra pode ser feita de diferentes maneiras (amostra casual simples, sistemática e estratificada).",
       "ano_inicio": 8,
       "ano_fim": null,
       "unidade_tematica": "Probabilidade e estatística",
-      "objeto_conhecimento": "Pesquisas censitária ou amostral; Planejamento de pesquisa, coleta e organização dos dados, construção de tabelas e gráficos e interpretação das informações"
+      "objeto_conhecimento": "Pesquisas censitária ou amostral Planejamento e execução de pesquisa amostral"
     },
     {
       "codigo": "EF08MA27",
@@ -216,7 +216,7 @@
       "ano_inicio": 8,
       "ano_fim": null,
       "unidade_tematica": "Probabilidade e estatística",
-      "objeto_conhecimento": "Pesquisas censitária ou amostral; Planejamento de pesquisa, coleta e organização dos dados, construção de tabelas e gráficos e interpretação das informações"
+      "objeto_conhecimento": "Pesquisas censitária ou amostral Planejamento e execução de pesquisa amostral"
     }
   ]
 }

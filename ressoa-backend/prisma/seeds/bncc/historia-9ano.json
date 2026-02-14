@@ -1,0 +1,294 @@
+{
+  "disciplina": "HISTORIA",
+  "ano": 9,
+  "habilidades": [
+    {
+      "codigo": "EF09HI01",
+      "descricao": "Descrever e contextualizar os principais aspectos sociais, culturais, econômicos e políticos da emergência da República no Brasil.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "O nascimento da República no Brasil e os processos históricos até a metade do século XX",
+      "objeto_conhecimento": "Experiências republicanas e práticas autoritárias: as tensões e disputas do mundo contemporâneo A proclamação da República e seus primeiros desdobramentos"
+    },
+    {
+      "codigo": "EF09HI02",
+      "descricao": "Caracterizar e compreender os ciclos da história republicana, identificando particularidades da história local e regional até 1954.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "O nascimento da República no Brasil e os processos históricos até a metade do século XX",
+      "objeto_conhecimento": "Experiências republicanas e práticas autoritárias: as tensões e disputas do mundo contemporâneo A proclamação da República e seus primeiros desdobramentos"
+    },
+    {
+      "codigo": "EF09HI03",
+      "descricao": "Identificar os mecanismos de inserção dos negros na sociedade brasileira pós-abolição e avaliar os seus resultados.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "O nascimento da República no Brasil e os processos históricos até a metade do século XX",
+      "objeto_conhecimento": "A questão da inserção dos negros no período republicano do pós-abolição Os movimentos sociais e a imprensa negra; a cultura afro-brasileira como elemento de resistência e superação das discriminações"
+    },
+    {
+      "codigo": "EF09HI04",
+      "descricao": "Discutir a importância da participação da população negra na formação econômica, política e social do Brasil.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "O nascimento da República no Brasil e os processos históricos até a metade do século XX",
+      "objeto_conhecimento": "A questão da inserção dos negros no período republicano do pós-abolição Os movimentos sociais e a imprensa negra; a cultura afro-brasileira como elemento de resistência e superação das discriminações"
+    },
+    {
+      "codigo": "EF09HI05",
+      "descricao": "Identificar os processos de urbanização e modernização da sociedade brasileira e avaliar suas contradições e impactos na região em que vive.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "O nascimento da República no Brasil e os processos históricos até a metade do século XX",
+      "objeto_conhecimento": "Primeira República e suas características Contestações e dinâmicas da vida cultural no Brasil entre 1900 e 1930"
+    },
+    {
+      "codigo": "EF09HI06",
+      "descricao": "Identificar e discutir o papel do trabalhismo como força política, social e cultural no Brasil, em diferentes escalas (nacional, regional, cidade, comunidade).",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "O nascimento da República no Brasil e os processos históricos até a metade do século XX",
+      "objeto_conhecimento": "O período varguista e suas contradições A emergência da vida urbana e a segregação espacial O trabalhismo e seu protagonismo político"
+    },
+    {
+      "codigo": "EF09HI07",
+      "descricao": "Identificar e explicar, em meio a lógicas de inclusão e exclusão, as pautas dos povos indígenas, no contexto republicano (até 1964), e das populações afrodescendentes.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "O nascimento da República no Brasil e os processos históricos até a metade do século XX",
+      "objeto_conhecimento": "A questão indígena durante a República (até 1964)"
+    },
+    {
+      "codigo": "EF09HI08",
+      "descricao": "Identificar as transformações ocorridas no debate sobre as questões da diversidade no Brasil durante o século XX e compreender o significado das mudanças de abordagem em relação ao tema.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "O nascimento da República no Brasil e os processos históricos até a metade do século XX",
+      "objeto_conhecimento": "Anarquismo e protagonismo feminino"
+    },
+    {
+      "codigo": "EF09HI09",
+      "descricao": "Relacionar as conquistas de direitos políticos, sociais e civis à atuação de movimentos sociais.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "O nascimento da República no Brasil e os processos históricos até a metade do século XX",
+      "objeto_conhecimento": "Anarquismo e protagonismo feminino"
+    },
+    {
+      "codigo": "EF09HI10",
+      "descricao": "Identificar e relacionar as dinâmicas do capitalismo e suas crises, os grandes conflitos mundiais e os conflitos vivenciados na Europa.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Totalitarismos e conflitos mundiais",
+      "objeto_conhecimento": "O mundo em conflito: a Primeira Guerra Mundial A questão da Palestina A Revolução Russa A crise capitalista de 1929"
+    },
+    {
+      "codigo": "EF09HI11",
+      "descricao": "Identificar as especificidades e os desdobramentos mundiais da Revolução Russa e seu significado histórico.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Totalitarismos e conflitos mundiais",
+      "objeto_conhecimento": "O mundo em conflito: a Primeira Guerra Mundial A questão da Palestina A Revolução Russa A crise capitalista de 1929"
+    },
+    {
+      "codigo": "EF09HI12",
+      "descricao": "Analisar a crise capitalista de 1929 e seus desdobramentos em relação à economia global.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Totalitarismos e conflitos mundiais",
+      "objeto_conhecimento": "O mundo em conflito: a Primeira Guerra Mundial A questão da Palestina A Revolução Russa A crise capitalista de 1929"
+    },
+    {
+      "codigo": "EF09HI13",
+      "descricao": "Descrever e contextualizar os processos da emergência do fascismo e do nazismo, a consolidação dos estados totalitários e as práticas de extermínio (como o holocausto).",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Totalitarismos e conflitos mundiais",
+      "objeto_conhecimento": "A emergência do fascismo e do nazismo  A Segunda Guerra Mundial Judeus e outras vítimas do holocausto"
+    },
+    {
+      "codigo": "EF09HI14",
+      "descricao": "Caracterizar e discutir as dinâmicas do colonialismo no continente africano e asiático e as lógicas de resistência das populações locais diante das questões internacionais.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Totalitarismos e conflitos mundiais",
+      "objeto_conhecimento": "O colonialismo na África As guerras mundiais, a crise do colonialismo e o advento dos nacionalismos africanos e asiáticos"
+    },
+    {
+      "codigo": "EF09HI15",
+      "descricao": "Discutir as motivações que levaram à criação da Organização das Nações Unidas (ONU) no contexto do pós-guerra e os propósitos dessa organização.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Totalitarismos e conflitos mundiais",
+      "objeto_conhecimento": "A Organização das Nações Unidas (ONU) e a questão dos Direitos Humanos"
+    },
+    {
+      "codigo": "EF09HI16",
+      "descricao": "Relacionar a Carta dos Direitos Humanos ao processo de afirmação dos direitos fundamentais e de defesa da dignidade humana, valorizando as instituições voltadas para a defesa desses direitos e para a identificação dos agentes responsáveis por sua violação.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Totalitarismos e conflitos mundiais",
+      "objeto_conhecimento": "A Organização das Nações Unidas (ONU) e a questão dos Direitos Humanos"
+    },
+    {
+      "codigo": "EF09HI17",
+      "descricao": "Identificar e analisar processos sociais, econômicos, culturais e políticos do Brasil a partir de 1946.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Modernização, ditadura civil-militar e redemocratização: o Brasil após 1946",
+      "objeto_conhecimento": "O Brasil da era JK e o ideal de uma nação moderna: a urbanização e seus desdobramentos em um país em transformação"
+    },
+    {
+      "codigo": "EF09HI18",
+      "descricao": "Descrever e analisar as relações entre as transformações urbanas e seus impactos na cultura brasileira entre 1946 e 1964 e na produção das desigualdades regionais e sociais.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Modernização, ditadura civil-militar e redemocratização: o Brasil após 1946",
+      "objeto_conhecimento": "O Brasil da era JK e o ideal de uma nação moderna: a urbanização e seus desdobramentos em um país em transformação"
+    },
+    {
+      "codigo": "EF09HI19",
+      "descricao": "Identificar e compreender o processo que resultou na ditadura civil-militar no Brasil e discutir a emergência de questões relacionadas à memória e à justiça sobre os casos de violação dos direitos humanos.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Modernização, ditadura civil-militar e redemocratização: o Brasil após 1946",
+      "objeto_conhecimento": "Os anos 1960: revolução cultural? A ditadura civil-militar e os processos de resistência As questões indígena e negra e a ditadura"
+    },
+    {
+      "codigo": "EF09HI20",
+      "descricao": "Discutir os processos de resistência e as propostas de reorganização da sociedade brasileira durante a ditadura civil-militar.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Modernização, ditadura civil-militar e redemocratização: o Brasil após 1946",
+      "objeto_conhecimento": "Os anos 1960: revolução cultural? A ditadura civil-militar e os processos de resistência As questões indígena e negra e a ditadura"
+    },
+    {
+      "codigo": "EF09HI21",
+      "descricao": "Identificar e relacionar as demandas indígenas e quilombolas como forma de contestação ao modelo desenvolvimentista da ditadura.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Modernização, ditadura civil-militar e redemocratização: o Brasil após 1946",
+      "objeto_conhecimento": "Os anos 1960: revolução cultural? A ditadura civil-militar e os processos de resistência As questões indígena e negra e a ditadura"
+    },
+    {
+      "codigo": "EF09HI22",
+      "descricao": "Discutir o papel da mobilização da sociedade brasileira do final do período ditatorial até a Constituição de 1988.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Modernização, ditadura civil-militar e redemocratização: o Brasil após 1946",
+      "objeto_conhecimento": "O processo de redemocratização A Constituição de 1988 e a emancipação das cidadanias (analfabetos, indígenas, negros, jovens etc.) A história recente do Brasil: transformações políticas, econômicas, sociais e culturais de 1989 aos dias atuais Os protagonismos da sociedade civil e as alterações da sociedade brasileira A questão da violência contra populações marginalizadas O Brasil e suas relações internacionais na era da globalização"
+    },
+    {
+      "codigo": "EF09HI23",
+      "descricao": "Identificar direitos civis, políticos e sociais expressos na Constituição de 1988 e relacioná-los à noção de cidadania e ao pacto da sociedade brasileira de combate a diversas formas de preconceito, como o racismo.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Modernização, ditadura civil-militar e redemocratização: o Brasil após 1946",
+      "objeto_conhecimento": "O processo de redemocratização A Constituição de 1988 e a emancipação das cidadanias (analfabetos, indígenas, negros, jovens etc.) A história recente do Brasil: transformações políticas, econômicas, sociais e culturais de 1989 aos dias atuais Os protagonismos da sociedade civil e as alterações da sociedade brasileira A questão da violência contra populações marginalizadas O Brasil e suas relações internacionais na era da globalização"
+    },
+    {
+      "codigo": "EF09HI24",
+      "descricao": "Analisar as transformações políticas, econômicas, sociais e culturais de 1989 aos dias atuais, identificando questões prioritárias para a promoção da cidadania e dos valores democráticos.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Modernização, ditadura civil-militar e redemocratização: o Brasil após 1946",
+      "objeto_conhecimento": "O processo de redemocratização A Constituição de 1988 e a emancipação das cidadanias (analfabetos, indígenas, negros, jovens etc.) A história recente do Brasil: transformações políticas, econômicas, sociais e culturais de 1989 aos dias atuais Os protagonismos da sociedade civil e as alterações da sociedade brasileira A questão da violência contra populações marginalizadas O Brasil e suas relações internacionais na era da globalização"
+    },
+    {
+      "codigo": "EF09HI25",
+      "descricao": "Relacionar as transformações da sociedade brasileira aos protagonismos da sociedade civil após 1989.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Modernização, ditadura civil-militar e redemocratização: o Brasil após 1946",
+      "objeto_conhecimento": "O processo de redemocratização A Constituição de 1988 e a emancipação das cidadanias (analfabetos, indígenas, negros, jovens etc.) A história recente do Brasil: transformações políticas, econômicas, sociais e culturais de 1989 aos dias atuais Os protagonismos da sociedade civil e as alterações da sociedade brasileira A questão da violência contra populações marginalizadas O Brasil e suas relações internacionais na era da globalização"
+    },
+    {
+      "codigo": "EF09HI26",
+      "descricao": "Discutir e analisar as causas da violência contra populações marginalizadas (negros, indígenas, mulheres, homossexuais, camponeses, pobres etc.) com vistas à tomada de consciência e à construção de uma cultura de paz, empatia e respeito às pessoas.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Modernização, ditadura civil-militar e redemocratização: o Brasil após 1946",
+      "objeto_conhecimento": "O processo de redemocratização A Constituição de 1988 e a emancipação das cidadanias (analfabetos, indígenas, negros, jovens etc.) A história recente do Brasil: transformações políticas, econômicas, sociais e culturais de 1989 aos dias atuais Os protagonismos da sociedade civil e as alterações da sociedade brasileira A questão da violência contra populações marginalizadas O Brasil e suas relações internacionais na era da globalização"
+    },
+    {
+      "codigo": "EF09HI27",
+      "descricao": "Relacionar aspectos das mudanças econômicas, culturais e sociais ocorridas no Brasil a partir da década de 1990 ao papel do País no cenário internacional na era da globalização.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "Modernização, ditadura civil-militar e redemocratização: o Brasil após 1946",
+      "objeto_conhecimento": "O processo de redemocratização A Constituição de 1988 e a emancipação das cidadanias (analfabetos, indígenas, negros, jovens etc.) A história recente do Brasil: transformações políticas, econômicas, sociais e culturais de 1989 aos dias atuais Os protagonismos da sociedade civil e as alterações da sociedade brasileira A questão da violência contra populações marginalizadas O Brasil e suas relações internacionais na era da globalização"
+    },
+    {
+      "codigo": "EF09HI28",
+      "descricao": "Identificar e analisar aspectos da Guerra Fria, seus principais conflitos e as tensões geopolíticas no interior dos blocos liderados por soviéticos e estadunidenses.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "A história recente",
+      "objeto_conhecimento": "A Guerra Fria: confrontos de dois modelos políticos A Revolução Chinesa e as tensões entre China e Rússia A Revolução Cubana e as tensões entre Estados Unidos da América e Cuba"
+    },
+    {
+      "codigo": "EF09HI29",
+      "descricao": "Descrever e analisar as experiências ditatoriais na América Latina, seus procedimentos e vínculos com o poder, em nível nacional e internacional, e a atuação de movimentos de contestação às ditaduras.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "A história recente",
+      "objeto_conhecimento": "As experiências ditatoriais na América Latina"
+    },
+    {
+      "codigo": "EF09HI30",
+      "descricao": "Comparar as características dos regimes ditatoriais latino-americanos, com especial atenção para a censura política, a opressão e o uso da força, bem como para as reformas econômicas e sociais e seus impactos.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "A história recente",
+      "objeto_conhecimento": "As experiências ditatoriais na América Latina"
+    },
+    {
+      "codigo": "EF09HI31",
+      "descricao": "Descrever e avaliar os processos de descolonização na África e na Ásia.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "A história recente",
+      "objeto_conhecimento": "Os processos de descolonização na África e na Ásia"
+    },
+    {
+      "codigo": "EF09HI32",
+      "descricao": "Analisar mudanças e permanências associadas ao processo de globalização, considerando os argumentos dos movimentos críticos às políticas globais.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "A história recente",
+      "objeto_conhecimento": "O fim da Guerra Fria e o processo de globalização Políticas econômicas na América Latina"
+    },
+    {
+      "codigo": "EF09HI33",
+      "descricao": "Analisar as transformações nas relações políticas locais e globais geradas pelo desenvolvimento das tecnologias digitais de informação e comunicação.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "A história recente",
+      "objeto_conhecimento": "O fim da Guerra Fria e o processo de globalização Políticas econômicas na América Latina"
+    },
+    {
+      "codigo": "EF09HI34",
+      "descricao": "Discutir as motivações da adoção de diferentes políticas econômicas na América Latina, assim como seus impactos sociais nos países da região.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "A história recente",
+      "objeto_conhecimento": "O fim da Guerra Fria e o processo de globalização Políticas econômicas na América Latina"
+    },
+    {
+      "codigo": "EF09HI35",
+      "descricao": "Analisar os aspectos relacionados ao fenômeno do terrorismo na contemporaneidade, incluindo os movimentos migratórios e os choques entre diferentes grupos e culturas.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "A história recente",
+      "objeto_conhecimento": "Os conflitos do século XXI e a questão do terrorismo Pluralidades e diversidades identitárias na atualidade As pautas dos povos indígenas no século XXI e suas formas de inserção no debate local, regional, nacional e internacional"
+    },
+    {
+      "codigo": "EF09HI36",
+      "descricao": "Identificar e discutir as diversidades identitárias e seus significados históricos no início do século XXI, combatendo qualquer forma de preconceito e violência.",
+      "ano_inicio": 9,
+      "ano_fim": null,
+      "unidade_tematica": "A história recente",
+      "objeto_conhecimento": "Os conflitos do século XXI e a questão do terrorismo Pluralidades e diversidades identitárias na atualidade As pautas dos povos indígenas no século XXI e suas formas de inserção no debate local, regional, nacional e internacional"
+    }
+  ]
+}

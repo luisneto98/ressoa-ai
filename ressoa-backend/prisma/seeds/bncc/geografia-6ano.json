@@ -1,0 +1,110 @@
+{
+  "disciplina": "GEOGRAFIA",
+  "ano": 6,
+  "habilidades": [
+    {
+      "codigo": "EF06GE01",
+      "descricao": "Comparar modificações das paisagens nos lugares de vivência e os usos desses lugares em diferentes tempos.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "O sujeito e seu lugar no mundo",
+      "objeto_conhecimento": "Identidade sociocultural"
+    },
+    {
+      "codigo": "EF06GE02",
+      "descricao": "Analisar modificações de paisagens por diferentes tipos de sociedade, com destaque para os povos originários.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "O sujeito e seu lugar no mundo",
+      "objeto_conhecimento": "Identidade sociocultural"
+    },
+    {
+      "codigo": "EF06GE03",
+      "descricao": "Descrever os movimentos do planeta e sua relação com a circulação geral da atmosfera, o tempo atmosférico e os padrões climáticos.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Conexões e escalas",
+      "objeto_conhecimento": "Relações entre os componentes físico-naturais"
+    },
+    {
+      "codigo": "EF06GE04",
+      "descricao": "Descrever o ciclo da água, comparando o escoamento superficial no ambiente urbano e rural, reconhecendo os principais componentes da morfologia das bacias e das redes hidrográficas e a sua localização no modelado da superfície terrestre e da cobertura vegetal.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Conexões e escalas",
+      "objeto_conhecimento": "Relações entre os componentes físico-naturais"
+    },
+    {
+      "codigo": "EF06GE05",
+      "descricao": "Relacionar padrões climáticos, tipos de solo, relevo e formações vegetais.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Conexões e escalas",
+      "objeto_conhecimento": "Relações entre os componentes físico-naturais"
+    },
+    {
+      "codigo": "EF06GE06",
+      "descricao": "Identificar as características das paisagens transformadas pelo trabalho humano a partir do desenvolvimento da agropecuária e do processo de industrialização.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Mundo do trabalho",
+      "objeto_conhecimento": "Transformação das paisagens naturais e antrópicas"
+    },
+    {
+      "codigo": "EF06GE07",
+      "descricao": "Explicar as mudanças na interação humana com a natureza a partir do surgimento das cidades.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Mundo do trabalho",
+      "objeto_conhecimento": "Transformação das paisagens naturais e antrópicas"
+    },
+    {
+      "codigo": "EF06GE08",
+      "descricao": "Medir distâncias na superfície pelas escalas gráficas e numéricas dos mapas.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Formas de representação e pensamento espacial",
+      "objeto_conhecimento": "Fenômenos naturais e sociais representados de diferentes maneiras"
+    },
+    {
+      "codigo": "EF06GE09",
+      "descricao": "Elaborar modelos tridimensionais, blocos-diagramas e perfis topográficos e de vegetação, visando à representação de elementos e estruturas da superfície terrestre.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Formas de representação e pensamento espacial",
+      "objeto_conhecimento": "Fenômenos naturais e sociais representados de diferentes maneiras"
+    },
+    {
+      "codigo": "EF06GE10",
+      "descricao": "Explicar as diferentes formas de uso do solo (rotação de terras, terraceamento, aterros etc.) e de apropriação dos recursos hídricos (sistema de irrigação, tratamento e redes de distribuição), bem como suas vantagens e desvantagens em diferentes épocas e lugares.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Natureza, ambientes e qualidade de vida",
+      "objeto_conhecimento": "Biodiversidade e ciclo hidrológico"
+    },
+    {
+      "codigo": "EF06GE11",
+      "descricao": "Analisar distintas interações das sociedades com a natureza, com base na distribuição dos componentes físico-naturais, incluindo as transformações da biodiversidade local e do mundo.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Natureza, ambientes e qualidade de vida",
+      "objeto_conhecimento": "Biodiversidade e ciclo hidrológico"
+    },
+    {
+      "codigo": "EF06GE12",
+      "descricao": "Identificar o consumo dos recursos hídricos e o uso das principais bacias hidrográficas no Brasil e no mundo, enfatizando as transformações nos ambientes urbanos.",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Natureza, ambientes e qualidade de vida",
+      "objeto_conhecimento": "Biodiversidade e ciclo hidrológico"
+    },
+    {
+      "codigo": "EF06GE13",
+      "descricao": "Analisar consequências, vantagens e desvantagens das práticas humanas na dinâmica climática (ilha de calor etc.).",
+      "ano_inicio": 6,
+      "ano_fim": null,
+      "unidade_tematica": "Natureza, ambientes e qualidade de vida",
+      "objeto_conhecimento": "Atividades humanas e dinâmica climática"
+    }
+  ]
+}

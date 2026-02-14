@@ -63,7 +63,7 @@ export class ProfessoresService {
         t.id as turma_id,
         t.nome as turma_nome,
         t.curriculo_tipo::text as curriculo_tipo,
-        p.disciplina::text as disciplina,
+        t.disciplina::text as disciplina,
         p.bimestre,
         COUNT(DISTINCT ph.habilidade_id)::int as habilidades_planejadas,
         COUNT(DISTINCT CASE
@@ -90,22 +90,22 @@ export class ProfessoresService {
           ),
           0
         )::numeric as percentual_cobertura
-      FROM "Planejamento" p
-      INNER JOIN "Turma" t ON p.turma_id = t.id AND t.escola_id = ${escolaId}
-      LEFT JOIN "PlanejamentoHabilidade" ph ON ph.planejamento_id = p.id
-      LEFT JOIN "Habilidade" h ON h.id = ph.habilidade_id
-      LEFT JOIN "Aula" au ON au.turma_id = t.id
+      FROM "planejamento" p
+      INNER JOIN "turma" t ON p.turma_id = t.id AND t.escola_id = ${escolaId}
+      LEFT JOIN "planejamento_habilidade" ph ON ph.planejamento_id = p.id
+      LEFT JOIN "habilidades" h ON h.id = ph.habilidade_id
+      LEFT JOIN "aula" au ON au.turma_id = t.id
         AND au.professor_id = ${professorId}
         AND au.escola_id = ${escolaId}
-      LEFT JOIN "Analise" a ON a.aula_id = au.id
+      LEFT JOIN "analise" a ON a.aula_id = au.id
         AND a.status = 'APROVADO'
       WHERE p.professor_id = ${professorId}
         AND p.escola_id = ${escolaId}
         ${filtros?.turma_id ? Prisma.sql`AND t.id = ${filtros.turma_id}` : Prisma.empty}
-        ${filtros?.disciplina ? Prisma.sql`AND p.disciplina = ${filtros.disciplina}` : Prisma.empty}
+        ${filtros?.disciplina ? Prisma.sql`AND t.disciplina = ${filtros.disciplina}` : Prisma.empty}
         ${filtros?.bimestre ? Prisma.sql`AND p.bimestre = ${filtros.bimestre}` : Prisma.empty}
         ${filtros?.curriculo_tipo ? Prisma.sql`AND t.curriculo_tipo = ${filtros.curriculo_tipo}` : Prisma.empty}
-      GROUP BY t.id, t.nome, t.curriculo_tipo, p.disciplina, p.bimestre
+      GROUP BY t.id, t.nome, t.curriculo_tipo, t.disciplina, p.bimestre
       ORDER BY p.bimestre ASC, t.nome ASC;
     `;
 
@@ -140,16 +140,16 @@ export class ProfessoresService {
     const timeline = await this.prisma.$queryRaw<TimelineResult[]>`
       WITH weekly_data AS (
         SELECT
-          DATE_TRUNC('week', au.data_aula)::date as semana,
+          DATE_TRUNC('week', au.data)::date as semana,
           au.id as aula_id,
           a.cobertura_json->'habilidades' as habilidades_json
-        FROM "Aula" au
-        INNER JOIN "Analise" a ON a.aula_id = au.id
+        FROM "aula" au
+        INNER JOIN "analise" a ON a.aula_id = au.id
           AND a.status = 'APROVADO'
         WHERE au.turma_id = ${turmaId}
           AND au.professor_id = ${professorId}
           AND au.escola_id = ${escolaId}
-          AND EXTRACT(QUARTER FROM au.data_aula) = ${quarter}
+          AND EXTRACT(QUARTER FROM au.data) = ${quarter}
       )
       SELECT
         semana,

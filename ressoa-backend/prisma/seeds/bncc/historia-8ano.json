@@ -1,0 +1,222 @@
+{
+  "disciplina": "HISTORIA",
+  "ano": 8,
+  "habilidades": [
+    {
+      "codigo": "EF08HI01",
+      "descricao": "Identificar os principais aspectos conceituais do iluminismo e do liberalismo e discutir a relação entre eles e a organização do mundo contemporâneo.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "O mundo contemporâneo: o Antigo Regime em crise",
+      "objeto_conhecimento": "A questão do iluminismo e da ilustração"
+    },
+    {
+      "codigo": "EF08HI02",
+      "descricao": "Identificar as particularidades político-sociais da Inglaterra do século XVII e analisar os desdobramentos posteriores à Revolução Gloriosa.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "O mundo contemporâneo: o Antigo Regime em crise",
+      "objeto_conhecimento": "As revoluções inglesas e os princípios do liberalismo"
+    },
+    {
+      "codigo": "EF08HI03",
+      "descricao": "Analisar os impactos da Revolução Industrial na produção e circulação de povos, produtos e culturas.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "O mundo contemporâneo: o Antigo Regime em crise",
+      "objeto_conhecimento": "Revolução Industrial e seus impactos na produção e circulação de povos, produtos e culturas"
+    },
+    {
+      "codigo": "EF08HI04",
+      "descricao": "Identificar e relacionar os processos da Revolução Francesa e seus desdobramentos na Europa e no mundo.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "O mundo contemporâneo: o Antigo Regime em crise",
+      "objeto_conhecimento": "Revolução Francesa e seus desdobramentos"
+    },
+    {
+      "codigo": "EF08HI05",
+      "descricao": "Explicar os movimentos e as rebeliões da América portuguesa, articulando as temáticas locais e suas interfaces com processos ocorridos na Europa e nas Américas.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "O mundo contemporâneo: o Antigo Regime em crise",
+      "objeto_conhecimento": "Rebeliões na América portuguesa: as conjurações mineira e baiana"
+    },
+    {
+      "codigo": "EF08HI06",
+      "descricao": "Aplicar os conceitos de Estado, nação, território, governo e país para o entendimento de conflitos e tensões.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Os processos de independência nas Américas",
+      "objeto_conhecimento": "Independência dos Estados Unidos da América  Independências na América espanhola • A revolução dos escravizados em São Domingo e seus múltiplos significados e desdobramentos: o caso do Haiti Os caminhos até a independência do Brasil"
+    },
+    {
+      "codigo": "EF08HI07",
+      "descricao": "Identificar e contextualizar as especificidades dos diversos processos de independência nas Américas, seus aspectos populacionais e suas conformações territoriais.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Os processos de independência nas Américas",
+      "objeto_conhecimento": "Independência dos Estados Unidos da América  Independências na América espanhola • A revolução dos escravizados em São Domingo e seus múltiplos significados e desdobramentos: o caso do Haiti Os caminhos até a independência do Brasil"
+    },
+    {
+      "codigo": "EF08HI08",
+      "descricao": "Conhecer o ideário dos líderes dos movimentos independentistas e seu papel nas revoluções que levaram à independência das colônias hispano-americanas.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Os processos de independência nas Américas",
+      "objeto_conhecimento": "Independência dos Estados Unidos da América  Independências na América espanhola • A revolução dos escravizados em São Domingo e seus múltiplos significados e desdobramentos: o caso do Haiti Os caminhos até a independência do Brasil"
+    },
+    {
+      "codigo": "EF08HI09",
+      "descricao": "Conhecer as características e os principais pensadores do Pan-americanismo.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Os processos de independência nas Américas",
+      "objeto_conhecimento": "Independência dos Estados Unidos da América  Independências na América espanhola • A revolução dos escravizados em São Domingo e seus múltiplos significados e desdobramentos: o caso do Haiti Os caminhos até a independência do Brasil"
+    },
+    {
+      "codigo": "EF08HI10",
+      "descricao": "Identificar a Revolução de São Domingo como evento singular e desdobramento da Revolução Francesa e avaliar suas implicações.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Os processos de independência nas Américas",
+      "objeto_conhecimento": "Independência dos Estados Unidos da América  Independências na América espanhola • A revolução dos escravizados em São Domingo e seus múltiplos significados e desdobramentos: o caso do Haiti Os caminhos até a independência do Brasil"
+    },
+    {
+      "codigo": "EF08HI11",
+      "descricao": "Identificar e explicar os protagonismos e a atuação de diferentes grupos sociais e étnicos nas lutas de independência no Brasil, na América espanhola e no Haiti.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Os processos de independência nas Américas",
+      "objeto_conhecimento": "Independência dos Estados Unidos da América  Independências na América espanhola • A revolução dos escravizados em São Domingo e seus múltiplos significados e desdobramentos: o caso do Haiti Os caminhos até a independência do Brasil"
+    },
+    {
+      "codigo": "EF08HI12",
+      "descricao": "Caracterizar a organização política e social no Brasil desde a chegada da Corte portuguesa, em 1808, até 1822 e seus desdobramentos para a história política brasileira.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Os processos de independência nas Américas",
+      "objeto_conhecimento": "Independência dos Estados Unidos da América  Independências na América espanhola • A revolução dos escravizados em São Domingo e seus múltiplos significados e desdobramentos: o caso do Haiti Os caminhos até a independência do Brasil"
+    },
+    {
+      "codigo": "EF08HI13",
+      "descricao": "Analisar o processo de independência em diferentes países latino-americanos e comparar as formas de governo neles adotadas.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Os processos de independência nas Américas",
+      "objeto_conhecimento": "Independência dos Estados Unidos da América  Independências na América espanhola • A revolução dos escravizados em São Domingo e seus múltiplos significados e desdobramentos: o caso do Haiti Os caminhos até a independência do Brasil"
+    },
+    {
+      "codigo": "EF08HI14",
+      "descricao": "Discutir a noção da tutela dos grupos indígenas e a participação dos negros na sociedade brasileira do final do período colonial, identificando permanências na forma de preconceitos, estereótipos e violências sobre as populações indígenas e negras no Brasil e nas Américas.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Os processos de independência nas Américas",
+      "objeto_conhecimento": "A tutela da população indígena, a escravidão dos negros e a tutela dos egressos da escravidão"
+    },
+    {
+      "codigo": "EF08HI15",
+      "descricao": "Identificar e analisar o equilíbrio das forças e os sujeitos envolvidos nas disputas políticas durante o Primeiro e o Segundo Reinado.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "O Brasil no século XIX",
+      "objeto_conhecimento": "Brasil: Primeiro Reinado O Período Regencial e as contestações ao poder central O Brasil do Segundo Reinado: política e economia • A Lei de Terras e seus desdobramentos na política do Segundo Reinado • Territórios e fronteiras: a Guerra do Paraguai"
+    },
+    {
+      "codigo": "EF08HI16",
+      "descricao": "Identificar, comparar e analisar a diversidade política, social e regional nas rebeliões e nos movimentos contestatórios ao poder centralizado.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "O Brasil no século XIX",
+      "objeto_conhecimento": "Brasil: Primeiro Reinado O Período Regencial e as contestações ao poder central O Brasil do Segundo Reinado: política e economia • A Lei de Terras e seus desdobramentos na política do Segundo Reinado • Territórios e fronteiras: a Guerra do Paraguai"
+    },
+    {
+      "codigo": "EF08HI17",
+      "descricao": "Relacionar as transformações territoriais, em razão de questões de fronteiras, com as tensões e conflitos durante o Império.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "O Brasil no século XIX",
+      "objeto_conhecimento": "Brasil: Primeiro Reinado O Período Regencial e as contestações ao poder central O Brasil do Segundo Reinado: política e economia • A Lei de Terras e seus desdobramentos na política do Segundo Reinado • Territórios e fronteiras: a Guerra do Paraguai"
+    },
+    {
+      "codigo": "EF08HI18",
+      "descricao": "Identificar as questões internas e externas sobre a atuação do Brasil na Guerra do Paraguai e discutir diferentes versões sobre o conflito.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "O Brasil no século XIX",
+      "objeto_conhecimento": "Brasil: Primeiro Reinado O Período Regencial e as contestações ao poder central O Brasil do Segundo Reinado: política e economia • A Lei de Terras e seus desdobramentos na política do Segundo Reinado • Territórios e fronteiras: a Guerra do Paraguai"
+    },
+    {
+      "codigo": "EF08HI19",
+      "descricao": "Formular questionamentos sobre o legado da escravidão nas Américas, com base na seleção e consulta de fontes de diferentes naturezas.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "O Brasil no século XIX",
+      "objeto_conhecimento": "O escravismo no Brasil do século XIX: plantations e revoltas de escravizados, abolicionismo e políticas migratórias no Brasil Imperial"
+    },
+    {
+      "codigo": "EF08HI20",
+      "descricao": "Identificar e relacionar aspectos das estruturas sociais da atualidade com os legados da escravidão no Brasil e discutir a importância de ações afirmativas.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "O Brasil no século XIX",
+      "objeto_conhecimento": "O escravismo no Brasil do século XIX: plantations e revoltas de escravizados, abolicionismo e políticas migratórias no Brasil Imperial"
+    },
+    {
+      "codigo": "EF08HI21",
+      "descricao": "Identificar e analisar as políticas oficiais com relação ao indígena durante o Império.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "O Brasil no século XIX",
+      "objeto_conhecimento": "Políticas de extermínio do indígena durante o Império"
+    },
+    {
+      "codigo": "EF08HI22",
+      "descricao": "Discutir o papel das culturas letradas, não letradas e das artes na produção das identidades no Brasil do século XIX.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "O Brasil no século XIX",
+      "objeto_conhecimento": "A produção do imaginário nacional brasileiro: cultura popular, representações visuais, letras e o Romantismo no Brasil"
+    },
+    {
+      "codigo": "EF08HI23",
+      "descricao": "Estabelecer relações causais entre as ideologias raciais e o determinismo no contexto do imperialismo europeu e seus impactos na África e na Ásia.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Configurações do mundo no século XIX",
+      "objeto_conhecimento": "Nacionalismo, revoluções e as novas nações europeias"
+    },
+    {
+      "codigo": "EF08HI24",
+      "descricao": "Reconhecer os principais produtos, utilizados pelos europeus, procedentes do continente africano durante o imperialismo e analisar os impactos sobre as comunidades locais na forma de organização e exploração econômica.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Configurações do mundo no século XIX",
+      "objeto_conhecimento": "Uma nova ordem econômica: as demandas do capitalismo industrial e o lugar das economias africanas e asiáticas nas dinâmicas globais"
+    },
+    {
+      "codigo": "EF08HI25",
+      "descricao": "Caracterizar e contextualizar aspectos das relações entre os Estados Unidos da América e a América Latina no século XIX.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Configurações do mundo no século XIX",
+      "objeto_conhecimento": "Os Estados Unidos da América e a América Latina no século XIX"
+    },
+    {
+      "codigo": "EF08HI26",
+      "descricao": "Identificar e contextualizar o protagonismo das populações locais na resistência ao imperialismo na África e Ásia.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Configurações do mundo no século XIX",
+      "objeto_conhecimento": "O imperialismo europeu e a partilha da África e da Ásia"
+    },
+    {
+      "codigo": "EF08HI27",
+      "descricao": "Identificar as tensões e os significados dos discursos civilizatórios, avaliando seus impactos negativos para os povos indígenas originários e as populações negras nas Américas.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Configurações do mundo no século XIX",
+      "objeto_conhecimento": "Pensamento e cultura no século XIX: darwinismo e racismo O discurso civilizatório nas Américas, o silenciamento dos saberes indígenas e as formas de integração e destruição de comunidades e povos indígenas A resistência dos povos e comunidades indígenas diante da ofensiva civilizatória"
+    }
+  ]
+}

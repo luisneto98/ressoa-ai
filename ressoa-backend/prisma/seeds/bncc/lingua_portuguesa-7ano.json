@@ -1,0 +1,118 @@
+{
+  "disciplina": "LINGUA_PORTUGUESA",
+  "ano": 7,
+  "habilidades": [
+    {
+      "codigo": "EF07LP01",
+      "descricao": "Distinguir diferentes propostas editoriais – sensacionalismo, jornalismo investigativo etc. –, de forma a identificar os recursos utilizados para impactar/chocar o leitor que podem comprometer uma análise crítica da notícia e do fato noticiado.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Leitura",
+      "objeto_conhecimento": "Reconstrução do contexto de produção, circulação e recepção de textos Caracterização do campo jornalístico e relação entre os gêneros em circulação, mídias e práticas da cultura digital"
+    },
+    {
+      "codigo": "EF07LP02",
+      "descricao": "Comparar notícias e reportagens sobre um mesmo fato divulgadas em diferentes mídias, analisando as especificidades das mídias, os processos de (re)elaboração dos textos e a convergência das mídias em notícias ou reportagens multissemióticas.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Leitura",
+      "objeto_conhecimento": "Reconstrução do contexto de produção, circulação e recepção de textos Caracterização do campo jornalístico e relação entre os gêneros em circulação, mídias e práticas da cultura digital"
+    },
+    {
+      "codigo": "EF07LP03",
+      "descricao": "Formar, com base em palavras primitivas, palavras derivadas com os prefixos e sufixos mais produtivos no português.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Léxico/morfologia"
+    },
+    {
+      "codigo": "EF07LP04",
+      "descricao": "Reconhecer, em textos, o verbo como o núcleo das orações.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Morfossintaxe"
+    },
+    {
+      "codigo": "EF07LP05",
+      "descricao": "Identificar, em orações de textos lidos ou de produção própria, verbos de predicação completa e incompleta: intransitivos e transitivos.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Morfossintaxe"
+    },
+    {
+      "codigo": "EF07LP06",
+      "descricao": "Empregar as regras básicas de concordância nominal e verbal em situações comunicativas e na produção de textos.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Morfossintaxe"
+    },
+    {
+      "codigo": "EF07LP07",
+      "descricao": "Identificar, em textos lidos ou de produção própria, a estrutura básica da oração: sujeito, predicado, complemento (objetos direto e indireto).",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Morfossintaxe"
+    },
+    {
+      "codigo": "EF07LP08",
+      "descricao": "Identificar, em textos lidos ou de produção própria, adjetivos que ampliam o sentido do substantivo sujeito ou complemento verbal.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Morfossintaxe"
+    },
+    {
+      "codigo": "EF07LP09",
+      "descricao": "Identificar, em textos lidos ou de produção própria, advérbios e locuções adverbiais que ampliam o sentido do verbo núcleo da oração.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Morfossintaxe"
+    },
+    {
+      "codigo": "EF07LP10",
+      "descricao": "Utilizar, ao produzir texto, conhecimentos linguísticos e gramaticais: modos e tempos verbais, concordância nominal e verbal, pontuação etc.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Morfossintaxe"
+    },
+    {
+      "codigo": "EF07LP11",
+      "descricao": "Identificar, em textos lidos ou de produção própria, períodos compostos nos quais duas orações são conectadas por vírgula, ou por conjunções que expressem soma de sentido (conjunção “e”) ou oposição de sentidos (conjunções “mas”, “porém”).",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Morfossintaxe"
+    },
+    {
+      "codigo": "EF07LP12",
+      "descricao": "Reconhecer recursos de coesão referencial: substituições lexicais (de substantivos por sinônimos) ou pronominais (uso de pronomes anafóricos – pessoais, possessivos, demonstrativos).",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Semântica Coesão"
+    },
+    {
+      "codigo": "EF07LP13",
+      "descricao": "Estabelecer relações entre partes do texto, identificando substituições lexicais (de substantivos por sinônimos) ou pronominais (uso de pronomes anafóricos – pessoais, possessivos, demonstrativos), que contribuem para a continuidade do texto.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Coesão"
+    },
+    {
+      "codigo": "EF07LP14",
+      "descricao": "Identificar, em textos, os efeitos de sentido do uso de estratégias de modalização e argumentatividade.",
+      "ano_inicio": 7,
+      "ano_fim": null,
+      "unidade_tematica": "Análise linguística/semiótica",
+      "objeto_conhecimento": "Modalização"
+    }
+  ]
+}

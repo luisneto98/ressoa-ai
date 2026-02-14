@@ -1,0 +1,94 @@
+{
+  "disciplina": "COMPUTACAO",
+  "ano": 8,
+  "habilidades": [
+    {
+      "codigo": "EF08CO01",
+      "descricao": "Construir soluções de problemas usando a técnica de recursão e automatizar tais soluções usando uma linguagem de programação. Construir e analisar soluções computacionais de problemas de diferentes áreas do conhecimento, de forma individual ou colaborativa, selecionando as estruturas de dados adequadas (registros, matrizes, listas e grafos), aperfeiçoando e articulando saberes escolares.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Pensamento computacional",
+      "objeto_conhecimento": "Programação - Programação com listas e recursão"
+    },
+    {
+      "codigo": "EF08CO02",
+      "descricao": "Criar soluções de problemas para os quais seja adequado o uso de listas para descrever suas informações e automatizá-las usando uma linguagem de programação, empregando ou não a recursão como uma técnica de resolver o problema. Construir e analisar soluções computacionais de problemas de diferentes áreas do conhecimento, de forma individual ou colaborativa, selecionando as estruturas de dados adequadas (registros, matrizes, listas e grafos), aperfeiçoando e articulando saberes escolares.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Pensamento computacional",
+      "objeto_conhecimento": "Programação - Programação com listas e recursão"
+    },
+    {
+      "codigo": "EF08CO03",
+      "descricao": "Utilizar algoritmos clássicos de manipulação sobre listas. Construir e analisar soluções computacionais de problemas de diferentes áreas do conhecimento, de forma individual ou colaborativa, selecionando as estruturas de dados adequadas (registros, matrizes, listas e grafos), aperfeiçoando e articulando saberes escolares.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Pensamento computacional",
+      "objeto_conhecimento": "Programação - Algoritmos clássicos"
+    },
+    {
+      "codigo": "EF08CO04",
+      "descricao": "Construir soluções computacionais de problemas de diferentes áreas do conhecimento, de forma individual e colaborativa, selecionando as estruturas de dados e técnicas adequadas, aperfeiçoando e articulando saberes escolares. Construir e analisar soluções computacionais de problemas de diferentes áreas do conhecimento, de forma individual ou colaborativa, selecionando as estruturas de dados adequadas (registros, matrizes, listas e grafos), aperfeiçoando e articulando saberes escolares.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Pensamento computacional",
+      "objeto_conhecimento": "Programação - Projetos com programação"
+    },
+    {
+      "codigo": "EF08CO05",
+      "descricao": "Compreender os conceitos de paralelismo, concorrência e armazenamento/ processamento distribuídos. Entender os fundamentos de sistemas distribuídos e da internet.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Mundo digital",
+      "objeto_conhecimento": "Sistemas distribuídos e internet - Fundamentos de sistemas distribuídos"
+    },
+    {
+      "codigo": "EF08CO06",
+      "descricao": "Entender como é a estrutura e funcionamento da internet. Entender os fundamentos de sistemas distribuídos e da internet.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Mundo digital",
+      "objeto_conhecimento": "Sistemas distribuídos e internet - Internet"
+    },
+    {
+      "codigo": "EF08CO07",
+      "descricao": "Compartilhar informações por meio de redes sociais compreendendo a sua dinâmica de funcionamento de forma responsável e avaliando sua confiabilidade considerando o respeito e a ética. Entender que as tecnologias devem ser utilizadas de maneira segura, ética e responsável, respeitando direitos autorais, de imagem e as leis vigentes.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Cultura digital",
+      "objeto_conhecimento": "Segurança e responsabilidade no uso da tecnologia - Redes sociais e segurança da informação"
+    },
+    {
+      "codigo": "EF08CO08",
+      "descricao": "Distinguir os tipos de dados pessoais que são solicitados em espaços digitais e os riscos associados. Entender que as tecnologias devem ser utilizadas de maneira segura, ética e responsável, respeitando direitos autorais, de imagem e as leis vigentes.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Cultura digital",
+      "objeto_conhecimento": "Segurança e responsabilidade no uso da tecnologia - Redes sociais e segurança da informação"
+    },
+    {
+      "codigo": "EF08CO09",
+      "descricao": "Analisar criticamente as políticas de termos de uso das redes sociais e demais plataformas. Entender que as tecnologias devem ser utilizadas de maneira segura, ética e responsável, respeitando direitos autorais, de imagem e as leis vigentes.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Cultura digital",
+      "objeto_conhecimento": "Segurança e responsabilidade no uso da tecnologia - Redes sociais e segurança da informação"
+    },
+    {
+      "codigo": "EF08CO10",
+      "descricao": "Discutir questões sobre segurança e privacidade relacionadas ao uso dos ambientes virtuais. Entender que as tecnologias devem ser utilizadas de maneira segura, ética e responsável, respeitando direitos autorais, de imagem e as leis vigentes.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Cultura digital",
+      "objeto_conhecimento": "Segurança e responsabilidade no uso da tecnologia - Segurança em ambientes virtuais"
+    },
+    {
+      "codigo": "EF08CO11",
+      "descricao": "Avaliar a precisão, relevância, adequação, abrangência e vieses que ocorrem em fontes de informação eletrônica. Selecionar e utilizar tecnologias computacionais para se expressar e resolver problemas, analisando criticamente os diferentes impactos na sociedade.",
+      "ano_inicio": 8,
+      "ano_fim": null,
+      "unidade_tematica": "Cultura digital",
+      "objeto_conhecimento": "Uso de tecnologias computacionais - Uso crítico das mídias digitais"
+    }
+  ]
+}

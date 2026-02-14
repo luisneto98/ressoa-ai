@@ -66,3 +66,26 @@ export function useEscolas() {
     enabled: false,
   });
 }
+
+/**
+ * Hook para convidar diretor por email (POST /api/v1/admin/invite-director)
+ * Story 13.2 - AC12: Submit do convite com loading state
+ *
+ * Features:
+ * - Envia convite com token único de 24h
+ * - Throws error para tratamento manual (409 Conflict, 404 Not Found, 400 Bad Request)
+ * - Não invalida cache (diretor ainda não está cadastrado)
+ */
+export function useInviteDirector() {
+  return useMutation({
+    mutationFn: async (data: { escola_id: string; email: string; nome: string }) => {
+      const response = await apiClient.post<{ message: string }>(
+        '/admin/invite-director',
+        data
+      );
+      return response.data;
+    },
+    // Não invalida queries porque diretor ainda não foi criado
+    // Criação só acontece quando diretor aceita o convite (Story 13.3)
+  });
+}

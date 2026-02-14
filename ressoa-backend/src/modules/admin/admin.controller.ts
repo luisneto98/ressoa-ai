@@ -46,6 +46,7 @@ import {
   CreateUsuarioDto,
   EscolaResponseDto,
   UsuarioResponseDto,
+  InviteDirectorDto,
 } from './dto';
 
 @ApiTags('admin')
@@ -120,6 +121,48 @@ export class AdminController {
   })
   async createUser(@Body() dto: CreateUsuarioDto): Promise<UsuarioResponseDto> {
     return this.adminService.createUsuario(dto);
+  }
+
+  @Post('invite-director')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Enviar convite por email para Diretor (admin only)' })
+  @ApiResponse({
+    status: 201,
+    description: 'Convite enviado com sucesso',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Convite enviado com sucesso',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Dados inválidos ou escola inativa',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - Token ausente ou inválido',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Usuário não é ADMIN',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not Found - Escola não encontrada',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Conflict - Email já cadastrado nesta escola',
+  })
+  async inviteDirector(
+    @Body() dto: InviteDirectorDto,
+  ): Promise<{ message: string }> {
+    return this.adminService.inviteDirector(dto);
   }
 
   @Post('refresh-cobertura')

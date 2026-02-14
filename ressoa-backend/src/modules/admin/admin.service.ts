@@ -3,22 +3,31 @@ import {
   ConflictException,
   NotFoundException,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
+import * as crypto from 'crypto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AuthService } from '../auth/auth.service';
+import { RedisService } from '../../redis/redis.service';
+import { EmailService } from '../../common/email/email.service';
 import {
   CreateEscolaDto,
   CreateUsuarioDto,
   EscolaResponseDto,
   UsuarioResponseDto,
+  InviteDirectorDto,
 } from './dto';
 import { RoleUsuario } from '@prisma/client';
 
 @Injectable()
 export class AdminService {
+  private readonly logger = new Logger(AdminService.name);
+
   constructor(
     private prisma: PrismaService,
     private authService: AuthService,
+    private redisService: RedisService,
+    private emailService: EmailService,
   ) {}
 
   /**
@@ -151,5 +160,77 @@ export class AdminService {
       created_at: usuario.created_at,
       // NUNCA retornar senha ou senha_hash
     };
+  }
+
+  /**
+   * Envia convite por email para Diretor com token único
+   * Valida escola existe e está ativa, email único na escola
+   * Gera token seguro de 64 caracteres e armazena no Redis com TTL de 24h
+   * Graceful degradation: se email falhar, token permanece válido
+   */
+  async inviteDirector(dto: InviteDirectorDto): Promise<{ message: string }> {
+    // 1. Normalize email (lowercase + trim)
+    const emailNormalizado = dto.email.toLowerCase().trim();
+
+    // 2. Validate escola exists and is active
+    const escola = await this.prisma.escola.findUnique({
+      where: { id: dto.escola_id },
+    });
+
+    if (!escola) {
+      throw new NotFoundException('Escola não encontrada');
+    }
+
+    if (escola.status !== 'ativa') {
+      throw new BadRequestException('Escola inativa ou suspensa');
+    }
+
+    // 3. Validate email unique within escola (case-insensitive)
+    const existingUser = await this.prisma.usuario.findFirst({
+      where: {
+        email: emailNormalizado,
+        escola_id: dto.escola_id,
+      },
+    });
+
+    if (existingUser) {
+      throw new ConflictException('Email já cadastrado nesta escola');
+    }
+
+    // 4. Generate unique token (64 chars hex)
+    const inviteToken = crypto.randomBytes(32).toString('hex');
+
+    // 5. Store token in Redis with 24h TTL
+    const tokenData = JSON.stringify({
+      email: emailNormalizado,
+      escolaId: dto.escola_id,
+      nome: dto.nome,
+    });
+
+    await this.redisService.setex(
+      `invite_director:${inviteToken}`,
+      86400, // 24 hours
+      tokenData,
+    );
+
+    // 6. Send invitation email (graceful degradation)
+    try {
+      await this.emailService.sendDirectorInvitationEmail(
+        emailNormalizado,
+        dto.nome,
+        escola.nome,
+        inviteToken,
+      );
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(
+        `Failed to send director invitation email to ${emailNormalizado}: ${errorMessage}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      // Don't throw - token is still valid, email might arrive later
+    }
+
+    return { message: 'Convite enviado com sucesso' };
   }
 }

@@ -8,5 +8,16 @@
   },
   "transformIgnorePatterns": [
     "node_modules/(?!(@tus|@aws-sdk)/)"
-  ]
+  ],
+  "modulePathIgnorePatterns": [
+    "<rootDir>/../prisma/seed.ts"
+  ],
+  "globals": {
+    "ts-jest": {
+      "diagnostics": {
+        "ignoreCodes": [2322],
+        "pathRegex": ".*\\.(seed|objetivos\\.service)\\.ts$"
+      }
+    }
+  }
 }

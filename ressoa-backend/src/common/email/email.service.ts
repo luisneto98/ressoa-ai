@@ -190,6 +190,54 @@ export class EmailService {
   }
 
   /**
+   * Send director invitation email with unique token
+   * Story 13.2 - AC7: Email de convite com link de aceitação
+   *
+   * @param email - Director's email address
+   * @param nome - Director's full name
+   * @param escolaNome - School name
+   * @param inviteToken - Secure invitation token (64 chars hex)
+   * @returns Promise<void>
+   */
+  async sendDirectorInvitationEmail(
+    email: string,
+    nome: string,
+    escolaNome: string,
+    inviteToken: string,
+  ): Promise<void> {
+    const frontendUrl = this.configService.get('FRONTEND_URL');
+    const inviteUrl = `${frontendUrl}/aceitar-convite?token=${inviteToken}`;
+    const from = this.configService.get('EMAIL_FROM') || 'noreply@ressoaai.com';
+
+    const msg = {
+      to: email,
+      from,
+      subject: `Convite para Diretor - ${escolaNome}`,
+      html: this.getDirectorInvitationTemplate(nome, escolaNome, inviteUrl),
+    };
+
+    // PRODUCTION SAFETY: Mock emails in development
+    if (this.isDevelopment || !this.emailEnabled) {
+      this.logger.log(
+        `[MOCK EMAIL] Director Invitation\nTo: ${email}\nSchool: ${escolaNome}\nToken: ${inviteToken}\nURL: ${inviteUrl}`,
+      );
+      return;
+    }
+
+    try {
+      await sgMail.send(msg);
+      this.logger.log(
+        `Director invitation email sent to ${email} for school ${escolaNome}`,
+      );
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      // Throw error so AdminService can log and handle gracefully
+      throw new Error(`Failed to send director invitation email: ${errorMessage}`);
+    }
+  }
+
+  /**
    * Generate HTML template for password reset email
    * Story 1.5 - Task 5: Email Template
    *
@@ -384,6 +432,90 @@ export class EmailService {
           <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 40px 0;">
 
           <p style="color: #94A3B8; font-size: 12px; text-align: center; margin: 0;">
+            © ${currentYear} Ressoa AI. Todos os direitos reservados.
+          </p>
+        </div>
+      </body>
+      </html>
+    `;
+  }
+
+  /**
+   * Generate HTML template for director invitation email
+   * Story 13.2 - Task 3: Email Template
+   *
+   * @param nome - Director's full name
+   * @param escolaNome - School name
+   * @param inviteUrl - Full invitation URL with token
+   * @returns HTML string
+   */
+  private getDirectorInvitationTemplate(
+    nome: string,
+    escolaNome: string,
+    inviteUrl: string,
+  ): string {
+    const currentYear = new Date().getFullYear();
+    return `
+      <!DOCTYPE html>
+      <html lang="pt-BR">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Convite para Diretor - Ressoa AI</title>
+      </head>
+      <body style="font-family: 'Inter', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #F8FAFC;">
+        <div style="background-color: white; border-radius: 8px; padding: 40px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="color: #0A2647; font-size: 28px; margin: 0; font-weight: 600;">Ressoa AI</h1>
+            <p style="color: #64748B; font-size: 14px; margin-top: 5px;">Inteligência de Aula, Análise e Previsão de Conteúdo</p>
+          </div>
+
+          <h2 style="color: #0A2647; font-size: 20px; margin-bottom: 20px;">Bem-vindo ao Ressoa AI!</h2>
+
+          <p style="color: #334155; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+            Olá, <strong>${nome}</strong>!
+          </p>
+
+          <p style="color: #334155; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+            Você foi convidado para ser <strong>Diretor</strong> da escola <strong>${escolaNome}</strong> na plataforma Ressoa AI.
+          </p>
+
+          <p style="color: #334155; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">
+            Clique no botão abaixo para aceitar o convite e criar sua senha de acesso:
+          </p>
+
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${inviteUrl}" style="display: inline-block; background-color: #2563EB; color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: 500; transition: background-color 0.2s;">
+              Aceitar Convite
+            </a>
+          </div>
+
+          <div style="background-color: #FEF3C7; border-left: 4px solid #F59E0B; padding: 15px; margin: 30px 0; border-radius: 4px;">
+            <p style="color: #92400E; font-size: 14px; margin: 0 0 10px 0; line-height: 1.5;">
+              ⏱️ <strong>Validade:</strong> Este convite expira em <strong>24 horas</strong>.
+            </p>
+            <p style="color: #92400E; font-size: 14px; margin: 0; line-height: 1.5;">
+              Se o link não funcionar, copie e cole o seguinte endereço no navegador:
+            </p>
+          </div>
+
+          <p style="color: #2563EB; font-size: 12px; word-break: break-all; background-color: #F1F5F9; padding: 10px; border-radius: 4px; margin-bottom: 30px;">
+            ${inviteUrl}
+          </p>
+
+          <div style="background-color: #DBEAFE; border-left: 4px solid #2563EB; padding: 15px; margin: 30px 0; border-radius: 4px;">
+            <p style="color: #1E40AF; font-size: 14px; margin: 0; line-height: 1.5;">
+              💡 <strong>Instruções:</strong> Após aceitar o convite, você poderá criar sua senha e acessar a plataforma para gerenciar sua escola.
+            </p>
+          </div>
+
+          <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 40px 0;">
+
+          <p style="color: #94A3B8; font-size: 12px; text-align: center; margin: 0;">
+            Se você não solicitou este convite, ignore este email.
+          </p>
+
+          <p style="color: #94A3B8; font-size: 12px; text-align: center; margin: 15px 0 0 0;">
             © ${currentYear} Ressoa AI. Todos os direitos reservados.
           </p>
         </div>

@@ -1,31 +1,50 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CreateEscolaDialog } from './components/CreateEscolaDialog';
-import { useCreateEscola } from '@/hooks/useEscolas';
+import { InviteDirectorDialog } from './components/InviteDirectorDialog';
+import { useCreateEscola, useInviteDirector } from '@/hooks/useEscolas';
 import type { EscolaFormData } from '@/lib/validation/escola.schema';
-import { IconBuildingCommunity } from '@tabler/icons-react';
+import type { InviteDirectorFormData } from '@/lib/validation/invite-director.schema';
+import { IconBuildingCommunity, IconMailPlus } from '@tabler/icons-react';
 
 /**
  * Dashboard administrativo (Admin role)
  * Epic 13 Story 13.1: Cadastro de escolas
+ * Epic 13 Story 13.2: Convite de diretor por email
  */
 export function AdminDashboard() {
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
+  const [selectedEscola, setSelectedEscola] = useState<{
+    id: string;
+    nome: string;
+  } | null>(null);
+
   const createEscolaMutation = useCreateEscola();
+  const inviteDirectorMutation = useInviteDirector();
 
   /**
-   * Handle school creation (AC11)
-   * Redireciona para tela de convite de diretor após sucesso
-   * (Story 13-2 ainda não implementada, então apenas fecha o dialog)
+   * Handle school creation (Story 13.1 AC11)
+   * Abre automaticamente o dialog de convite de diretor após criar escola
    */
   const handleCreateEscola = async (data: EscolaFormData) => {
     const newEscola = await createEscolaMutation.mutateAsync(data);
 
-    // TODO Story 13-2: Redirecionar para tela de convite de Diretor
-    // navigate(`/admin/convites/diretor?escolaId=${newEscola.id}`);
-
     console.log('Escola criada:', newEscola.id);
-    setDialogOpen(false);
+    setCreateDialogOpen(false);
+
+    // Story 13.2: Abrir dialog de convite de diretor automaticamente
+    setSelectedEscola({ id: newEscola.id, nome: newEscola.nome });
+    setInviteDialogOpen(true);
+  };
+
+  /**
+   * Handle director invitation (Story 13.2 AC12)
+   */
+  const handleInviteDirector = async (
+    data: InviteDirectorFormData & { escola_id: string }
+  ) => {
+    await inviteDirectorMutation.mutateAsync(data);
   };
 
   return (
@@ -43,7 +62,7 @@ export function AdminDashboard() {
           </div>
 
           <Button
-            onClick={() => setDialogOpen(true)}
+            onClick={() => setCreateDialogOpen(true)}
             size="lg"
             className="bg-tech-blue hover:bg-tech-blue/90 text-white gap-2"
           >
@@ -62,23 +81,37 @@ export function AdminDashboard() {
             Bem-vindo ao Painel Administrativo
           </h2>
           <p className="text-gray-600 max-w-md mx-auto">
-            Clique em "Nova Escola" para cadastrar uma escola cliente e começar
-            o processo de onboarding.
+            Clique em "Nova Escola" para cadastrar uma escola cliente e
+            convidar o Diretor por email.
           </p>
           <p className="text-sm text-gray-500 mt-4">
             Story 13.1 - Cadastro de Escola ✅ Implementado
+            <br />
+            Story 13.2 - Convite de Diretor ✅ Implementado
             <br />
             Story 13.7 - Listagem de Escolas 🚧 Próximo
           </p>
         </div>
 
-        {/* Dialog de cadastro */}
+        {/* Dialog de cadastro de escola */}
         <CreateEscolaDialog
-          open={dialogOpen}
-          onOpenChange={setDialogOpen}
+          open={createDialogOpen}
+          onOpenChange={setCreateDialogOpen}
           onSubmit={handleCreateEscola}
           isLoading={createEscolaMutation.isPending}
         />
+
+        {/* Dialog de convite de diretor */}
+        {selectedEscola && (
+          <InviteDirectorDialog
+            open={inviteDialogOpen}
+            onOpenChange={setInviteDialogOpen}
+            escolaId={selectedEscola.id}
+            escolaNome={selectedEscola.nome}
+            onSubmit={handleInviteDirector}
+            isLoading={inviteDirectorMutation.isPending}
+          />
+        )}
       </div>
     </div>
   );

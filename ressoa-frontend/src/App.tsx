@@ -24,6 +24,7 @@ import { QualidadePromptsPage } from '@/pages/admin/QualidadePromptsPage';
 import { PromptDiffsPage } from '@/pages/admin/PromptDiffsPage';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
+import { AcceptInvitationPage } from '@/pages/AcceptInvitationPage';
 import TurmasListPage from '@/pages/turmas/TurmasListPage';
 
 // Create Query Client
@@ -65,6 +66,7 @@ function App() {
         {/* Public routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/aceitar-convite" element={<AcceptInvitationPage />} />
 
         {/* Protected routes: All use AppLayout with Sidebar + Header */}
         <Route element={<AppLayout />}>

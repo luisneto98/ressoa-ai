@@ -146,7 +146,7 @@ development_status:
     epic-13: in-progress # Gestão Hierárquica de Cadastros (Admin → Diretor → Coordenador → Professor) - Sistema de convites por email
     13-1-cadastrar-escola-admin: done # Como Admin, cadastrar Escola com validação CNPJ único - Code review complete: 8 issues found (5 CRITICAL/HIGH auto-fixed, 2 MEDIUM deferred, 1 LOW accepted) - 10/10 E2E tests passing - Email case-insensitive check added
     13-2-convidar-diretor-email-admin: done # Como Admin, enviar convite por email para Diretor com token único
-    13-3-aceitar-convite-criar-senha: backlog # Como Diretor convidado, aceitar convite e criar senha forte
+    13-3-aceitar-convite-criar-senha: review # Como Diretor convidado, aceitar convite e criar senha forte - Implementation complete (frontend + backend) - E2E tests written but not executed
     13-4-convidar-coordenador-diretor: backlog # Como Diretor, enviar convite por email para Coordenador
     13-5-convidar-professor-diretor: backlog # Como Diretor, enviar convite por email para Professor
     13-6-convidar-professor-coordenador: backlog # Como Coordenador, enviar convite por email para Professor
@@ -157,3 +157,10 @@ development_status:
     13-11-cancelar-convite-pendente: backlog # Como Admin/Diretor/Coordenador, cancelar convite pendente
     13-12-reenviar-convite-expirado: backlog # Como Admin/Diretor/Coordenador, reenviar convite expirado
     epic-13-retrospective: optional
+    epic-14: backlog # Sistema Configurável de Provider Routing (IA Cost Optimization) - Economia de 89% em custos de IA
+    14-1-camada-roteamento-configuravel: backlog # Provider routing layer com config-driven selection (STT + LLM routers)
+    14-2-groq-whisper-provider-stt: backlog # Implementar Groq Whisper Large v3 Turbo (89% economia STT)
+    14-3-gemini-flash-provider-llm: backlog # Implementar Google Gemini 2.0 Flash (92% economia LLM)
+    14-4-integracao-router-pipeline: backlog # Integrar routers com AnaliseService e STTService
+    14-5-dashboard-custos-provider: backlog # Dashboard Admin de custos por provider com savings tracking
+    epic-14-retrospective: optional

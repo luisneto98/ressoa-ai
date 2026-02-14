@@ -7,6 +7,8 @@ import {
   NotFoundException,
   HttpCode,
   Logger,
+  Query,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -28,6 +30,7 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { AuthResponseDto, LogoutResponseDto } from './dto/auth-response.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { AcceptInvitationDto } from './dto/accept-invitation.dto';
 import { RoleUsuario } from '@prisma/client';
 
 @ApiTags('auth')
@@ -489,5 +492,91 @@ export class AuthController {
     return {
       message: 'Senha redefinida com sucesso. Faça login com sua nova senha.',
     };
+  }
+
+  @Public()
+  @Get('validate-token')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Validar token de convite e obter informações pré-visualização',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Token válido',
+    schema: {
+      type: 'object',
+      properties: {
+        email: { type: 'string', example: 'diretor@escola.com' },
+        nome: { type: 'string', example: 'João Silva' },
+        escolaNome: { type: 'string', example: 'Escola Teste' },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'Token inválido ou expirado' })
+  async validateToken(
+    @Query('token') token: string,
+  ): Promise<{ email: string; nome: string; escolaNome: string }> {
+    // 1. Validate token exists in Redis
+    const tokenData = await this.redisService.get(`invite_director:${token}`);
+    if (!tokenData) {
+      throw new UnauthorizedException('Token inválido ou expirado');
+    }
+
+    // 2. Parse token data
+    let email: string;
+    let escolaId: string;
+    let nome: string;
+    try {
+      const parsed = JSON.parse(tokenData) as {
+        email: string;
+        escolaId: string;
+        nome: string;
+      };
+      email = parsed.email;
+      escolaId = parsed.escolaId;
+      nome = parsed.nome;
+    } catch (error) {
+      throw new UnauthorizedException('Token inválido ou corrompido');
+    }
+
+    // 3. Get escola name
+    const escola = await this.prisma.escola.findUnique({
+      where: { id: escolaId },
+      select: { nome: true },
+    });
+
+    if (!escola) {
+      throw new UnauthorizedException('Escola não encontrada');
+    }
+
+    return {
+      email,
+      nome,
+      escolaNome: escola.nome,
+    };
+  }
+
+  @Public()
+  @Post('accept-invitation')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Aceitar convite de diretor e criar senha' })
+  @ApiResponse({
+    status: 201,
+    description: 'Convite aceito com sucesso',
+    schema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string', example: 'Convite aceito com sucesso' },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'Token inválido ou expirado' })
+  @ApiResponse({ status: 409, description: 'Email já cadastrado nesta escola' })
+  @ApiResponse({ status: 404, description: 'Escola não encontrada' })
+  @ApiResponse({ status: 400, description: 'Escola inativa ou senha fraca' })
+  async acceptInvitation(
+    @Body() dto: AcceptInvitationDto,
+  ): Promise<{ message: string }> {
+    return this.authService.acceptInvitation(dto);
   }
 }

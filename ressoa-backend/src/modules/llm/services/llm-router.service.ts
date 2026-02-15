@@ -11,11 +11,13 @@ export class LLMRouterService {
   constructor(
     @Inject('CLAUDE_PROVIDER') private claudeProvider: LLMProvider,
     @Inject('GPT_PROVIDER') private gptProvider: LLMProvider,
+    @Inject('GEMINI_PROVIDER') private geminiProvider: LLMProvider,
     private configService: ProvidersConfigService,
   ) {
     this.providerMap = new Map<string, LLMProvider>([
       ['CLAUDE_SONNET', this.claudeProvider],
       ['GPT4_MINI', this.gptProvider],
+      ['GEMINI_FLASH', this.geminiProvider],
     ]);
   }
 

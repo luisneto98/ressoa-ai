@@ -26,18 +26,20 @@ describe('LLMRouterService', () => {
   let service: LLMRouterService;
   let claudeProvider: jest.Mocked<LLMProvider>;
   let gptProvider: jest.Mocked<LLMProvider>;
+  let geminiProvider: jest.Mocked<LLMProvider>;
   let configService: jest.Mocked<ProvidersConfigService>;
 
   beforeEach(() => {
     claudeProvider = createMockProvider(ProviderLLM.CLAUDE_SONNET);
     gptProvider = createMockProvider(ProviderLLM.GPT4_MINI);
+    geminiProvider = createMockProvider(ProviderLLM.GEMINI_FLASH);
     configService = {
       getSTTConfig: jest.fn(),
       getLLMConfig: jest.fn().mockReturnValue({ primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' }),
       getConfig: jest.fn(),
     } as any;
 
-    service = new LLMRouterService(claudeProvider, gptProvider, configService);
+    service = new LLMRouterService(claudeProvider, gptProvider, geminiProvider, configService);
   });
 
   describe('getLLMProvider', () => {
@@ -56,10 +58,18 @@ describe('LLMRouterService', () => {
       expect(provider.getName()).toBe(ProviderLLM.GPT4_MINI);
     });
 
-    it('should throw for unknown provider key', () => {
-      configService.getLLMConfig.mockReturnValue({ primary: 'GEMINI_FLASH', fallback: 'GPT4_MINI' });
+    it('should return Gemini when config sets GEMINI_FLASH as primary', () => {
+      configService.getLLMConfig.mockReturnValue({ primary: 'GEMINI_FLASH', fallback: 'CLAUDE_SONNET' });
 
-      expect(() => service.getLLMProvider('analise_cobertura')).toThrow('Unknown LLM provider: GEMINI_FLASH');
+      const provider = service.getLLMProvider('analise_cobertura');
+
+      expect(provider.getName()).toBe(ProviderLLM.GEMINI_FLASH);
+    });
+
+    it('should throw for unknown provider key', () => {
+      configService.getLLMConfig.mockReturnValue({ primary: 'UNKNOWN_PROVIDER', fallback: 'GPT4_MINI' });
+
+      expect(() => service.getLLMProvider('analise_cobertura')).toThrow('Unknown LLM provider: UNKNOWN_PROVIDER');
     });
   });
 

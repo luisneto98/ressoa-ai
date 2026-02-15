@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from '../../prisma/prisma.module';
 import { ClaudeProvider } from './providers/claude.provider';
 import { GPTProvider } from './providers/gpt.provider';
+import { GeminiProvider } from './providers/gemini.provider';
 import { PromptService } from './services/prompt.service';
 import { LLMRouterService } from './services/llm-router.service';
 
@@ -12,6 +13,7 @@ import { LLMRouterService } from './services/llm-router.service';
  * **Providers:**
  * - ClaudeProvider (Claude 4.6 Sonnet) - Análise pedagógica
  * - GPTProvider (GPT-4.6 mini) - Exercícios contextuais
+ * - GeminiProvider (Gemini 2.0 Flash) - Análise pedagógica low-cost
  *
  * **Services:**
  * - PromptService - Versionamento e A/B testing de prompts
@@ -19,6 +21,7 @@ import { LLMRouterService } from './services/llm-router.service';
  * **Dependency Injection:**
  * - Use @Inject('CLAUDE_PROVIDER') para ClaudeProvider
  * - Use @Inject('GPT_PROVIDER') para GPTProvider
+ * - Use @Inject('GEMINI_PROVIDER') para GeminiProvider
  * - Inject PromptService diretamente
  */
 @Module({
@@ -32,9 +35,13 @@ import { LLMRouterService } from './services/llm-router.service';
       provide: 'GPT_PROVIDER',
       useClass: GPTProvider,
     },
+    {
+      provide: 'GEMINI_PROVIDER',
+      useClass: GeminiProvider,
+    },
     PromptService,
     LLMRouterService, // Config-driven LLM provider routing (Story 14.1)
   ],
-  exports: ['CLAUDE_PROVIDER', 'GPT_PROVIDER', PromptService, LLMRouterService],
+  exports: ['CLAUDE_PROVIDER', 'GPT_PROVIDER', 'GEMINI_PROVIDER', PromptService, LLMRouterService],
 })
 export class LLMModule {}

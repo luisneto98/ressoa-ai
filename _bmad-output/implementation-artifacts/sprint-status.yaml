@@ -160,7 +160,7 @@ development_status:
     epic-14: in-progress # Sistema Configurável de Provider Routing (IA Cost Optimization) - Economia de 89% em custos de IA
     14-1-camada-roteamento-configuravel: done # Code review complete - 5 issues auto-fixed (1 HIGH: timer leak, 4 MEDIUM: LLM timeout, watcher guard, test improvements) - 48/48 tests passing
     14-2-groq-whisper-provider-stt: done # Code review complete - 6 issues found (1H/2M/2L), all auto-fixed: 300s timeout, lighter health check, docstring update - 22 unit tests, 60 total passing
-    14-3-gemini-flash-provider-llm: backlog # Implementar Google Gemini 2.0 Flash (92% economia LLM)
+    14-3-gemini-flash-provider-llm: done # Code review complete - 4 issues auto-fixed (1 HIGH: config defaults reverted, 2 MEDIUM: isAvailable lightweight + branch coverage 82%→95%, 1 LOW: default model test) - 24 unit tests, 36 LLM module tests passing, coverage 95.12% branch
     14-4-integracao-router-pipeline: backlog # Integrar routers com AnaliseService e STTService
     14-5-dashboard-custos-provider: backlog # Dashboard Admin de custos por provider com savings tracking
     epic-14-retrospective: optional

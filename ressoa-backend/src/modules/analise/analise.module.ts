@@ -17,12 +17,12 @@ import { FeedbackProcessor } from './processors/feedback.processor';
  * especializados que gera análise pedagógica profunda, impossível de replicar com
  * ferramentas genéricas de IA.
  *
- * Pipeline:
- * 1. Cobertura BNCC (Claude Sonnet)
- * 2. Análise Qualitativa (Claude Sonnet)
- * 3. Geração de Relatório (Claude Sonnet)
- * 4. Geração de Exercícios (GPT-4 mini - cost optimization)
- * 5. Detecção de Alertas (Claude Haiku - cost optimization)
+ * Pipeline (providers config-driven via providers.config.json - Story 14.4):
+ * 1. Cobertura BNCC
+ * 2. Análise Qualitativa
+ * 3. Geração de Relatório
+ * 4. Geração de Exercícios
+ * 5. Detecção de Alertas
  *
  * Cada prompt vê outputs dos prompts anteriores (contexto acumulativo).
  *
@@ -42,7 +42,7 @@ import { FeedbackProcessor } from './processors/feedback.processor';
 @Module({
   imports: [
     PrismaModule,
-    LLMModule, // Provides PromptService, ClaudeProvider, GPTProvider
+    LLMModule, // Provides PromptService, LLMRouterService
     NotificacoesModule, // Provides NotificacaoService for completion notifications
     AulasModule, // Provides AulasService for permission validation (Story 6.1)
     BullModule.registerQueue({

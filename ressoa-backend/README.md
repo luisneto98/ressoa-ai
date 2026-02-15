@@ -118,6 +118,65 @@ src/
 └── main.ts               # Entry point
 ```
 
+## Configuração de Providers (IA)
+
+O arquivo `providers.config.json` na raiz do backend controla qual provider de IA é usado para cada etapa do pipeline de análise.
+
+### Estrutura
+
+```json
+{
+  "version": "1.0.0",
+  "stt": {
+    "primary": "GROQ_WHISPER",
+    "fallback": "WHISPER"
+  },
+  "llm": {
+    "analise_cobertura": { "primary": "GEMINI_FLASH", "fallback": "CLAUDE_SONNET" },
+    "analise_qualitativa": { "primary": "GEMINI_FLASH", "fallback": "CLAUDE_SONNET" },
+    "relatorio": { "primary": "GEMINI_FLASH", "fallback": "GPT4_MINI" },
+    "exercicios": { "primary": "GPT4_MINI", "fallback": "GEMINI_FLASH" },
+    "alertas": { "primary": "GEMINI_FLASH", "fallback": "CLAUDE_SONNET" }
+  }
+}
+```
+
+### Providers Disponíveis
+
+| Tipo | Key | Serviço |
+|------|-----|---------|
+| STT | `WHISPER` | OpenAI Whisper |
+| STT | `GOOGLE` | Google Cloud Speech |
+| STT | `GROQ_WHISPER` | Groq Whisper Large v3 Turbo |
+| LLM | `CLAUDE_SONNET` | Anthropic Claude Sonnet |
+| LLM | `GPT4_MINI` | OpenAI GPT-4 mini |
+| LLM | `GEMINI_FLASH` | Google Gemini 2.0 Flash |
+
+### Como Funciona
+
+- **Primary:** Provider usado por padrão para cada etapa
+- **Fallback:** Provider alternativo ativado automaticamente se o primary falhar (timeout, API error)
+- **Hot-reload:** Alterações no arquivo são detectadas automaticamente (sem restart)
+- Se o arquivo não existir, defaults conservadores são usados (Claude + Whisper)
+
+### Variáveis de Ambiente Necessárias
+
+Cada provider requer suas API keys no `.env`:
+
+```bash
+# OpenAI (Whisper + GPT)
+OPENAI_API_KEY=sk-...
+
+# Anthropic (Claude)
+ANTHROPIC_API_KEY=sk-ant-...
+
+# Google (Gemini)
+GOOGLE_AI_API_KEY=...
+
+# Groq (Whisper)
+GROQ_API_KEY=gsk_...
+```
+
 ## Variáveis de Ambiente
 
 Veja `.env.example` para a lista completa de variáveis necessárias.

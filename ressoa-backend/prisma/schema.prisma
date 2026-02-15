@@ -459,6 +459,20 @@ model Analise {
   custo_total_usd        Float // Sum of 5 prompts
   tempo_processamento_ms Int // Total pipeline time
 
+  // Provider cost breakdown (Story 14.4)
+  provider_stt              String?
+  custo_stt_usd             Float?
+  provider_llm_cobertura    String?
+  custo_llm_cobertura_usd   Float?
+  provider_llm_qualitativa  String?
+  custo_llm_qualitativa_usd Float?
+  provider_llm_relatorio    String?
+  custo_llm_relatorio_usd   Float?
+  provider_llm_exercicios   String?
+  custo_llm_exercicios_usd  Float?
+  provider_llm_alertas      String?
+  custo_llm_alertas_usd     Float?
+
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 

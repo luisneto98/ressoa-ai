@@ -1,11 +1,10 @@
-import { Injectable, Logger, NotFoundException, Inject } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import type { Queue } from 'bull';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { PromptService } from '../../llm/services/prompt.service';
-import { ClaudeProvider } from '../../llm/providers/claude.provider';
-import { GPTProvider } from '../../llm/providers/gpt.provider';
-import { LLMProvider } from '../../llm/interfaces/llm-provider.interface';
+import { LLMRouterService } from '../../llm/services/llm-router.service';
+import { LLMAnalysisType } from '../../../config/providers.config';
 import { Analise, StatusAnalise } from '@prisma/client';
 
 interface ContextoPedagogico {
@@ -26,8 +25,8 @@ interface ContextoPedagogico {
  * **Qualidade target:** >90% dos relatórios usáveis sem edição significativa
  *
  * **Provider Selection Strategy:**
- * - Claude Sonnet: Prompts 1, 2, 3, 5 (pedagogical reasoning)
- * - GPT-4 mini: Prompt 4 (exercise generation - 20x cheaper)
+ * - Config-driven via providers.config.json (Story 14.4)
+ * - LLMRouterService handles primary/fallback selection per analysis type
  *
  * @see _bmad-output/planning-artifacts/estrategia-prompts-ia-2026-02-08.md
  */
@@ -38,8 +37,7 @@ export class AnaliseService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly promptService: PromptService,
-    @Inject('CLAUDE_PROVIDER') private readonly claudeProvider: ClaudeProvider,
-    @Inject('GPT_PROVIDER') private readonly gptProvider: GPTProvider,
+    private readonly llmRouterService: LLMRouterService,
     @InjectQueue('feedback-queue') private readonly feedbackQueue: Queue,
   ) {}
 
@@ -213,7 +211,8 @@ export class AnaliseService {
         output: coberturaOutput,
         custo: custo1,
         versao: versao1,
-      } = await this.executePrompt('prompt-cobertura', contexto, this.claudeProvider);
+        provider: prov1,
+      } = await this.executePrompt('prompt-cobertura', contexto, 'analise_cobertura');
       contexto.cobertura = coberturaOutput;
       custoTotal += custo1;
       promptVersoes.cobertura = versao1;
@@ -224,7 +223,8 @@ export class AnaliseService {
         output: qualitativaOutput,
         custo: custo2,
         versao: versao2,
-      } = await this.executePrompt('prompt-qualitativa', contexto, this.claudeProvider);
+        provider: prov2,
+      } = await this.executePrompt('prompt-qualitativa', contexto, 'analise_qualitativa');
       contexto.analise_qualitativa = qualitativaOutput;
       custoTotal += custo2;
       promptVersoes.qualitativa = versao2;
@@ -235,17 +235,19 @@ export class AnaliseService {
         output: relatorioOutput,
         custo: custo3,
         versao: versao3,
-      } = await this.executePrompt('prompt-relatorio', contexto, this.claudeProvider);
+        provider: prov3,
+      } = await this.executePrompt('prompt-relatorio', contexto, 'relatorio');
       custoTotal += custo3;
       promptVersoes.relatorio = versao3;
 
-      // 6. PROMPT 4: Geração de Exercícios (GPT-4 mini - cost optimization)
-      this.logger.log('Executando Prompt 4: Geração de Exercícios (GPT mini)');
+      // 6. PROMPT 4: Geração de Exercícios (config-driven provider)
+      this.logger.log('Executando Prompt 4: Geração de Exercícios');
       const {
         output: exerciciosOutput,
         custo: custo4,
         versao: versao4,
-      } = await this.executePrompt('prompt-exercicios', contexto, this.gptProvider);
+        provider: prov4,
+      } = await this.executePrompt('prompt-exercicios', contexto, 'exercicios');
       custoTotal += custo4;
       promptVersoes.exercicios = versao4;
 
@@ -255,7 +257,8 @@ export class AnaliseService {
         output: alertasOutput,
         custo: custo5,
         versao: versao5,
-      } = await this.executePrompt('prompt-alertas', contexto, this.claudeProvider);
+        provider: prov5,
+      } = await this.executePrompt('prompt-alertas', contexto, 'alertas');
       custoTotal += custo5;
       promptVersoes.alertas = versao5;
 
@@ -275,6 +278,17 @@ export class AnaliseService {
             prompt_versoes_json: promptVersoes,
             custo_total_usd: custoTotal,
             tempo_processamento_ms: Date.now() - startTime,
+            // Provider cost breakdown (Story 14.4)
+            provider_llm_cobertura: prov1,
+            custo_llm_cobertura_usd: custo1,
+            provider_llm_qualitativa: prov2,
+            custo_llm_qualitativa_usd: custo2,
+            provider_llm_relatorio: prov3,
+            custo_llm_relatorio_usd: custo3,
+            provider_llm_exercicios: prov4,
+            custo_llm_exercicios_usd: custo4,
+            provider_llm_alertas: prov5,
+            custo_llm_alertas_usd: custo5,
           },
         });
 
@@ -321,34 +335,36 @@ export class AnaliseService {
    *
    * @param nomePrompt Nome do prompt (e.g., "prompt-cobertura")
    * @param contexto Objeto com variáveis para renderizar no prompt
-   * @param provider Provider LLM a ser usado (ClaudeProvider ou GPTProvider)
-   * @returns {{ output: object | string, custo: number, versao: string }}
+   * @param analysisType Tipo de análise para roteamento de provider (e.g., 'analise_cobertura')
+   * @returns {{ output: object | string, custo: number, versao: string, provider: string }}
    *   - output: JSON object para prompts 1,2,4,5 | Markdown string para prompt 3
    *   - custo: Custo em USD para esta execução do prompt
    *   - versao: Versão do prompt utilizada (e.g., "v1.0.0")
+   *   - provider: Provider usado (e.g., "Gemini", "Claude")
    * @private
    */
   private async executePrompt(
     nomePrompt: string,
     contexto: any,
-    provider: LLMProvider,
-  ): Promise<{ output: any; custo: number; versao: string }> {
+    analysisType: LLMAnalysisType,
+  ): Promise<{ output: any; custo: number; versao: string; provider: string }> {
     try {
       // 1. Buscar prompt ativo (com A/B testing se habilitado)
       const prompt = await this.promptService.getActivePrompt(nomePrompt);
 
       this.logger.log(
-        `Executando prompt: ${nomePrompt} v${prompt.versao}, provider=${provider.getName()}`,
+        `Executando prompt: ${nomePrompt} v${prompt.versao}, analysisType=${analysisType}`,
       );
 
       // 2. Renderizar prompt com variáveis do contexto
       const promptRendered = await this.promptService.renderPrompt(prompt, contexto);
 
-      // 3. Executar LLM
-      const result = await provider.generate(promptRendered, {
-        temperature: 0.7,
-        maxTokens: 4000,
-      });
+      // 3. Executar LLM via router (fallback + timeout + logging handled by router)
+      const result = await this.llmRouterService.generateWithFallback(
+        analysisType,
+        promptRendered,
+        { temperature: 0.7, maxTokens: 4000 },
+      );
 
       // 4. Parse JSON output (assumindo que prompts retornam JSON)
       let output;
@@ -359,9 +375,8 @@ export class AnaliseService {
         output = result.texto;
       }
 
-      // MEDIUM FIX: Log individual prompt metrics for debugging and cost monitoring
       this.logger.log(
-        `Prompt ${nomePrompt} concluído: versao=${prompt.versao}, custo=$${result.custo_usd.toFixed(4)}, ` +
+        `Prompt ${nomePrompt} concluído: versao=${prompt.versao}, provider=${result.provider}, custo=$${result.custo_usd.toFixed(4)}, ` +
         `tokens_in=${result.tokens_input}, tokens_out=${result.tokens_output}`,
       );
 
@@ -369,10 +384,11 @@ export class AnaliseService {
         output,
         custo: result.custo_usd,
         versao: prompt.versao,
+        provider: result.provider,
       };
     } catch (error) {
       this.logger.error(
-        `Erro em executePrompt: prompt=${nomePrompt}, provider=${provider.getName()}`,
+        `Erro em executePrompt: prompt=${nomePrompt}, analysisType=${analysisType}`,
         error instanceof Error ? error.stack : String(error),
       );
       throw error;

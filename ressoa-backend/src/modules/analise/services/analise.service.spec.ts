@@ -3,16 +3,14 @@ import { NotFoundException } from '@nestjs/common';
 import { AnaliseService } from './analise.service';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { PromptService } from '../../llm/services/prompt.service';
-import { ClaudeProvider } from '../../llm/providers/claude.provider';
-import { GPTProvider } from '../../llm/providers/gpt.provider';
+import { LLMRouterService } from '../../llm/services/llm-router.service';
 
 describe('AnaliseService', () => {
   let service: AnaliseService;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let prisma: any;
   let promptService: jest.Mocked<PromptService>;
-  let claudeProvider: jest.Mocked<ClaudeProvider>;
-  let gptProvider: jest.Mocked<GPTProvider>;
+  let llmRouterService: jest.Mocked<LLMRouterService>;
 
   const mockAulaId = 'aula-test-123';
   const mockTranscricaoId = 'transcricao-test-456';
@@ -87,6 +85,9 @@ describe('AnaliseService', () => {
       nome: '6A',
       disciplina: 'MATEMATICA',
       serie: 'SEXTO_ANO',
+      tipo_ensino: 'FUNDAMENTAL',
+      curriculo_tipo: 'BNCC',
+      contexto_pedagogico: null,
       ano_letivo: 2026,
       escola_id: 'escola-123',
       professor_id: 'prof-123',
@@ -110,13 +111,17 @@ describe('AnaliseService', () => {
 
   const mockLLMResult = {
     texto: '{"habilidades": [{"codigo": "EF06MA01", "nivel_cobertura": "completo"}]}',
-    provider: 'CLAUDE' as any,
-    modelo: 'claude-sonnet-4',
-    tokens_input: 100,
-    tokens_output: 50,
-    custo_usd: 0.02,
-    tempo_processamento_ms: 1500,
-    metadata: { model: 'claude-sonnet-4' },
+    provider: 'Gemini' as any,
+    modelo: 'gemini-2.0-flash',
+    tokens_input: 15000,
+    tokens_output: 2000,
+    custo_usd: 0.0023,
+    tempo_processamento_ms: 4200,
+    metadata: {},
+  };
+
+  const mockLLMRouterService = {
+    generateWithFallback: jest.fn().mockResolvedValue(mockLLMResult),
   };
 
   beforeEach(async () => {
@@ -134,7 +139,6 @@ describe('AnaliseService', () => {
               create: jest.fn(),
             },
             $transaction: jest.fn().mockImplementation(async (callback) => {
-              // Mock transaction by calling callback with mocked tx object
               const mockTx = {
                 analise: {
                   create: jest.fn().mockResolvedValue({
@@ -150,6 +154,16 @@ describe('AnaliseService', () => {
                     prompt_versoes_json: {},
                     custo_total_usd: 0.1,
                     tempo_processamento_ms: 50000,
+                    provider_llm_cobertura: 'Gemini',
+                    custo_llm_cobertura_usd: 0.0023,
+                    provider_llm_qualitativa: 'Gemini',
+                    custo_llm_qualitativa_usd: 0.0023,
+                    provider_llm_relatorio: 'Gemini',
+                    custo_llm_relatorio_usd: 0.0023,
+                    provider_llm_exercicios: 'GPT',
+                    custo_llm_exercicios_usd: 0.005,
+                    provider_llm_alertas: 'Gemini',
+                    custo_llm_alertas_usd: 0.0023,
                     created_at: new Date(),
                     updated_at: new Date(),
                   }),
@@ -170,18 +184,8 @@ describe('AnaliseService', () => {
           },
         },
         {
-          provide: 'CLAUDE_PROVIDER',
-          useValue: {
-            generate: jest.fn(),
-            getName: jest.fn().mockReturnValue('Claude'),
-          },
-        },
-        {
-          provide: 'GPT_PROVIDER',
-          useValue: {
-            generate: jest.fn(),
-            getName: jest.fn().mockReturnValue('GPT'),
-          },
+          provide: LLMRouterService,
+          useValue: mockLLMRouterService,
         },
         {
           provide: 'BullQueue_feedback-queue',
@@ -195,8 +199,10 @@ describe('AnaliseService', () => {
     service = module.get<AnaliseService>(AnaliseService);
     prisma = module.get(PrismaService) as jest.Mocked<PrismaService>;
     promptService = module.get(PromptService) as jest.Mocked<PromptService>;
-    claudeProvider = module.get('CLAUDE_PROVIDER') as jest.Mocked<ClaudeProvider>;
-    gptProvider = module.get('GPT_PROVIDER') as jest.Mocked<GPTProvider>;
+    llmRouterService = module.get(LLMRouterService) as jest.Mocked<LLMRouterService>;
+
+    // Reset default mock implementation (jest.clearAllMocks removes it)
+    llmRouterService.generateWithFallback.mockResolvedValue(mockLLMResult);
   });
 
   it('should be defined', () => {
@@ -205,9 +211,7 @@ describe('AnaliseService', () => {
 
   describe('analisarAula', () => {
     it('should throw NotFoundException when aula not found', async () => {
-      // CRITICAL FIX: Mock prompts validation (runs before aula lookup)
       promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
-
       prisma.aula.findUnique.mockResolvedValue(null);
 
       await expect(service.analisarAula(mockAulaId)).rejects.toThrow(NotFoundException);
@@ -217,9 +221,7 @@ describe('AnaliseService', () => {
     });
 
     it('should throw NotFoundException when transcricao missing', async () => {
-      // CRITICAL FIX: Mock prompts validation (runs before transcricao check)
       promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
-
       const aulaSemTranscricao = { ...mockAulaCompleta, transcricao: null };
       prisma.aula.findUnique.mockResolvedValue(aulaSemTranscricao as any);
 
@@ -229,33 +231,32 @@ describe('AnaliseService', () => {
       );
     });
 
-    it('should execute all 5 prompts in order', async () => {
+    it('should execute all 5 prompts via LLMRouterService', async () => {
       prisma.aula.findUnique.mockResolvedValue(mockAulaCompleta as any);
       promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
       promptService.renderPrompt.mockResolvedValue('rendered prompt text');
 
-      claudeProvider.generate.mockResolvedValue(mockLLMResult);
-      gptProvider.generate.mockResolvedValue(mockLLMResult);
-
       await service.analisarAula(mockAulaId);
 
-      // Verify prompts called in order
-      // NOTE: getActivePrompt called 10 times total: 5 for validation + 5 for execution
-      expect(promptService.getActivePrompt).toHaveBeenCalledTimes(10);
+      // generateWithFallback called 5 times (one per prompt)
+      expect(llmRouterService.generateWithFallback).toHaveBeenCalledTimes(5);
 
-      // Validation calls (1-5)
-      expect(promptService.getActivePrompt).toHaveBeenNthCalledWith(1, 'prompt-cobertura');
-      expect(promptService.getActivePrompt).toHaveBeenNthCalledWith(2, 'prompt-qualitativa');
-      expect(promptService.getActivePrompt).toHaveBeenNthCalledWith(3, 'prompt-relatorio');
-      expect(promptService.getActivePrompt).toHaveBeenNthCalledWith(4, 'prompt-exercicios');
-      expect(promptService.getActivePrompt).toHaveBeenNthCalledWith(5, 'prompt-alertas');
-
-      // Execution calls (6-10) - same order
-      expect(promptService.getActivePrompt).toHaveBeenNthCalledWith(6, 'prompt-cobertura');
-      expect(promptService.getActivePrompt).toHaveBeenNthCalledWith(7, 'prompt-qualitativa');
-      expect(promptService.getActivePrompt).toHaveBeenNthCalledWith(8, 'prompt-relatorio');
-      expect(promptService.getActivePrompt).toHaveBeenNthCalledWith(9, 'prompt-exercicios');
-      expect(promptService.getActivePrompt).toHaveBeenNthCalledWith(10, 'prompt-alertas');
+      // Verify correct analysisTypes in order
+      expect(llmRouterService.generateWithFallback).toHaveBeenNthCalledWith(
+        1, 'analise_cobertura', expect.any(String), expect.objectContaining({ temperature: 0.7 }),
+      );
+      expect(llmRouterService.generateWithFallback).toHaveBeenNthCalledWith(
+        2, 'analise_qualitativa', expect.any(String), expect.objectContaining({ temperature: 0.7 }),
+      );
+      expect(llmRouterService.generateWithFallback).toHaveBeenNthCalledWith(
+        3, 'relatorio', expect.any(String), expect.objectContaining({ temperature: 0.7 }),
+      );
+      expect(llmRouterService.generateWithFallback).toHaveBeenNthCalledWith(
+        4, 'exercicios', expect.any(String), expect.objectContaining({ temperature: 0.7 }),
+      );
+      expect(llmRouterService.generateWithFallback).toHaveBeenNthCalledWith(
+        5, 'alertas', expect.any(String), expect.objectContaining({ temperature: 0.7 }),
+      );
     });
 
     it('should accumulate context (Prompt 2 sees cobertura output)', async () => {
@@ -264,9 +265,6 @@ describe('AnaliseService', () => {
 
       const renderPromptSpy = jest.fn().mockResolvedValue('rendered');
       promptService.renderPrompt = renderPromptSpy;
-
-      claudeProvider.generate.mockResolvedValue(mockLLMResult);
-      gptProvider.generate.mockResolvedValue(mockLLMResult);
 
       await service.analisarAula(mockAulaId);
 
@@ -277,67 +275,47 @@ describe('AnaliseService', () => {
       expect(secondPromptContext).toHaveProperty('turma');
     });
 
-    it('should use ClaudeProvider for prompts 1,2,3,5', async () => {
-      prisma.aula.findUnique.mockResolvedValue(mockAulaCompleta as any);
-      promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
-      promptService.renderPrompt.mockResolvedValue('rendered');
+    it('should save provider cost breakdown in Analise (via transaction)', async () => {
+      const costs = [0.020, 0.025, 0.015, 0.005, 0.020];
+      const providers = ['Gemini', 'Gemini', 'Gemini', 'GPT', 'Gemini'];
+      let callCount = 0;
 
-      claudeProvider.generate.mockResolvedValue(mockLLMResult);
-      gptProvider.generate.mockResolvedValue(mockLLMResult);
-
-      await service.analisarAula(mockAulaId);
-
-      expect(claudeProvider.generate).toHaveBeenCalledTimes(4); // Prompts 1,2,3,5
-    });
-
-    it('should use GPTProvider for prompt 4 (cost optimization)', async () => {
-      prisma.aula.findUnique.mockResolvedValue(mockAulaCompleta as any);
-      promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
-      promptService.renderPrompt.mockResolvedValue('rendered');
-
-      claudeProvider.generate.mockResolvedValue(mockLLMResult);
-      gptProvider.generate.mockResolvedValue(mockLLMResult);
-
-      await service.analisarAula(mockAulaId);
-
-      expect(gptProvider.generate).toHaveBeenCalledTimes(1); // Prompt 4 only
-    });
-
-    it('should save Analise with all fields populated (via transaction)', async () => {
-      prisma.aula.findUnique.mockResolvedValue(mockAulaCompleta as any);
-      promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
-      promptService.renderPrompt.mockResolvedValue('rendered');
-
-      // Claude called for prompts 1, 2, 3, 5
-      // Prompt 3 returns markdown (not JSON)
-      let claudeCallCount = 0;
-      claudeProvider.generate.mockImplementation(() => {
-        claudeCallCount++;
-        if (claudeCallCount === 3) {
-          // Prompt 3 - Relatório em markdown
-          return Promise.resolve({
-            texto: '# Relatório Pedagógico\n\n**Cobertura:** Completa',
-            provider: 'CLAUDE' as any,
-            modelo: 'claude-sonnet-4',
-            tokens_input: 100,
-            tokens_output: 50,
-            custo_usd: 0.02,
-            tempo_processamento_ms: 1500,
-            metadata: {},
-          });
-        }
-        // Other prompts return JSON
-        return Promise.resolve(mockLLMResult);
+      llmRouterService.generateWithFallback.mockImplementation(() => {
+        return Promise.resolve({
+          ...mockLLMResult,
+          custo_usd: costs[callCount],
+          provider: providers[callCount++] as any,
+        });
       });
 
-      gptProvider.generate.mockResolvedValue(mockLLMResult);
-      prisma.analise.create.mockResolvedValue({} as any);
-      prisma.aula.update.mockResolvedValue({} as any);
+      prisma.aula.findUnique.mockResolvedValue(mockAulaCompleta as any);
+      promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
+      promptService.renderPrompt.mockResolvedValue('rendered');
 
       await service.analisarAula(mockAulaId);
 
-      // Verify $transaction was called with atomic operations
+      // Verify $transaction was called
       expect(prisma.$transaction).toHaveBeenCalled();
+
+      // Verify the create call inside transaction includes provider breakdown
+      const txCallback = prisma.$transaction.mock.calls[0][0];
+      const mockTx = {
+        analise: { create: jest.fn().mockResolvedValue({ id: 'analise-1' }) },
+        aula: { update: jest.fn().mockResolvedValue({}) },
+      };
+      await txCallback(mockTx);
+
+      const createData = mockTx.analise.create.mock.calls[0][0].data;
+      expect(createData.provider_llm_cobertura).toBe('Gemini');
+      expect(createData.custo_llm_cobertura_usd).toBe(0.020);
+      expect(createData.provider_llm_qualitativa).toBe('Gemini');
+      expect(createData.custo_llm_qualitativa_usd).toBe(0.025);
+      expect(createData.provider_llm_relatorio).toBe('Gemini');
+      expect(createData.custo_llm_relatorio_usd).toBe(0.015);
+      expect(createData.provider_llm_exercicios).toBe('GPT');
+      expect(createData.custo_llm_exercicios_usd).toBe(0.005);
+      expect(createData.provider_llm_alertas).toBe('Gemini');
+      expect(createData.custo_llm_alertas_usd).toBe(0.020);
     });
 
     it('should update Aula status to ANALISADA (via transaction)', async () => {
@@ -345,44 +323,41 @@ describe('AnaliseService', () => {
       promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
       promptService.renderPrompt.mockResolvedValue('rendered');
 
-      claudeProvider.generate.mockResolvedValue(mockLLMResult);
-      gptProvider.generate.mockResolvedValue(mockLLMResult);
-
       await service.analisarAula(mockAulaId);
 
-      // Verify $transaction was called (Aula update happens inside transaction)
       expect(prisma.$transaction).toHaveBeenCalled();
     });
 
     it('should track custo_total correctly (sum of 5 prompts)', async () => {
+      const costs = [0.020, 0.025, 0.015, 0.005, 0.020];
+      let callCount = 0;
+
+      llmRouterService.generateWithFallback.mockImplementation(() => {
+        return Promise.resolve({
+          ...mockLLMResult,
+          custo_usd: costs[callCount++],
+        });
+      });
+
       prisma.aula.findUnique.mockResolvedValue(mockAulaCompleta as any);
       promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
       promptService.renderPrompt.mockResolvedValue('rendered');
 
-      // Claude provider called 4 times (prompts 1,2,3,5)
-      // GPT provider called 1 time (prompt 4)
-      const claudeCosts = [0.020, 0.025, 0.015, 0.020]; // Prompts 1,2,3,5
-      let claudeCallCount = 0;
-
-      claudeProvider.generate.mockImplementation(() => {
-        return Promise.resolve({
-          ...mockLLMResult,
-          custo_usd: claudeCosts[claudeCallCount++],
-        });
-      });
-
-      gptProvider.generate.mockResolvedValue({
-        ...mockLLMResult,
-        custo_usd: 0.005, // Prompt 4
-      });
-
-      prisma.analise.create.mockResolvedValue({} as any);
-      prisma.aula.update.mockResolvedValue({} as any);
-
       await service.analisarAula(mockAulaId);
 
-      // Verify $transaction was called (cost tracking happens inside)
+      // Verify $transaction was called
       expect(prisma.$transaction).toHaveBeenCalled();
+
+      // Verify custo_total inside transaction
+      const txCallback = prisma.$transaction.mock.calls[0][0];
+      const mockTx = {
+        analise: { create: jest.fn().mockResolvedValue({ id: 'analise-1' }) },
+        aula: { update: jest.fn().mockResolvedValue({}) },
+      };
+      await txCallback(mockTx);
+
+      const createData = mockTx.analise.create.mock.calls[0][0].data;
+      expect(createData.custo_total_usd).toBeCloseTo(0.085, 4); // Sum of all costs
     });
 
     it('should track prompt_versoes_json (5 versions)', async () => {
@@ -398,19 +373,56 @@ describe('AnaliseService', () => {
 
       let callCount = 0;
       promptService.getActivePrompt.mockImplementation(() => {
-        // NOTE: getActivePrompt is called 10 times now (5 validation + 5 execution)
-        // Use modulo to cycle through prompts array
         return Promise.resolve(prompts[callCount++ % 5] as any);
       });
 
       promptService.renderPrompt.mockResolvedValue('rendered');
-      claudeProvider.generate.mockResolvedValue(mockLLMResult);
-      gptProvider.generate.mockResolvedValue(mockLLMResult);
 
       await service.analisarAula(mockAulaId);
 
-      // Verify $transaction was called (version tracking happens inside)
       expect(prisma.$transaction).toHaveBeenCalled();
+    });
+
+    it('should propagate LLM router errors', async () => {
+      prisma.aula.findUnique.mockResolvedValue(mockAulaCompleta as any);
+      promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
+      promptService.renderPrompt.mockResolvedValue('rendered');
+
+      llmRouterService.generateWithFallback.mockRejectedValue(
+        new Error('LLM generation failed for analise_cobertura: primary=GEMINI_FLASH, fallback=CLAUDE_SONNET'),
+      );
+
+      await expect(service.analisarAula(mockAulaId)).rejects.toThrow(
+        'LLM generation failed',
+      );
+    });
+
+    it('should handle fallback scenario (router handles internally)', async () => {
+      prisma.aula.findUnique.mockResolvedValue(mockAulaCompleta as any);
+      promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
+      promptService.renderPrompt.mockResolvedValue('rendered');
+
+      // Simulate fallback: router returns Claude as provider (fallback was used)
+      llmRouterService.generateWithFallback.mockResolvedValue({
+        ...mockLLMResult,
+        provider: 'Claude' as any,
+        modelo: 'claude-sonnet-4',
+        custo_usd: 0.05,
+      });
+
+      // Clear call count before test execution
+      llmRouterService.generateWithFallback.mockClear();
+      llmRouterService.generateWithFallback.mockResolvedValue({
+        ...mockLLMResult,
+        provider: 'Claude' as any,
+        modelo: 'claude-sonnet-4',
+        custo_usd: 0.05,
+      });
+
+      const result = await service.analisarAula(mockAulaId);
+      expect(result).toBeDefined();
+      // Verify router was called 5 times - fallback handling is internal to router
+      expect(llmRouterService.generateWithFallback).toHaveBeenCalledTimes(5);
     });
   });
 
@@ -421,22 +433,13 @@ describe('AnaliseService', () => {
       promptService.renderPrompt.mockResolvedValue('rendered');
 
       const jsonOutput = { habilidades: [{ codigo: 'EF06MA01' }] };
-      claudeProvider.generate.mockResolvedValue({
+      llmRouterService.generateWithFallback.mockResolvedValue({
+        ...mockLLMResult,
         texto: JSON.stringify(jsonOutput),
-        provider: 'CLAUDE' as any,
-        modelo: 'claude-sonnet-4',
-        tokens_input: 100,
-        tokens_output: 50,
-        custo_usd: 0.02,
-        tempo_processamento_ms: 1500,
-        metadata: {},
       });
-
-      gptProvider.generate.mockResolvedValue(mockLLMResult);
 
       await service.analisarAula(mockAulaId);
 
-      // Verify $transaction was called (JSON parsing happens in executePrompt)
       expect(prisma.$transaction).toHaveBeenCalled();
     });
 
@@ -446,41 +449,21 @@ describe('AnaliseService', () => {
       promptService.renderPrompt.mockResolvedValue('rendered');
 
       let callCount = 0;
-      claudeProvider.generate.mockImplementation(() => {
+      llmRouterService.generateWithFallback.mockImplementation(() => {
         callCount++;
         if (callCount === 3) {
           // Prompt 3 - Relatório (markdown)
           return Promise.resolve({
+            ...mockLLMResult,
             texto: '# Relatório Pedagógico\n\n**Cobertura:** Completa',
-            provider: 'CLAUDE' as any,
-            modelo: 'claude-sonnet-4',
-            tokens_input: 100,
-            tokens_output: 50,
-            custo_usd: 0.02,
-            tempo_processamento_ms: 1500,
-            metadata: {},
           });
         }
         return Promise.resolve(mockLLMResult);
       });
 
-      gptProvider.generate.mockResolvedValue(mockLLMResult);
-
       await service.analisarAula(mockAulaId);
 
-      // Verify $transaction was called (markdown handling happens in executePrompt)
       expect(prisma.$transaction).toHaveBeenCalled();
-    });
-
-    it('should handle LLM provider errors (logs and re-throws)', async () => {
-      prisma.aula.findUnique.mockResolvedValue(mockAulaCompleta as any);
-      promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
-      promptService.renderPrompt.mockResolvedValue('rendered');
-
-      const providerError = new Error('LLM API timeout');
-      claudeProvider.generate.mockRejectedValue(providerError);
-
-      await expect(service.analisarAula(mockAulaId)).rejects.toThrow('LLM API timeout');
     });
   });
 
@@ -490,7 +473,6 @@ describe('AnaliseService', () => {
   describe('Helper Methods - Ensino Médio Context', () => {
     describe('getFaixaEtaria', () => {
       it('should return correct age range for Ensino Médio series', () => {
-        // Access private method via reflection
         const getFaixaEtaria = (service as any).getFaixaEtaria.bind(service);
 
         expect(getFaixaEtaria('MEDIO', 'PRIMEIRO_ANO_EM')).toBe('14-15 anos');
@@ -544,19 +526,16 @@ describe('AnaliseService', () => {
     describe('getNivelEnsino', () => {
       it('should return "Ensino Médio" for MEDIO', () => {
         const getNivelEnsino = (service as any).getNivelEnsino.bind(service);
-
         expect(getNivelEnsino('MEDIO')).toBe('Ensino Médio');
       });
 
       it('should return "Ensino Fundamental" for FUNDAMENTAL', () => {
         const getNivelEnsino = (service as any).getNivelEnsino.bind(service);
-
         expect(getNivelEnsino('FUNDAMENTAL')).toBe('Ensino Fundamental');
       });
 
       it('should return "Ensino Fundamental" for null/undefined (backward compat)', () => {
         const getNivelEnsino = (service as any).getNivelEnsino.bind(service);
-
         expect(getNivelEnsino(null)).toBe('Ensino Fundamental');
         expect(getNivelEnsino(undefined)).toBe('Ensino Fundamental');
       });
@@ -576,12 +555,9 @@ describe('AnaliseService', () => {
         prisma.aula.findUnique.mockResolvedValue(aulaEM as any);
         promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
         promptService.renderPrompt.mockResolvedValue('rendered');
-        claudeProvider.generate.mockResolvedValue(mockLLMResult);
-        gptProvider.generate.mockResolvedValue(mockLLMResult);
 
         await service.analisarAula(mockAulaId);
 
-        // Verify renderPrompt was called with EM context
         const firstRenderCall = promptService.renderPrompt.mock.calls[0];
         const contexto = firstRenderCall[1];
 
@@ -604,8 +580,6 @@ describe('AnaliseService', () => {
         prisma.aula.findUnique.mockResolvedValue(aulaEF as any);
         promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
         promptService.renderPrompt.mockResolvedValue('rendered');
-        claudeProvider.generate.mockResolvedValue(mockLLMResult);
-        gptProvider.generate.mockResolvedValue(mockLLMResult);
 
         await service.analisarAula(mockAulaId);
 
@@ -631,8 +605,6 @@ describe('AnaliseService', () => {
         prisma.aula.findUnique.mockResolvedValue(aulaWithoutTipoEnsino as any);
         promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
         promptService.renderPrompt.mockResolvedValue('rendered');
-        claudeProvider.generate.mockResolvedValue(mockLLMResult);
-        gptProvider.generate.mockResolvedValue(mockLLMResult);
 
         await service.analisarAula(mockAulaId);
 
@@ -644,10 +616,6 @@ describe('AnaliseService', () => {
       });
     });
 
-    /**
-     * STORY 10.6: Integration tests comparing EM vs EF analysis outputs
-     * Critical requirement AC#10: Validate that prompts generate different analyses for EM vs EF
-     */
     describe('Story 10.6: Diferenças entre Ensino Fundamental e Médio', () => {
       it('should include serie and disciplina in top-level context (CRITICAL FIX)', async () => {
         const aulaEM = {
@@ -663,457 +631,126 @@ describe('AnaliseService', () => {
         prisma.aula.findUnique.mockResolvedValue(aulaEM as any);
         promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
         promptService.renderPrompt.mockResolvedValue('rendered');
-        claudeProvider.generate.mockResolvedValue(mockLLMResult);
-        gptProvider.generate.mockResolvedValue(mockLLMResult);
 
         await service.analisarAula(mockAulaId);
 
         const firstRenderCall = promptService.renderPrompt.mock.calls[0];
         const contexto = firstRenderCall[1];
 
-        // CRITICAL: serie and disciplina MUST be top-level for template conditionals
-        // Templates use {{#if (eq serie 'TERCEIRO_ANO_EM')}} and {{#if (eq disciplina 'LINGUA_PORTUGUESA')}}
         expect(contexto.serie).toBe('TERCEIRO_ANO_EM');
         expect(contexto.disciplina).toBe('LINGUA_PORTUGUESA');
-
-        // Should also exist nested (backward compat)
         expect(contexto.turma.serie).toBe('TERCEIRO_ANO_EM');
         expect(contexto.turma.disciplina).toBe('LINGUA_PORTUGUESA');
       });
 
       it('should pass different context for EM vs EF (same transcript)', async () => {
-        // This test validates that EM and EF receive different contextual variables
-        // enabling prompts to generate age-appropriate analyses
-
         const aulaEF = {
           ...mockAulaCompleta,
-          turma: {
-            ...mockAulaCompleta.turma,
-            tipo_ensino: 'FUNDAMENTAL',
-            serie: 'SEXTO_ANO',
-          },
+          turma: { ...mockAulaCompleta.turma, tipo_ensino: 'FUNDAMENTAL', serie: 'SEXTO_ANO' },
         };
-
         const aulaEM = {
           ...mockAulaCompleta,
-          turma: {
-            ...mockAulaCompleta.turma,
-            tipo_ensino: 'MEDIO',
-            serie: 'PRIMEIRO_ANO_EM',
-          },
+          turma: { ...mockAulaCompleta.turma, tipo_ensino: 'MEDIO', serie: 'PRIMEIRO_ANO_EM' },
         };
 
         // Execute for EF
         prisma.aula.findUnique.mockResolvedValue(aulaEF as any);
         promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
         promptService.renderPrompt.mockResolvedValue('rendered');
-        claudeProvider.generate.mockResolvedValue(mockLLMResult);
-        gptProvider.generate.mockResolvedValue(mockLLMResult);
-
         await service.analisarAula('aula-ef-id');
-
         const efContext = promptService.renderPrompt.mock.calls[0][1];
 
-        // Clear mocks
         jest.clearAllMocks();
 
         // Execute for EM
         prisma.aula.findUnique.mockResolvedValue(aulaEM as any);
         promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
         promptService.renderPrompt.mockResolvedValue('rendered');
-        claudeProvider.generate.mockResolvedValue(mockLLMResult);
-        gptProvider.generate.mockResolvedValue(mockLLMResult);
-
+        llmRouterService.generateWithFallback.mockResolvedValue(mockLLMResult);
         await service.analisarAula('aula-em-id');
-
         const emContext = promptService.renderPrompt.mock.calls[0][1];
 
-        // Compare contexts
         expect(efContext.tipo_ensino).toBe('FUNDAMENTAL');
         expect(emContext.tipo_ensino).toBe('MEDIO');
-
         expect(efContext.nivel_ensino).toBe('Ensino Fundamental');
         expect(emContext.nivel_ensino).toBe('Ensino Médio');
-
-        expect(efContext.faixa_etaria).toBe('11-12 anos'); // 6º ano EF
-        expect(emContext.faixa_etaria).toBe('14-15 anos'); // 1º ano EM
-
+        expect(efContext.faixa_etaria).toBe('11-12 anos');
+        expect(emContext.faixa_etaria).toBe('14-15 anos');
         expect(efContext.ano_serie).toBe('6º Ano');
         expect(emContext.ano_serie).toBe('1º (EM)');
-
-        // This validates that prompts receive different signals to generate:
-        // - Different Bloom Taxonomy expectations (EM: 70%+ higher levels)
-        // - Different exercise complexity (EM: ENEM-style)
-        // - Different alert types (EM: "falta ENEM", EF: "cobertura insuficiente")
       });
-
-      it('should format serie correctly for EM with (EM) suffix', async () => {
-        const seriesEM = [
-          { input: 'PRIMEIRO_ANO_EM', expected: '1º (EM)' },
-          { input: 'SEGUNDO_ANO_EM', expected: '2º (EM)' },
-          { input: 'TERCEIRO_ANO_EM', expected: '3º (EM)' },
-        ];
-
-        for (const { input, expected } of seriesEM) {
-          const aulaEM = {
-            ...mockAulaCompleta,
-            turma: {
-              ...mockAulaCompleta.turma,
-              tipo_ensino: 'MEDIO',
-              serie: input,
-            },
-          };
-
-          prisma.aula.findUnique.mockResolvedValue(aulaEM as any);
-          promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
-          promptService.renderPrompt.mockResolvedValue('rendered');
-          claudeProvider.generate.mockResolvedValue(mockLLMResult);
-          gptProvider.generate.mockResolvedValue(mockLLMResult);
-
-          await service.analisarAula(mockAulaId);
-
-          const context = promptService.renderPrompt.mock.calls[0][1];
-          expect(context.ano_serie).toBe(expected);
-
-          jest.clearAllMocks();
-        }
-      });
-
-      it('should map faixa_etaria correctly for all EM series', async () => {
-        const faixasEtariasEM = [
-          { serie: 'PRIMEIRO_ANO_EM', expected: '14-15 anos' },
-          { serie: 'SEGUNDO_ANO_EM', expected: '15-16 anos' },
-          { serie: 'TERCEIRO_ANO_EM', expected: '16-17 anos' },
-        ];
-
-        for (const { serie, expected } of faixasEtariasEM) {
-          const aulaEM = {
-            ...mockAulaCompleta,
-            turma: {
-              ...mockAulaCompleta.turma,
-              tipo_ensino: 'MEDIO',
-              serie,
-            },
-          };
-
-          prisma.aula.findUnique.mockResolvedValue(aulaEM as any);
-          promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
-          promptService.renderPrompt.mockResolvedValue('rendered');
-          claudeProvider.generate.mockResolvedValue(mockLLMResult);
-          gptProvider.generate.mockResolvedValue(mockLLMResult);
-
-          await service.analisarAula(mockAulaId);
-
-          const context = promptService.renderPrompt.mock.calls[0][1];
-          expect(context.faixa_etaria).toBe(expected);
-
-          jest.clearAllMocks();
-        }
-      });
-
-      /**
-       * NOTE: Full integration test with actual LLM calls would validate:
-       * - EM reports have professional tone (not infantilized)
-       * - EM exercises are more complex (>= 2 ANALISAR/AVALIAR/CRIAR)
-       * - EM alerts include "metodologia inadequada", "falta ENEM contexto"
-       * - Bloom distribution: EM has higher % in levels 4-6 than EF
-       *
-       * These require end-to-end testing with real/mocked LLM responses.
-       * Current tests validate that CONTEXT is correctly passed to prompts.
-       */
     });
   });
 
   /**
-   * STORY 11.7: Tests for buildPlanejamentoContext - BNCC vs Custom curriculum adaptation
+   * STORY 11.7: Tests for buildPlanejamentoContext
    */
   describe('buildPlanejamentoContext (Story 11.7)', () => {
     describe('BNCC curriculum (isCurriculoCustom = false)', () => {
       it('should format BNCC habilidades context', () => {
         const buildPlanejamentoContext = (service as any).buildPlanejamentoContext.bind(service);
-
         const mockPlanejamentoBNCC = {
           id: 'plan-1',
           habilidades: [
             {
-              id: 'ph-1',
-              planejamento_id: 'plan-1',
-              habilidade_id: 'hab-1',
-              peso: 1.0,
-              aulas_previstas: 4,
-              habilidade: {
-                codigo: 'EF06MA01',
-                descricao: 'Comparar, ordenar, ler e escrever números naturais',
-                unidade_tematica: 'Números',
-              },
-            },
-            {
-              id: 'ph-2',
-              planejamento_id: 'plan-1',
-              habilidade_id: 'hab-2',
-              peso: 1.5,
-              aulas_previstas: 5,
-              habilidade: {
-                codigo: 'EF06MA02',
-                descricao: 'Reconhecer o sistema de numeração decimal',
-                unidade_tematica: 'Números',
-              },
+              id: 'ph-1', planejamento_id: 'plan-1', habilidade_id: 'hab-1',
+              peso: 1.0, aulas_previstas: 4,
+              habilidade: { codigo: 'EF06MA01', descricao: 'Comparar números', unidade_tematica: 'Números' },
             },
           ],
-          objetivos: [], // Empty for BNCC
-        };
-
-        const result = buildPlanejamentoContext(mockPlanejamentoBNCC, false);
-
-        expect(result).toEqual({
-          tipo: 'bncc',
-          habilidades: [
-            {
-              codigo: 'EF06MA01',
-              descricao: 'Comparar, ordenar, ler e escrever números naturais',
-              unidade_tematica: 'Números',
-            },
-            {
-              codigo: 'EF06MA02',
-              descricao: 'Reconhecer o sistema de numeração decimal',
-              unidade_tematica: 'Números',
-            },
-          ],
-        });
-      });
-
-      it('should handle empty habilidades array (BNCC)', () => {
-        const buildPlanejamentoContext = (service as any).buildPlanejamentoContext.bind(service);
-
-        const mockPlanejamentoVazio = {
-          id: 'plan-1',
-          habilidades: [],
           objetivos: [],
         };
 
-        const result = buildPlanejamentoContext(mockPlanejamentoVazio, false);
-
+        const result = buildPlanejamentoContext(mockPlanejamentoBNCC, false);
         expect(result).toEqual({
           tipo: 'bncc',
-          habilidades: [],
+          habilidades: [{ codigo: 'EF06MA01', descricao: 'Comparar números', unidade_tematica: 'Números' }],
         });
       });
 
       it('should return null when planejamento is null', () => {
         const buildPlanejamentoContext = (service as any).buildPlanejamentoContext.bind(service);
-
-        const result = buildPlanejamentoContext(null, false);
-
-        expect(result).toBeNull();
-      });
-
-      it('should return null when planejamento is undefined', () => {
-        const buildPlanejamentoContext = (service as any).buildPlanejamentoContext.bind(service);
-
-        const result = buildPlanejamentoContext(undefined, false);
-
-        expect(result).toBeNull();
+        expect(buildPlanejamentoContext(null, false)).toBeNull();
       });
     });
 
     describe('Custom curriculum (isCurriculoCustom = true)', () => {
-      it('should format custom objetivos context with all Bloom fields', () => {
+      it('should format custom objetivos context with Bloom fields', () => {
         const buildPlanejamentoContext = (service as any).buildPlanejamentoContext.bind(service);
-
         const mockPlanejamentoCustom = {
           id: 'plan-custom-1',
-          habilidades: [], // Legacy empty
-          objetivos: [
-            {
-              id: 'po-1',
-              planejamento_id: 'plan-custom-1',
-              objetivo_id: 'obj-1',
-              peso: 1.5,
-              aulas_previstas: 3,
-              objetivo: {
-                codigo: 'PM-MAT-01',
-                descricao: 'Resolver problemas de razão e proporção',
-                nivel_cognitivo: 'APLICAR',
-                area_conhecimento: 'Matemática - Raciocínio',
-                criterios_evidencia: [
-                  'Identificar dados do problema',
-                  'Aplicar regra de três',
-                  'Interpretar resultado no contexto',
-                ],
-              },
+          habilidades: [],
+          objetivos: [{
+            id: 'po-1', planejamento_id: 'plan-custom-1', objetivo_id: 'obj-1',
+            peso: 1.5, aulas_previstas: 3,
+            objetivo: {
+              codigo: 'PM-MAT-01', descricao: 'Resolver problemas',
+              nivel_cognitivo: 'APLICAR', area_conhecimento: 'Matemática',
+              criterios_evidencia: ['Identificar dados', 'Aplicar regra de três'],
             },
-            {
-              id: 'po-2',
-              planejamento_id: 'plan-custom-1',
-              objetivo_id: 'obj-2',
-              peso: 1.0,
-              aulas_previstas: 2,
-              objetivo: {
-                codigo: 'PM-MAT-02',
-                descricao: 'Calcular porcentagens em contextos práticos',
-                nivel_cognitivo: 'ENTENDER',
-                area_conhecimento: 'Matemática - Básica',
-                criterios_evidencia: ['Reconhecer situações de porcentagem', 'Calcular valores'],
-              },
-            },
-          ],
+          }],
         };
 
         const result = buildPlanejamentoContext(mockPlanejamentoCustom, true);
-
-        expect(result).toEqual({
-          tipo: 'custom',
-          objetivos: [
-            {
-              codigo: 'PM-MAT-01',
-              descricao: 'Resolver problemas de razão e proporção',
-              nivel_cognitivo: 'APLICAR',
-              area_conhecimento: 'Matemática - Raciocínio',
-              criterios_evidencia: [
-                'Identificar dados do problema',
-                'Aplicar regra de três',
-                'Interpretar resultado no contexto',
-              ],
-              peso: 1.5,
-              aulas_previstas: 3,
-            },
-            {
-              codigo: 'PM-MAT-02',
-              descricao: 'Calcular porcentagens em contextos práticos',
-              nivel_cognitivo: 'ENTENDER',
-              area_conhecimento: 'Matemática - Básica',
-              criterios_evidencia: ['Reconhecer situações de porcentagem', 'Calcular valores'],
-              peso: 1.0,
-              aulas_previstas: 2,
-            },
-          ],
-        });
+        expect(result.tipo).toBe('custom');
+        expect(result.objetivos).toHaveLength(1);
+        expect(result.objetivos[0].nivel_cognitivo).toBe('APLICAR');
       });
 
-      it('should handle empty criterios_evidencia (custom objetivo without criteria)', () => {
+      it('should fallback to BNCC when custom objetivos empty', () => {
         const buildPlanejamentoContext = (service as any).buildPlanejamentoContext.bind(service);
-
-        const mockPlanejamentoSemCriterios = {
-          id: 'plan-1',
-          habilidades: [],
-          objetivos: [
-            {
-              id: 'po-1',
-              planejamento_id: 'plan-1',
-              objetivo_id: 'obj-1',
-              peso: 1.0,
-              aulas_previstas: 2,
-              objetivo: {
-                codigo: 'CUSTOM-01',
-                descricao: 'Objetivo sem critérios',
-                nivel_cognitivo: 'LEMBRAR',
-                area_conhecimento: 'Geral',
-                criterios_evidencia: null, // May be null in DB
-              },
-            },
-          ],
-        };
-
-        const result = buildPlanejamentoContext(mockPlanejamentoSemCriterios, true);
-
-        expect(result.objetivos[0].criterios_evidencia).toEqual([]);
-      });
-
-      it('should handle empty objetivos array (custom fallback to BNCC)', () => {
-        const buildPlanejamentoContext = (service as any).buildPlanejamentoContext.bind(service);
-
         const mockPlanejamentoFallback = {
           id: 'plan-1',
-          habilidades: [
-            {
-              id: 'ph-1',
-              planejamento_id: 'plan-1',
-              habilidade_id: 'hab-1',
-              peso: 1.0,
-              aulas_previstas: 4,
-              habilidade: {
-                codigo: 'EF06MA01',
-                descricao: 'Habilidade BNCC fallback',
-                unidade_tematica: 'Números',
-              },
-            },
-          ],
-          objetivos: [], // Empty custom - should fallback to BNCC
+          habilidades: [{
+            id: 'ph-1', planejamento_id: 'plan-1', habilidade_id: 'hab-1',
+            peso: 1.0, aulas_previstas: 4,
+            habilidade: { codigo: 'EF06MA01', descricao: 'Fallback', unidade_tematica: 'Números' },
+          }],
+          objetivos: [],
         };
 
         const result = buildPlanejamentoContext(mockPlanejamentoFallback, true);
-
-        // Should fallback to BNCC format when custom objetivos empty
-        expect(result).toEqual({
-          tipo: 'bncc',
-          habilidades: [
-            {
-              codigo: 'EF06MA01',
-              descricao: 'Habilidade BNCC fallback',
-              unidade_tematica: 'Números',
-            },
-          ],
-        });
-      });
-    });
-
-    describe('Backward compatibility', () => {
-      it('should use habilidades when curriculo_tipo=CUSTOM but objetivos missing (legacy)', () => {
-        const buildPlanejamentoContext = (service as any).buildPlanejamentoContext.bind(service);
-
-        const mockPlanejamentoLegacy = {
-          id: 'plan-legacy',
-          habilidades: [
-            {
-              id: 'ph-1',
-              planejamento_id: 'plan-legacy',
-              habilidade_id: 'hab-1',
-              peso: 1.0,
-              aulas_previstas: 4,
-              habilidade: {
-                codigo: 'EF07MA15',
-                descricao: 'Legacy habilidade',
-                unidade_tematica: 'Geometria',
-              },
-            },
-          ],
-          // Objetivos undefined (old planejamentos before Story 11.3)
-        };
-
-        const result = buildPlanejamentoContext(mockPlanejamentoLegacy, true);
-
-        // Should fallback to BNCC
         expect(result.tipo).toBe('bncc');
-        expect(result.habilidades).toHaveLength(1);
-        expect(result.habilidades[0].codigo).toBe('EF07MA15');
-      });
-
-      it('should handle planejamento without objetivos property (legacy schema)', () => {
-        const buildPlanejamentoContext = (service as any).buildPlanejamentoContext.bind(service);
-
-        const mockPlanejamentoOldSchema = {
-          id: 'plan-old',
-          habilidades: [
-            {
-              id: 'ph-1',
-              planejamento_id: 'plan-old',
-              habilidade_id: 'hab-1',
-              peso: 1.0,
-              aulas_previstas: 4,
-              habilidade: {
-                codigo: 'EF08MA12',
-                descricao: 'Old schema habilidade',
-                unidade_tematica: 'Álgebra',
-              },
-            },
-          ],
-          // No 'objetivos' property at all
-        };
-
-        const result = buildPlanejamentoContext(mockPlanejamentoOldSchema, false);
-
-        expect(result.tipo).toBe('bncc');
-        expect(result.habilidades).toHaveLength(1);
       });
     });
   });

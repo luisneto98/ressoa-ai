@@ -60,6 +60,7 @@ enum ProviderSTT {
   GOOGLE
   AZURE
   MANUAL
+  GROQ_WHISPER
 }
 
 enum TipoNotificacao {

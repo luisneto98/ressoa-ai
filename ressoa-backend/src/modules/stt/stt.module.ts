@@ -7,6 +7,7 @@ import { STTService } from './stt.service';
 import { TranscricaoService } from './transcricao.service';
 import { WhisperProvider } from './providers/whisper.provider';
 import { GoogleProvider } from './providers/google.provider';
+import { GroqWhisperProvider } from './providers/groq-whisper.provider';
 import { TranscriptionProcessor } from './workers/transcription.processor';
 import { STTRouterService } from './services/stt-router.service';
 
@@ -14,8 +15,8 @@ import { STTRouterService } from './services/stt-router.service';
  * STT (Speech-to-Text) Module
  *
  * Provides:
- * - Multi-provider STT abstraction layer (Whisper, Google, Azure)
- * - Automatic failover: primary → fallback
+ * - Multi-provider STT abstraction layer (Whisper, Google, Groq Whisper)
+ * - Config-driven routing with automatic failover: primary → fallback (Story 14.1)
  * - Transcription persistence and Aula status management
  * - Async transcription processing via Bull queue workers (Story 4.3)
  *
@@ -27,9 +28,11 @@ import { STTRouterService } from './services/stt-router.service';
  *         ↓
  * STTService (Orchestration Layer with Failover)
  *         ↓
- * Providers (WHISPER_PROVIDER, GOOGLE_PROVIDER)
+ * STTRouterService (Config-driven routing - Story 14.1)
  *         ↓
- * External APIs (OpenAI, Google Cloud)
+ * Providers (WHISPER_PROVIDER, GOOGLE_PROVIDER, GROQ_WHISPER_PROVIDER)
+ *         ↓
+ * External APIs (OpenAI, Google Cloud, Groq)
  * ```
  *
  * @see architecture.md lines 427-450 (Service Abstraction Layer Pattern)
@@ -65,6 +68,10 @@ import { STTRouterService } from './services/stt-router.service';
     {
       provide: 'GOOGLE_PROVIDER',
       useClass: GoogleProvider, // Real implementation (Story 4.2) - Google Cloud Speech API
+    },
+    {
+      provide: 'GROQ_WHISPER_PROVIDER',
+      useClass: GroqWhisperProvider, // Story 14.2 - Groq Whisper Large v3 Turbo (89% cost reduction)
     },
   ],
   exports: [STTService, TranscricaoService, STTRouterService],

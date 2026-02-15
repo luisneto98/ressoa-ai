@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "stt": {
-    "primary": "WHISPER",
-    "fallback": "GOOGLE"
+    "primary": "GROQ_WHISPER",
+    "fallback": "WHISPER"
   },
   "llm": {
     "analise_cobertura": { "primary": "CLAUDE_SONNET", "fallback": "GPT4_MINI" },

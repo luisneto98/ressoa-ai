@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "ProviderSTT" ADD VALUE 'GROQ_WHISPER';

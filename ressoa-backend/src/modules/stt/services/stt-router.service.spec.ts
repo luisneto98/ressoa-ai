@@ -26,11 +26,13 @@ describe('STTRouterService', () => {
   let service: STTRouterService;
   let whisperProvider: jest.Mocked<STTProvider>;
   let googleProvider: jest.Mocked<STTProvider>;
+  let groqWhisperProvider: jest.Mocked<STTProvider>;
   let configService: jest.Mocked<ProvidersConfigService>;
 
   beforeEach(() => {
     whisperProvider = createMockProvider(ProviderSTT.WHISPER);
     googleProvider = createMockProvider(ProviderSTT.GOOGLE);
+    groqWhisperProvider = createMockProvider(ProviderSTT.GROQ_WHISPER);
     configService = {
       getSTTConfig: jest.fn().mockReturnValue({ primary: 'WHISPER', fallback: 'GOOGLE' }),
       getLLMConfig: jest.fn(),
@@ -40,6 +42,7 @@ describe('STTRouterService', () => {
     service = new STTRouterService(
       whisperProvider,
       googleProvider,
+      groqWhisperProvider,
       configService,
     );
   });
@@ -57,6 +60,14 @@ describe('STTRouterService', () => {
       const provider = service.getSTTProvider();
 
       expect(provider.getName()).toBe(ProviderSTT.GOOGLE);
+    });
+
+    it('should return Groq Whisper when config sets GROQ_WHISPER as primary', () => {
+      configService.getSTTConfig.mockReturnValue({ primary: 'GROQ_WHISPER', fallback: 'WHISPER' });
+
+      const provider = service.getSTTProvider();
+
+      expect(provider.getName()).toBe(ProviderSTT.GROQ_WHISPER);
     });
 
     it('should throw for unknown provider key', () => {

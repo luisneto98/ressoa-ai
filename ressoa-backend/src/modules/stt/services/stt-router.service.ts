@@ -11,11 +11,13 @@ export class STTRouterService {
   constructor(
     @Inject('WHISPER_PROVIDER') private whisperProvider: STTProvider,
     @Inject('GOOGLE_PROVIDER') private googleProvider: STTProvider,
+    @Inject('GROQ_WHISPER_PROVIDER') private groqWhisperProvider: STTProvider,
     private configService: ProvidersConfigService,
   ) {
     this.providerMap = new Map<string, STTProvider>([
       ['WHISPER', this.whisperProvider],
       ['GOOGLE', this.googleProvider],
+      ['GROQ_WHISPER', this.groqWhisperProvider],
     ]);
   }
 

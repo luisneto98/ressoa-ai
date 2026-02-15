@@ -10,6 +10,7 @@ const ProviderSTTKey = z.enum([
   'GOOGLE',
   'AZURE',
   'MANUAL',
+  'GROQ_WHISPER',
 ]);
 
 const ProviderLLMKey = z.enum([

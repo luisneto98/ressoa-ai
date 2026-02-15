@@ -83,7 +83,7 @@ describe('ProvidersConfigSchema', () => {
   });
 
   it('should accept all valid ProviderSTT enum values', () => {
-    const validSTT = ['WHISPER', 'GOOGLE', 'AZURE', 'MANUAL'];
+    const validSTT = ['WHISPER', 'GOOGLE', 'AZURE', 'MANUAL', 'GROQ_WHISPER'];
     for (const provider of validSTT) {
       const config = {
         version: '1.0.0',

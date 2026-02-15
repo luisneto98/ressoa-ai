@@ -102,9 +102,12 @@ describe('Prompt 5 - Detecção de Alertas', () => {
     jest.spyOn(promptService, 'renderPrompt').mockResolvedValue('Rendered prompt');
     jest.spyOn(claudeProvider, 'generate').mockResolvedValue({
       texto: JSON.stringify(mockLLMResponse),
-      tokens_entrada: 500,
-      tokens_saida: 300,
+      provider: 'CLAUDE' as any,
+      modelo: 'claude-sonnet-4',
+      tokens_input: 500,
+      tokens_output: 300,
       custo_usd: 0.008,
+      tempo_processamento_ms: 1500,
     });
 
     // Act: Execute prompt
@@ -178,9 +181,12 @@ describe('Prompt 5 - Detecção de Alertas', () => {
     jest.spyOn(promptService, 'renderPrompt').mockResolvedValue('Rendered prompt');
     jest.spyOn(claudeProvider, 'generate').mockResolvedValue({
       texto: JSON.stringify(mockLLMResponse),
-      tokens_entrada: 500,
-      tokens_saida: 300,
+      provider: 'CLAUDE' as any,
+      modelo: 'claude-sonnet-4',
+      tokens_input: 500,
+      tokens_output: 300,
       custo_usd: 0.008,
+      tempo_processamento_ms: 1500,
     });
 
     // Act
@@ -244,9 +250,12 @@ describe('Prompt 5 - Detecção de Alertas', () => {
     jest.spyOn(promptService, 'renderPrompt').mockResolvedValue('Rendered prompt');
     jest.spyOn(claudeProvider, 'generate').mockResolvedValue({
       texto: JSON.stringify(mockLLMResponse),
-      tokens_entrada: 500,
-      tokens_saida: 300,
+      provider: 'CLAUDE' as any,
+      modelo: 'claude-sonnet-4',
+      tokens_input: 500,
+      tokens_output: 300,
       custo_usd: 0.008,
+      tempo_processamento_ms: 1500,
     });
 
     // Act
@@ -295,9 +304,12 @@ describe('Prompt 5 - Detecção de Alertas', () => {
     jest.spyOn(promptService, 'renderPrompt').mockResolvedValue('Rendered prompt');
     jest.spyOn(claudeProvider, 'generate').mockResolvedValue({
       texto: JSON.stringify(mockLLMResponse),
-      tokens_entrada: 500,
-      tokens_saida: 100,
+      provider: 'CLAUDE' as any,
+      modelo: 'claude-sonnet-4',
+      tokens_input: 500,
+      tokens_output: 100,
       custo_usd: 0.006,
+      tempo_processamento_ms: 1500,
     });
 
     // Act
@@ -360,9 +372,12 @@ describe('Prompt 5 - Detecção de Alertas', () => {
     jest.spyOn(promptService, 'renderPrompt').mockResolvedValue('Rendered prompt');
     jest.spyOn(claudeProvider, 'generate').mockResolvedValue({
       texto: JSON.stringify(mockLLMResponse),
-      tokens_entrada: 500,
-      tokens_saida: 350,
+      provider: 'CLAUDE' as any,
+      modelo: 'claude-sonnet-4',
+      tokens_input: 500,
+      tokens_output: 350,
       custo_usd: 0.009,
+      tempo_processamento_ms: 1500,
     });
 
     // Act

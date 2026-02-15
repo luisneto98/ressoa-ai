@@ -8,7 +8,8 @@ import { GPTProvider } from '../../llm/providers/gpt.provider';
 
 describe('AnaliseService', () => {
   let service: AnaliseService;
-  let prisma: jest.Mocked<PrismaService>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let prisma: any;
   let promptService: jest.Mocked<PromptService>;
   let claudeProvider: jest.Mocked<ClaudeProvider>;
   let gptProvider: jest.Mocked<GPTProvider>;
@@ -109,9 +110,12 @@ describe('AnaliseService', () => {
 
   const mockLLMResult = {
     texto: '{"habilidades": [{"codigo": "EF06MA01", "nivel_cobertura": "completo"}]}',
-    tokens_entrada: 100,
-    tokens_saida: 50,
+    provider: 'CLAUDE' as any,
+    modelo: 'claude-sonnet-4',
+    tokens_input: 100,
+    tokens_output: 50,
     custo_usd: 0.02,
+    tempo_processamento_ms: 1500,
     metadata: { model: 'claude-sonnet-4' },
   };
 
@@ -313,9 +317,12 @@ describe('AnaliseService', () => {
           // Prompt 3 - Relatório em markdown
           return Promise.resolve({
             texto: '# Relatório Pedagógico\n\n**Cobertura:** Completa',
-            tokens_entrada: 100,
-            tokens_saida: 50,
+            provider: 'CLAUDE' as any,
+            modelo: 'claude-sonnet-4',
+            tokens_input: 100,
+            tokens_output: 50,
             custo_usd: 0.02,
+            tempo_processamento_ms: 1500,
             metadata: {},
           });
         }
@@ -416,9 +423,12 @@ describe('AnaliseService', () => {
       const jsonOutput = { habilidades: [{ codigo: 'EF06MA01' }] };
       claudeProvider.generate.mockResolvedValue({
         texto: JSON.stringify(jsonOutput),
-        tokens_entrada: 100,
-        tokens_saida: 50,
+        provider: 'CLAUDE' as any,
+        modelo: 'claude-sonnet-4',
+        tokens_input: 100,
+        tokens_output: 50,
         custo_usd: 0.02,
+        tempo_processamento_ms: 1500,
         metadata: {},
       });
 
@@ -442,9 +452,12 @@ describe('AnaliseService', () => {
           // Prompt 3 - Relatório (markdown)
           return Promise.resolve({
             texto: '# Relatório Pedagógico\n\n**Cobertura:** Completa',
-            tokens_entrada: 100,
-            tokens_saida: 50,
+            provider: 'CLAUDE' as any,
+            modelo: 'claude-sonnet-4',
+            tokens_input: 100,
+            tokens_output: 50,
             custo_usd: 0.02,
+            tempo_processamento_ms: 1500,
             metadata: {},
           });
         }

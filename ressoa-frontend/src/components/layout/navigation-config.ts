@@ -9,6 +9,7 @@ import {
   Settings,
   GraduationCap,
   Mail,
+  UserPlus,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -28,6 +29,7 @@ const NAVIGATION: Record<string, NavItem[]> = {
   ],
   COORDENADOR: [
     { label: 'Professores', path: '/dashboard/coordenador/professores', icon: Users },
+    { label: 'Convidar Professor', path: '/coordenador/professores', icon: UserPlus },
     { label: 'Cadastro de Turmas', path: '/turmas', icon: GraduationCap },
     { label: 'Dashboard Turmas', path: '/dashboard/coordenador/turmas', icon: BarChart3 },
     { label: 'Convites', path: '/convites', icon: Mail },
@@ -35,15 +37,18 @@ const NAVIGATION: Record<string, NavItem[]> = {
   ],
   DIRETOR: [
     { label: 'Visão Geral', path: '/dashboard/diretor', icon: Building2 },
+    { label: 'Coordenadores', path: '/coordenadores', icon: UserPlus },
     { label: 'Professores', path: '/dashboard/coordenador/professores', icon: Users },
     { label: 'Cadastro de Turmas', path: '/turmas', icon: GraduationCap },
     { label: 'Convites', path: '/convites', icon: Mail },
     { label: 'Dashboard Turmas', path: '/dashboard/coordenador/turmas', icon: BarChart3 },
   ],
   ADMIN: [
+    { label: 'Escolas', path: '/admin/escolas', icon: Building2 },
+    { label: 'Usuários', path: '/admin/usuarios', icon: Users },
     { label: 'Monitoramento STT', path: '/admin/monitoramento/stt', icon: Settings },
     { label: 'Monitoramento Análise', path: '/admin/monitoramento/analise', icon: BarChart3 },
-    { label: 'Custos', path: '/admin/custos/escolas', icon: Building2 },
+    { label: 'Custos', path: '/admin/custos/escolas', icon: BarChart3 },
     { label: 'Qualidade Prompts', path: '/admin/prompts/qualidade', icon: Shield },
     { label: 'Convites', path: '/convites', icon: Mail },
   ],

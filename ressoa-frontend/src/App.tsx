@@ -29,6 +29,7 @@ import TurmasListPage from '@/pages/turmas/TurmasListPage';
 import { CoordenadoresPage } from '@/pages/diretor/CoordenadoresPage';
 import { ProfessoresPage } from '@/pages/coordenador/ProfessoresPage';
 import { AdminUsuariosPage } from '@/pages/admin/UsuariosPage';
+import { AdminDashboard } from '@/pages/admin/AdminDashboard';
 import { DiretorUsuariosPage } from '@/pages/diretor/UsuariosPage';
 import { CoordenadorUsuariosPage } from '@/pages/coordenador/UsuariosPage';
 import { ConvitesPendentesPage } from '@/pages/convites/ConvitesPendentesPage';
@@ -107,10 +108,20 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* Legacy admin route redirect: /admin → /admin/monitoramento/stt */}
+          {/* Legacy admin route redirect: /admin → /admin/escolas */}
           <Route
             path="/admin"
-            element={<Navigate to="/admin/monitoramento/stt" replace />}
+            element={<Navigate to="/admin/escolas" replace />}
+          />
+
+          {/* Admin Escolas Route - Story 13.1 */}
+          <Route
+            path="/admin/escolas"
+            element={
+              <ProtectedRoute roles={['ADMIN']}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
           />
 
           {/* Admin Monitoramento Routes - Story 8.1, 8.2 */}

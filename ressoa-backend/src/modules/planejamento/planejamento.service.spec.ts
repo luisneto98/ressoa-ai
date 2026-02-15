@@ -32,14 +32,14 @@ describe('PlanejamentoService - Story 11.3 (Objetivos Genéricos)', () => {
   const mockUser: AuthenticatedUser = {
     userId: mockProfessorId,
     email: 'professor@test.com',
-    escola_id: mockEscolaId,
+    escolaId: mockEscolaId,
     role: 'PROFESSOR',
   };
 
   const mockCoordenadorUser: AuthenticatedUser = {
     userId: 'coordenador-uuid-789',
     email: 'coordenador@test.com',
-    escola_id: mockEscolaId,
+    escolaId: mockEscolaId,
     role: 'COORDENADOR',
   };
 
@@ -51,7 +51,7 @@ describe('PlanejamentoService - Story 11.3 (Objetivos Genéricos)', () => {
     tipo_ensino: 'FUNDAMENTAL',
     ano_letivo: 2026,
     turno: 'MATUTINO',
-    escola_id: mockEscolaId,
+    escolaId: mockEscolaId,
     professor_id: mockProfessorId,
     curriculo_tipo: 'BNCC',
     contexto_pedagogico: null,
@@ -135,7 +135,7 @@ describe('PlanejamentoService - Story 11.3 (Objetivos Genéricos)', () => {
     turma_id: mockTurma.id,
     bimestre: 1,
     ano_letivo: 2026,
-    escola_id: mockEscolaId,
+    escolaId: mockEscolaId,
     professor_id: mockProfessorId,
     validado_coordenacao: false,
     deleted_at: null,
@@ -143,7 +143,7 @@ describe('PlanejamentoService - Story 11.3 (Objetivos Genéricos)', () => {
     updated_at: new Date(),
   };
 
-  const mockPrismaService = {
+  const mockPrismaService: any = {
     getEscolaIdOrThrow: jest.fn(() => mockEscolaId),
     turma: {
       findUnique: jest.fn(),

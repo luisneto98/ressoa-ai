@@ -584,10 +584,17 @@ async function migrateBNCCToObjetivos() {
 
   for (const hab of habilidades) {
     try {
-      await prisma.objetivoAprendizagem.upsert({
-        where: { codigo: hab.codigo },
-        update: {}, // Não atualiza se já existe (idempotente)
-        create: {
+      // Use findFirst + create pattern because @@unique([turma_id, codigo])
+      // with null turma_id doesn't support reliable upsert in PostgreSQL
+      const existing = await prisma.objetivoAprendizagem.findFirst({
+        where: { turma_id: null, codigo: hab.codigo },
+      });
+      if (existing) {
+        skipped++;
+        continue;
+      }
+      await prisma.objetivoAprendizagem.create({
+        data: {
           codigo: hab.codigo,
           descricao: hab.descricao,
           nivel_cognitivo: 'APLICAR', // Default BNCC (maioria é nível Aplicar segundo Bloom)

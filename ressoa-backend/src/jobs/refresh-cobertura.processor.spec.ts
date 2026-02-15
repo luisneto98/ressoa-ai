@@ -44,7 +44,7 @@ describe('RefreshCoberturaProcessor', () => {
     });
 
     it('should execute REFRESH MATERIALIZED VIEW CONCURRENTLY', async () => {
-      prisma.$executeRaw.mockResolvedValue(undefined);
+      prisma.$executeRaw.mockResolvedValue(0);
 
       await processor.refreshCoberturaBimestral(mockJob);
 
@@ -56,7 +56,7 @@ describe('RefreshCoberturaProcessor', () => {
     });
 
     it('should return success with duration', async () => {
-      prisma.$executeRaw.mockResolvedValue(undefined);
+      prisma.$executeRaw.mockResolvedValue(0);
 
       const result = await processor.refreshCoberturaBimestral(mockJob);
 
@@ -68,7 +68,7 @@ describe('RefreshCoberturaProcessor', () => {
     });
 
     it('should log start with job ID', async () => {
-      prisma.$executeRaw.mockResolvedValue(undefined);
+      prisma.$executeRaw.mockResolvedValue(0);
       const logSpy = jest.spyOn(processor['logger'], 'log');
 
       await processor.refreshCoberturaBimestral(mockJob);
@@ -79,7 +79,7 @@ describe('RefreshCoberturaProcessor', () => {
     });
 
     it('should log success with duration and job ID', async () => {
-      prisma.$executeRaw.mockResolvedValue(undefined);
+      prisma.$executeRaw.mockResolvedValue(0);
       const logSpy = jest.spyOn(processor['logger'], 'log');
 
       await processor.refreshCoberturaBimestral(mockJob);

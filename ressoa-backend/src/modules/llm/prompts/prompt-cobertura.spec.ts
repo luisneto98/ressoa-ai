@@ -317,11 +317,9 @@ describe('Prompt 1 - Cobertura BNCC (Unit)', () => {
       const result = await claudeProvider.generate(
         'Test prompt content',
         {
-          modelo: ProviderLLM.CLAUDE_SONNET,
           temperature: 0.3,
-          max_tokens: 2000,
+          maxTokens: 2000,
         },
-        'test-user-id',
       );
 
       expect(result.texto).toBeDefined();

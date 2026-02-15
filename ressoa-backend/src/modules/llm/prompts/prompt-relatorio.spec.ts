@@ -185,7 +185,9 @@ Aula bem estruturada com introdução clara, desenvolvimento lógico, mas faltou
       jest.spyOn(gptProvider, 'generate').mockResolvedValue({
         texto: mockRelatorioMarkdown,
         custo_usd: 0.004,
-        tokens_usados: 650,
+        tokens_input: 400,
+        tokens_output: 250,
+        tempo_processamento_ms: 1500,
         modelo: 'gpt-4.6-mini',
         provider: ProviderLLM.GPT4_MINI,
       });
@@ -302,7 +304,9 @@ Aula bem estruturada com introdução clara, desenvolvimento lógico, mas faltou
       jest.spyOn(gptProvider, 'generate').mockResolvedValue({
         texto: mockRelatorioMarkdown,
         custo_usd: 0.004,
-        tokens_usados: 650,
+        tokens_input: 400,
+        tokens_output: 250,
+        tempo_processamento_ms: 1500,
         modelo: 'gpt-4.6-mini',
         provider: ProviderLLM.GPT4_MINI,
       });
@@ -352,7 +356,9 @@ Aula bem estruturada com introdução clara, desenvolvimento lógico, mas faltou
       jest.spyOn(gptProvider, 'generate').mockResolvedValue({
         texto: mockRelatorioMarkdown,
         custo_usd: 0.004,
-        tokens_usados: 650,
+        tokens_input: 400,
+        tokens_output: 250,
+        tempo_processamento_ms: 1500,
         modelo: 'gpt-4.6-mini',
         provider: ProviderLLM.GPT4_MINI,
       });
@@ -375,7 +381,9 @@ Aula bem estruturada com introdução clara, desenvolvimento lógico, mas faltou
       jest.spyOn(gptProvider, 'generate').mockResolvedValue({
         texto: mockRelatorioMarkdown,
         custo_usd: 0.004,
-        tokens_usados: 650,
+        tokens_input: 400,
+        tokens_output: 250,
+        tempo_processamento_ms: 1500,
         modelo: 'gpt-4.6-mini',
         provider: ProviderLLM.GPT4_MINI,
       });
@@ -400,7 +408,9 @@ Aula bem estruturada com introdução clara, desenvolvimento lógico, mas faltou
       jest.spyOn(gptProvider, 'generate').mockResolvedValue({
         texto: mockRelatorioMarkdown,
         custo_usd: 0.004,
-        tokens_usados: 650,
+        tokens_input: 400,
+        tokens_output: 250,
+        tempo_processamento_ms: 1500,
         modelo: 'gpt-4.6-mini',
         provider: ProviderLLM.GPT4_MINI,
       });
@@ -423,7 +433,9 @@ Aula bem estruturada com introdução clara, desenvolvimento lógico, mas faltou
       jest.spyOn(gptProvider, 'generate').mockResolvedValue({
         texto: mockRelatorioMarkdown,
         custo_usd: 0.004,
-        tokens_usados: 650,
+        tokens_input: 400,
+        tokens_output: 250,
+        tempo_processamento_ms: 1500,
         modelo: 'gpt-4.6-mini',
         provider: ProviderLLM.GPT4_MINI,
       });
@@ -445,7 +457,9 @@ Aula bem estruturada com introdução clara, desenvolvimento lógico, mas faltou
       jest.spyOn(gptProvider, 'generate').mockResolvedValue({
         texto: mockRelatorioMarkdown,
         custo_usd: 0.004,
-        tokens_usados: 650,
+        tokens_input: 400,
+        tokens_output: 250,
+        tempo_processamento_ms: 1500,
         modelo: 'gpt-4.6-mini',
         provider: ProviderLLM.GPT4_MINI,
       });
@@ -467,7 +481,9 @@ Aula bem estruturada com introdução clara, desenvolvimento lógico, mas faltou
       jest.spyOn(gptProvider, 'generate').mockResolvedValue({
         texto: mockRelatorioMarkdown,
         custo_usd: 0.004,
-        tokens_usados: 650,
+        tokens_input: 400,
+        tokens_output: 250,
+        tempo_processamento_ms: 1500,
         modelo: 'gpt-4.6-mini',
         provider: ProviderLLM.GPT4_MINI,
       });

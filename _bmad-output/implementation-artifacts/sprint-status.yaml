@@ -157,8 +157,8 @@ development_status:
     13-11-cancelar-convite-pendente: done # Code review complete - 8 issues auto-fixed (3 HIGH: multi-tenancy hardening, 3 MEDIUM: UseGuards, FK onDelete, file list, 2 LOW: redundant index, badge variant) - 16/16 E2E + 8/8 frontend tests
     13-12-reenviar-convite-expirado: done # Code review complete - 6 issues found (1 HIGH pattern debt deferred, 3 MEDIUM auto-fixed: EmailModule import, Swagger 201, dialog close-on-error, 2 LOW) - 10/10 frontend tests passing
     epic-13-retrospective: optional
-    epic-14: backlog # Sistema Configurável de Provider Routing (IA Cost Optimization) - Economia de 89% em custos de IA
-    14-1-camada-roteamento-configuravel: backlog # Provider routing layer com config-driven selection (STT + LLM routers)
+    epic-14: in-progress # Sistema Configurável de Provider Routing (IA Cost Optimization) - Economia de 89% em custos de IA
+    14-1-camada-roteamento-configuravel: done # Code review complete - 5 issues auto-fixed (1 HIGH: timer leak, 4 MEDIUM: LLM timeout, watcher guard, test improvements) - 48/48 tests passing
     14-2-groq-whisper-provider-stt: backlog # Implementar Groq Whisper Large v3 Turbo (89% economia STT)
     14-3-gemini-flash-provider-llm: backlog # Implementar Google Gemini 2.0 Flash (92% economia LLM)
     14-4-integracao-router-pipeline: backlog # Integrar routers com AnaliseService e STTService

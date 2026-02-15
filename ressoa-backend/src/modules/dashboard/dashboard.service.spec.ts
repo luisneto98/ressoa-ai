@@ -534,7 +534,7 @@ describe('DashboardService', () => {
         },
       ];
 
-      const mockBreakdown = [];
+      const mockBreakdown: any[] = [];
       const mockPorDisciplina = [
         {
           disciplina: 'MATEMATICA',
@@ -617,7 +617,7 @@ describe('DashboardService', () => {
         },
       ];
 
-      const mockBreakdown = [];
+      const mockBreakdown: any[] = [];
       const mockPorDisciplina = [
         {
           disciplina: 'MATEMATICA',
@@ -626,7 +626,7 @@ describe('DashboardService', () => {
           total_aulas: BigInt(444),
         },
       ];
-      const mockEvolucao = [];
+      const mockEvolucao: any[] = [];
 
       mockPrismaService.$queryRaw
         .mockResolvedValueOnce(mockKPIs)
@@ -659,13 +659,13 @@ describe('DashboardService', () => {
         tempo_medio_revisao_geral: 180.0,
       }];
 
-      const mockBreakdown = [];
+      const mockBreakdown: any[] = [];
       const mockPorDisciplina = [
         { disciplina: 'MATEMATICA', cobertura_media: 80.0, total_turmas: BigInt(10), total_aulas: BigInt(100) },
         { disciplina: 'LINGUA_PORTUGUESA', cobertura_media: 65.0, total_turmas: BigInt(10), total_aulas: BigInt(90) },
         { disciplina: 'CIENCIAS', cobertura_media: 70.0, total_turmas: BigInt(10), total_aulas: BigInt(95) },
       ];
-      const mockEvolucao = [];
+      const mockEvolucao: any[] = [];
 
       mockPrismaService.$queryRaw
         .mockResolvedValueOnce(mockKPIs)
@@ -798,8 +798,8 @@ describe('DashboardService', () => {
           },
         ];
 
-        const mockMetricasSeries = [];
-        const mockMetricasDisciplinas = [];
+        const mockMetricasSeries: any[] = [];
+        const mockMetricasDisciplinas: any[] = [];
 
         mockPrismaService.$queryRaw
           .mockResolvedValueOnce(mockKpis)

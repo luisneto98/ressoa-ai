@@ -172,9 +172,9 @@ export class ObjetivosService {
       });
     }
 
-    // BNCC: código é único globalmente
-    return this.prisma.objetivoAprendizagem.findUnique({
-      where: { codigo },
+    // BNCC: código é único globalmente (turma_id = null)
+    return this.prisma.objetivoAprendizagem.findFirst({
+      where: { codigo, turma_id: null },
     });
   }
 

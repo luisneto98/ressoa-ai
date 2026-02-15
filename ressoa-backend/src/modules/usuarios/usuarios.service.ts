@@ -54,17 +54,17 @@ export class UsuariosService {
     if (role && allowedRoles) {
       // Intersect: only show if requested role is within allowed hierarchy
       if (allowedRoles.includes(role)) {
-        where.perfil_usuario = { isNot: null, role };
+        where.perfil_usuario = { isNot: null, is: { role } };
       } else {
         // Requested role outside hierarchy → guaranteed empty result
-        where.perfil_usuario = { isNot: null, role: { in: [] } };
+        where.perfil_usuario = { isNot: null, is: { role: { in: [] } } };
       }
     } else if (role) {
       // Admin or unrestricted: use requested role directly
-      where.perfil_usuario = { isNot: null, role };
+      where.perfil_usuario = { isNot: null, is: { role } };
     } else if (allowedRoles) {
       // No explicit role filter, but hierarchy restriction applies
-      where.perfil_usuario = { isNot: null, role: { in: allowedRoles } };
+      where.perfil_usuario = { isNot: null, is: { role: { in: allowedRoles } } };
     } else {
       // No role filter, no hierarchy restriction: exclude orphaned records
       where.perfil_usuario = { isNot: null };

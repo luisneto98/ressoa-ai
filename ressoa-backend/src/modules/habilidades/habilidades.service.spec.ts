@@ -6,7 +6,8 @@ import { TipoEnsino } from '@prisma/client';
 
 describe('HabilidadesService', () => {
   let service: HabilidadesService;
-  let prisma: jest.Mocked<PrismaService>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let prisma: any;
   let redis: jest.Mocked<RedisService>;
 
   const mockHabilidadesFundamental = [

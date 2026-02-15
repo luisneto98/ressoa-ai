@@ -8,6 +8,7 @@ import { TranscricaoService } from './transcricao.service';
 import { WhisperProvider } from './providers/whisper.provider';
 import { GoogleProvider } from './providers/google.provider';
 import { TranscriptionProcessor } from './workers/transcription.processor';
+import { STTRouterService } from './services/stt-router.service';
 
 /**
  * STT (Speech-to-Text) Module
@@ -55,6 +56,7 @@ import { TranscriptionProcessor } from './workers/transcription.processor';
   providers: [
     STTService,
     TranscricaoService,
+    STTRouterService, // Config-driven STT provider routing (Story 14.1)
     TranscriptionProcessor, // Worker for async transcription (Story 4.3)
     {
       provide: 'WHISPER_PROVIDER',
@@ -65,6 +67,6 @@ import { TranscriptionProcessor } from './workers/transcription.processor';
       useClass: GoogleProvider, // Real implementation (Story 4.2) - Google Cloud Speech API
     },
   ],
-  exports: [STTService, TranscricaoService],
+  exports: [STTService, TranscricaoService, STTRouterService],
 })
 export class SttModule {}

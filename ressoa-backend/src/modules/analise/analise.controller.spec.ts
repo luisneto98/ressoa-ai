@@ -70,6 +70,7 @@ describe('AnaliseController', () => {
       ],
       sugestoes_proxima_aula: ['Revisar conceitos', 'Propor exercícios'],
     },
+    status: 'APROVADA',
     tempo_processamento_ms: 45000,
     custo_total_usd: 0.198,
     prompt_versoes_json: { cobertura: 'v1.0.0', qualitativa: 'v1.0.0' },
@@ -170,7 +171,7 @@ describe('AnaliseController', () => {
     });
 
     it('should throw 404 for non-existent aula', async () => {
-      aulasService.findOne.mockResolvedValue(null);
+      aulasService.findOne.mockResolvedValue(null as any);
 
       await expect(
         controller.getAnaliseByAula('aula-999', mockUser),

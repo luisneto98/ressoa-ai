@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { IconMailPlus } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 import { InviteCoordenadorDialog } from './components/InviteCoordenadorDialog';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuthStore } from '@/stores/auth.store';
 
 export function CoordenadoresPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
-  const { user } = useAuth();
+  const { user } = useAuthStore();
 
   const handleInviteSuccess = () => {
     // Disable button for 3s to prevent duplicate clicks

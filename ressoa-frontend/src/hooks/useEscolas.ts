@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api-client';
+import { apiClient } from '@/api/axios';
 import type { EscolaFormData } from '@/lib/validation/escola.schema';
 
 /**

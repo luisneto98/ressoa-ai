@@ -13,7 +13,7 @@ describe('EmailService', () => {
   let service: EmailService;
   let configService: ConfigService;
 
-  const mockConfigDevelopment = {
+  const mockConfigDevelopment: Record<string, string> = {
     NODE_ENV: 'development',
     EMAIL_PROVIDER: 'sendgrid',
     EMAIL_API_KEY: 'SG.test-key',
@@ -21,7 +21,7 @@ describe('EmailService', () => {
     FRONTEND_URL: 'http://localhost:5173',
   };
 
-  const mockConfigProduction = {
+  const mockConfigProduction: Record<string, string> = {
     NODE_ENV: 'production',
     EMAIL_PROVIDER: 'sendgrid',
     EMAIL_API_KEY: 'SG.real-api-key',

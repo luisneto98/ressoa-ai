@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { IconMailPlus } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 import { InviteProfessorDialog } from '@/components/shared/InviteProfessorDialog';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuthStore } from '@/stores/auth.store';
 import { useInviteProfessor } from '@/hooks/useCoordenador';
 
 export function ProfessoresPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
-  const { user } = useAuth();
+  const { user } = useAuthStore();
 
   const { mutateAsync: inviteProfessor, isPending } = useInviteProfessor();
 

@@ -38,6 +38,7 @@ import { TenantInterceptor } from './common/interceptors/tenant.interceptor';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { envSchema } from './config/env';
+import { ProvidersConfigModule } from './modules/providers-config/providers-config.module';
 import { bullBoardAuthMiddleware } from './common/middleware/bull-board-auth.middleware';
 
 // Conditionally import TusModule only in non-test environments
@@ -103,6 +104,7 @@ if (process.env.NODE_ENV !== 'test') {
       { name: 'refresh-cobertura-queue', adapter: BullAdapter },
     ),
     ScheduleModule.forRoot(), // Cron jobs for monitoring alerts (Story 8.1)
+    ProvidersConfigModule, // Global module for provider routing config (Story 14.1)
     ContextModule, // Global module for multi-tenant context
     EmailModule, // Global module for email service (Story 1.5)
     PrismaModule,

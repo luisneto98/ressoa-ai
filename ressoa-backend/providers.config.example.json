@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "stt": {
+    "primary": "WHISPER",
+    "fallback": "GOOGLE"
+  },
+  "llm": {
+    "analise_cobertura": { "primary": "CLAUDE_SONNET", "fallback": "GPT4_MINI" },
+    "analise_qualitativa": { "primary": "CLAUDE_SONNET", "fallback": "GPT4_MINI" },
+    "relatorio": { "primary": "CLAUDE_SONNET", "fallback": "GPT4_MINI" },
+    "exercicios": { "primary": "GPT4_MINI", "fallback": "CLAUDE_SONNET" },
+    "alertas": { "primary": "CLAUDE_SONNET", "fallback": "GPT4_MINI" }
+  }
+}

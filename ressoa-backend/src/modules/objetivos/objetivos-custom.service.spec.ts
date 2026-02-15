@@ -329,7 +329,7 @@ describe('ObjetivosService - Custom CRUD (Story 11.4)', () => {
     };
 
     it('AC7: Deve atualizar campos parcialmente (PATCH)', async () => {
-      const updated = { ...mockObjetivo, descricao: updateDto.descricao };
+      const updated = { ...mockObjetivo, descricao: updateDto.descricao! };
 
       jest.spyOn(prisma.turma, 'findUnique').mockResolvedValue(mockTurmaCustom as any);
       jest

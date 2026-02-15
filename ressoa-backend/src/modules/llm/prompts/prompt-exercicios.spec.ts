@@ -225,7 +225,9 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       jest.spyOn(gptProvider, 'generate').mockResolvedValue({
         texto: JSON.stringify(mockExerciciosOutput),
         custo_usd: 0.006,
-        tokens_usados: 850,
+        tokens_input: 500,
+        tokens_output: 350,
+        tempo_processamento_ms: 1500,
         modelo: 'gpt-4.6-mini',
         provider: ProviderLLM.GPT4_MINI,
       });
@@ -249,7 +251,7 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       const result = await gptProvider.generate('test-prompt', {});
       const data = JSON.parse(result.texto);
 
-      data.exercicios.forEach((ex, idx) => {
+      data.exercicios.forEach((ex: any, idx: number) => {
         expect(ex).toHaveProperty('numero', idx + 1);
         expect(ex).toHaveProperty('enunciado');
         expect(ex).toHaveProperty('contexto_aula');
@@ -278,7 +280,9 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       jest.spyOn(gptProvider, 'generate').mockResolvedValue({
         texto: JSON.stringify(mockExerciciosOutput),
         custo_usd: 0.006,
-        tokens_usados: 850,
+        tokens_input: 500,
+        tokens_output: 350,
+        tempo_processamento_ms: 1500,
         modelo: 'gpt-4.6-mini',
         provider: ProviderLLM.GPT4_MINI,
       });
@@ -289,8 +293,8 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       const data = JSON.parse(result.texto);
 
       const bloomCounts = { 2: 0, 3: 0, 4: 0, 5: 0 };
-      data.exercicios.forEach((ex) => {
-        bloomCounts[ex.nivel_bloom]++;
+      data.exercicios.forEach((ex: any) => {
+        (bloomCounts as any)[ex.nivel_bloom]++;
       });
 
       // 2 exercícios Nível 2 (Compreender)
@@ -327,8 +331,8 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
         5: 'Avaliar',
       };
 
-      data.exercicios.forEach((ex) => {
-        expect(ex.nivel_bloom_descricao).toBe(nivelDescricoes[ex.nivel_bloom]);
+      data.exercicios.forEach((ex: any) => {
+        expect(ex.nivel_bloom_descricao).toBe((nivelDescricoes as any)[ex.nivel_bloom]);
       });
     });
   });
@@ -338,7 +342,9 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       jest.spyOn(gptProvider, 'generate').mockResolvedValue({
         texto: JSON.stringify(mockExerciciosOutput),
         custo_usd: 0.006,
-        tokens_usados: 850,
+        tokens_input: 500,
+        tokens_output: 350,
+        tempo_processamento_ms: 1500,
         modelo: 'gpt-4.6-mini',
         provider: ProviderLLM.GPT4_MINI,
       });
@@ -375,7 +381,9 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       jest.spyOn(gptProvider, 'generate').mockResolvedValue({
         texto: JSON.stringify(mockExerciciosOutput),
         custo_usd: 0.006,
-        tokens_usados: 850,
+        tokens_input: 500,
+        tokens_output: 350,
+        tempo_processamento_ms: 1500,
         modelo: 'gpt-4.6-mini',
         provider: ProviderLLM.GPT4_MINI,
       });
@@ -401,7 +409,7 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       const result = await gptProvider.generate('test-prompt', {});
       const data = JSON.parse(result.texto);
 
-      data.exercicios.forEach((ex) => {
+      data.exercicios.forEach((ex: any) => {
         expect(ex.contexto_aula).toBeTruthy();
         expect(ex.contexto_aula.length).toBeGreaterThan(10);
       });
@@ -414,7 +422,7 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       // Genéricos que NÃO deveriam aparecer se exercícios são contextuais
       const genericMarkers = ['por exemplo', 'suponha que', 'imagine'];
 
-      data.exercicios.forEach((ex) => {
+      data.exercicios.forEach((ex: any) => {
         // Contexto_aula não deve estar vazio (sem contexto = genérico)
         expect(ex.contexto_aula).not.toBe('');
 
@@ -431,7 +439,9 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       jest.spyOn(gptProvider, 'generate').mockResolvedValue({
         texto: JSON.stringify(mockExerciciosOutput),
         custo_usd: 0.006,
-        tokens_usados: 850,
+        tokens_input: 500,
+        tokens_output: 350,
+        tempo_processamento_ms: 1500,
         modelo: 'gpt-4.6-mini',
         provider: ProviderLLM.GPT4_MINI,
       });
@@ -441,7 +451,7 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       const result = await gptProvider.generate('test-prompt', {});
       const data = JSON.parse(result.texto);
 
-      data.exercicios.forEach((ex, idx) => {
+      data.exercicios.forEach((ex: any, idx: number) => {
         expect(ex.gabarito).toHaveProperty('resposta_curta');
         expect(ex.gabarito).toHaveProperty('resolucao_passo_a_passo');
         expect(ex.gabarito).toHaveProperty('criterios_correcao');
@@ -453,7 +463,7 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       const result = await gptProvider.generate('test-prompt', {});
       const data = JSON.parse(result.texto);
 
-      data.exercicios.forEach((ex, idx) => {
+      data.exercicios.forEach((ex: any, idx: number) => {
         expect(ex.gabarito.resolucao_passo_a_passo.length).toBeGreaterThanOrEqual(2);
       });
     });
@@ -462,7 +472,7 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       const result = await gptProvider.generate('test-prompt', {});
       const data = JSON.parse(result.texto);
 
-      data.exercicios.forEach((ex, idx) => {
+      data.exercicios.forEach((ex: any, idx: number) => {
         expect(ex.gabarito.criterios_correcao).toBeInstanceOf(Array);
         expect(ex.gabarito.criterios_correcao.length).toBeGreaterThan(0);
       });
@@ -472,7 +482,7 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       const result = await gptProvider.generate('test-prompt', {});
       const data = JSON.parse(result.texto);
 
-      data.exercicios.forEach((ex, idx) => {
+      data.exercicios.forEach((ex: any, idx: number) => {
         expect(ex.gabarito.dica_professor).toBeTruthy();
         expect(ex.gabarito.dica_professor.length).toBeGreaterThan(10);
       });
@@ -484,7 +494,9 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       jest.spyOn(gptProvider, 'generate').mockResolvedValue({
         texto: JSON.stringify(mockExerciciosOutput),
         custo_usd: 0.006,
-        tokens_usados: 850,
+        tokens_input: 500,
+        tokens_output: 350,
+        tempo_processamento_ms: 1500,
         modelo: 'gpt-4.6-mini',
         provider: ProviderLLM.GPT4_MINI,
       });
@@ -494,7 +506,7 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       const result = await gptProvider.generate('test-prompt', {});
       const data = JSON.parse(result.texto);
 
-      data.exercicios.forEach((ex) => {
+      data.exercicios.forEach((ex: any) => {
         expect(ex.habilidade_relacionada).toBeTruthy();
         expect(ex.habilidade_relacionada).toMatch(/^EF\d{2}[A-Z]{2}\d{2}$/); // Formato BNCC
       });
@@ -505,7 +517,7 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       const data = JSON.parse(result.texto);
 
       // Habilidades do fixture: EF06MA01, EF06MA07
-      const habilidadesUsadas = data.exercicios.map((ex) => ex.habilidade_relacionada);
+      const habilidadesUsadas = data.exercicios.map((ex: any) => ex.habilidade_relacionada);
 
       expect(habilidadesUsadas).toContain('EF06MA01');
       expect(habilidadesUsadas).toContain('EF06MA07');
@@ -516,7 +528,7 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       const data = JSON.parse(result.texto);
 
       // Habilidades não presentes no fixture
-      const habilidadesUsadas = data.exercicios.map((ex) => ex.habilidade_relacionada);
+      const habilidadesUsadas = data.exercicios.map((ex: any) => ex.habilidade_relacionada);
 
       expect(habilidadesUsadas).not.toContain('EF06MA03');
       expect(habilidadesUsadas).not.toContain('EF06MA04');
@@ -528,7 +540,9 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       jest.spyOn(gptProvider, 'generate').mockResolvedValue({
         texto: JSON.stringify(mockExerciciosOutput),
         custo_usd: 0.006,
-        tokens_usados: 850,
+        tokens_input: 500,
+        tokens_output: 350,
+        tempo_processamento_ms: 1500,
         modelo: 'gpt-4.6-mini',
         provider: ProviderLLM.GPT4_MINI,
       });
@@ -539,7 +553,7 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       const data = JSON.parse(result.texto);
 
       // 6º ano deve ter exemplos concretos: pizza, balas, figurinhas, etc.
-      const enunciados = data.exercicios.map((ex) => ex.enunciado.toLowerCase()).join(' ');
+      const enunciados = data.exercicios.map((ex: any) => ex.enunciado.toLowerCase()).join(' ');
 
       expect(enunciados).toMatch(/pizza|balas|figurinhas|números/);
     });
@@ -549,10 +563,10 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       const data = JSON.parse(result.texto);
 
       // Exercícios fáceis (1-2) devem ter enunciados curtos
-      const faceis = data.exercicios.filter((ex) => ex.dificuldade === 'facil');
+      const faceis = data.exercicios.filter((ex: any) => ex.dificuldade === 'facil');
 
-      faceis.forEach((ex) => {
-        const sentenceCount = ex.enunciado.split(/[.!?]/).filter((s) => s.trim().length > 0).length;
+      faceis.forEach((ex: any) => {
+        const sentenceCount = ex.enunciado.split(/[.!?]/).filter((s: string) => s.trim().length > 0).length;
         expect(sentenceCount).toBeLessThanOrEqual(4);
       });
     });
@@ -563,7 +577,9 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       jest.spyOn(gptProvider, 'generate').mockResolvedValue({
         texto: JSON.stringify(mockExerciciosOutput),
         custo_usd: 0.006,
-        tokens_usados: 850,
+        tokens_input: 500,
+        tokens_output: 350,
+        tempo_processamento_ms: 1500,
         modelo: 'gpt-4.6-mini',
         provider: ProviderLLM.GPT4_MINI,
       });
@@ -577,9 +593,9 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       const bloomCounts = { 2: 0, 3: 0, 4: 0, 5: 0 };
       const diffCounts = { facil: 0, medio: 0, dificil: 0 };
 
-      data.exercicios.forEach((ex) => {
-        bloomCounts[ex.nivel_bloom]++;
-        diffCounts[ex.dificuldade]++;
+      data.exercicios.forEach((ex: any) => {
+        (bloomCounts as any)[ex.nivel_bloom]++;
+        (diffCounts as any)[ex.dificuldade]++;
       });
 
       // Comparar com metadados

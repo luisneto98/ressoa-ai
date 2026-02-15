@@ -1,4 +1,4 @@
-import { apiClient } from '@/lib/api-client';
+import { apiClient } from '@/api/axios';
 import type { InviteProfessorFormData } from '@/lib/validation/invite-professor.schema';
 
 export const coordenadorApi = {

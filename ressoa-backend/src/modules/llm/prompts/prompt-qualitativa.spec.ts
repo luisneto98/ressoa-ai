@@ -405,11 +405,9 @@ describe('Prompt 2 - Análise Qualitativa (Unit)', () => {
       const result = await claudeProvider.generate(
         'Test prompt content',
         {
-          modelo: ProviderLLM.CLAUDE_SONNET,
           temperature: 0.4,
-          max_tokens: 2500,
+          maxTokens: 2500,
         },
-        'test-user-id',
       );
 
       expect(result.texto).toBeDefined();

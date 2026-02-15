@@ -4,6 +4,7 @@ import { PrismaModule } from '../../prisma/prisma.module';
 import { ClaudeProvider } from './providers/claude.provider';
 import { GPTProvider } from './providers/gpt.provider';
 import { PromptService } from './services/prompt.service';
+import { LLMRouterService } from './services/llm-router.service';
 
 /**
  * Módulo LLM - Abstração multi-provider com versionamento de prompts
@@ -32,7 +33,8 @@ import { PromptService } from './services/prompt.service';
       useClass: GPTProvider,
     },
     PromptService,
+    LLMRouterService, // Config-driven LLM provider routing (Story 14.1)
   ],
-  exports: ['CLAUDE_PROVIDER', 'GPT_PROVIDER', PromptService],
+  exports: ['CLAUDE_PROVIDER', 'GPT_PROVIDER', PromptService, LLMRouterService],
 })
 export class LLMModule {}

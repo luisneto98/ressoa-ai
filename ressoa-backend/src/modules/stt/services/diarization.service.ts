@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { LLMRouterService } from '../../llm/services/llm-router.service';
+import { ProvidersConfigService } from '../../providers-config/providers-config.service';
 import type { TranscriptionWord } from '../interfaces/stt-provider.interface';
 import type { DiarizationResult, SpeakerStats } from '../interfaces/diarization.interface';
 
@@ -26,10 +27,22 @@ Responda APENAS com SRT, sem explicações.`;
 export class DiarizationService {
   private readonly logger = new Logger(DiarizationService.name);
 
-  constructor(private readonly llmRouter: LLMRouterService) {}
+  constructor(
+    private readonly llmRouter: LLMRouterService,
+    private readonly providersConfig: ProvidersConfigService,
+  ) {}
 
   async diarize(words: TranscriptionWord[] | undefined): Promise<DiarizationResult> {
     const startTime = Date.now();
+
+    // Feature flag check
+    if (!this.providersConfig.isDiarizationEnabled()) {
+      this.logger.log({
+        msg: 'Diarization disabled via DIARIZATION_ENABLED=false',
+        words_count: words?.length ?? 0,
+      });
+      return this.buildFallbackResult(startTime, words);
+    }
 
     // Fallback: words undefined ou vazio
     if (!words || words.length === 0) {

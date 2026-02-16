@@ -45,6 +45,10 @@ export class ProvidersConfigService implements OnModuleInit, OnModuleDestroy {
     return this.config;
   }
 
+  isDiarizationEnabled(): boolean {
+    return (process.env.DIARIZATION_ENABLED ?? 'true') === 'true';
+  }
+
   private startFileWatcher(): void {
     if (!existsSync(this.configPath)) {
       this.logger.log(

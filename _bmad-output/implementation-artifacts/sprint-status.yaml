@@ -168,7 +168,7 @@ development_status:
     15-1-prompt-contexto-pedagogico-stt: done # Code review complete - 7 issues found (1 HIGH: Record<string,any> type safety, 4 MEDIUM, 2 LOW) - All auto-fixed - 98/98 tests passing - stt_prompt_key added to metadata
     15-2-timestamps-por-palavra-stt: done # Code review complete - 1 HIGH (DRY accepted), 3 MEDIUM auto-fixed (logging, comment, test parity), 2 LOW accepted - 96/96 STT tests passing
     15-3-servico-diarizacao-llm: done # Code review complete - 5 issues found (1 HIGH: broken providers.config tests, 3 MEDIUM, 1 LOW) - 2 auto-fixed - 28/28 tests passing
-    15-4-configuracao-provider-diarizacao: backlog # Env vars DIARIZATION_LLM_PROVIDER, DIARIZATION_ENABLED, fallback
+    15-4-configuracao-provider-diarizacao: done # Code review complete - 0 HIGH, 3 MEDIUM (2 fixed: structured logging + test cleanup DRY, 1 accepted: process.env direct read), 2 LOW (1 fixed, 1 N/A) - 33/33 tests passing
     15-5-integracao-pipeline-stt-diarizacao: backlog # Integrar STT → Diarização → Salvar SRT enriquecido no campo texto
     15-6-atualizar-prompts-analise-consumir-srt: backlog # Adaptar 5 prompts de análise para interpretar SRT com speaker labels
     epic-15-retrospective: optional

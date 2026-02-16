@@ -29,6 +29,7 @@ describe('ProvidersConfigService', () => {
   });
 
   afterEach(() => {
+    delete process.env.DIARIZATION_ENABLED;
     service.onModuleDestroy();
   });
 
@@ -225,6 +226,32 @@ describe('ProvidersConfigService', () => {
       expect(mockedFs.readFileSync).toHaveBeenCalledTimes(1);
 
       jest.useRealTimers();
+    });
+  });
+
+  describe('isDiarizationEnabled', () => {
+    it('should return true when DIARIZATION_ENABLED is "true"', () => {
+      process.env.DIARIZATION_ENABLED = 'true';
+
+      expect(service.isDiarizationEnabled()).toBe(true);
+    });
+
+    it('should return false when DIARIZATION_ENABLED is "false"', () => {
+      process.env.DIARIZATION_ENABLED = 'false';
+
+      expect(service.isDiarizationEnabled()).toBe(false);
+    });
+
+    it('should default to true when DIARIZATION_ENABLED is undefined', () => {
+      delete process.env.DIARIZATION_ENABLED;
+
+      expect(service.isDiarizationEnabled()).toBe(true);
+    });
+
+    it('should return false for any non-"true" string value', () => {
+      process.env.DIARIZATION_ENABLED = 'yes';
+
+      expect(service.isDiarizationEnabled()).toBe(false);
     });
   });
 

@@ -1,12 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DiarizationService } from './diarization.service';
 import { LLMRouterService } from '../../llm/services/llm-router.service';
+import { ProvidersConfigService } from '../../providers-config/providers-config.service';
 import type { TranscriptionWord } from '../interfaces/stt-provider.interface';
 import type { LLMResult } from '../../llm/interfaces/llm-provider.interface';
 
 describe('DiarizationService', () => {
   let service: DiarizationService;
   let mockRouter: jest.Mocked<Pick<LLMRouterService, 'generateWithFallback'>>;
+  let mockProvidersConfig: jest.Mocked<Pick<ProvidersConfigService, 'isDiarizationEnabled'>>;
 
   const sampleWords: TranscriptionWord[] = [
     { word: 'Bom', start: 0.0, end: 0.2 },
@@ -46,10 +48,15 @@ describe('DiarizationService', () => {
       generateWithFallback: jest.fn(),
     };
 
+    mockProvidersConfig = {
+      isDiarizationEnabled: jest.fn().mockReturnValue(true),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DiarizationService,
         { provide: LLMRouterService, useValue: mockRouter },
+        { provide: ProvidersConfigService, useValue: mockProvidersConfig },
       ],
     }).compile();
 
@@ -136,6 +143,47 @@ describe('DiarizationService', () => {
       expect(result.provider).toBe(mockLLMResult.provider);
       expect(result.custo_usd).toBe(mockLLMResult.custo_usd);
       expect(result.tempo_processamento_ms).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  describe('feature flag (DIARIZATION_ENABLED)', () => {
+    it('should return fallback without calling LLM when diarization is disabled', async () => {
+      mockProvidersConfig.isDiarizationEnabled.mockReturnValue(false);
+
+      const result = await service.diarize(sampleWords);
+
+      expect(result.provider).toBe('FALLBACK');
+      expect(result.custo_usd).toBe(0);
+      expect(result.srt).not.toContain('[PROFESSOR]');
+      expect(result.srt).not.toContain('[ALUNO]');
+      // Fallback SRT should still contain the words (not empty)
+      expect(result.srt).toContain('Bom');
+      expect(result.srt).toContain('frações');
+      expect(result.segments_count).toBeGreaterThan(0);
+
+      expect(mockRouter.generateWithFallback).not.toHaveBeenCalled();
+    });
+
+    it('should return empty fallback when diarization disabled and words is undefined', async () => {
+      mockProvidersConfig.isDiarizationEnabled.mockReturnValue(false);
+
+      const result = await service.diarize(undefined);
+
+      expect(result.provider).toBe('FALLBACK');
+      expect(result.srt).toBe('');
+      expect(result.segments_count).toBe(0);
+      expect(mockRouter.generateWithFallback).not.toHaveBeenCalled();
+    });
+
+    it('should proceed normally when diarization is enabled', async () => {
+      mockProvidersConfig.isDiarizationEnabled.mockReturnValue(true);
+      mockRouter.generateWithFallback.mockResolvedValue(mockLLMResult);
+
+      const result = await service.diarize(sampleWords);
+
+      expect(result.provider).toBe('GEMINI_FLASH');
+      expect(result.srt).toContain('[PROFESSOR]');
+      expect(mockRouter.generateWithFallback).toHaveBeenCalledTimes(1);
     });
   });
 

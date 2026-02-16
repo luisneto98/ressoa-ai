@@ -87,6 +87,7 @@ export class WhisperProvider implements STTProvider {
         model: 'whisper-1', // Abstraction for whisper-large-v3
         language: idioma, // ISO 639-1 format (pt, not pt-BR)
         response_format: 'verbose_json', // Includes segments, duration, confidence
+        ...(options?.prompt && { prompt: options.prompt }),
       });
 
       // Calculate cost: $0.006 per minute
@@ -107,6 +108,7 @@ export class WhisperProvider implements STTProvider {
         metadata: {
           model: 'whisper-1',
           segments_count: response.segments?.length || 0,
+          ...(options?.prompt && { stt_prompt_used: true }),
         },
       };
 

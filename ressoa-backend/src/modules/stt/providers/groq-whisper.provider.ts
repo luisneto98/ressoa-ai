@@ -63,6 +63,7 @@ export class GroqWhisperProvider implements STTProvider {
           response_format: 'verbose_json',
           language: idioma,
           temperature: 0.0,
+          ...(options?.prompt && { prompt: options.prompt }),
         }),
         new Promise<never>((_, reject) => {
           timer = setTimeout(
@@ -96,6 +97,7 @@ export class GroqWhisperProvider implements STTProvider {
           segments_count: segments.length,
           billed_seconds: billedSeconds,
           cost_per_hour: costPerHour,
+          ...(options?.prompt && { stt_prompt_used: true }),
         },
       };
 

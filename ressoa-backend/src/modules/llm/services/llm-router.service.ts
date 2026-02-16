@@ -1,5 +1,5 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
-import { LLMProvider, LLMResult, GenerateOptions } from '../interfaces/llm-provider.interface';
+import type { LLMProvider, LLMResult, GenerateOptions } from '../interfaces/llm-provider.interface';
 import { LLMAnalysisType } from '../../../config/providers.config';
 import { ProvidersConfigService } from '../../providers-config/providers-config.service';
 

@@ -141,6 +141,23 @@ describe('STTRouterService', () => {
       expect(whisperProvider.transcribe).not.toHaveBeenCalled();
     });
 
+    it('should propagate prompt option to fallback provider', async () => {
+      whisperProvider.transcribe.mockRejectedValueOnce(new Error('Whisper down'));
+      const options = { idioma: 'pt-BR', prompt: 'Frações, equações, álgebra' };
+
+      await service.transcribeWithFallback(audioBuffer, options);
+
+      expect(googleProvider.transcribe).toHaveBeenCalledWith(audioBuffer, options);
+    });
+
+    it('should pass prompt option to primary provider', async () => {
+      const options = { idioma: 'pt-BR', prompt: 'BNCC vocabulary terms' };
+
+      await service.transcribeWithFallback(audioBuffer, options);
+
+      expect(whisperProvider.transcribe).toHaveBeenCalledWith(audioBuffer, options);
+    });
+
     it('should handle timeout on primary and succeed with fallback', async () => {
       // Simulate a provider that hangs indefinitely (never resolves)
       whisperProvider.transcribe.mockRejectedValueOnce(new Error('Timeout after 300000ms'));

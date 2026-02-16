@@ -164,3 +164,11 @@ development_status:
     14-4-integracao-router-pipeline: done # Code review complete - 3 MEDIUM auto-fixed (stale JSDoc, module comment, mock data) + 1 LOW deferred - 66/66 tests passing - All 10 ACs verified
     14-5-dashboard-custos-provider: backlog # Dashboard Admin de custos por provider com savings tracking
     epic-14-retrospective: optional
+    epic-15: in-progress # Transcrição Enriquecida com Diarização via LLM - Prompt pedagógico STT + Word timestamps + Diarização Professor/Aluno via Gemini Flash + Saída SRT
+    15-1-prompt-contexto-pedagogico-stt: done # Code review complete - 7 issues found (1 HIGH: Record<string,any> type safety, 4 MEDIUM, 2 LOW) - All auto-fixed - 98/98 tests passing - stt_prompt_key added to metadata
+    15-2-timestamps-por-palavra-stt: backlog # Ativar timestamp_granularities: ["word"] no Whisper e Groq - word-level timing
+    15-3-servico-diarizacao-llm: backlog # DiarizationService - LLM (Gemini Flash) identifica [PROFESSOR] vs [ALUNO] e gera SRT
+    15-4-configuracao-provider-diarizacao: backlog # Env vars DIARIZATION_LLM_PROVIDER, DIARIZATION_ENABLED, fallback
+    15-5-integracao-pipeline-stt-diarizacao: backlog # Integrar STT → Diarização → Salvar SRT enriquecido no campo texto
+    15-6-atualizar-prompts-analise-consumir-srt: backlog # Adaptar 5 prompts de análise para interpretar SRT com speaker labels
+    epic-15-retrospective: optional

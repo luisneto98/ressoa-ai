@@ -68,4 +68,7 @@ export interface TranscribeOptions {
 
   /** Provider-specific model identifier (e.g., 'whisper-1', 'enhanced') */
   model?: string;
+
+  /** Vocabulary/context prompt to improve transcription accuracy (max ~224 tokens / ~800 chars) */
+  prompt?: string;
 }

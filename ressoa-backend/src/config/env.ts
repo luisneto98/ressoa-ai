@@ -27,12 +27,16 @@ export const envSchema = z.object({
   // Google Cloud Service Account JSON (Story 4.2 - required for STT fallback)
   // Format: stringified JSON of service account credentials
   GOOGLE_CLOUD_CREDENTIALS: z.string().optional(),
+  // Groq API key (Story 14.2 - Groq Whisper STT)
+  GROQ_API_KEY: z.string().optional(),
+  // Google Gemini API key (Story 14.3 - Gemini Flash LLM)
+  GEMINI_API_KEY: z.string().optional(),
   // STT Provider Configuration (Story 4.1)
   STT_PRIMARY_PROVIDER: z
-    .enum(['WHISPER', 'GOOGLE', 'AZURE'])
+    .enum(['WHISPER', 'GOOGLE', 'AZURE', 'GROQ_WHISPER'])
     .default('WHISPER'),
   STT_FALLBACK_PROVIDER: z
-    .enum(['WHISPER', 'GOOGLE', 'AZURE'])
+    .enum(['WHISPER', 'GOOGLE', 'AZURE', 'GROQ_WHISPER'])
     .default('GOOGLE'),
   // AWS S3 for audio downloads (Story 4.1)
   AWS_ACCESS_KEY_ID: z.string().optional(),

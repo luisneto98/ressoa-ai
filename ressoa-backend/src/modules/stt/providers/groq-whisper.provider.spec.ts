@@ -288,6 +288,37 @@ describe('GroqWhisperProvider', () => {
         temperature: 0.0,
       });
     });
+
+    it('should pass prompt to Groq API when provided', async () => {
+      const prompt = 'Frações, equações, álgebra';
+      await provider.transcribe(audioBuffer, { prompt });
+
+      expect(mockCreate).toHaveBeenCalledWith(
+        expect.objectContaining({ prompt }),
+      );
+    });
+
+    it('should not pass prompt when undefined', async () => {
+      await provider.transcribe(audioBuffer, { prompt: undefined });
+
+      expect(mockCreate).toHaveBeenCalledWith(
+        expect.not.objectContaining({ prompt: expect.anything() }),
+      );
+    });
+
+    it('should set stt_prompt_used in metadata when prompt provided', async () => {
+      const result = await provider.transcribe(audioBuffer, {
+        prompt: 'BNCC terms',
+      });
+
+      expect(result.metadata?.stt_prompt_used).toBe(true);
+    });
+
+    it('should not set stt_prompt_used when no prompt', async () => {
+      const result = await provider.transcribe(audioBuffer);
+
+      expect(result.metadata?.stt_prompt_used).toBeUndefined();
+    });
   });
 
   describe('isAvailable', () => {

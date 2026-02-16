@@ -11,6 +11,7 @@ import { writeFile, unlink, readFile } from 'fs/promises';
 import { tmpdir } from 'os';
 import { join } from 'path';
 import { randomUUID } from 'crypto';
+import { STT_PROMPTS, resolveSttPromptKey } from './constants/stt-prompts';
 
 const execFileAsync = promisify(execFile);
 
@@ -80,6 +81,11 @@ export class TranscricaoService {
         escola_id: escolaId, // ✅ Multi-tenancy enforcement
         deleted_at: null, // ✅ Soft delete pattern
       },
+      include: {
+        planejamento: {
+          include: { disciplina: true },
+        },
+      },
     });
 
     if (!aula || !aula.arquivo_url) {
@@ -105,9 +111,19 @@ export class TranscricaoService {
       this.logger.log(`Áudio comprimido: ${(audioBuffer.length / 1024 / 1024).toFixed(1)}MB`);
     }
 
+    // Resolve discipline-specific STT prompt for vocabulary context
+    const disciplinaNome = aula.planejamento?.disciplina?.nome || '';
+    const promptKey = resolveSttPromptKey(disciplinaNome);
+    const sttPrompt = STT_PROMPTS[promptKey] || STT_PROMPTS.default;
+
+    this.logger.log(
+      `Prompt STT resolvido: disciplina="${disciplinaNome}", chave="${promptKey}"`,
+    );
+
     // Transcribe using STTService (handles failover automatically)
     const result = await this.sttService.transcribe(audioBuffer, {
       idioma: 'pt-BR',
+      prompt: sttPrompt,
     });
 
     this.logger.log(
@@ -125,7 +141,7 @@ export class TranscricaoService {
         confianca: result.confianca,
         custo_usd: result.custo_usd,
         tempo_processamento_ms: result.tempo_processamento_ms,
-        metadata_json: result.metadata,
+        metadata_json: { ...result.metadata, stt_prompt_key: promptKey },
       },
     });
 

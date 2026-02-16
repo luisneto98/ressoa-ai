@@ -319,6 +319,7 @@ describe('TranscricaoService - Diarization Integration', () => {
     expect(mockPrisma.transcricao.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
+          tempo_processamento_ms: expect.any(Number),
           metadata_json: expect.objectContaining({
             has_diarization: true,
             diarization_provider: 'GEMINI_FLASH',
@@ -410,6 +411,10 @@ describe('TranscricaoService - Diarization Integration', () => {
         data: expect.objectContaining({
           texto: fallbackSrt,
           custo_usd: mockTranscribeResult.custo_usd, // 0 diarization cost
+          metadata_json: expect.objectContaining({
+            has_diarization: false, // FALLBACK provider means no real diarization
+            diarization_provider: 'FALLBACK',
+          }),
         }),
       }),
     );
@@ -503,6 +508,16 @@ describe('TranscricaoService - Diarization Integration', () => {
 
     // Diarization should be called with undefined (it handles this case)
     expect(mockDiarizationService.diarize).toHaveBeenCalledWith(undefined);
+  });
+
+  // M2 fix: verify tempo_processamento_ms reflects total pipeline time
+  it('should save total pipeline time in tempo_processamento_ms', async () => {
+    await service.transcribeAula('aula-uuid');
+
+    const createCall = mockPrisma.transcricao.create.mock.calls[0][0];
+    // tempo_processamento_ms should be a number >= 0 (stt + diarization wall-clock)
+    expect(typeof createCall.data.tempo_processamento_ms).toBe('number');
+    expect(createCall.data.tempo_processamento_ms).toBeGreaterThanOrEqual(0);
   });
 
   it('should pass diarization cost as 0 when diarization returns fallback', async () => {

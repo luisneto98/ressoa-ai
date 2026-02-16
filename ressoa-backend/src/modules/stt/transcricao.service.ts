@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../prisma/prisma.service';
 import { STTService } from './stt.service';
 import { DiarizationService } from './services/diarization.service';
+import type { DiarizationResult } from './interfaces/diarization.interface';
 import { Transcricao } from '@prisma/client';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { Readable } from 'stream';
@@ -141,7 +142,8 @@ export class TranscricaoService {
 
     // Diarization: enrich transcription with speaker labels (Story 15.5)
     // DiarizationService.diarize() handles: feature flag, empty words, LLM errors
-    let diarizationResult: Awaited<ReturnType<DiarizationService['diarize']>> | null = null;
+    let diarizationResult: DiarizationResult | null = null;
+    const diarizationStartTime = Date.now();
     try {
       diarizationResult = await this.diarizationService.diarize(result.words);
     } catch (error) {
@@ -152,6 +154,7 @@ export class TranscricaoService {
         aulaId,
       });
     }
+    const diarizationDurationMs = Date.now() - diarizationStartTime;
 
     // Determine final texto: prefer diarization SRT, fallback to original
     let finalTexto = result.texto;
@@ -161,6 +164,10 @@ export class TranscricaoService {
 
     // Accumulate costs: STT + diarization
     const totalCusto = result.custo_usd + (diarizationResult?.custo_usd ?? 0);
+    const totalProcessingMs = sttDurationMs + diarizationDurationMs;
+
+    // Determine has_diarization: true only when real diarization occurred (not FALLBACK)
+    const hasDiarization = !!diarizationResult && diarizationResult.provider !== 'FALLBACK';
 
     // Save transcription to database
     const transcricao = await this.prisma.transcricao.create({
@@ -172,19 +179,18 @@ export class TranscricaoService {
         duracao_segundos: result.duracao_segundos,
         confianca: result.confianca,
         custo_usd: totalCusto,
-        tempo_processamento_ms: result.tempo_processamento_ms,
+        tempo_processamento_ms: totalProcessingMs,
         metadata_json: {
           ...result.metadata,
           stt_prompt_key: promptKey,
           ...(result.words && { words: result.words, word_count: result.words.length }),
+          has_diarization: hasDiarization,
           ...(diarizationResult && {
-            has_diarization: true,
             diarization_provider: diarizationResult.provider,
             diarization_cost_usd: diarizationResult.custo_usd,
-            diarization_processing_ms: diarizationResult.tempo_processamento_ms,
+            diarization_processing_ms: diarizationDurationMs,
             speaker_stats: diarizationResult.speaker_stats,
           }),
-          ...(!diarizationResult && { has_diarization: false }),
         },
       },
     });
@@ -198,7 +204,6 @@ export class TranscricaoService {
     });
 
     // Structured logging: timing and cost breakdown (AC #6, #7)
-    const totalDurationMs = sttDurationMs + (diarizationResult?.tempo_processamento_ms ?? 0);
     this.logger.log({
       msg: 'Transcription pipeline complete',
       aulaId,
@@ -207,9 +212,9 @@ export class TranscricaoService {
       diarization_cost_usd: diarizationResult?.custo_usd ?? 0,
       total_cost_usd: totalCusto,
       stt_duration_ms: sttDurationMs,
-      diarization_duration_ms: diarizationResult?.tempo_processamento_ms ?? 0,
-      total_duration_ms: totalDurationMs,
-      has_diarization: !!diarizationResult,
+      diarization_duration_ms: diarizationDurationMs,
+      total_duration_ms: totalProcessingMs,
+      has_diarization: hasDiarization,
     });
 
     return transcricao;

@@ -1,6 +1,6 @@
 # Story 15.5: Integrar Pipeline Completo (STT → Diarização → Salvar)
 
-Status: review
+Status: done
 
 ## Story
 
@@ -190,18 +190,18 @@ N/A — no issues encountered during implementation.
 - ✅ `metadata_json` enriched with `has_diarization`, `diarization_provider`, `diarization_cost_usd`, `diarization_processing_ms`, `speaker_stats`
 - ✅ Cost accumulation: `custo_usd = stt_cost + diarization_cost` (0 for fallback)
 - ✅ Structured logging with separate STT/diarization timing and costs
-- ✅ 22 unit tests passing (10 existing + 12 new diarization integration tests)
-- ✅ 125/125 STT module tests passing
-- ✅ 8/8 analysis processor tests passing
-- ✅ 620/659 full suite passing (39 pre-existing failures in auth/admin/turmas/email/gemini/analise — unrelated)
+- ✅ 23 unit tests passing (10 existing + 13 new diarization integration tests)
+- ✅ 126/126 STT module tests passing
+- ✅ 8/8 analysis processor tests passing (analise.service)
 - ✅ TranscriptionProcessor unchanged — diarization is internal to `transcribeAula()`
 - ✅ No new files, no module changes, no DB migrations needed
 
 ### File List
 
 - `ressoa-backend/src/modules/stt/transcricao.service.ts` (MODIFIED) — Added DiarizationService injection, diarization call with try-catch, SRT texto replacement, metadata enrichment, cost accumulation, structured timing logs
-- `ressoa-backend/src/modules/stt/transcricao.service.spec.ts` (MODIFIED) — Added 12 diarization integration tests, updated constructor mock to include DiarizationService
+- `ressoa-backend/src/modules/stt/transcricao.service.spec.ts` (MODIFIED) — Added 13 diarization integration tests, updated constructor mock to include DiarizationService
 
 ## Change Log
 
 - **2026-02-16**: Story 15.5 implemented — Integrated STT → Diarization → Save pipeline in `TranscricaoService.transcribeAula()`. Added DiarizationService DI, SRT output, metadata enrichment, cost accumulation, structured logging, and 12 new tests covering all ACs (#1-#9).
+- **2026-02-16**: Code review fixes (4 issues) — H1: `tempo_processamento_ms` now saves total pipeline time (STT+diarization) instead of only STT time. M1: `has_diarization` now correctly returns `false` when diarization provider is FALLBACK (feature flag off or fallback). M2: Added missing test for `tempo_processamento_ms` validation. M3: Diarization timing now uses consistent wall-clock measurement. L1: Replaced verbose `Awaited<ReturnType<...>>` type with explicit `DiarizationResult` import.

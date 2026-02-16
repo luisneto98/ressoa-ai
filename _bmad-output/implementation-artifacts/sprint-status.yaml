@@ -170,5 +170,5 @@ development_status:
     15-3-servico-diarizacao-llm: done # Code review complete - 5 issues found (1 HIGH: broken providers.config tests, 3 MEDIUM, 1 LOW) - 2 auto-fixed - 28/28 tests passing
     15-4-configuracao-provider-diarizacao: done # Code review complete - 0 HIGH, 3 MEDIUM (2 fixed: structured logging + test cleanup DRY, 1 accepted: process.env direct read), 2 LOW (1 fixed, 1 N/A) - 33/33 tests passing
     15-5-integracao-pipeline-stt-diarizacao: done # Code review complete - 5 issues found (1 HIGH, 3 MEDIUM, 1 LOW) - All auto-fixed - 23/23 tests passing (126/126 STT module) - tempo_processamento_ms fix, has_diarization semantic fix, wall-clock timing consistency
-    15-6-atualizar-prompts-analise-consumir-srt: backlog # Adaptar 5 prompts de análise para interpretar SRT com speaker labels
+    15-6-atualizar-prompts-analise-consumir-srt: done # Code review complete - 2 MEDIUM auto-fixed (as any → typed TranscricaoMetadataJson, test count 17→30 corrected) + 3 LOW (file list, completion notes, __dirname path) - 61/61 analise tests passing - All 5 ACs verified
     epic-15-retrospective: optional

@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { AnaliseService } from './analise.service';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { PromptService } from '../../llm/services/prompt.service';
@@ -752,6 +754,236 @@ describe('AnaliseService', () => {
         const result = buildPlanejamentoContext(mockPlanejamentoFallback, true);
         expect(result.tipo).toBe('bncc');
       });
+    });
+  });
+
+  /**
+   * STORY 15.6: Tests for SRT-aware prompts and diarization metadata
+   */
+  describe('Story 15.6: SRT Diarization Metadata in Context', () => {
+    it('should pass has_diarization and speaker_stats when metadata_json contains them', async () => {
+      const aulaWithDiarization = {
+        ...mockAulaCompleta,
+        transcricao: {
+          ...mockAulaCompleta.transcricao,
+          texto: '1\n00:00:01,200 --> 00:00:05,800\n[PROFESSOR] Bom dia, turma!\n\n2\n00:00:06,100 --> 00:00:08,400\n[ALUNO] Bom dia!\n',
+          metadata_json: {
+            has_diarization: true,
+            speaker_stats: {
+              professor_segments: 10,
+              aluno_segments: 5,
+              professor_words: 200,
+              aluno_words: 50,
+            },
+          },
+        },
+      };
+
+      prisma.aula.findUnique.mockResolvedValue(aulaWithDiarization as any);
+      promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
+      promptService.renderPrompt.mockResolvedValue('rendered');
+
+      await service.analisarAula(mockAulaId);
+
+      const firstRenderCall = promptService.renderPrompt.mock.calls[0];
+      const contexto = firstRenderCall[1];
+
+      expect(contexto.has_diarization).toBe(true);
+      expect(contexto.speaker_stats).toEqual({
+        professor_segments: 10,
+        aluno_segments: 5,
+        professor_words: 200,
+        aluno_words: 50,
+      });
+    });
+
+    it('should default has_diarization to false when metadata_json has no diarization', async () => {
+      const aulaWithoutDiarization = {
+        ...mockAulaCompleta,
+        transcricao: {
+          ...mockAulaCompleta.transcricao,
+          texto: 'Bom dia, turma! Hoje vamos estudar frações...',
+          metadata_json: {
+            provider: 'whisper',
+            has_diarization: false,
+          },
+        },
+      };
+
+      prisma.aula.findUnique.mockResolvedValue(aulaWithoutDiarization as any);
+      promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
+      promptService.renderPrompt.mockResolvedValue('rendered');
+
+      await service.analisarAula(mockAulaId);
+
+      const firstRenderCall = promptService.renderPrompt.mock.calls[0];
+      const contexto = firstRenderCall[1];
+
+      expect(contexto.has_diarization).toBe(false);
+      expect(contexto.speaker_stats).toBeNull();
+    });
+
+    it('should not include diarization fields when metadata_json is null', async () => {
+      const aulaNoMetadata = {
+        ...mockAulaCompleta,
+        transcricao: {
+          ...mockAulaCompleta.transcricao,
+          texto: 'Bom dia, turma!',
+          metadata_json: null,
+        },
+      };
+
+      prisma.aula.findUnique.mockResolvedValue(aulaNoMetadata as any);
+      promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
+      promptService.renderPrompt.mockResolvedValue('rendered');
+
+      await service.analisarAula(mockAulaId);
+
+      const firstRenderCall = promptService.renderPrompt.mock.calls[0];
+      const contexto = firstRenderCall[1];
+
+      expect(contexto.has_diarization).toBeUndefined();
+      expect(contexto.speaker_stats).toBeUndefined();
+    });
+
+    it('should pass SRT content as transcricao in context', async () => {
+      const srtContent = '1\n00:00:01,200 --> 00:00:05,800\n[PROFESSOR] Bom dia, turma!\n\n2\n00:00:06,100 --> 00:00:08,400\n[ALUNO] Bom dia!\n';
+      const aulaWithSRT = {
+        ...mockAulaCompleta,
+        transcricao: {
+          ...mockAulaCompleta.transcricao,
+          texto: srtContent,
+          metadata_json: { has_diarization: true },
+        },
+      };
+
+      prisma.aula.findUnique.mockResolvedValue(aulaWithSRT as any);
+      promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
+      promptService.renderPrompt.mockResolvedValue('rendered');
+
+      await service.analisarAula(mockAulaId);
+
+      const firstRenderCall = promptService.renderPrompt.mock.calls[0];
+      const contexto = firstRenderCall[1];
+
+      expect(contexto.transcricao).toBe(srtContent);
+    });
+
+    it('should handle plain text transcription (backward compatibility)', async () => {
+      const plainText = 'Bom dia, turma! Hoje vamos estudar frações equivalentes.';
+      const aulaPlainText = {
+        ...mockAulaCompleta,
+        transcricao: {
+          ...mockAulaCompleta.transcricao,
+          texto: plainText,
+          metadata_json: {},
+        },
+      };
+
+      prisma.aula.findUnique.mockResolvedValue(aulaPlainText as any);
+      promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
+      promptService.renderPrompt.mockResolvedValue('rendered');
+
+      await service.analisarAula(mockAulaId);
+
+      const firstRenderCall = promptService.renderPrompt.mock.calls[0];
+      const contexto = firstRenderCall[1];
+
+      expect(contexto.transcricao).toBe(plainText);
+      // Empty metadata_json should still spread (has_diarization defaults to false)
+      expect(contexto.has_diarization).toBe(false);
+    });
+  });
+
+  /**
+   * STORY 15.6: Validate v4.0.0 prompt seed files
+   */
+  describe('Story 15.6: Prompt Seed Files Validation', () => {
+    const promptsDir = join(__dirname, '../../../../prisma/seeds/prompts');
+
+    const promptNames = [
+      'prompt-cobertura',
+      'prompt-qualitativa',
+      'prompt-relatorio',
+      'prompt-exercicios',
+      'prompt-alertas',
+    ];
+
+    it.each(promptNames)('should have v4.0.0 file with ativo=true for %s', (nome) => {
+      const filePath = join(promptsDir, `${nome}-v4.0.0.json`);
+      const content = JSON.parse(readFileSync(filePath, 'utf-8'));
+
+      expect(content.nome).toBe(nome);
+      expect(content.versao).toBe('v4.0.0');
+      expect(content.ativo).toBe(true);
+    });
+
+    it.each(promptNames)('should have v3.0.0 file with ativo=false for %s', (nome) => {
+      const filePath = join(promptsDir, `${nome}-v3.0.0.json`);
+      const content = JSON.parse(readFileSync(filePath, 'utf-8'));
+
+      expect(content.nome).toBe(nome);
+      expect(content.versao).toBe('v3.0.0');
+      expect(content.ativo).toBe(false);
+    });
+
+    it.each(promptNames)('v4.0.0 %s should contain speaker label references', (nome) => {
+      const filePath = join(promptsDir, `${nome}-v4.0.0.json`);
+      const content = JSON.parse(readFileSync(filePath, 'utf-8'));
+
+      expect(content.conteudo).toContain('[PROFESSOR]');
+      expect(content.conteudo).toContain('[ALUNO]');
+      // Prompts 1-2 reference SRT format directly; prompts 3-5 reference speaker labels from analysis
+      expect(content.conteudo).toMatch(/SRT|speaker label|speaker_analysis|diarização/i);
+    });
+
+    it.each(promptNames)('v4.0.0 %s should contain backward compatibility fallback', (nome) => {
+      const filePath = join(promptsDir, `${nome}-v4.0.0.json`);
+      const content = JSON.parse(readFileSync(filePath, 'utf-8'));
+
+      // Each prompt must handle plain text gracefully
+      expect(content.conteudo).toMatch(/texto puro|sem labels|NÃO contém labels/i);
+    });
+
+    it('v4.0.0 prompt-cobertura should have speaker field in evidence schema', () => {
+      const filePath = join(promptsDir, 'prompt-cobertura-v4.0.0.json');
+      const content = JSON.parse(readFileSync(filePath, 'utf-8'));
+
+      expect(content.conteudo).toContain('"speaker"');
+      expect(content.conteudo).toContain('interacoes_relevantes');
+    });
+
+    it('v4.0.0 prompt-qualitativa should have participacao_alunos field', () => {
+      const filePath = join(promptsDir, 'prompt-qualitativa-v4.0.0.json');
+      const content = JSON.parse(readFileSync(filePath, 'utf-8'));
+
+      expect(content.conteudo).toContain('participacao_alunos');
+      expect(content.conteudo).toContain('intervencoes_contadas');
+    });
+
+    it('v4.0.0 prompt-relatorio should have Dinâmica de Participação section', () => {
+      const filePath = join(promptsDir, 'prompt-relatorio-v4.0.0.json');
+      const content = JSON.parse(readFileSync(filePath, 'utf-8'));
+
+      expect(content.conteudo).toContain('Dinâmica de Participação');
+      expect(content.conteudo).toContain('blockquote');
+    });
+
+    it('v4.0.0 prompt-exercicios should reference student doubts for exercises', () => {
+      const filePath = join(promptsDir, 'prompt-exercicios-v4.0.0.json');
+      const content = JSON.parse(readFileSync(filePath, 'utf-8'));
+
+      expect(content.conteudo).toContain('dúvidas dos alunos');
+      expect(content.conteudo).toContain('contexto_aula');
+    });
+
+    it('v4.0.0 prompt-alertas should have PARTICIPACAO_DESEQUILIBRADA and INTERACAO_FREQUENTE', () => {
+      const filePath = join(promptsDir, 'prompt-alertas-v4.0.0.json');
+      const content = JSON.parse(readFileSync(filePath, 'utf-8'));
+
+      expect(content.conteudo).toContain('PARTICIPACAO_DESEQUILIBRADA');
+      expect(content.conteudo).toContain('INTERACAO_FREQUENTE');
+      expect(content.conteudo).toContain('speaker_analysis');
     });
   });
 });

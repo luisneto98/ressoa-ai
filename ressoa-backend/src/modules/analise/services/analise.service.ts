@@ -6,6 +6,13 @@ import { PromptService } from '../../llm/services/prompt.service';
 import { LLMRouterService } from '../../llm/services/llm-router.service';
 import { LLMAnalysisType } from '../../../config/providers.config';
 import { Analise, StatusAnalise } from '@prisma/client';
+import type { SpeakerStats } from '../../stt/interfaces/diarization.interface';
+
+interface TranscricaoMetadataJson {
+  has_diarization?: boolean;
+  speaker_stats?: SpeakerStats;
+  [key: string]: unknown;
+}
 
 interface ContextoPedagogico {
   objetivo_geral: string;
@@ -199,6 +206,15 @@ export class AnaliseService {
 
       // Objetivos de aprendizagem (adapta formato BNCC vs custom)
       planejamento: this.buildPlanejamentoContext(aula.planejamento, isCurriculoCustom),
+
+      // STORY 15.6: Diarization metadata for SRT-aware prompts
+      ...(aula.transcricao.metadata_json && (() => {
+        const meta = aula.transcricao.metadata_json as TranscricaoMetadataJson;
+        return {
+          has_diarization: meta.has_diarization || false,
+          speaker_stats: meta.speaker_stats || null,
+        };
+      })()),
     };
 
     let custoTotal = 0;

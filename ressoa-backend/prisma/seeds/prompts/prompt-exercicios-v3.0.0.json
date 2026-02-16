@@ -2,7 +2,7 @@
   "nome": "prompt-exercicios",
   "versao": "v3.0.0",
   "modelo_sugerido": "GPT4_MINI",
-  "ativo": true,
+  "ativo": false,
   "ab_testing": false,
   "variaveis": {
     "temperature": 0.7,

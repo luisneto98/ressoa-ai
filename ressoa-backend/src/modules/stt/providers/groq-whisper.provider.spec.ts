@@ -94,6 +94,75 @@ describe('GroqWhisperProvider', () => {
       );
     });
 
+    it('should request timestamp_granularities in API call', async () => {
+      await provider.transcribe(audioBuffer);
+
+      expect(mockCreate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          timestamp_granularities: ['word', 'segment'],
+        }),
+      );
+    });
+
+    it('should extract words from response when available', async () => {
+      mockCreate.mockResolvedValueOnce({
+        ...mockVerboseResponse,
+        words: [
+          { word: 'Hoje', start: 0.0, end: 0.32 },
+          { word: 'vamos', start: 0.32, end: 0.56 },
+          { word: 'falar', start: 0.56, end: 0.88 },
+        ],
+      });
+
+      const result = await provider.transcribe(audioBuffer);
+
+      expect(result.words).toEqual([
+        { word: 'Hoje', start: 0.0, end: 0.32 },
+        { word: 'vamos', start: 0.32, end: 0.56 },
+        { word: 'falar', start: 0.56, end: 0.88 },
+      ]);
+      expect(result.metadata?.word_count).toBe(3);
+    });
+
+    it('should set words to undefined when response has no words (backward compat)', async () => {
+      const result = await provider.transcribe(audioBuffer);
+
+      expect(result.words).toBeUndefined();
+      expect(result.metadata?.word_count).toBeUndefined();
+    });
+
+    it('should map word objects correctly to TranscriptionWord (strip extra fields)', async () => {
+      mockCreate.mockResolvedValueOnce({
+        ...mockVerboseResponse,
+        words: [
+          { word: 'frações', start: 1.23, end: 1.89, extra_field: 'ignored' },
+        ],
+      });
+
+      const result = await provider.transcribe(audioBuffer);
+
+      expect(result.words).toHaveLength(1);
+      expect(result.words![0]).toEqual({
+        word: 'frações',
+        start: 1.23,
+        end: 1.89,
+      });
+      // Ensure extra fields are NOT included
+      expect((result.words![0] as any).extra_field).toBeUndefined();
+    });
+
+    it('should set words to undefined when response words is empty array', async () => {
+      mockCreate.mockResolvedValueOnce({
+        ...mockVerboseResponse,
+        words: [],
+      });
+
+      const result = await provider.transcribe(audioBuffer);
+
+      expect(result.words).toBeUndefined();
+      expect(result.metadata?.word_count).toBeUndefined();
+    });
+
     it('should calculate cost correctly for whisper-large-v3-turbo', async () => {
       const result = await provider.transcribe(audioBuffer);
 
@@ -286,6 +355,7 @@ describe('GroqWhisperProvider', () => {
         response_format: 'verbose_json',
         language: 'en',
         temperature: 0.0,
+        timestamp_granularities: ['word', 'segment'],
       });
     });
 

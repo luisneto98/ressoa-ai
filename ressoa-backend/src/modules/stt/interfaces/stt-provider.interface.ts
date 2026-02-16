@@ -1,6 +1,19 @@
 import { ProviderSTT } from '@prisma/client';
 
 /**
+ * Word-level timestamp from STT transcription.
+ * Used by DiarizationService (Story 15.3) for speaker identification.
+ */
+export interface TranscriptionWord {
+  /** Transcribed word */
+  word: string;
+  /** Start time in seconds (e.g., 0.32) */
+  start: number;
+  /** End time in seconds (e.g., 0.56) */
+  end: number;
+}
+
+/**
  * Normalized transcription result returned by all STT providers.
  * Ensures consistent data structure regardless of underlying provider.
  */
@@ -28,6 +41,9 @@ export interface TranscriptionResult {
 
   /** Provider-specific metadata */
   metadata?: Record<string, any>;
+
+  /** Word-level timestamps (optional — only when provider supports timestamp_granularities) */
+  words?: TranscriptionWord[];
 }
 
 /**

@@ -92,7 +92,7 @@ export class GoogleProvider implements STTProvider {
           languageCode: options?.idioma || 'pt-BR',
           model: 'default', // Cost-optimized model for MVP
           enableAutomaticPunctuation: true,
-          enableWordTimeOffsets: false, // Not needed for MVP
+          enableWordTimeOffsets: false, // Word timestamps via Google use different API; Story 15.2 uses OpenAI-style timestamp_granularities
         },
       });
 

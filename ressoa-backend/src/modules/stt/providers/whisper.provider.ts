@@ -7,6 +7,7 @@ import * as crypto from 'crypto';
 import {
   STTProvider,
   TranscriptionResult,
+  TranscriptionWord,
   TranscribeOptions,
 } from '../interfaces';
 
@@ -88,6 +89,7 @@ export class WhisperProvider implements STTProvider {
         language: idioma, // ISO 639-1 format (pt, not pt-BR)
         response_format: 'verbose_json', // Includes segments, duration, confidence
         ...(options?.prompt && { prompt: options.prompt }),
+        timestamp_granularities: ['word', 'segment'],
       });
 
       // Calculate cost: $0.006 per minute
@@ -96,6 +98,17 @@ export class WhisperProvider implements STTProvider {
 
       // Calculate average confidence from segments
       const confianca = this.calculateConfidence(response.segments || []);
+
+      // Extract word-level timestamps (top-level when timestamp_granularities active)
+      const rawWords = (response as any).words;
+      const words: TranscriptionWord[] | undefined =
+        rawWords?.length > 0
+          ? rawWords.map((w: any) => ({
+              word: w.word,
+              start: w.start,
+              end: w.end,
+            }))
+          : undefined;
 
       const result: TranscriptionResult = {
         texto: response.text,
@@ -109,13 +122,16 @@ export class WhisperProvider implements STTProvider {
           model: 'whisper-1',
           segments_count: response.segments?.length || 0,
           ...(options?.prompt && { stt_prompt_used: true }),
+          ...(words && { word_count: words.length }),
         },
+        words,
       };
 
       this.logger.log(
         `Transcrição Whisper concluída: ${result.duracao_segundos}s, ` +
           `custo=$${result.custo_usd.toFixed(4)}, ` +
-          `confiança=${((result.confianca ?? 0) * 100).toFixed(1)}%`,
+          `confiança=${((result.confianca ?? 0) * 100).toFixed(1)}%` +
+          (words ? `, words=${words.length}` : ''),
       );
 
       return result;

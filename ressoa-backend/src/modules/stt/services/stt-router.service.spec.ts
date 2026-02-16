@@ -158,6 +158,27 @@ describe('STTRouterService', () => {
       expect(whisperProvider.transcribe).toHaveBeenCalledWith(audioBuffer, options);
     });
 
+    it('should propagate words field intact from provider result', async () => {
+      const wordsArray = [
+        { word: 'Hoje', start: 0.0, end: 0.32 },
+        { word: 'vamos', start: 0.32, end: 0.56 },
+      ];
+      whisperProvider.transcribe.mockResolvedValueOnce({
+        ...mockTranscriptionResult,
+        words: wordsArray,
+      });
+
+      const result = await service.transcribeWithFallback(audioBuffer);
+
+      expect(result.words).toEqual(wordsArray);
+    });
+
+    it('should propagate undefined words when provider does not return words', async () => {
+      const result = await service.transcribeWithFallback(audioBuffer);
+
+      expect(result.words).toBeUndefined();
+    });
+
     it('should handle timeout on primary and succeed with fallback', async () => {
       // Simulate a provider that hangs indefinitely (never resolves)
       whisperProvider.transcribe.mockRejectedValueOnce(new Error('Timeout after 300000ms'));

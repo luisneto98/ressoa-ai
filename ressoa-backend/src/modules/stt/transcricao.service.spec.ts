@@ -191,4 +191,43 @@ describe('TranscricaoService - Prompt Resolution', () => {
       }),
     );
   });
+
+  it('should save words and word_count in metadata_json when available', async () => {
+    const wordsArray = [
+      { word: 'Hoje', start: 0.0, end: 0.32 },
+      { word: 'vamos', start: 0.32, end: 0.56 },
+    ];
+    mockSTTService.transcribe.mockResolvedValueOnce({
+      ...mockTranscribeResult,
+      words: wordsArray,
+    });
+    mockPrisma.aula.findUnique.mockResolvedValue(
+      createMockAula('Matemática'),
+    );
+
+    await service.transcribeAula('aula-uuid');
+
+    expect(mockPrisma.transcricao.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          metadata_json: expect.objectContaining({
+            words: wordsArray,
+            word_count: 2,
+          }),
+        }),
+      }),
+    );
+  });
+
+  it('should not include words in metadata_json when not available', async () => {
+    mockPrisma.aula.findUnique.mockResolvedValue(
+      createMockAula('Matemática'),
+    );
+
+    await service.transcribeAula('aula-uuid');
+
+    const createCall = mockPrisma.transcricao.create.mock.calls[0][0];
+    expect(createCall.data.metadata_json.words).toBeUndefined();
+    expect(createCall.data.metadata_json.word_count).toBeUndefined();
+  });
 });

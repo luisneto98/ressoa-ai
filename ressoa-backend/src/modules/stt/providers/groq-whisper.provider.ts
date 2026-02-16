@@ -7,6 +7,7 @@ import * as crypto from 'crypto';
 import {
   STTProvider,
   TranscriptionResult,
+  TranscriptionWord,
   TranscribeOptions,
 } from '../interfaces';
 
@@ -64,7 +65,8 @@ export class GroqWhisperProvider implements STTProvider {
           language: idioma,
           temperature: 0.0,
           ...(options?.prompt && { prompt: options.prompt }),
-        }),
+          timestamp_granularities: ['word', 'segment'],
+        } as any),
         new Promise<never>((_, reject) => {
           timer = setTimeout(
             () => reject(new Error(`Groq Whisper timeout after ${TRANSCRIPTION_TIMEOUT_MS}ms`)),
@@ -84,6 +86,17 @@ export class GroqWhisperProvider implements STTProvider {
       const segments = (response as any).segments || [];
       const confianca = this.calculateConfidence(segments);
 
+      // Extract word-level timestamps (top-level when timestamp_granularities active)
+      const rawWords = (response as any).words;
+      const words: TranscriptionWord[] | undefined =
+        rawWords?.length > 0
+          ? rawWords.map((w: any) => ({
+              word: w.word,
+              start: w.start,
+              end: w.end,
+            }))
+          : undefined;
+
       const result: TranscriptionResult = {
         texto: response.text,
         provider: ProviderSTT.GROQ_WHISPER,
@@ -98,14 +111,17 @@ export class GroqWhisperProvider implements STTProvider {
           billed_seconds: billedSeconds,
           cost_per_hour: costPerHour,
           ...(options?.prompt && { stt_prompt_used: true }),
+          ...(words && { word_count: words.length }),
         },
+        words,
       };
 
       this.logger.log(
         `Transcrição Groq Whisper concluída: ${result.duracao_segundos}s, ` +
           `modelo=${model}, custo=$${result.custo_usd.toFixed(6)}, ` +
           `confiança=${((result.confianca ?? 0) * 100).toFixed(1)}%, ` +
-          `tempo=${result.tempo_processamento_ms}ms`,
+          `tempo=${result.tempo_processamento_ms}ms` +
+          (words ? `, words=${words.length}` : ''),
       );
 
       return result;

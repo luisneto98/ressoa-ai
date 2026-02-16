@@ -141,7 +141,11 @@ export class TranscricaoService {
         confianca: result.confianca,
         custo_usd: result.custo_usd,
         tempo_processamento_ms: result.tempo_processamento_ms,
-        metadata_json: { ...result.metadata, stt_prompt_key: promptKey },
+        metadata_json: {
+          ...result.metadata,
+          stt_prompt_key: promptKey,
+          ...(result.words && { words: result.words, word_count: result.words.length }),
+        },
       },
     });
 

@@ -2,6 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../prisma/prisma.service';
 import { STTService } from './stt.service';
+import { DiarizationService } from './services/diarization.service';
 import { Transcricao } from '@prisma/client';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { Readable } from 'stream';
@@ -39,6 +40,7 @@ export class TranscricaoService {
     private prisma: PrismaService,
     private sttService: STTService,
     private configService: ConfigService,
+    private diarizationService: DiarizationService,
   ) {
     // Initialize S3 client (compatible with MinIO)
     const accessKeyId = this.configService.get<string>('S3_ACCESS_KEY');
@@ -121,30 +123,68 @@ export class TranscricaoService {
     );
 
     // Transcribe using STTService (handles failover automatically)
+    const sttStartTime = Date.now();
     const result = await this.sttService.transcribe(audioBuffer, {
       idioma: 'pt-BR',
       prompt: sttPrompt,
     });
+    const sttDurationMs = Date.now() - sttStartTime;
 
-    this.logger.log(
-      `Transcrição concluída: provider=${result.provider}, texto_length=${result.texto.length}`,
-    );
+    this.logger.log({
+      msg: 'STT transcription completed',
+      provider: result.provider,
+      texto_length: result.texto.length,
+      words_count: result.words?.length ?? 0,
+      stt_duration_ms: sttDurationMs,
+      custo_usd: result.custo_usd,
+    });
+
+    // Diarization: enrich transcription with speaker labels (Story 15.5)
+    // DiarizationService.diarize() handles: feature flag, empty words, LLM errors
+    let diarizationResult: Awaited<ReturnType<DiarizationService['diarize']>> | null = null;
+    try {
+      diarizationResult = await this.diarizationService.diarize(result.words);
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.warn({
+        msg: 'Diarization unexpected error — using original texto as fallback',
+        error: errorMsg,
+        aulaId,
+      });
+    }
+
+    // Determine final texto: prefer diarization SRT, fallback to original
+    let finalTexto = result.texto;
+    if (diarizationResult && diarizationResult.srt.length > 0) {
+      finalTexto = diarizationResult.srt;
+    }
+
+    // Accumulate costs: STT + diarization
+    const totalCusto = result.custo_usd + (diarizationResult?.custo_usd ?? 0);
 
     // Save transcription to database
     const transcricao = await this.prisma.transcricao.create({
       data: {
         aula_id: aulaId,
-        texto: result.texto,
-        provider: result.provider, // Provider from metadata
+        texto: finalTexto,
+        provider: result.provider,
         idioma: result.idioma,
         duracao_segundos: result.duracao_segundos,
         confianca: result.confianca,
-        custo_usd: result.custo_usd,
+        custo_usd: totalCusto,
         tempo_processamento_ms: result.tempo_processamento_ms,
         metadata_json: {
           ...result.metadata,
           stt_prompt_key: promptKey,
           ...(result.words && { words: result.words, word_count: result.words.length }),
+          ...(diarizationResult && {
+            has_diarization: true,
+            diarization_provider: diarizationResult.provider,
+            diarization_cost_usd: diarizationResult.custo_usd,
+            diarization_processing_ms: diarizationResult.tempo_processamento_ms,
+            speaker_stats: diarizationResult.speaker_stats,
+          }),
+          ...(!diarizationResult && { has_diarization: false }),
         },
       },
     });
@@ -157,10 +197,20 @@ export class TranscricaoService {
       },
     });
 
-    // Log cost for tracking (Epic 8 dashboard)
-    this.logger.log(
-      `Transcrição completa: aulaId=${aulaId}, provider=${transcricao.provider}, custo=$${transcricao.custo_usd?.toFixed(4) || '0.0000'}`,
-    );
+    // Structured logging: timing and cost breakdown (AC #6, #7)
+    const totalDurationMs = sttDurationMs + (diarizationResult?.tempo_processamento_ms ?? 0);
+    this.logger.log({
+      msg: 'Transcription pipeline complete',
+      aulaId,
+      provider: transcricao.provider,
+      stt_cost_usd: result.custo_usd,
+      diarization_cost_usd: diarizationResult?.custo_usd ?? 0,
+      total_cost_usd: totalCusto,
+      stt_duration_ms: sttDurationMs,
+      diarization_duration_ms: diarizationResult?.tempo_processamento_ms ?? 0,
+      total_duration_ms: totalDurationMs,
+      has_diarization: !!diarizationResult,
+    });
 
     return transcricao;
   }

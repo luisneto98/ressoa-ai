@@ -39,11 +39,12 @@ export const ProvidersConfigSchema = z.object({
     relatorio: ProviderPairSchema,
     exercicios: ProviderPairSchema,
     alertas: ProviderPairSchema,
+    diarizacao: ProviderPairSchema,
   }),
 });
 
 export type ProvidersConfig = z.infer<typeof ProvidersConfigSchema>;
-export type LLMAnalysisType = 'analise_cobertura' | 'analise_qualitativa' | 'relatorio' | 'exercicios' | 'alertas';
+export type LLMAnalysisType = 'analise_cobertura' | 'analise_qualitativa' | 'relatorio' | 'exercicios' | 'alertas' | 'diarizacao';
 
 export const DEFAULT_PROVIDERS_CONFIG: ProvidersConfig = {
   version: '1.0.0',
@@ -54,6 +55,7 @@ export const DEFAULT_PROVIDERS_CONFIG: ProvidersConfig = {
     relatorio: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
     exercicios: { primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' },
     alertas: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
+    diarizacao: { primary: 'GEMINI_FLASH', fallback: 'GPT4_MINI' },
   },
 };
 

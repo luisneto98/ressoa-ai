@@ -10,6 +10,8 @@ import { GoogleProvider } from './providers/google.provider';
 import { GroqWhisperProvider } from './providers/groq-whisper.provider';
 import { TranscriptionProcessor } from './workers/transcription.processor';
 import { STTRouterService } from './services/stt-router.service';
+import { DiarizationService } from './services/diarization.service';
+import { LLMModule } from '../llm/llm.module';
 
 /**
  * STT (Speech-to-Text) Module
@@ -43,6 +45,7 @@ import { STTRouterService } from './services/stt-router.service';
     ConfigModule,
     PrismaModule,
     NotificacoesModule, // Story 4.4: Import to access NotificacoesService
+    LLMModule, // Story 15.3: Import to access LLMRouterService for diarization
     // Bull Queue for Transcription Worker (Story 4.3)
     BullModule.registerQueue({
       name: 'transcription',
@@ -60,6 +63,7 @@ import { STTRouterService } from './services/stt-router.service';
     STTService,
     TranscricaoService,
     STTRouterService, // Config-driven STT provider routing (Story 14.1)
+    DiarizationService, // Story 15.3: LLM-based speaker diarization
     TranscriptionProcessor, // Worker for async transcription (Story 4.3)
     {
       provide: 'WHISPER_PROVIDER',
@@ -74,6 +78,6 @@ import { STTRouterService } from './services/stt-router.service';
       useClass: GroqWhisperProvider, // Story 14.2 - Groq Whisper Large v3 Turbo (89% cost reduction)
     },
   ],
-  exports: [STTService, TranscricaoService, STTRouterService],
+  exports: [STTService, TranscricaoService, STTRouterService, DiarizationService],
 })
 export class SttModule {}

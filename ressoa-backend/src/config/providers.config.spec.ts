@@ -16,6 +16,7 @@ describe('ProvidersConfigSchema', () => {
         relatorio: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
         exercicios: { primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' },
         alertas: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
+        diarizacao: { primary: 'GEMINI_FLASH', fallback: 'GPT4_MINI' },
       },
     };
 
@@ -32,6 +33,7 @@ describe('ProvidersConfigSchema', () => {
         relatorio: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
         exercicios: { primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' },
         alertas: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
+        diarizacao: { primary: 'GEMINI_FLASH', fallback: 'GPT4_MINI' },
       },
     };
 
@@ -48,6 +50,7 @@ describe('ProvidersConfigSchema', () => {
         relatorio: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
         exercicios: { primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' },
         alertas: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
+        diarizacao: { primary: 'GEMINI_FLASH', fallback: 'GPT4_MINI' },
       },
     };
 
@@ -76,6 +79,7 @@ describe('ProvidersConfigSchema', () => {
         relatorio: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
         exercicios: { primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' },
         alertas: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
+        diarizacao: { primary: 'GEMINI_FLASH', fallback: 'GPT4_MINI' },
       },
     };
 
@@ -94,6 +98,7 @@ describe('ProvidersConfigSchema', () => {
           relatorio: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
           exercicios: { primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' },
           alertas: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
+          diarizacao: { primary: 'GEMINI_FLASH', fallback: 'GPT4_MINI' },
         },
       };
       expect(() => ProvidersConfigSchema.parse(config)).not.toThrow();
@@ -112,6 +117,7 @@ describe('ProvidersConfigSchema', () => {
           relatorio: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
           exercicios: { primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' },
           alertas: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
+          diarizacao: { primary: 'GEMINI_FLASH', fallback: 'GPT4_MINI' },
         },
       };
       expect(() => ProvidersConfigSchema.parse(config)).not.toThrow();
@@ -143,6 +149,7 @@ describe('loadProvidersConfig', () => {
         relatorio: { primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' },
         exercicios: { primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' },
         alertas: { primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' },
+        diarizacao: { primary: 'GEMINI_FLASH', fallback: 'GPT4_MINI' },
       },
     };
 

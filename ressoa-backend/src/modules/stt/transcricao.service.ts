@@ -4,7 +4,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { STTService } from './stt.service';
 import { DiarizationService } from './services/diarization.service';
 import type { DiarizationResult } from './interfaces/diarization.interface';
-import { Transcricao } from '@prisma/client';
+import { Prisma, Transcricao } from '@prisma/client';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { Readable } from 'stream';
 import { execFile } from 'child_process';
@@ -74,7 +74,10 @@ export class TranscricaoService {
    * @throws NotFoundException if Aula not found or has no audio file
    * @throws Error if transcription or S3 download fails
    */
-  async transcribeAula(aulaId: string, escolaIdOverride?: string): Promise<Transcricao> {
+  async transcribeAula(
+    aulaId: string,
+    escolaIdOverride?: string,
+  ): Promise<Transcricao> {
     // Fetch aula with multi-tenancy validation
     // escolaIdOverride: used by Bull workers that run outside HTTP context
     const escolaId = escolaIdOverride || this.prisma.getEscolaIdOrThrow();
@@ -86,7 +89,7 @@ export class TranscricaoService {
       },
       include: {
         planejamento: {
-          include: { disciplina: true },
+          include: { turma: true },
         },
       },
     });
@@ -102,20 +105,22 @@ export class TranscricaoService {
     // Download audio from S3
     let audioBuffer = await this.downloadFromS3(aula.arquivo_url);
 
-    this.logger.log(
-      `Áudio baixado: ${audioBuffer.length} bytes`,
-    );
+    this.logger.log(`Áudio baixado: ${audioBuffer.length} bytes`);
 
     // Compress if over Whisper 25MB limit
     const WHISPER_LIMIT = 25 * 1024 * 1024;
     if (audioBuffer.length > WHISPER_LIMIT) {
-      this.logger.log(`Áudio excede 25MB (${(audioBuffer.length / 1024 / 1024).toFixed(1)}MB). Comprimindo...`);
+      this.logger.log(
+        `Áudio excede 25MB (${(audioBuffer.length / 1024 / 1024).toFixed(1)}MB). Comprimindo...`,
+      );
       audioBuffer = await this.compressAudio(audioBuffer);
-      this.logger.log(`Áudio comprimido: ${(audioBuffer.length / 1024 / 1024).toFixed(1)}MB`);
+      this.logger.log(
+        `Áudio comprimido: ${(audioBuffer.length / 1024 / 1024).toFixed(1)}MB`,
+      );
     }
 
     // Resolve discipline-specific STT prompt for vocabulary context
-    const disciplinaNome = aula.planejamento?.disciplina?.nome || '';
+    const disciplinaNome = aula.planejamento?.turma?.disciplina || '';
     const promptKey = resolveSttPromptKey(disciplinaNome);
     const sttPrompt = STT_PROMPTS[promptKey] || STT_PROMPTS.default;
 
@@ -167,32 +172,41 @@ export class TranscricaoService {
     const totalProcessingMs = sttDurationMs + diarizationDurationMs;
 
     // Determine has_diarization: true only when real diarization occurred (not FALLBACK)
-    const hasDiarization = !!diarizationResult && diarizationResult.provider !== 'FALLBACK';
+    const hasDiarization =
+      !!diarizationResult && diarizationResult.provider !== 'FALLBACK';
 
-    // Save transcription to database
-    const transcricao = await this.prisma.transcricao.create({
-      data: {
-        aula_id: aulaId,
-        texto: finalTexto,
-        provider: result.provider,
-        idioma: result.idioma,
-        duracao_segundos: result.duracao_segundos,
-        confianca: result.confianca,
-        custo_usd: totalCusto,
-        tempo_processamento_ms: totalProcessingMs,
-        metadata_json: {
-          ...result.metadata,
-          stt_prompt_key: promptKey,
-          ...(result.words && { words: result.words, word_count: result.words.length }),
-          has_diarization: hasDiarization,
-          ...(diarizationResult && {
-            diarization_provider: diarizationResult.provider,
-            diarization_cost_usd: diarizationResult.custo_usd,
-            diarization_processing_ms: diarizationDurationMs,
-            speaker_stats: diarizationResult.speaker_stats,
-          }),
-        },
-      },
+    // Save transcription to database (upsert for retry idempotency)
+    // On Bull retry, the previous attempt may have already created the record
+    const transcricaoData = {
+      aula_id: aulaId,
+      texto: finalTexto,
+      provider: result.provider,
+      idioma: result.idioma,
+      duracao_segundos: result.duracao_segundos,
+      confianca: result.confianca,
+      custo_usd: totalCusto,
+      tempo_processamento_ms: totalProcessingMs,
+      metadata_json: {
+        ...result.metadata,
+        stt_prompt_key: promptKey,
+        ...(result.words && {
+          words: result.words,
+          word_count: result.words.length,
+        }),
+        has_diarization: hasDiarization,
+        ...(diarizationResult && {
+          diarization_provider: diarizationResult.provider,
+          diarization_cost_usd: diarizationResult.custo_usd,
+          diarization_processing_ms: diarizationDurationMs,
+          speaker_stats: diarizationResult.speaker_stats,
+        }),
+      } as unknown as Prisma.InputJsonValue,
+    };
+
+    const transcricao = await this.prisma.transcricao.upsert({
+      where: { aula_id: aulaId },
+      create: transcricaoData,
+      update: transcricaoData,
     });
 
     // Update Aula status to TRANSCRITA
@@ -234,14 +248,22 @@ export class TranscricaoService {
     try {
       await writeFile(inputPath, audioBuffer);
 
-      await execFileAsync(ffmpegPath, [
-        '-i', inputPath,
-        '-ac', '1',           // mono
-        '-ar', '16000',       // 16kHz (optimal for speech)
-        '-b:a', '64k',        // 64kbps bitrate
-        '-y',                 // overwrite
-        outputPath,
-      ], { timeout: 120000 }); // 2 min timeout
+      await execFileAsync(
+        ffmpegPath,
+        [
+          '-i',
+          inputPath,
+          '-ac',
+          '1', // mono
+          '-ar',
+          '16000', // 16kHz (optimal for speech)
+          '-b:a',
+          '64k', // 64kbps bitrate
+          '-y', // overwrite
+          outputPath,
+        ],
+        { timeout: 120000 },
+      ); // 2 min timeout
 
       return await readFile(outputPath);
     } finally {

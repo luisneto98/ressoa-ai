@@ -1,19 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { AnaliseService } from '../src/modules/analise/services/analise.service';
-import { AnaliseModule } from '../src/modules/analise/analise.module';
-import { LlmModule } from '../src/modules/llm/llm.module';
-import { PrismaModule } from '../src/prisma/prisma.module';
 import { ClaudeProvider } from '../src/modules/llm/providers/claude.provider';
 import { GPTProvider } from '../src/modules/llm/providers/gpt.provider';
+import { GeminiProvider } from '../src/modules/llm/providers/gemini.provider';
 
 /**
  * E2E Test: Analise Pipeline Execution
  *
  * Tests the complete 5-prompt serial pipeline with realistic database state.
  * Mocks LLM providers to avoid real API calls (cost + speed).
+ *
+ * providers.config.json routes:
+ *   cobertura/qualitativa/relatorio/alertas → GEMINI_FLASH (primary), CLAUDE_SONNET (fallback)
+ *   exercicios → GPT4_MINI (primary), GEMINI_FLASH (fallback)
  */
 describe('Analise Pipeline (E2E)', () => {
   let app: INestApplication;
@@ -21,6 +23,7 @@ describe('Analise Pipeline (E2E)', () => {
   let analiseService: AnaliseService;
   let claudeProvider: ClaudeProvider;
   let gptProvider: GPTProvider;
+  let geminiProvider: GeminiProvider;
 
   let testEscolaId: string;
   let testProfessorId: string;
@@ -32,45 +35,41 @@ describe('Analise Pipeline (E2E)', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [
-        ConfigModule.forRoot({
-          isGlobal: true,
-          envFilePath: '.env.test',
-          ignoreEnvFile: false,
-        }),
-        PrismaModule,
-        LlmModule,
-        AnaliseModule,
-      ],
+      imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.setGlobalPrefix('api/v1');
+    app.useGlobalPipes(
+      new ValidationPipe({ whitelist: true, transform: true, forbidNonWhitelisted: true }),
+    );
     await app.init();
 
-    prisma = moduleFixture.get<PrismaService>(PrismaService);
-    analiseService = moduleFixture.get<AnaliseService>(AnaliseService);
-    claudeProvider = moduleFixture.get<ClaudeProvider>('CLAUDE_PROVIDER');
-    gptProvider = moduleFixture.get<GPTProvider>('GPT_PROVIDER');
-  });
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    prisma = app.get(PrismaService);
+    analiseService = app.get(AnaliseService);
+    claudeProvider = app.get<ClaudeProvider>('CLAUDE_PROVIDER');
+    gptProvider = app.get<GPTProvider>('GPT_PROVIDER');
+    geminiProvider = app.get<GeminiProvider>('GEMINI_PROVIDER');
+  }, 60000);
 
   afterAll(async () => {
     await app.close();
-  });
+  }, 60000);
 
   beforeEach(async () => {
-    // Seed minimal test data
-    const escola = await prisma.escola.create({
-      data: {
-        nome: 'Escola Test E2E',
-        cnpj: `12345678000${Date.now().toString().slice(-3)}`,
-      },
+    // Use demo escola from seed (avoids unique constraint issues)
+    const escolaDemo = await prisma.escola.findUnique({
+      where: { cnpj: '12.345.678/0001-90' },
     });
-    testEscolaId = escola.id;
+    if (!escolaDemo) throw new Error('Demo school not found. Run: npx prisma db seed');
+    testEscolaId = escolaDemo.id;
 
     const usuario = await prisma.usuario.create({
       data: {
-        nome: 'Prof Test',
-        email: `prof.test.${Date.now()}@example.com`,
+        nome: 'Prof Test Pipeline',
+        email: `prof.pipeline.${Date.now()}@example.com`,
         senha_hash: 'hash123',
         escola_id: testEscolaId,
       },
@@ -86,9 +85,10 @@ describe('Analise Pipeline (E2E)', () => {
 
     const turma = await prisma.turma.create({
       data: {
-        nome: '6A',
+        nome: `Pipeline-${Date.now()}`,
         disciplina: 'MATEMATICA',
         serie: 'SEXTO_ANO',
+        turno: 'MATUTINO',
         ano_letivo: 2026,
         escola_id: testEscolaId,
         professor_id: testProfessorId,
@@ -96,17 +96,11 @@ describe('Analise Pipeline (E2E)', () => {
     });
     testTurmaId = turma.id;
 
-    const habilidade = await prisma.habilidade.create({
-      data: {
-        codigo: 'EF06MA01',
-        descricao: 'Comparar, ordenar, ler e escrever números naturais...',
-        disciplina: 'MATEMATICA',
-        ano_inicio: 6,
-        ano_fim: null,
-        unidade_tematica: 'Números',
-        objeto_conhecimento: 'Sistema de numeração decimal',
-      },
+    // Use seeded BNCC habilidade (avoids unique constraint on codigo)
+    const habilidade = await prisma.habilidade.findFirst({
+      where: { disciplina: 'MATEMATICA', ano_inicio: 6 },
     });
+    if (!habilidade) throw new Error('BNCC habilidade not found. Run: npx prisma db seed');
     testHabilidadeId = habilidade.id;
 
     const planejamento = await prisma.planejamento.create({
@@ -158,65 +152,8 @@ describe('Analise Pipeline (E2E)', () => {
     });
     testTranscricaoId = transcricao.id;
 
-    // Create mock prompts
-    await prisma.prompt.upsert({
-      where: { nome_versao: { nome: 'prompt-cobertura', versao: 'v1.0.0' } },
-      create: {
-        nome: 'prompt-cobertura',
-        versao: 'v1.0.0',
-        conteudo: 'Analise cobertura BNCC: {{transcricao}}',
-        ativo: true,
-      },
-      update: {},
-    });
-
-    await prisma.prompt.upsert({
-      where: { nome_versao: { nome: 'prompt-qualitativa', versao: 'v1.0.0' } },
-      create: {
-        nome: 'prompt-qualitativa',
-        versao: 'v1.0.0',
-        conteudo: 'Analise qualitativa: {{cobertura}}',
-        ativo: true,
-      },
-      update: {},
-    });
-
-    await prisma.prompt.upsert({
-      where: { nome_versao: { nome: 'prompt-relatorio', versao: 'v1.0.0' } },
-      create: {
-        nome: 'prompt-relatorio',
-        versao: 'v1.0.0',
-        conteudo: 'Gere relatório: {{analise_qualitativa}}',
-        ativo: true,
-      },
-      update: {},
-    });
-
-    await prisma.prompt.upsert({
-      where: { nome_versao: { nome: 'prompt-exercicios', versao: 'v1.0.0' } },
-      create: {
-        nome: 'prompt-exercicios',
-        versao: 'v1.0.0',
-        conteudo: 'Gere exercícios: {{relatorio}}',
-        ativo: true,
-      },
-      update: {},
-    });
-
-    await prisma.prompt.upsert({
-      where: { nome_versao: { nome: 'prompt-alertas', versao: 'v1.0.0' } },
-      create: {
-        nome: 'prompt-alertas',
-        versao: 'v1.0.0',
-        conteudo: 'Detecte alertas: {{exercicios}}',
-        ativo: true,
-      },
-      update: {},
-    });
-
-    // Mock LLM providers to avoid real API calls
-    jest.spyOn(claudeProvider, 'generate').mockImplementation(async () => {
-      // Return realistic JSON structures
+    // Mock LLM providers — Gemini is primary for cobertura/qualitativa/relatorio/alertas
+    jest.spyOn(geminiProvider, 'generate').mockImplementation(async () => {
       return {
         texto: JSON.stringify({
           habilidades: [{ codigo: 'EF06MA01', nivel_cobertura: 'completo' }],
@@ -224,10 +161,11 @@ describe('Analise Pipeline (E2E)', () => {
         tokens_entrada: 100,
         tokens_saida: 50,
         custo_usd: 0.02,
-        metadata: { model: 'claude-sonnet-4' },
+        metadata: { model: 'gemini-2.0-flash' },
       };
     });
 
+    // GPT is primary for exercicios
     jest.spyOn(gptProvider, 'generate').mockImplementation(async () => {
       return {
         texto: JSON.stringify({
@@ -239,10 +177,23 @@ describe('Analise Pipeline (E2E)', () => {
         metadata: { model: 'gpt-4o-mini' },
       };
     });
+
+    // Claude is fallback — mock to avoid real API calls
+    jest.spyOn(claudeProvider, 'generate').mockImplementation(async () => {
+      return {
+        texto: JSON.stringify({
+          habilidades: [{ codigo: 'EF06MA01', nivel_cobertura: 'completo' }],
+        }),
+        tokens_entrada: 100,
+        tokens_saida: 50,
+        custo_usd: 0.02,
+        metadata: { model: 'claude-sonnet' },
+      };
+    });
   });
 
   afterEach(async () => {
-    // Clean up test data
+    // Clean up test data (don't delete seeded escola/habilidade)
     await prisma.analise.deleteMany({ where: { aula_id: testAulaId } });
     await prisma.transcricao.deleteMany({ where: { aula_id: testAulaId } });
     await prisma.aula.deleteMany({ where: { id: testAulaId } });
@@ -250,24 +201,21 @@ describe('Analise Pipeline (E2E)', () => {
       where: { planejamento_id: testPlanejamentoId },
     });
     await prisma.planejamento.deleteMany({ where: { id: testPlanejamentoId } });
-    await prisma.habilidade.deleteMany({ where: { id: testHabilidadeId } });
     await prisma.turma.deleteMany({ where: { id: testTurmaId } });
     await prisma.perfilUsuario.deleteMany({
       where: { usuario_id: testProfessorId },
     });
     await prisma.usuario.deleteMany({ where: { id: testProfessorId } });
-    await prisma.escola.deleteMany({ where: { id: testEscolaId } });
 
     jest.restoreAllMocks();
   });
 
   it('should execute complete 5-prompt pipeline end-to-end', async () => {
-    // Mock Prompt 3 to return markdown (not JSON)
-    let claudeCallCount = 0;
-    jest.spyOn(claudeProvider, 'generate').mockImplementation(async () => {
-      claudeCallCount++;
-      if (claudeCallCount === 3) {
-        // Prompt 3: Relatório em markdown
+    // Mock Gemini call 3 (relatorio) to return markdown instead of JSON
+    let geminiCallCount = 0;
+    jest.spyOn(geminiProvider, 'generate').mockImplementation(async () => {
+      geminiCallCount++;
+      if (geminiCallCount === 3) {
         return {
           texto: '# Relatório Pedagógico\n\n**Cobertura:** Completa',
           tokens_entrada: 100,
@@ -292,7 +240,7 @@ describe('Analise Pipeline (E2E)', () => {
     expect(analise.aula_id).toBe(testAulaId);
     expect(analise.transcricao_id).toBe(testTranscricaoId);
     expect(analise.planejamento_id).toBe(testPlanejamentoId);
-  });
+  }, 30000);
 
   it('should populate cobertura_json with habilidades structure', async () => {
     const analise = await analiseService.analisarAula(testAulaId);
@@ -301,21 +249,21 @@ describe('Analise Pipeline (E2E)', () => {
     expect(typeof analise.cobertura_json).toBe('object');
     // Should have habilidades array (from mock)
     expect(analise.cobertura_json).toHaveProperty('habilidades');
-  });
+  }, 30000);
 
   it('should populate analise_qualitativa_json structure', async () => {
     const analise = await analiseService.analisarAula(testAulaId);
 
     expect(analise.analise_qualitativa_json).toBeDefined();
     expect(typeof analise.analise_qualitativa_json).toBe('object');
-  });
+  }, 30000);
 
   it('should save relatorio_texto as markdown string (not JSON)', async () => {
-    // Mock Prompt 3 specifically
-    let claudeCallCount = 0;
-    jest.spyOn(claudeProvider, 'generate').mockImplementation(async () => {
-      claudeCallCount++;
-      if (claudeCallCount === 3) {
+    // Mock Gemini call 3 (relatorio) to return markdown
+    let geminiCallCount = 0;
+    jest.spyOn(geminiProvider, 'generate').mockImplementation(async () => {
+      geminiCallCount++;
+      if (geminiCallCount === 3) {
         return {
           texto: '# Relatório Pedagógico\n\n**Cobertura:** Completa',
           tokens_entrada: 100,
@@ -338,21 +286,21 @@ describe('Analise Pipeline (E2E)', () => {
     expect(typeof analise.relatorio_texto).toBe('string');
     expect(analise.relatorio_texto).toContain('Relatório Pedagógico');
     expect(analise.relatorio_texto).toContain('Cobertura');
-  });
+  }, 30000);
 
   it('should populate exercicios_json structure', async () => {
     const analise = await analiseService.analisarAula(testAulaId);
 
     expect(analise.exercicios_json).toBeDefined();
     expect(typeof analise.exercicios_json).toBe('object');
-  });
+  }, 30000);
 
   it('should populate alertas_json structure', async () => {
     const analise = await analiseService.analisarAula(testAulaId);
 
     expect(analise.alertas_json).toBeDefined();
     expect(typeof analise.alertas_json).toBe('object');
-  });
+  }, 30000);
 
   it('should track prompt_versoes_json with 5 versions', async () => {
     const analise = await analiseService.analisarAula(testAulaId);
@@ -366,21 +314,29 @@ describe('Analise Pipeline (E2E)', () => {
     expect(versoes).toHaveProperty('relatorio');
     expect(versoes).toHaveProperty('exercicios');
     expect(versoes).toHaveProperty('alertas');
-  });
+  }, 30000);
 
   it('should track custo_total_usd > 0 and < 0.50 (sanity check)', async () => {
     const analise = await analiseService.analisarAula(testAulaId);
 
     expect(analise.custo_total_usd).toBeGreaterThan(0);
     expect(analise.custo_total_usd).toBeLessThan(0.5); // Sanity check with mocks
-  });
+  }, 30000);
 
   it('should track tempo_processamento_ms > 0 and < 120000 (< 2min with mocks)', async () => {
     const analise = await analiseService.analisarAula(testAulaId);
 
     expect(analise.tempo_processamento_ms).toBeGreaterThan(0);
     expect(analise.tempo_processamento_ms).toBeLessThan(120000); // < 2 min with mocked providers
-  });
+  }, 30000);
+
+  // Story 16.4/16.6 (AC #2, retrocompat): aderencia_objetivo_json deve ser null quando aula sem descricao
+  it('should have aderencia_objetivo_json = null when aula has no descricao', async () => {
+    const analise = await analiseService.analisarAula(testAulaId);
+
+    // Aula criada sem descricao → aderencia_objetivo_json deve ser null
+    expect(analise.aderencia_objetivo_json).toBeNull();
+  }, 30000);
 
   it('should update Aula.status_processamento to ANALISADA', async () => {
     await analiseService.analisarAula(testAulaId);
@@ -391,7 +347,7 @@ describe('Analise Pipeline (E2E)', () => {
 
     expect(aulaUpdated).toBeDefined();
     expect(aulaUpdated!.status_processamento).toBe('ANALISADA');
-  });
+  }, 30000);
 
   it('should create one-to-one relation between Aula and Analise', async () => {
     const analise = await analiseService.analisarAula(testAulaId);
@@ -404,5 +360,5 @@ describe('Analise Pipeline (E2E)', () => {
     expect(aulaWithAnalise).toBeDefined();
     expect(aulaWithAnalise!.analise).toBeDefined();
     expect(aulaWithAnalise!.analise!.id).toBe(analise.id);
-  });
+  }, 30000);
 });

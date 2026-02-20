@@ -7,7 +7,7 @@
     "^.+\\.(t|j)s$": "ts-jest"
   },
   "transformIgnorePatterns": [
-    "node_modules/(?!(@tus|@aws-sdk)/)"
+    "node_modules/(?!(@tus|@aws-sdk|p-retry|is-network-error|@google)/)"
   ],
   "modulePathIgnorePatterns": [
     "<rootDir>/../prisma/seed.ts"

@@ -189,6 +189,7 @@ export class AnaliseController {
         id: aula.id,
         titulo: `Aula - ${aula.turma.nome}`,
         data_aula: aula.data,
+        descricao: aula.descricao,
         turma: {
           nome: aula.turma.nome,
           serie: aula.turma.serie,
@@ -223,6 +224,8 @@ export class AnaliseController {
       tem_edicao_exercicios: !!analise.exercicios_editado,
       // Transform alertas: extract nested structure
       alertas: alertasData || {},
+      // ✅ Story 16.4: Aderência ao objetivo declarado (null se aula sem descricao)
+      aderencia_objetivo_json: analise.aderencia_objetivo_json,
       // ✅ Story 6.2: Adicionar status para controle de edição
       status: analise.status,
       // Add planejamento_id for navigation

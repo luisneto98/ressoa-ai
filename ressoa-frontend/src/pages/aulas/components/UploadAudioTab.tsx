@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -50,6 +50,17 @@ const getCurrentStep = (status: UploadStatus): 1 | 2 | 3 | 4 => {
 
 export function UploadAudioTab() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const locationState = location.state as {
+    aulaId?: string;
+    turma_id?: string;
+    data?: string;
+    turma_nome?: string;
+  } | null;
+  const existingAulaId = locationState?.aulaId ?? null;
+  const existingTurmaId = locationState?.turma_id ?? null;
+  const existingData = locationState?.data ?? null;
+  const existingTurmaNome = locationState?.turma_nome ?? null;
   const { user, accessToken } = useAuthStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -308,19 +319,100 @@ export function UploadAudioTab() {
     }
   };
 
+  // Handler for uploading to an already-created aula (skip createAula step)
+  const handleUploadExisting = async () => {
+    if (!selectedFile || !existingAulaId) return;
+    if (!user || !accessToken) {
+      toast.error('Usuário não autenticado');
+      navigate('/login');
+      return;
+    }
+
+    try {
+      setUploadStatus('uploading');
+      setUploadProgress(0);
+
+      const upload = new tus.Upload(selectedFile, {
+        endpoint: TUS_UPLOAD_ENDPOINT,
+        metadata: {
+          filename: selectedFile.name,
+          filetype: selectedFile.type,
+          aula_id: existingAulaId,
+          escola_id: user.escola_id,
+          professor_id: user.id,
+          turma_id: existingTurmaId ?? '',
+          data: existingData ?? '',
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        chunkSize: 5 * 1024 * 1024,
+        retryDelays: [0, 1000, 3000, 5000],
+        onError: (error) => {
+          console.error('Upload error:', error);
+          let detectedErrorType: typeof errorType = 'generic';
+          if (error.message.includes('timeout') || error.message.includes('network')) {
+            detectedErrorType = 'network-timeout';
+          } else if (error.message.includes('format') || error.message.includes('unsupported') || error.message.includes('mime')) {
+            detectedErrorType = 'invalid-format';
+          } else if (error.message.includes('corrupt') || error.message.includes('invalid')) {
+            detectedErrorType = 'file-corrupt';
+          }
+          setErrorType(detectedErrorType);
+          setUploadStatus('error');
+          if (detectedErrorType === 'network-timeout') {
+            toast.error('Upload interrompido. Tente novamente.');
+          } else if (detectedErrorType === 'invalid-format') {
+            toast.error('Formato de arquivo não suportado.');
+          } else {
+            toast.error('Não conseguimos processar o arquivo.');
+          }
+        },
+        onProgress: (bytesUploaded, bytesTotal) => {
+          const percentage = Math.round((bytesUploaded / bytesTotal) * 100);
+          setUploadProgress(percentage);
+          const currentTime = Date.now();
+          if (uploadTrackingRef.current.startTime === 0) {
+            uploadTrackingRef.current.startTime = currentTime;
+            uploadTrackingRef.current.previousTime = currentTime;
+            uploadTrackingRef.current.previousBytes = 0;
+          }
+          const deltaBytes = bytesUploaded - uploadTrackingRef.current.previousBytes;
+          const deltaTime = (currentTime - uploadTrackingRef.current.previousTime) / 1000;
+          if (deltaTime > 0) {
+            const speed = deltaBytes / deltaTime;
+            uploadTrackingRef.current.sampleCount += 1;
+            if (uploadTrackingRef.current.sampleCount >= 3 && speed > 0) {
+              setUploadSpeed(speed);
+              const remaining = (bytesTotal - bytesUploaded) / speed;
+              setTimeRemaining(isFinite(remaining) ? remaining : null);
+            }
+            uploadTrackingRef.current.previousBytes = bytesUploaded;
+            uploadTrackingRef.current.previousTime = currentTime;
+          }
+        },
+        onSuccess: () => {
+          toast.success('Upload concluído! Transcrição em andamento...');
+          setUploadStatus('transcribing');
+          uploadTrackingRef.current = { startTime: 0, previousBytes: 0, previousTime: 0, sampleCount: 0 };
+          setTimeout(() => { navigate('/minhas-aulas'); }, 1500);
+        },
+      });
+
+      upload.start();
+      setCurrentUpload(upload);
+    } catch (error) {
+      console.error('Error uploading:', error);
+      toast.error('Erro ao iniciar upload. Tente novamente.');
+      setUploadStatus('error');
+    }
+  };
+
   const isFormValid = form.formState.isValid && selectedFile !== null;
 
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleUpload)} className="space-y-6">
-        {/* Common form fields */}
-        <Card>
-          <CardContent className="pt-6 space-y-4">
-            <AulaFormFields form={form} />
-          </CardContent>
-        </Card>
-
-        {/* Drag-and-drop zone */}
+  const uploadZoneAndActions = (
+    <>
+      {/* Drag-and-drop zone */}
         <Card>
           <CardContent className="pt-6">
             <div
@@ -442,9 +534,12 @@ export function UploadAudioTab() {
             onRetry={() => {
               setUploadStatus('idle');
               setUploadProgress(0);
-              // If we have the file, retry upload directly
               if (selectedFile) {
-                form.handleSubmit(handleUpload)();
+                if (existingAulaId) {
+                  handleUploadExisting();
+                } else {
+                  form.handleSubmit(handleUpload)();
+                }
               }
             }}
             onChooseAnother={() => {
@@ -479,6 +574,62 @@ export function UploadAudioTab() {
             </div>
           </div>
         )}
+
+    </>
+  );
+
+  // Simplified view for uploading to an existing aula (skip form fields)
+  if (existingAulaId) {
+    return (
+      <div className="space-y-6">
+        {/* Aula context info */}
+        {(existingTurmaNome || existingData) && (
+          <Card>
+            <CardContent className="pt-4 pb-4 flex gap-6">
+              {existingTurmaNome && (
+                <div>
+                  <p className="text-xs text-muted-foreground">Turma</p>
+                  <p className="text-sm font-medium text-deep-navy">{existingTurmaNome}</p>
+                </div>
+              )}
+              {existingData && (
+                <div>
+                  <p className="text-xs text-muted-foreground">Data</p>
+                  <p className="text-sm font-medium text-deep-navy">
+                    {new Date(existingData + 'T12:00:00').toLocaleDateString('pt-BR')}
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {uploadZoneAndActions}
+        {uploadStatus === 'idle' && (
+          <Button
+            type="button"
+            className="w-full h-11"
+            disabled={!selectedFile}
+            onClick={handleUploadExisting}
+          >
+            Iniciar Upload
+          </Button>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleUpload)} className="space-y-6">
+        {/* Common form fields */}
+        <Card>
+          <CardContent className="pt-6 space-y-4">
+            <AulaFormFields form={form} />
+          </CardContent>
+        </Card>
+
+        {uploadZoneAndActions}
 
         {/* Submit button */}
         {uploadStatus === 'idle' && (

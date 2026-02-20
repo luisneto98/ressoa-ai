@@ -342,13 +342,24 @@ export function normalizeAnaliseQualitativa(
 }
 
 /**
- * Adapter principal: normaliza análise completa v3/v4 → v2.
- * Para v5+, retorna o objeto original sem transformação (pass-through).
+ * Remove wrapper ```markdown ... ``` que a IA às vezes inclui no campo relatorio.
+ */
+function stripMarkdownCodeBlock(text: string): string {
+  if (!text) return text;
+  const match = text.match(/^```(?:markdown)?\s*\n([\s\S]*?)```\s*$/);
+  if (match) return match[1].trimEnd();
+  return text;
+}
+
+/**
+ * Adapter principal: normaliza análise completa v3/v4/v5 → v2.
+ * V5 usa a mesma estrutura de campos que v4 (objetivo_codigo, severidade, etc.).
  * Garante que aderencia_objetivo_json é propagado em todas as versões.
  */
 export function normalizeAnaliseV3(analise: any): any {
   const version = analise.metadata?.prompt_versoes?.cobertura;
-  const needsNormalization = version?.startsWith('v3') || version?.startsWith('v4');
+  const needsNormalization =
+    version?.startsWith('v3') || version?.startsWith('v4') || version?.startsWith('v5');
 
   if (!needsNormalization) {
     return analise; // Já está em v2 ou formato legado
@@ -362,6 +373,10 @@ export function normalizeAnaliseV3(analise: any): any {
 
   return {
     ...analise,
+    relatorio: stripMarkdownCodeBlock(analise.relatorio),
+    relatorio_original: analise.relatorio_original
+      ? stripMarkdownCodeBlock(analise.relatorio_original)
+      : analise.relatorio_original,
     cobertura_bncc: {
       habilidades: (analise.cobertura_bncc?.habilidades || []).map(normalizeHabilidade),
     },
@@ -381,7 +396,7 @@ export function normalizeAnaliseV3(analise: any): any {
                        analise.alertas?.score_geral_aula >= 60 ? 'BOM' : 'ATENCAO',
       },
       score_geral_aula: analise.alertas?.score_geral_aula,
-      speaker_analysis: analise.alertas?.speaker_analysis, // V4
+      speaker_analysis: analise.alertas?.speaker_analysis,
     },
     exercicios: {
       questoes: (analise.exercicios?.questoes || []).map(normalizeQuestao),

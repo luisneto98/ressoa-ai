@@ -1,9 +1,9 @@
 import { Badge } from '@/components/ui/badge';
-import { IconMusic, IconFileText, IconPencil } from '@tabler/icons-react';
+import { IconMusic, IconFileText, IconPencil, IconClock } from '@tabler/icons-react';
 
-type TipoEntrada = 'AUDIO' | 'TRANSCRICAO' | 'MANUAL';
+type TipoEntrada = 'AUDIO' | 'TRANSCRICAO' | 'MANUAL' | null;
 
-const tipoConfig: Record<TipoEntrada, {
+const tipoConfig: Record<string, {
   label: string;
   color: string;
   icon: React.ComponentType<{ className?: string }>;
@@ -23,6 +23,11 @@ const tipoConfig: Record<TipoEntrada, {
     color: 'bg-orange-50 text-orange-700 border-orange-200',
     icon: IconPencil,
   },
+  RASCUNHO: {
+    label: 'Rascunho',
+    color: 'bg-gray-50 text-gray-500 border-gray-200',
+    icon: IconClock,
+  },
 };
 
 interface TipoBadgeProps {
@@ -30,7 +35,7 @@ interface TipoBadgeProps {
 }
 
 export const TipoBadge = ({ tipo }: TipoBadgeProps) => {
-  const config = tipoConfig[tipo];
+  const config = tipoConfig[tipo ?? 'RASCUNHO'];
   const IconComponent = config.icon;
 
   return (

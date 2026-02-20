@@ -15,7 +15,9 @@ export const useIniciarProcessamento = () => {
       queryClient.invalidateQueries({ queryKey: ['aulas'] });
       // Navigate to upload page for AUDIO type
       if (variables.data.tipo_entrada === 'AUDIO') {
-        navigate('/aulas/upload', { state: { aulaId: aula.id } });
+        navigate('/aulas/upload', {
+          state: { aulaId: aula.id, turma_id: aula.turma_id, data: aula.data },
+        });
       }
     },
     onError: (error: any) => {

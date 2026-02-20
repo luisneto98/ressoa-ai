@@ -1,7 +1,8 @@
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { GradientCard } from '@/components/ui/gradient-card';
 import { Button } from '@/components/ui/button';
-import { IconEye, IconFileText, IconRefresh, IconTrash, IconSparkles } from '@tabler/icons-react';
+import { IconEye, IconFileText, IconRefresh, IconTrash, IconSparkles, IconUpload } from '@tabler/icons-react';
 import { StatusBadge } from './StatusBadge';
 import { TipoBadge } from './TipoBadge';
 import { formatDate } from '@/lib/utils';
@@ -24,6 +25,8 @@ export const AulasCards = ({
   onDelete,
   onStartAnalise,
 }: AulasCardsProps) => {
+  const navigate = useNavigate();
+
   return (
     <div className="block md:hidden space-y-4">
       {aulas.map((aula) => {
@@ -93,6 +96,22 @@ export const AulasCards = ({
             </CardContent>
 
             <CardFooter className="flex flex-wrap gap-2">
+              {/* Enviar Áudio — para CRIADA com tipo AUDIO */}
+              {aula.status_processamento === 'CRIADA' && aula.tipo_entrada === 'AUDIO' && (
+                <Button
+                  variant="default"
+                  size="default"
+                  onClick={() => navigate('/aulas/upload', {
+                    state: { aulaId: aula.id, turma_id: aula.turma_id, data: aula.data, turma_nome: aula.turma_nome },
+                  })}
+                  className="flex-1 min-h-[44px]"
+                  aria-label={`Enviar áudio para a aula de ${aula.turma_nome}`}
+                >
+                  <IconUpload className="h-4 w-4 mr-2" />
+                  Enviar Áudio
+                </Button>
+              )}
+
               <Button
                 variant="outline"
                 size="default"

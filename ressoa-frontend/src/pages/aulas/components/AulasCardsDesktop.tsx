@@ -113,8 +113,7 @@ export const AulasCardsDesktop = ({
             </CardContent>
 
             <CardFooter className="flex flex-col gap-2">
-              {/* Story 16.2: Enviar Áudio — apenas para RASCUNHO */}
-              {/* Chama iniciarProcessamento (RASCUNHO→CRIADA) antes de navegar para upload */}
+              {/* Story 16.2: Enviar Áudio — para RASCUNHO (inicia processamento primeiro) */}
               {aula.status_processamento === 'RASCUNHO' && (
                 <Button
                   variant="default"
@@ -128,6 +127,22 @@ export const AulasCardsDesktop = ({
                 >
                   <IconUpload className="h-4 w-4 mr-2" />
                   {isIniciarPending ? 'Iniciando...' : 'Enviar Áudio'}
+                </Button>
+              )}
+
+              {/* Enviar Áudio — para CRIADA com tipo AUDIO (aula já iniciada, aguarda upload) */}
+              {aula.status_processamento === 'CRIADA' && aula.tipo_entrada === 'AUDIO' && (
+                <Button
+                  variant="default"
+                  size="default"
+                  onClick={() => navigate('/aulas/upload', {
+                    state: { aulaId: aula.id, turma_id: aula.turma_id, data: aula.data, turma_nome: aula.turma_nome },
+                  })}
+                  className="w-full justify-start min-h-[44px]"
+                  aria-label={`Enviar áudio para a aula de ${aula.turma_nome}`}
+                >
+                  <IconUpload className="h-4 w-4 mr-2" />
+                  Enviar Áudio
                 </Button>
               )}
 

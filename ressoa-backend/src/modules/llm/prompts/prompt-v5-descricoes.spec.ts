@@ -74,13 +74,23 @@ describe('Prompts v5.0.0 — Seções Condicionais de Descrições (Story 16.3)'
   ];
 
   describe('Estrutura dos arquivos v5.0.0', () => {
-    it.each(promptNames)('%s-v5.0.0 deve ter versao v5.0.0 e ativo=true', (nome) => {
-      const file = join(promptsDir, `${nome}-v5.0.0.json`);
-      const data = JSON.parse(readFileSync(file, 'utf-8'));
+    it.each(promptNames.filter((n) => n !== 'prompt-relatorio'))(
+      '%s-v5.0.0 deve ter versao v5.0.0 e ativo=true',
+      (nome) => {
+        const file = join(promptsDir, `${nome}-v5.0.0.json`);
+        const data = JSON.parse(readFileSync(file, 'utf-8'));
 
+        expect(data.versao).toBe('v5.0.0');
+        expect(data.ativo).toBe(true);
+        expect(data.ab_testing).toBe(false);
+      },
+    );
+
+    it('prompt-relatorio-v5.0.0 deve ter ativo=false (supersedido por v5.1.0 — Story 16.4, AC#3)', () => {
+      const file = join(promptsDir, 'prompt-relatorio-v5.0.0.json');
+      const data = JSON.parse(readFileSync(file, 'utf-8'));
       expect(data.versao).toBe('v5.0.0');
-      expect(data.ativo).toBe(true);
-      expect(data.ab_testing).toBe(false);
+      expect(data.ativo).toBe(false);
     });
 
     it.each(promptNames)(
@@ -385,6 +395,84 @@ describe('Prompts v5.0.0 — Seções Condicionais de Descrições (Story 16.3)'
       expect(rendered).not.toContain('Objetivo Específico desta Aula');
       // Seção principal de dados deve estar presente (retrocompatibilidade total com v4)
       expect(rendered).toContain('DADOS DE ANÁLISE');
+    });
+  });
+
+  /**
+   * STORY 16.4: Testes de renderização do template prompt-relatorio-v5.1.0
+   *
+   * Valida que o bloco {{#if descricao_aula}} no Formato de Saída:
+   * - Inclui instrução do aderencia_json quando descricao_aula existe
+   * - Retorna apenas markdown quando descricao_aula é null ({{else}} branch)
+   */
+  describe('prompt-relatorio-v5.1.0 — Template Rendering (Story 16.4)', () => {
+    let conteudo: string;
+
+    beforeAll(() => {
+      conteudo = loadPromptConteudo('prompt-relatorio', 'v5.1.0');
+    });
+
+    it('deve incluir instrução aderencia_json quando descricao_aula existe', () => {
+      const rendered = renderConteudo(conteudo, {
+        ...baseContextoBNCC,
+        descricao_planejamento: null,
+        descricao_aula: 'Trabalhar frações equivalentes com material concreto',
+        cobertura: {},
+        analise_qualitativa: {},
+      });
+
+      expect(rendered).toContain('ADICIONALMENTE');
+      expect(rendered).toContain('aderencia_json');
+      expect(rendered).toContain('faixa_aderencia');
+      expect(rendered).toContain('BAIXA');
+      expect(rendered).toContain('TOTAL');
+      expect(rendered).toContain('avaliar o quanto foi alcançado');
+    });
+
+    it('deve omitir bloco aderencia_json e usar {{else}} quando descricao_aula é null', () => {
+      const rendered = renderConteudo(conteudo, {
+        ...baseContextoBNCC,
+        descricao_planejamento: null,
+        descricao_aula: null,
+        cobertura: {},
+        analise_qualitativa: {},
+      });
+
+      expect(rendered).not.toContain('ADICIONALMENTE');
+      expect(rendered).not.toContain('aderencia_json');
+      expect(rendered).toContain('Retorne APENAS o relatório em markdown');
+    });
+
+    it('deve renderizar instrução de objetivo quando descricao_aula existe', () => {
+      const rendered = renderConteudo(conteudo, {
+        ...baseContextoBNCC,
+        descricao_planejamento: null,
+        descricao_aula: 'Introduzir operações com frações',
+        cobertura: {},
+        analise_qualitativa: {},
+      });
+
+      expect(rendered).toContain('Objetivo Específico desta Aula');
+      expect(rendered).toContain('O relatório DEVE referenciar este objetivo');
+      expect(rendered).toContain('Introduzir operações com frações');
+    });
+
+    it('deve omitir blocos de descrição quando ambas são null (retrocompatibilidade com v5.0.0)', () => {
+      const rendered = renderConteudo(conteudo, {
+        ...baseContextoBNCC,
+        descricao_planejamento: null,
+        descricao_aula: null,
+        cobertura: {},
+        analise_qualitativa: {},
+      });
+
+      expect(rendered).not.toContain('Objetivo Específico desta Aula');
+      expect(rendered).not.toContain('Contexto do Planejamento Bimestral');
+      expect(rendered).toContain('DADOS DE ANÁLISE');
+    });
+
+    it('deve usar triple braces para descricao_aula no template (evita HTML encoding)', () => {
+      expect(conteudo).toContain('{{{descricao_aula}}}');
     });
   });
 

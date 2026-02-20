@@ -2,11 +2,12 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import type { Queue } from 'bull';
 import { jsonrepair } from 'jsonrepair';
+import { z } from 'zod';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { PromptService } from '../../llm/services/prompt.service';
 import { LLMRouterService } from '../../llm/services/llm-router.service';
 import { LLMAnalysisType } from '../../../config/providers.config';
-import { Analise, StatusAnalise } from '@prisma/client';
+import { Analise, Prisma, StatusAnalise } from '@prisma/client';
 import type { SpeakerStats } from '../../stt/interfaces/diarization.interface';
 
 interface TranscricaoMetadataJson {
@@ -21,6 +22,18 @@ interface ContextoPedagogico {
   metodologia: string;
   carga_horaria_total: number;
 }
+
+// STORY 16.4: Zod schema for aderencia_json validation (graceful degradation)
+const AderenciaObjetivoSchema = z.object({
+  faixa_aderencia: z.enum(['BAIXA', 'MEDIA', 'ALTA', 'TOTAL']),
+  descricao_faixa: z.string().min(1),
+  analise_qualitativa: z.string().min(1),
+  pontos_atingidos: z.array(z.string()),
+  pontos_nao_atingidos: z.array(z.string()),
+  recomendacao: z.string().min(1),
+});
+
+type AderenciaObjetivo = z.infer<typeof AderenciaObjetivoSchema>;
 
 /**
  * Orquestrador do pipeline serial de 5 prompts para análise pedagógica.
@@ -105,6 +118,61 @@ export class AnaliseService {
           `Invalid JSON from LLM: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`,
         );
       }
+    }
+  }
+
+  /**
+   * Extrai e valida bloco aderencia_json do output do Prompt 3.
+   *
+   * O Prompt 3 v5.1.0 retorna markdown + bloco opcional delimitado por
+   * ```aderencia_json ... ```. Este método extrai o JSON do bloco,
+   * valida com zod e retorna o objeto validado (ou null se ausente/inválido).
+   *
+   * Degradação graciosa: nunca lança exceção — falhas retornam null.
+   *
+   * @param relatorioOutput Output bruto do Prompt 3 (string markdown)
+   * @param descricaoAula Objetivo declarado (null = sem aderência)
+   * @returns { aderenciaJson, relatorioLimpo } — bloco removido do relatório
+   */
+  private extractAderenciaJson(
+    relatorioOutput: string,
+    descricaoAula: string | null,
+  ): { aderenciaJson: AderenciaObjetivo | null; relatorioLimpo: string } {
+    if (!descricaoAula) {
+      return { aderenciaJson: null, relatorioLimpo: relatorioOutput };
+    }
+
+    // Robust regex: handles \r\n (Windows) line endings and optional trailing whitespace after fence
+    const match = relatorioOutput.match(
+      /```aderencia_json[ \t]*\r?\n([\s\S]*?)\r?\n[ \t]*```/,
+    );
+
+    if (!match) {
+      this.logger.warn({
+        message:
+          'Bloco aderencia_json não encontrado no output do Prompt 3',
+        hint: 'LLM não gerou o bloco ou formato incorreto — aderencia_objetivo_json ficará null',
+      });
+      return { aderenciaJson: null, relatorioLimpo: relatorioOutput };
+    }
+
+    const rawJson = match[1].trim();
+    const relatorioLimpo = relatorioOutput
+      .replace(/\r?\n```aderencia_json[ \t]*\r?\n[\s\S]*?\r?\n[ \t]*```/, '')
+      .trim();
+
+    try {
+      const parsed = this.parseMarkdownJSON(rawJson);
+      const validated = AderenciaObjetivoSchema.parse(parsed);
+      return { aderenciaJson: validated, relatorioLimpo };
+    } catch (error) {
+      this.logger.warn({
+        message:
+          'Falha ao parsear/validar aderencia_json — degradação graciosa',
+        error: error instanceof Error ? error.message : String(error),
+        rawJson: rawJson.substring(0, 300),
+      });
+      return { aderenciaJson: null, relatorioLimpo };
     }
   }
 
@@ -307,13 +375,22 @@ export class AnaliseService {
       // 5. PROMPT 3: Geração de Relatório
       this.logger.log('Executando Prompt 3: Geração de Relatório');
       const {
-        output: relatorioOutput,
+        output: relatorioOutputRaw,
         custo: custo3,
         versao: versao3,
         provider: prov3,
       } = await this.executePrompt('prompt-relatorio', contexto, 'relatorio');
       custoTotal += custo3;
       promptVersoes.relatorio = versao3;
+
+      // STORY 16.4: Extrair e separar bloco aderencia_json do relatório markdown
+      const { aderenciaJson, relatorioLimpo: relatorioOutput } =
+        this.extractAderenciaJson(
+          typeof relatorioOutputRaw === 'string'
+            ? relatorioOutputRaw
+            : String(relatorioOutputRaw),
+          contexto.descricao_aula,
+        );
 
       // 6. PROMPT 4: Geração de Exercícios (config-driven provider)
       this.logger.log('Executando Prompt 4: Geração de Exercícios');
@@ -350,6 +427,8 @@ export class AnaliseService {
             relatorio_texto: relatorioOutput, // Keep as string (markdown text)
             exercicios_json: this.parseMarkdownJSON(exerciciosOutput),
             alertas_json: this.parseMarkdownJSON(alertasOutput),
+            // STORY 16.4: Aderência ao objetivo (null se sem descricao_aula ou parse falhou)
+            aderencia_objetivo_json: aderenciaJson ?? Prisma.DbNull,
             prompt_versoes_json: promptVersoes,
             custo_total_usd: custoTotal, // STT + 5 prompts LLM
             tempo_processamento_ms: Date.now() - startTime,

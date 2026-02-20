@@ -446,6 +446,9 @@ model Analise {
   exercicios_json          Json // Prompt 4: [ { enunciado, gabarito, nivel_bloom, ... } ]
   exercicios_editado       Json? // Versão editada (Story 6.3)
   alertas_json             Json // Prompt 5: [ { tipo, nivel, mensagem, ... } ]
+  // STORY 16.4: Análise de aderência ao objetivo declarado pelo professor
+  // Nullable — só existe quando aula.descricao (descricao_aula) estava preenchida
+  aderencia_objetivo_json  Json? // { faixa_aderencia, descricao_faixa, analise_qualitativa, pontos_atingidos, pontos_nao_atingidos, recomendacao }
 
   // Status tracking (Story 6.2)
   status StatusAnalise @default(AGUARDANDO_REVISAO)

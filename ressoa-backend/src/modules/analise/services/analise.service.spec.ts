@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { Prisma } from '@prisma/client';
 import { AnaliseService } from './analise.service';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { PromptService } from '../../llm/services/prompt.service';
@@ -1208,8 +1209,8 @@ describe('AnaliseService', () => {
       },
     );
 
-    it.each(promptNames)(
-      'should have v5.0.0 file with ativo=true for %s (Story 16.3)',
+    it.each(promptNames.filter((n) => n !== 'prompt-relatorio'))(
+      'should have v5.0.0 file with ativo=true for %s (Story 16.3 — other prompts unaffected by 16.4)',
       (nome) => {
         const filePath = join(promptsDir, `${nome}-v5.0.0.json`);
         const content = JSON.parse(readFileSync(filePath, 'utf-8'));
@@ -1221,6 +1222,14 @@ describe('AnaliseService', () => {
         expect(content.variaveis).toHaveProperty('descricao_aula');
       },
     );
+
+    it('prompt-relatorio-v5.0.0 should be ativo=false (superseded by v5.1.0 — Story 16.4, AC#3)', () => {
+      const filePath = join(promptsDir, 'prompt-relatorio-v5.0.0.json');
+      const content = JSON.parse(readFileSync(filePath, 'utf-8'));
+      expect(content.nome).toBe('prompt-relatorio');
+      expect(content.versao).toBe('v5.0.0');
+      expect(content.ativo).toBe(false);
+    });
 
     it.each(promptNames)(
       'should have v3.0.0 file with ativo=false for %s',
@@ -1301,6 +1310,156 @@ describe('AnaliseService', () => {
       expect(content.conteudo).toContain('PARTICIPACAO_DESEQUILIBRADA');
       expect(content.conteudo).toContain('INTERACAO_FREQUENTE');
       expect(content.conteudo).toContain('speaker_analysis');
+    });
+
+    it('prompt-relatorio-v5.1.0 should exist with ativo=true, max_tokens=5000, and aderencia_json instruction (Story 16.4)', () => {
+      const filePath = join(promptsDir, 'prompt-relatorio-v5.1.0.json');
+      const content = JSON.parse(readFileSync(filePath, 'utf-8'));
+
+      expect(content.nome).toBe('prompt-relatorio');
+      expect(content.versao).toBe('v5.1.0');
+      expect(content.ativo).toBe(true);
+      expect(content.variaveis.max_tokens).toBe(5000);
+      expect(content.conteudo).toContain('aderencia_json');
+      expect(content.conteudo).toContain('faixa_aderencia');
+      expect(content.conteudo).toContain('BAIXA');
+      expect(content.conteudo).toContain('TOTAL');
+      expect(content.conteudo).toContain('avaliar o quanto foi alcançado');
+    });
+  });
+
+  /**
+   * STORY 16.4: Tests for extractAderenciaJson + aderencia_objetivo_json pipeline
+   */
+  describe('extractAderenciaJson — Story 16.4', () => {
+    const validAderenciaJson = {
+      faixa_aderencia: 'ALTA',
+      descricao_faixa: 'Entre 70% e 90% do objetivo foi trabalhado',
+      analise_qualitativa: 'O professor abordou os principais pontos do objetivo. A atividade em grupos foi parcialmente executada.',
+      pontos_atingidos: ['Uso de exemplos visuais', 'Vocabulário técnico adequado'],
+      pontos_nao_atingidos: ['Atividade em grupos não realizada'],
+      recomendacao: 'Retomar a atividade em grupos na próxima aula.',
+    };
+
+    const validAderenciaBlock = `\n\`\`\`aderencia_json\n${JSON.stringify(validAderenciaJson, null, 2)}\n\`\`\``;
+
+    it('extrai e valida aderencia_json quando bloco está presente e descricao_aula existe', () => {
+      const extractAderenciaJson = (service as any).extractAderenciaJson.bind(service);
+      const relatorio = '## Resumo Executivo\n\nÓtima aula.' + validAderenciaBlock;
+      const descricaoAula = 'Trabalhar frações equivalentes com material concreto';
+
+      const result = extractAderenciaJson(relatorio, descricaoAula);
+
+      expect(result.aderenciaJson).not.toBeNull();
+      expect(result.aderenciaJson.faixa_aderencia).toBe('ALTA');
+      expect(result.aderenciaJson.pontos_atingidos).toHaveLength(2);
+      expect(result.relatorioLimpo).not.toContain('aderencia_json');
+      expect(result.relatorioLimpo).toContain('## Resumo Executivo');
+    });
+
+    it('retorna null quando bloco está ausente no output (degradação graciosa)', () => {
+      const extractAderenciaJson = (service as any).extractAderenciaJson.bind(service);
+      const relatorio = '## Resumo Executivo\n\nÓtima aula sem bloco aderencia.';
+      const descricaoAula = 'Trabalhar frações';
+
+      const result = extractAderenciaJson(relatorio, descricaoAula);
+
+      expect(result.aderenciaJson).toBeNull();
+      expect(result.relatorioLimpo).toBe(relatorio);
+    });
+
+    it('retorna null quando JSON do bloco é inválido (campo obrigatório ausente)', () => {
+      const extractAderenciaJson = (service as any).extractAderenciaJson.bind(service);
+      const incompleteJson = '{"faixa_aderencia": "ALTA"}'; // missing required fields
+      const relatorio = '## Relatório\n\nConteúdo.' + `\n\`\`\`aderencia_json\n${incompleteJson}\n\`\`\``;
+      const descricaoAula = 'Objetivo declarado';
+
+      const result = extractAderenciaJson(relatorio, descricaoAula);
+
+      expect(result.aderenciaJson).toBeNull();
+    });
+
+    it('retorna null quando descricao_aula é null (sem aderência esperada)', () => {
+      const extractAderenciaJson = (service as any).extractAderenciaJson.bind(service);
+      const relatorio = '## Relatório\n\nConteúdo.' + validAderenciaBlock;
+
+      const result = extractAderenciaJson(relatorio, null);
+
+      expect(result.aderenciaJson).toBeNull();
+      expect(result.relatorioLimpo).toBe(relatorio);
+    });
+
+    it('remove bloco aderencia_json do relatorio_limpo preservando restante do markdown', () => {
+      const extractAderenciaJson = (service as any).extractAderenciaJson.bind(service);
+      const before = '## Seção 1\n\nTexto antes do bloco.';
+      const after = '## Seção 2\n\nTexto após o bloco.';
+      const relatorio = before + validAderenciaBlock + '\n\n' + after;
+
+      const result = extractAderenciaJson(relatorio, 'Objetivo');
+
+      expect(result.relatorioLimpo).toContain('## Seção 1');
+      expect(result.relatorioLimpo).toContain('## Seção 2');
+      expect(result.relatorioLimpo).not.toContain('aderencia_json');
+      expect(result.relatorioLimpo).not.toContain('faixa_aderencia');
+    });
+
+    it('analisarAula persiste aderencia_objetivo_json quando descricao_aula existe', async () => {
+      const aulaComDescricao = {
+        ...mockAulaCompleta,
+        descricao: 'Trabalhar frações equivalentes',
+      };
+
+      prisma.aula.findUnique.mockResolvedValue(aulaComDescricao as any);
+      promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
+      promptService.renderPrompt.mockResolvedValue('rendered');
+
+      const relatorioComAderencia =
+        '## Resumo Executivo\n\nÓtima aula.' + validAderenciaBlock;
+
+      let callCount = 0;
+      llmRouterService.generateWithFallback.mockImplementation(() => {
+        callCount++;
+        if (callCount === 3) {
+          return Promise.resolve({ ...mockLLMResult, texto: relatorioComAderencia });
+        }
+        return Promise.resolve(mockLLMResult);
+      });
+
+      await service.analisarAula(mockAulaId);
+
+      const txCallback = prisma.$transaction.mock.calls[0][0];
+      const mockTx = {
+        analise: { create: jest.fn().mockResolvedValue({ id: 'analise-1' }) },
+        aula: { update: jest.fn().mockResolvedValue({}) },
+      };
+      await txCallback(mockTx);
+
+      const createData = mockTx.analise.create.mock.calls[0][0].data;
+      expect(createData.aderencia_objetivo_json).not.toBeNull();
+      expect(createData.aderencia_objetivo_json).toMatchObject({
+        faixa_aderencia: 'ALTA',
+      });
+    });
+
+    it('analisarAula salva aderencia_objetivo_json como null quando descricao_aula é null', async () => {
+      const aulaSemDescricao = { ...mockAulaCompleta, descricao: null };
+
+      prisma.aula.findUnique.mockResolvedValue(aulaSemDescricao as any);
+      promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
+      promptService.renderPrompt.mockResolvedValue('rendered');
+
+      await service.analisarAula(mockAulaId);
+
+      const txCallback = prisma.$transaction.mock.calls[0][0];
+      const mockTx = {
+        analise: { create: jest.fn().mockResolvedValue({ id: 'analise-1' }) },
+        aula: { update: jest.fn().mockResolvedValue({}) },
+      };
+      await txCallback(mockTx);
+
+      const createData = mockTx.analise.create.mock.calls[0][0].data;
+      // When descricao_aula is null, aderenciaJson is null → null ?? Prisma.DbNull = Prisma.DbNull
+      expect(createData.aderencia_objetivo_json).toBe(Prisma.DbNull);
     });
   });
 });

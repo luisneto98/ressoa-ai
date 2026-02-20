@@ -178,7 +178,8 @@ export class ObjetivosCustomController {
   @ApiParam({ name: 'id', description: 'UUID do objetivo', type: 'string' })
   @ApiResponse({
     status: 200,
-    description: 'Objetivo atualizado com sucesso (campos não enviados permanecem inalterados)',
+    description:
+      'Objetivo atualizado com sucesso (campos não enviados permanecem inalterados)',
   })
   @ApiResponse({
     status: 400,
@@ -202,7 +203,12 @@ export class ObjetivosCustomController {
     @Body() updateDto: UpdateObjetivoCustomDto,
     @CurrentUser() user: AuthenticatedUser,
   ) {
-    return this.objetivosService.updateCustom(turmaId, objetivoId, updateDto, user);
+    return this.objetivosService.updateCustom(
+      turmaId,
+      objetivoId,
+      updateDto,
+      user,
+    );
   }
 
   @Delete(':id')
@@ -228,11 +234,13 @@ export class ObjetivosCustomController {
   })
   @ApiResponse({
     status: 409,
-    description: 'Objetivo não pode ser deletado pois está em uso em planejamentos',
+    description:
+      'Objetivo não pode ser deletado pois está em uso em planejamentos',
     schema: {
       example: {
         statusCode: 409,
-        message: 'Objetivo não pode ser deletado pois está em uso em 2 planejamento(s)',
+        message:
+          'Objetivo não pode ser deletado pois está em uso em 2 planejamento(s)',
         error: 'Conflict',
         planejamentos_afetados: [
           { id: 'uuid-plan-1', bimestre: 1 },

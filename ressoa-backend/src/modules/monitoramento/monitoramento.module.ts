@@ -19,6 +19,11 @@ import { MonitoramentoPromptsService } from './monitoramento-prompts.service';
     MonitoramentoCustosService,
     MonitoramentoPromptsService,
   ],
-  exports: [MonitoramentoSTTService, MonitoramentoAnaliseService, MonitoramentoCustosService, MonitoramentoPromptsService],
+  exports: [
+    MonitoramentoSTTService,
+    MonitoramentoAnaliseService,
+    MonitoramentoCustosService,
+    MonitoramentoPromptsService,
+  ],
 })
 export class MonitoramentoModule {}

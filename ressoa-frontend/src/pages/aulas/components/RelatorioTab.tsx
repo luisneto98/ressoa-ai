@@ -24,6 +24,7 @@ import {
   Brain,
   Presentation,
   Users,
+  Users2,
   MessageCircle,
   Link2,
   Languages,
@@ -62,6 +63,14 @@ interface AnaliseQualitativa {
     pontos_atencao?: string[];
   };
   comentario_sintetico?: string; // FIX Issue #3: Explicit optional field
+  participacao_alunos?: { // V4: dados de participação dos alunos
+    perguntas_alunos: number;
+    respostas_alunos: number;
+    intervencoes_contadas: number;
+    tempo_fala_alunos_pct: number;
+    qualidade_interacoes: string;
+    observacoes: string;
+  };
 }
 
 interface RelatorioTabProps {
@@ -134,7 +143,6 @@ export function RelatorioTab({ analise }: RelatorioTabProps) {
   const comentarioSintetico = useMemo(() => analise.analise_qualitativa.comentario_sintetico, [analise]); // FIX Issue #3: Remove any cast
 
   const handleExportPDF = async () => {
-    // Generate safe filename
     const aulaTitle = analise.aula.titulo.replace(/[^a-zA-Z0-9]/g, '_');
     const date = new Date(analise.aula.data_aula).toISOString().split('T')[0];
     const filename = `Relatorio_${aulaTitle}_${date}.pdf`;
@@ -338,6 +346,14 @@ export function RelatorioTab({ analise }: RelatorioTabProps) {
             icon={<Languages className="h-4 w-4 text-rose-500" />}
             data={qual.adequacao_linguistica}
           />
+          {/* V4: Participação dos Alunos */}
+          {qual.participacao_alunos && (
+            <QualitativaCard
+              title="Participação dos Alunos"
+              icon={<Users2 className="h-4 w-4 text-emerald-600" />}
+              data={qual.participacao_alunos}
+            />
+          )}
         </div>
       </div>
 

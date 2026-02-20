@@ -35,11 +35,18 @@ describe('LLMRouterService', () => {
     geminiProvider = createMockProvider(ProviderLLM.GEMINI_FLASH);
     configService = {
       getSTTConfig: jest.fn(),
-      getLLMConfig: jest.fn().mockReturnValue({ primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' }),
+      getLLMConfig: jest
+        .fn()
+        .mockReturnValue({ primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' }),
       getConfig: jest.fn(),
     } as any;
 
-    service = new LLMRouterService(claudeProvider, gptProvider, geminiProvider, configService);
+    service = new LLMRouterService(
+      claudeProvider,
+      gptProvider,
+      geminiProvider,
+      configService,
+    );
   });
 
   describe('getLLMProvider', () => {
@@ -47,11 +54,16 @@ describe('LLMRouterService', () => {
       const provider = service.getLLMProvider('analise_cobertura');
 
       expect(provider.getName()).toBe(ProviderLLM.CLAUDE_SONNET);
-      expect(configService.getLLMConfig).toHaveBeenCalledWith('analise_cobertura');
+      expect(configService.getLLMConfig).toHaveBeenCalledWith(
+        'analise_cobertura',
+      );
     });
 
     it('should return GPT when config sets GPT as primary for exercicios', () => {
-      configService.getLLMConfig.mockReturnValue({ primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' });
+      configService.getLLMConfig.mockReturnValue({
+        primary: 'GPT4_MINI',
+        fallback: 'CLAUDE_SONNET',
+      });
 
       const provider = service.getLLMProvider('exercicios');
 
@@ -59,7 +71,10 @@ describe('LLMRouterService', () => {
     });
 
     it('should return Gemini when config sets GEMINI_FLASH as primary', () => {
-      configService.getLLMConfig.mockReturnValue({ primary: 'GEMINI_FLASH', fallback: 'CLAUDE_SONNET' });
+      configService.getLLMConfig.mockReturnValue({
+        primary: 'GEMINI_FLASH',
+        fallback: 'CLAUDE_SONNET',
+      });
 
       const provider = service.getLLMProvider('analise_cobertura');
 
@@ -67,9 +82,14 @@ describe('LLMRouterService', () => {
     });
 
     it('should throw for unknown provider key', () => {
-      configService.getLLMConfig.mockReturnValue({ primary: 'UNKNOWN_PROVIDER', fallback: 'GPT4_MINI' });
+      configService.getLLMConfig.mockReturnValue({
+        primary: 'UNKNOWN_PROVIDER',
+        fallback: 'GPT4_MINI',
+      });
 
-      expect(() => service.getLLMProvider('analise_cobertura')).toThrow('Unknown LLM provider: UNKNOWN_PROVIDER');
+      expect(() => service.getLLMProvider('analise_cobertura')).toThrow(
+        'Unknown LLM provider: UNKNOWN_PROVIDER',
+      );
     });
   });
 
@@ -81,7 +101,10 @@ describe('LLMRouterService', () => {
     });
 
     it('should return Claude when config sets Claude as fallback', () => {
-      configService.getLLMConfig.mockReturnValue({ primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' });
+      configService.getLLMConfig.mockReturnValue({
+        primary: 'GPT4_MINI',
+        fallback: 'CLAUDE_SONNET',
+      });
 
       const provider = service.getLLMFallback('exercicios');
 
@@ -94,7 +117,11 @@ describe('LLMRouterService', () => {
     const options = { temperature: 0.3, maxTokens: 2000 };
 
     it('should use primary provider on success', async () => {
-      const result = await service.generateWithFallback('analise_cobertura', prompt, options);
+      const result = await service.generateWithFallback(
+        'analise_cobertura',
+        prompt,
+        options,
+      );
 
       expect(result.provider).toBe(ProviderLLM.CLAUDE_SONNET);
       expect(claudeProvider.generate).toHaveBeenCalledWith(prompt, options);
@@ -102,9 +129,14 @@ describe('LLMRouterService', () => {
     });
 
     it('should fallback to secondary on primary failure', async () => {
-      claudeProvider.generate.mockRejectedValueOnce(new Error('Claude API error'));
+      claudeProvider.generate.mockRejectedValueOnce(
+        new Error('Claude API error'),
+      );
 
-      const result = await service.generateWithFallback('analise_cobertura', prompt);
+      const result = await service.generateWithFallback(
+        'analise_cobertura',
+        prompt,
+      );
 
       expect(result.provider).toBe(ProviderLLM.GPT4_MINI);
       expect(claudeProvider.generate).toHaveBeenCalled();
@@ -123,14 +155,21 @@ describe('LLMRouterService', () => {
     it('should route different analysis types correctly', async () => {
       // exercicios uses GPT as primary
       configService.getLLMConfig.mockImplementation((type: LLMAnalysisType) => {
-        if (type === 'exercicios') return { primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' };
+        if (type === 'exercicios')
+          return { primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' };
         return { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' };
       });
 
-      const coberturaResult = await service.generateWithFallback('analise_cobertura', prompt);
+      const coberturaResult = await service.generateWithFallback(
+        'analise_cobertura',
+        prompt,
+      );
       expect(coberturaResult.provider).toBe(ProviderLLM.CLAUDE_SONNET);
 
-      const exerciciosResult = await service.generateWithFallback('exercicios', prompt);
+      const exerciciosResult = await service.generateWithFallback(
+        'exercicios',
+        prompt,
+      );
       expect(exerciciosResult.provider).toBe(ProviderLLM.GPT4_MINI);
     });
 

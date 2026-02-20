@@ -38,10 +38,15 @@ export class ConvitesController {
   constructor(private readonly convitesService: ConvitesService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Listar convites (paginado, com filtro por status)' })
+  @ApiOperation({
+    summary: 'Listar convites (paginado, com filtro por status)',
+  })
   @ApiResponse({ status: 200, description: 'Lista de convites retornada' })
   @ApiResponse({ status: 401, description: 'Não autenticado' })
-  @ApiResponse({ status: 403, description: 'Acesso negado (apenas ADMIN, DIRETOR, COORDENADOR)' })
+  @ApiResponse({
+    status: 403,
+    description: 'Acesso negado (apenas ADMIN, DIRETOR, COORDENADOR)',
+  })
   async listConvites(
     @CurrentUser() user: AuthenticatedUser,
     @Query() query: ListConvitesQueryDto,
@@ -57,7 +62,10 @@ export class ConvitesController {
   @ApiOperation({ summary: 'Cancelar convite pendente' })
   @ApiParam({ name: 'id', description: 'UUID do convite' })
   @ApiResponse({ status: 200, description: 'Convite cancelado com sucesso' })
-  @ApiResponse({ status: 400, description: 'Convite já aceito (não cancelável)' })
+  @ApiResponse({
+    status: 400,
+    description: 'Convite já aceito (não cancelável)',
+  })
   @ApiResponse({ status: 401, description: 'Não autenticado' })
   @ApiResponse({ status: 403, description: 'Acesso negado' })
   @ApiResponse({ status: 404, description: 'Convite não encontrado' })
@@ -73,7 +81,10 @@ export class ConvitesController {
   @ApiOperation({ summary: 'Reenviar convite expirado/pendente' })
   @ApiParam({ name: 'id', description: 'UUID do convite' })
   @ApiResponse({ status: 201, description: 'Convite reenviado com sucesso' })
-  @ApiResponse({ status: 400, description: 'Convite já aceito (não reenviável)' })
+  @ApiResponse({
+    status: 400,
+    description: 'Convite já aceito (não reenviável)',
+  })
   @ApiResponse({ status: 401, description: 'Não autenticado' })
   @ApiResponse({ status: 403, description: 'Acesso negado' })
   @ApiResponse({ status: 404, description: 'Convite não encontrado' })

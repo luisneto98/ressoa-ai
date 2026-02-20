@@ -90,7 +90,10 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
             'Passo 2: Identificar as partes consumidas (numerador): 3 fatias',
             'Passo 3: Escrever a fração: 3/8',
           ],
-          criterios_correcao: ['Aceitar: 3/8, três oitavos, 0.375', 'Não aceitar: 3/5, 8/3'],
+          criterios_correcao: [
+            'Aceitar: 3/8, três oitavos, 0.375',
+            'Não aceitar: 3/5, 8/3',
+          ],
           dica_professor:
             'Erro comum: alunos podem confundir numerador e denominador. Reforçar que o denominador é sempre o TOTAL de partes.',
         },
@@ -112,28 +115,37 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
             'Passo 3: Comparar dezenas: 23 < 42',
             'Passo 4: Identificar número de 3 dígitos: 150',
           ],
-          criterios_correcao: ['Aceitar: Ordem correta', 'Não aceitar: Ordem invertida'],
-          dica_professor: 'Reforçar que números com mais dígitos são geralmente maiores.',
+          criterios_correcao: [
+            'Aceitar: Ordem correta',
+            'Não aceitar: Ordem invertida',
+          ],
+          dica_professor:
+            'Reforçar que números com mais dígitos são geralmente maiores.',
         },
       },
       {
         numero: 3,
         enunciado:
           'O professor explicou que 1/2 e 2/4 são frações equivalentes. Crie um desenho ou diagrama que mostre por que essas duas frações representam a mesma quantidade.',
-        contexto_aula: 'Professor desenhou pizza no quadro para mostrar frações equivalentes',
+        contexto_aula:
+          'Professor desenhou pizza no quadro para mostrar frações equivalentes',
         nivel_bloom: 3,
         nivel_bloom_descricao: 'Aplicar',
         dificuldade: 'medio',
         habilidade_relacionada: 'EF06MA07',
         gabarito: {
-          resposta_curta: 'Desenho mostrando 1 parte de 2 totais = 2 partes de 4 totais',
+          resposta_curta:
+            'Desenho mostrando 1 parte de 2 totais = 2 partes de 4 totais',
           resolucao_passo_a_passo: [
             'Passo 1: Desenhar círculo dividido em 2 partes, sombrear 1',
             'Passo 2: Desenhar círculo dividido em 4 partes, sombrear 2',
             'Passo 3: Observar que a área sombreada é igual',
           ],
-          criterios_correcao: ['Aceitar: Qualquer representação visual correta'],
-          dica_professor: 'Este exercício avalia compreensão conceitual, não apenas cálculo.',
+          criterios_correcao: [
+            'Aceitar: Qualquer representação visual correta',
+          ],
+          dica_professor:
+            'Este exercício avalia compreensão conceitual, não apenas cálculo.',
         },
       },
       {
@@ -152,8 +164,11 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
             'Passo 2: Resolver: 1/4 de 24 = 24 ÷ 4 = 6',
             'Passo 3: Verificar: 6 x 4 = 24',
           ],
-          criterios_correcao: ['Aceitar: Problema bem estruturado e resolução correta'],
-          dica_professor: 'Avalia transferência de aprendizado. Valorizar a tentativa.',
+          criterios_correcao: [
+            'Aceitar: Problema bem estruturado e resolução correta',
+          ],
+          dica_professor:
+            'Avalia transferência de aprendizado. Valorizar a tentativa.',
         },
       },
       {
@@ -173,7 +188,8 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
             'Passo 3: Concluir que denominador importa',
           ],
           criterios_correcao: ['Aceitar: Qualquer contra-exemplo válido'],
-          dica_professor: 'Exercício desafiador. Muitos alunos vão errar. Use para discussão.',
+          dica_professor:
+            'Exercício desafiador. Muitos alunos vão errar. Use para discussão.',
         },
       },
     ],
@@ -332,7 +348,9 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       };
 
       data.exercicios.forEach((ex: any) => {
-        expect(ex.nivel_bloom_descricao).toBe((nivelDescricoes as any)[ex.nivel_bloom]);
+        expect(ex.nivel_bloom_descricao).toBe(
+          (nivelDescricoes as any)[ex.nivel_bloom],
+        );
       });
     });
   });
@@ -427,7 +445,11 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
         expect(ex.contexto_aula).not.toBe('');
 
         // Se usar "imagine" ou "suponha", deve ter contexto forte
-        if (genericMarkers.some((marker) => ex.enunciado.toLowerCase().includes(marker))) {
+        if (
+          genericMarkers.some((marker) =>
+            ex.enunciado.toLowerCase().includes(marker),
+          )
+        ) {
           expect(ex.contexto_aula.length).toBeGreaterThan(20);
         }
       });
@@ -464,7 +486,9 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       const data = JSON.parse(result.texto);
 
       data.exercicios.forEach((ex: any, idx: number) => {
-        expect(ex.gabarito.resolucao_passo_a_passo.length).toBeGreaterThanOrEqual(2);
+        expect(
+          ex.gabarito.resolucao_passo_a_passo.length,
+        ).toBeGreaterThanOrEqual(2);
       });
     });
 
@@ -517,7 +541,9 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       const data = JSON.parse(result.texto);
 
       // Habilidades do fixture: EF06MA01, EF06MA07
-      const habilidadesUsadas = data.exercicios.map((ex: any) => ex.habilidade_relacionada);
+      const habilidadesUsadas = data.exercicios.map(
+        (ex: any) => ex.habilidade_relacionada,
+      );
 
       expect(habilidadesUsadas).toContain('EF06MA01');
       expect(habilidadesUsadas).toContain('EF06MA07');
@@ -528,7 +554,9 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       const data = JSON.parse(result.texto);
 
       // Habilidades não presentes no fixture
-      const habilidadesUsadas = data.exercicios.map((ex: any) => ex.habilidade_relacionada);
+      const habilidadesUsadas = data.exercicios.map(
+        (ex: any) => ex.habilidade_relacionada,
+      );
 
       expect(habilidadesUsadas).not.toContain('EF06MA03');
       expect(habilidadesUsadas).not.toContain('EF06MA04');
@@ -553,7 +581,9 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       const data = JSON.parse(result.texto);
 
       // 6º ano deve ter exemplos concretos: pizza, balas, figurinhas, etc.
-      const enunciados = data.exercicios.map((ex: any) => ex.enunciado.toLowerCase()).join(' ');
+      const enunciados = data.exercicios
+        .map((ex: any) => ex.enunciado.toLowerCase())
+        .join(' ');
 
       expect(enunciados).toMatch(/pizza|balas|figurinhas|números/);
     });
@@ -563,10 +593,14 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       const data = JSON.parse(result.texto);
 
       // Exercícios fáceis (1-2) devem ter enunciados curtos
-      const faceis = data.exercicios.filter((ex: any) => ex.dificuldade === 'facil');
+      const faceis = data.exercicios.filter(
+        (ex: any) => ex.dificuldade === 'facil',
+      );
 
       faceis.forEach((ex: any) => {
-        const sentenceCount = ex.enunciado.split(/[.!?]/).filter((s: string) => s.trim().length > 0).length;
+        const sentenceCount = ex.enunciado
+          .split(/[.!?]/)
+          .filter((s: string) => s.trim().length > 0).length;
         expect(sentenceCount).toBeLessThanOrEqual(4);
       });
     });
@@ -604,17 +638,27 @@ describe('Prompt 4 - Geração de Exercícios (Unit)', () => {
       expect(data.metadados.distribuicao_bloom.nivel_4).toBe(bloomCounts[4]);
       expect(data.metadados.distribuicao_bloom.nivel_5).toBe(bloomCounts[5]);
 
-      expect(data.metadados.distribuicao_dificuldade.facil).toBe(diffCounts.facil);
-      expect(data.metadados.distribuicao_dificuldade.medio).toBe(diffCounts.medio);
-      expect(data.metadados.distribuicao_dificuldade.dificil).toBe(diffCounts.dificil);
+      expect(data.metadados.distribuicao_dificuldade.facil).toBe(
+        diffCounts.facil,
+      );
+      expect(data.metadados.distribuicao_dificuldade.medio).toBe(
+        diffCounts.medio,
+      );
+      expect(data.metadados.distribuicao_dificuldade.dificil).toBe(
+        diffCounts.dificil,
+      );
     });
 
     it('deve ter tempo estimado razoável (20-40 min para 5 exercícios)', async () => {
       const result = await gptProvider.generate('test-prompt', {});
       const data = JSON.parse(result.texto);
 
-      expect(data.metadados.tempo_estimado_resolucao_minutos).toBeGreaterThanOrEqual(20);
-      expect(data.metadados.tempo_estimado_resolucao_minutos).toBeLessThanOrEqual(40);
+      expect(
+        data.metadados.tempo_estimado_resolucao_minutos,
+      ).toBeGreaterThanOrEqual(20);
+      expect(
+        data.metadados.tempo_estimado_resolucao_minutos,
+      ).toBeLessThanOrEqual(40);
     });
   });
 });

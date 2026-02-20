@@ -1,4 +1,8 @@
-import { ProvidersConfigSchema, loadProvidersConfig, DEFAULT_PROVIDERS_CONFIG } from './providers.config';
+import {
+  ProvidersConfigSchema,
+  loadProvidersConfig,
+  DEFAULT_PROVIDERS_CONFIG,
+} from './providers.config';
 import * as fs from 'fs';
 
 jest.mock('fs');
@@ -12,7 +16,10 @@ describe('ProvidersConfigSchema', () => {
       stt: { primary: 'WHISPER', fallback: 'GOOGLE' },
       llm: {
         analise_cobertura: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
-        analise_qualitativa: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
+        analise_qualitativa: {
+          primary: 'CLAUDE_SONNET',
+          fallback: 'GPT4_MINI',
+        },
         relatorio: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
         exercicios: { primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' },
         alertas: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
@@ -29,7 +36,10 @@ describe('ProvidersConfigSchema', () => {
       stt: { primary: 'INVALID', fallback: 'GOOGLE' },
       llm: {
         analise_cobertura: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
-        analise_qualitativa: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
+        analise_qualitativa: {
+          primary: 'CLAUDE_SONNET',
+          fallback: 'GPT4_MINI',
+        },
         relatorio: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
         exercicios: { primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' },
         alertas: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
@@ -46,7 +56,10 @@ describe('ProvidersConfigSchema', () => {
       stt: { primary: 'WHISPER', fallback: 'GOOGLE' },
       llm: {
         analise_cobertura: { primary: 'INVALID_MODEL', fallback: 'GPT4_MINI' },
-        analise_qualitativa: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
+        analise_qualitativa: {
+          primary: 'CLAUDE_SONNET',
+          fallback: 'GPT4_MINI',
+        },
         relatorio: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
         exercicios: { primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' },
         alertas: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
@@ -75,7 +88,10 @@ describe('ProvidersConfigSchema', () => {
       stt: { primary: 'WHISPER', fallback: 'GOOGLE' },
       llm: {
         analise_cobertura: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
-        analise_qualitativa: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
+        analise_qualitativa: {
+          primary: 'CLAUDE_SONNET',
+          fallback: 'GPT4_MINI',
+        },
         relatorio: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
         exercicios: { primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' },
         alertas: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
@@ -93,8 +109,14 @@ describe('ProvidersConfigSchema', () => {
         version: '1.0.0',
         stt: { primary: provider, fallback: 'GOOGLE' },
         llm: {
-          analise_cobertura: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
-          analise_qualitativa: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
+          analise_cobertura: {
+            primary: 'CLAUDE_SONNET',
+            fallback: 'GPT4_MINI',
+          },
+          analise_qualitativa: {
+            primary: 'CLAUDE_SONNET',
+            fallback: 'GPT4_MINI',
+          },
           relatorio: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
           exercicios: { primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' },
           alertas: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
@@ -106,14 +128,24 @@ describe('ProvidersConfigSchema', () => {
   });
 
   it('should accept all valid ProviderLLM enum values', () => {
-    const validLLM = ['CLAUDE_SONNET', 'CLAUDE_HAIKU', 'GPT4_TURBO', 'GPT4_MINI', 'GEMINI_PRO', 'GEMINI_FLASH'];
+    const validLLM = [
+      'CLAUDE_SONNET',
+      'CLAUDE_HAIKU',
+      'GPT4_TURBO',
+      'GPT4_MINI',
+      'GEMINI_PRO',
+      'GEMINI_FLASH',
+    ];
     for (const provider of validLLM) {
       const config = {
         version: '1.0.0',
         stt: { primary: 'WHISPER', fallback: 'GOOGLE' },
         llm: {
           analise_cobertura: { primary: provider, fallback: 'GPT4_MINI' },
-          analise_qualitativa: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
+          analise_qualitativa: {
+            primary: 'CLAUDE_SONNET',
+            fallback: 'GPT4_MINI',
+          },
           relatorio: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
           exercicios: { primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' },
           alertas: { primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' },
@@ -145,7 +177,10 @@ describe('loadProvidersConfig', () => {
       stt: { primary: 'GOOGLE', fallback: 'WHISPER' },
       llm: {
         analise_cobertura: { primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' },
-        analise_qualitativa: { primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' },
+        analise_qualitativa: {
+          primary: 'GPT4_MINI',
+          fallback: 'CLAUDE_SONNET',
+        },
         relatorio: { primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' },
         exercicios: { primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' },
         alertas: { primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' },

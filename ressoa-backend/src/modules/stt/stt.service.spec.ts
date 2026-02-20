@@ -17,7 +17,9 @@ describe('STTService', () => {
   };
 
   const mockSTTRouterService = {
-    transcribeWithFallback: jest.fn().mockResolvedValue(mockTranscriptionResult),
+    transcribeWithFallback: jest
+      .fn()
+      .mockResolvedValue(mockTranscriptionResult),
   };
 
   beforeEach(async () => {
@@ -32,7 +34,7 @@ describe('STTService', () => {
     }).compile();
 
     service = module.get<STTService>(STTService);
-    sttRouterService = module.get(STTRouterService) as jest.Mocked<STTRouterService>;
+    sttRouterService = module.get(STTRouterService);
   });
 
   it('should be defined', () => {
@@ -47,7 +49,10 @@ describe('STTService', () => {
       const result = await service.transcribe(audioBuffer, options);
 
       expect(sttRouterService.transcribeWithFallback).toHaveBeenCalledTimes(1);
-      expect(sttRouterService.transcribeWithFallback).toHaveBeenCalledWith(audioBuffer, options);
+      expect(sttRouterService.transcribeWithFallback).toHaveBeenCalledWith(
+        audioBuffer,
+        options,
+      );
       expect(result).toEqual(mockTranscriptionResult);
     });
 
@@ -56,7 +61,10 @@ describe('STTService', () => {
 
       const result = await service.transcribe(audioBuffer);
 
-      expect(sttRouterService.transcribeWithFallback).toHaveBeenCalledWith(audioBuffer, undefined);
+      expect(sttRouterService.transcribeWithFallback).toHaveBeenCalledWith(
+        audioBuffer,
+        undefined,
+      );
       expect(result).toEqual(mockTranscriptionResult);
     });
 
@@ -64,7 +72,9 @@ describe('STTService', () => {
       const audioBuffer = Buffer.from('fake-audio-data');
 
       sttRouterService.transcribeWithFallback.mockRejectedValue(
-        new Error('STT transcription failed on all providers: primary=GROQ_WHISPER, fallback=WHISPER'),
+        new Error(
+          'STT transcription failed on all providers: primary=GROQ_WHISPER, fallback=WHISPER',
+        ),
       );
 
       await expect(service.transcribe(audioBuffer)).rejects.toThrow(
@@ -79,13 +89,13 @@ describe('STTService', () => {
       sttRouterService.transcribeWithFallback.mockResolvedValue({
         ...mockTranscriptionResult,
         provider: 'Whisper' as any,
-        custo_usd: 0.10,
+        custo_usd: 0.1,
       });
 
       const result = await service.transcribe(audioBuffer);
 
       expect(result.provider).toBe('Whisper');
-      expect(result.custo_usd).toBe(0.10);
+      expect(result.custo_usd).toBe(0.1);
     });
   });
 });

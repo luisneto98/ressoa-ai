@@ -32,7 +32,9 @@ export class CoberturaService implements OnModuleInit {
       },
     );
 
-    this.logger.log('Daily refresh job scheduled at 2:00 AM BRT (cron: 0 5 * * *, tz: America/Sao_Paulo)');
+    this.logger.log(
+      'Daily refresh job scheduled at 2:00 AM BRT (cron: 0 5 * * *, tz: America/Sao_Paulo)',
+    );
   }
 
   /**
@@ -54,7 +56,9 @@ export class CoberturaService implements OnModuleInit {
       },
     );
 
-    this.logger.log(`Manual refresh triggered with high priority (job: ${job.id})`);
+    this.logger.log(
+      `Manual refresh triggered with high priority (job: ${job.id})`,
+    );
     return { message: 'Refresh enfileirado com sucesso' };
   }
 }

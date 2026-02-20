@@ -83,7 +83,8 @@ describe('Prompt 5 - Detecção de Alertas', () => {
           tipo: 'gap_curricular',
           nivel: 'WARNING',
           titulo: 'Gap detectado: EF06MA03 não coberto',
-          mensagem: 'A habilidade EF06MA03 estava planejada mas não foi abordada.',
+          mensagem:
+            'A habilidade EF06MA03 estava planejada mas não foi abordada.',
           acoes_sugeridas: ['Considere abordar na próxima aula'],
           metadata: { habilidade_id: 'EF06MA03', nivel_cobertura_atual: 0 },
         },
@@ -98,8 +99,12 @@ describe('Prompt 5 - Detecção de Alertas', () => {
       },
     };
 
-    jest.spyOn(promptService, 'getActivePrompt').mockResolvedValue(mockPrompt as any);
-    jest.spyOn(promptService, 'renderPrompt').mockResolvedValue('Rendered prompt');
+    jest
+      .spyOn(promptService, 'getActivePrompt')
+      .mockResolvedValue(mockPrompt as any);
+    jest
+      .spyOn(promptService, 'renderPrompt')
+      .mockResolvedValue('Rendered prompt');
     jest.spyOn(claudeProvider, 'generate').mockResolvedValue({
       texto: JSON.stringify(mockLLMResponse),
       provider: 'CLAUDE' as any,
@@ -113,7 +118,10 @@ describe('Prompt 5 - Detecção de Alertas', () => {
     // Act: Execute prompt
     const prompt = await promptService.getActivePrompt('prompt-alertas');
     const rendered = await promptService.renderPrompt(prompt, mockContext);
-    const result = await claudeProvider.generate(rendered, { temperature: 0.4, maxTokens: 1000 });
+    const result = await claudeProvider.generate(rendered, {
+      temperature: 0.4,
+      maxTokens: 1000,
+    });
     const output = JSON.parse(result.texto);
 
     // Assert: Validate gap detection
@@ -177,8 +185,12 @@ describe('Prompt 5 - Detecção de Alertas', () => {
       },
     };
 
-    jest.spyOn(promptService, 'getActivePrompt').mockResolvedValue(mockPrompt as any);
-    jest.spyOn(promptService, 'renderPrompt').mockResolvedValue('Rendered prompt');
+    jest
+      .spyOn(promptService, 'getActivePrompt')
+      .mockResolvedValue(mockPrompt as any);
+    jest
+      .spyOn(promptService, 'renderPrompt')
+      .mockResolvedValue('Rendered prompt');
     jest.spyOn(claudeProvider, 'generate').mockResolvedValue({
       texto: JSON.stringify(mockLLMResponse),
       provider: 'CLAUDE' as any,
@@ -192,7 +204,10 @@ describe('Prompt 5 - Detecção de Alertas', () => {
     // Act
     const prompt = await promptService.getActivePrompt('prompt-alertas');
     const rendered = await promptService.renderPrompt(prompt, mockContext);
-    const result = await claudeProvider.generate(rendered, { temperature: 0.4, maxTokens: 1000 });
+    const result = await claudeProvider.generate(rendered, {
+      temperature: 0.4,
+      maxTokens: 1000,
+    });
     const output = JSON.parse(result.texto);
 
     // Assert
@@ -246,8 +261,12 @@ describe('Prompt 5 - Detecção de Alertas', () => {
       },
     };
 
-    jest.spyOn(promptService, 'getActivePrompt').mockResolvedValue(mockPrompt as any);
-    jest.spyOn(promptService, 'renderPrompt').mockResolvedValue('Rendered prompt');
+    jest
+      .spyOn(promptService, 'getActivePrompt')
+      .mockResolvedValue(mockPrompt as any);
+    jest
+      .spyOn(promptService, 'renderPrompt')
+      .mockResolvedValue('Rendered prompt');
     jest.spyOn(claudeProvider, 'generate').mockResolvedValue({
       texto: JSON.stringify(mockLLMResponse),
       provider: 'CLAUDE' as any,
@@ -261,7 +280,10 @@ describe('Prompt 5 - Detecção de Alertas', () => {
     // Act
     const prompt = await promptService.getActivePrompt('prompt-alertas');
     const rendered = await promptService.renderPrompt(prompt, mockContext);
-    const result = await claudeProvider.generate(rendered, { temperature: 0.4, maxTokens: 1000 });
+    const result = await claudeProvider.generate(rendered, {
+      temperature: 0.4,
+      maxTokens: 1000,
+    });
     const output = JSON.parse(result.texto);
 
     // Assert: Validate suggestions are actionable
@@ -300,8 +322,12 @@ describe('Prompt 5 - Detecção de Alertas', () => {
       },
     };
 
-    jest.spyOn(promptService, 'getActivePrompt').mockResolvedValue(mockPrompt as any);
-    jest.spyOn(promptService, 'renderPrompt').mockResolvedValue('Rendered prompt');
+    jest
+      .spyOn(promptService, 'getActivePrompt')
+      .mockResolvedValue(mockPrompt as any);
+    jest
+      .spyOn(promptService, 'renderPrompt')
+      .mockResolvedValue('Rendered prompt');
     jest.spyOn(claudeProvider, 'generate').mockResolvedValue({
       texto: JSON.stringify(mockLLMResponse),
       provider: 'CLAUDE' as any,
@@ -315,7 +341,10 @@ describe('Prompt 5 - Detecção de Alertas', () => {
     // Act
     const prompt = await promptService.getActivePrompt('prompt-alertas');
     const rendered = await promptService.renderPrompt(prompt, mockContext);
-    const result = await claudeProvider.generate(rendered, { temperature: 0.4, maxTokens: 1000 });
+    const result = await claudeProvider.generate(rendered, {
+      temperature: 0.4,
+      maxTokens: 1000,
+    });
 
     // Assert: JSON should parse without errors
     expect(() => JSON.parse(result.texto)).not.toThrow();
@@ -368,8 +397,12 @@ describe('Prompt 5 - Detecção de Alertas', () => {
       },
     };
 
-    jest.spyOn(promptService, 'getActivePrompt').mockResolvedValue(mockPrompt as any);
-    jest.spyOn(promptService, 'renderPrompt').mockResolvedValue('Rendered prompt');
+    jest
+      .spyOn(promptService, 'getActivePrompt')
+      .mockResolvedValue(mockPrompt as any);
+    jest
+      .spyOn(promptService, 'renderPrompt')
+      .mockResolvedValue('Rendered prompt');
     jest.spyOn(claudeProvider, 'generate').mockResolvedValue({
       texto: JSON.stringify(mockLLMResponse),
       provider: 'CLAUDE' as any,
@@ -383,7 +416,10 @@ describe('Prompt 5 - Detecção de Alertas', () => {
     // Act
     const prompt = await promptService.getActivePrompt('prompt-alertas');
     const rendered = await promptService.renderPrompt(prompt, mockContext);
-    const result = await claudeProvider.generate(rendered, { temperature: 0.4, maxTokens: 1000 });
+    const result = await claudeProvider.generate(rendered, {
+      temperature: 0.4,
+      maxTokens: 1000,
+    });
     const output = JSON.parse(result.texto);
 
     // Assert: Metadata should be comprehensive

@@ -8,8 +8,10 @@ import {
   ValidateNested,
   IsOptional,
   IsNumber,
+  IsString,
+  MaxLength,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class HabilidadePlanejamentoDto {
@@ -21,7 +23,8 @@ export class HabilidadePlanejamentoDto {
   habilidade_id!: string;
 
   @ApiPropertyOptional({
-    description: 'Peso da habilidade no planejamento (opcional - default automático)',
+    description:
+      'Peso da habilidade no planejamento (opcional - default automático)',
     example: 1.0,
     minimum: 0,
   })
@@ -31,7 +34,8 @@ export class HabilidadePlanejamentoDto {
   peso?: number; // Opcional - RN-PLAN-02
 
   @ApiPropertyOptional({
-    description: 'Número de aulas previstas (opcional - estimado automaticamente)',
+    description:
+      'Número de aulas previstas (opcional - estimado automaticamente)',
     example: 10,
     minimum: 1,
   })
@@ -151,4 +155,15 @@ export class CreatePlanejamentoDto {
   @ValidateNested({ each: true })
   @Type(() => PlanejamentoObjetivoInputDto)
   objetivos?: PlanejamentoObjetivoInputDto[];
+
+  @ApiPropertyOptional({
+    description: 'Descrição das metodologias, ênfases e estratégias do bimestre',
+    maxLength: 2000,
+    example: 'Pretendo usar material concreto para frações, ênfase em resolução de problemas contextualizados, avaliação formativa contínua...',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(2000)
+  @Transform(({ value }) => (value === '' ? undefined : value))
+  descricao?: string;
 }

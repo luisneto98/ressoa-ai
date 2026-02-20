@@ -2,7 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { LLMRouterService } from '../../llm/services/llm-router.service';
 import { ProvidersConfigService } from '../../providers-config/providers-config.service';
 import type { TranscriptionWord } from '../interfaces/stt-provider.interface';
-import type { DiarizationResult, SpeakerStats } from '../interfaces/diarization.interface';
+import type {
+  DiarizationResult,
+  SpeakerStats,
+} from '../interfaces/diarization.interface';
 
 const DIARIZATION_SYSTEM_PROMPT = `Você é um especialista em análise de transcrições de aulas escolares brasileiras.
 
@@ -32,7 +35,9 @@ export class DiarizationService {
     private readonly providersConfig: ProvidersConfigService,
   ) {}
 
-  async diarize(words: TranscriptionWord[] | undefined): Promise<DiarizationResult> {
+  async diarize(
+    words: TranscriptionWord[] | undefined,
+  ): Promise<DiarizationResult> {
     const startTime = Date.now();
 
     // Feature flag check
@@ -57,11 +62,15 @@ export class DiarizationService {
       const formattedInput = this.formatWordsForLLM(words);
       const prompt = `Analise a seguinte transcrição com timestamps e gere SRT com identificação de falantes:\n\n${formattedInput}`;
 
-      const llmResult = await this.llmRouter.generateWithFallback('diarizacao', prompt, {
-        temperature: 0.1,
-        maxTokens: 8192,
-        systemPrompt: DIARIZATION_SYSTEM_PROMPT,
-      });
+      const llmResult = await this.llmRouter.generateWithFallback(
+        'diarizacao',
+        prompt,
+        {
+          temperature: 0.1,
+          maxTokens: 8192,
+          systemPrompt: DIARIZATION_SYSTEM_PROMPT,
+        },
+      );
 
       const srt = llmResult.texto.trim();
       const speakerStats = this.parseSpeakerStats(srt);
@@ -138,14 +147,17 @@ export class DiarizationService {
     return {
       professor_segments: profSegments,
       aluno_segments: alunoSegments,
-      professor_time_pct: totalTime > 0 ? Math.round((profTime / totalTime) * 1000) / 10 : 100,
+      professor_time_pct:
+        totalTime > 0 ? Math.round((profTime / totalTime) * 1000) / 10 : 100,
     };
   }
 
   private parseSrtTimestamp(ts: string): number {
     const [h, m, sMs] = ts.split(':');
     const [s, ms] = sMs.split(',');
-    return parseInt(h) * 3600 + parseInt(m) * 60 + parseInt(s) + parseInt(ms) / 1000;
+    return (
+      parseInt(h) * 3600 + parseInt(m) * 60 + parseInt(s) + parseInt(ms) / 1000
+    );
   }
 
   private countSegments(srt: string): number {

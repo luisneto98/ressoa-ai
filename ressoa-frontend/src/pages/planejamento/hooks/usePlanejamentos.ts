@@ -5,7 +5,7 @@ interface Turma {
   id: string;
   nome: string;
   disciplina: string;
-  serie: number;
+  serie: string; // Prisma enum value: "SEXTO_ANO" | "SETIMO_ANO" | "OITAVO_ANO" | "NONO_ANO" etc.
 }
 
 interface Habilidade {
@@ -26,6 +26,7 @@ export interface Planejamento {
   bimestre: number;
   ano_letivo: number;
   validado_coordenacao: boolean;
+  descricao?: string | null; // Epic 16 - Contexto bimestral do professor
   habilidades: Habilidade[];
   created_at: string;
   updated_at: string;

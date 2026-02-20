@@ -62,7 +62,9 @@ describe('PromptService', () => {
       ).rejects.toThrow(NotFoundException);
       await expect(
         service.getActivePrompt('nonexistent-prompt'),
-      ).rejects.toThrow('Nenhum prompt ativo encontrado para: nonexistent-prompt');
+      ).rejects.toThrow(
+        'Nenhum prompt ativo encontrado para: nonexistent-prompt',
+      );
     });
 
     it('should return most recent when 2 exist but ab_testing=false', async () => {
@@ -214,7 +216,8 @@ describe('PromptService', () => {
           id: 'prompt-1',
           nome: 'test-conditional',
           versao: 'v2.0.0',
-          conteudo: '{{#if (eq tipo_ensino \'MEDIO\')}}Ensino Médio{{else}}Ensino Fundamental{{/if}}',
+          conteudo:
+            "{{#if (eq tipo_ensino 'MEDIO')}}Ensino Médio{{else}}Ensino Fundamental{{/if}}",
           ativo: true,
           ab_testing: false,
         } as any;
@@ -231,7 +234,8 @@ describe('PromptService', () => {
           id: 'prompt-1',
           nome: 'test-conditional',
           versao: 'v2.0.0',
-          conteudo: '{{#if (eq tipo_ensino \'MEDIO\')}}Ensino Médio{{else}}Ensino Fundamental{{/if}}',
+          conteudo:
+            "{{#if (eq tipo_ensino 'MEDIO')}}Ensino Médio{{else}}Ensino Fundamental{{/if}}",
           ativo: true,
           ab_testing: false,
         } as any;
@@ -248,7 +252,8 @@ describe('PromptService', () => {
           id: 'prompt-1',
           nome: 'test-nested',
           versao: 'v2.0.0',
-          conteudo: '{{#if (eq tipo_ensino \'MEDIO\')}}EM{{#if (eq serie \'TERCEIRO_ANO_EM\')}} - 3º ano (ENEM){{/if}}{{else}}EF{{/if}}',
+          conteudo:
+            "{{#if (eq tipo_ensino 'MEDIO')}}EM{{#if (eq serie 'TERCEIRO_ANO_EM')}} - 3º ano (ENEM){{/if}}{{else}}EF{{/if}}",
           ativo: true,
           ab_testing: false,
         } as any;
@@ -268,7 +273,8 @@ describe('PromptService', () => {
           id: 'prompt-1',
           nome: 'test-and',
           versao: 'v2.0.0',
-          conteudo: '{{#if (and (eq tipo_ensino \'MEDIO\') (eq disciplina \'MATEMATICA\'))}}Matemática EM{{else}}Outro{{/if}}',
+          conteudo:
+            "{{#if (and (eq tipo_ensino 'MEDIO') (eq disciplina 'MATEMATICA'))}}Matemática EM{{else}}Outro{{/if}}",
           ativo: true,
           ab_testing: false,
         } as any;
@@ -288,7 +294,8 @@ describe('PromptService', () => {
           id: 'prompt-1',
           nome: 'test-or',
           versao: 'v2.0.0',
-          conteudo: '{{#if (or (eq serie \'PRIMEIRO_ANO_EM\') (eq serie \'SEGUNDO_ANO_EM\'))}}1º ou 2º ano{{else}}Outro{{/if}}',
+          conteudo:
+            "{{#if (or (eq serie 'PRIMEIRO_ANO_EM') (eq serie 'SEGUNDO_ANO_EM'))}}1º ou 2º ano{{else}}Outro{{/if}}",
           ativo: true,
           ab_testing: false,
         } as any;

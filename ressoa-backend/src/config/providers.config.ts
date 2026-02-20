@@ -44,7 +44,13 @@ export const ProvidersConfigSchema = z.object({
 });
 
 export type ProvidersConfig = z.infer<typeof ProvidersConfigSchema>;
-export type LLMAnalysisType = 'analise_cobertura' | 'analise_qualitativa' | 'relatorio' | 'exercicios' | 'alertas' | 'diarizacao';
+export type LLMAnalysisType =
+  | 'analise_cobertura'
+  | 'analise_qualitativa'
+  | 'relatorio'
+  | 'exercicios'
+  | 'alertas'
+  | 'diarizacao';
 
 export const DEFAULT_PROVIDERS_CONFIG: ProvidersConfig = {
   version: '1.0.0',
@@ -60,7 +66,8 @@ export const DEFAULT_PROVIDERS_CONFIG: ProvidersConfig = {
 };
 
 export function loadProvidersConfig(configPath?: string): ProvidersConfig {
-  const path = configPath || process.env.PROVIDERS_CONFIG_PATH || 'providers.config.json';
+  const path =
+    configPath || process.env.PROVIDERS_CONFIG_PATH || 'providers.config.json';
 
   if (!existsSync(path)) {
     logger.warn(`Config file not found at "${path}", using default config`);
@@ -71,7 +78,9 @@ export function loadProvidersConfig(configPath?: string): ProvidersConfig {
     const raw = readFileSync(path, 'utf-8');
     const parsed = JSON.parse(raw);
     const validated = ProvidersConfigSchema.parse(parsed);
-    logger.log(`Providers config loaded from "${path}" (version: ${validated.version})`);
+    logger.log(
+      `Providers config loaded from "${path}" (version: ${validated.version})`,
+    );
     return validated;
   } catch (error) {
     if (error instanceof z.ZodError) {

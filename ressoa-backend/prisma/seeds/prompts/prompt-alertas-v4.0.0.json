@@ -5,7 +5,7 @@
   "ativo": true,
   "ab_testing": false,
   "variaveis": {
-    "temperature": 0.4,
+    "temperature": 0.2,
     "max_tokens": 2000,
     "curriculo_tipo": "BNCC | CUSTOM",
     "cobertura": "object",

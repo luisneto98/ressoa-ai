@@ -249,8 +249,7 @@ export class NotificacoesService {
 
       // ALWAYS send email for errors (ignores preference)
       try {
-        const frontendUrl =
-          process.env.FRONTEND_URL || 'http://localhost:5173';
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
         // NOTE: Reusing transcription email template for now
         // Future: Create dedicated error email template
         await this.emailService.sendTranscricaoProntaEmail({
@@ -270,8 +269,7 @@ export class NotificacoesService {
         );
       }
     } catch (error) {
-      const errorMsg =
-        error instanceof Error ? error.message : 'Unknown error';
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(
         `Failed to create error notification for aula ${aulaId}: ${errorMsg}`,
       );

@@ -87,7 +87,9 @@ export class FeedbackProcessor {
     // TODO: Usar motivo para identificar padrões de falha nos prompts
 
     // STUB: Log para demonstração
-    this.logger.log(`Feedback explícito registrado (stub): "${motivo.substring(0, 100)}..."`);
+    this.logger.log(
+      `Feedback explícito registrado (stub): "${motivo.substring(0, 100)}..."`,
+    );
 
     return { success: true, analise_id, motivo };
   }

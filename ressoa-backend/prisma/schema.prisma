@@ -290,6 +290,7 @@ model Planejamento {
   escola_id            String
   professor_id         String
   validado_coordenacao Boolean   @default(false)
+  descricao            String?   @db.Text // Contexto bimestral do professor (Epic 16)
   deleted_at           DateTime? // Soft delete (LGPD compliance)
   created_at           DateTime  @default(now())
   updated_at           DateTime  @updatedAt

@@ -17,7 +17,9 @@ const mockTranscriptionResult: TranscriptionResult = {
 function createMockProvider(name: ProviderSTT): jest.Mocked<STTProvider> {
   return {
     getName: jest.fn().mockReturnValue(name),
-    transcribe: jest.fn().mockResolvedValue({ ...mockTranscriptionResult, provider: name }),
+    transcribe: jest
+      .fn()
+      .mockResolvedValue({ ...mockTranscriptionResult, provider: name }),
     isAvailable: jest.fn().mockResolvedValue(true),
   };
 }
@@ -34,7 +36,9 @@ describe('STTRouterService', () => {
     googleProvider = createMockProvider(ProviderSTT.GOOGLE);
     groqWhisperProvider = createMockProvider(ProviderSTT.GROQ_WHISPER);
     configService = {
-      getSTTConfig: jest.fn().mockReturnValue({ primary: 'WHISPER', fallback: 'GOOGLE' }),
+      getSTTConfig: jest
+        .fn()
+        .mockReturnValue({ primary: 'WHISPER', fallback: 'GOOGLE' }),
       getLLMConfig: jest.fn(),
       getConfig: jest.fn(),
     } as any;
@@ -55,7 +59,10 @@ describe('STTRouterService', () => {
     });
 
     it('should return Google when config sets Google as primary', () => {
-      configService.getSTTConfig.mockReturnValue({ primary: 'GOOGLE', fallback: 'WHISPER' });
+      configService.getSTTConfig.mockReturnValue({
+        primary: 'GOOGLE',
+        fallback: 'WHISPER',
+      });
 
       const provider = service.getSTTProvider();
 
@@ -63,7 +70,10 @@ describe('STTRouterService', () => {
     });
 
     it('should return Groq Whisper when config sets GROQ_WHISPER as primary', () => {
-      configService.getSTTConfig.mockReturnValue({ primary: 'GROQ_WHISPER', fallback: 'WHISPER' });
+      configService.getSTTConfig.mockReturnValue({
+        primary: 'GROQ_WHISPER',
+        fallback: 'WHISPER',
+      });
 
       const provider = service.getSTTProvider();
 
@@ -71,9 +81,14 @@ describe('STTRouterService', () => {
     });
 
     it('should throw for unknown provider key', () => {
-      configService.getSTTConfig.mockReturnValue({ primary: 'AZURE', fallback: 'GOOGLE' });
+      configService.getSTTConfig.mockReturnValue({
+        primary: 'AZURE',
+        fallback: 'GOOGLE',
+      });
 
-      expect(() => service.getSTTProvider()).toThrow('Unknown STT provider: AZURE');
+      expect(() => service.getSTTProvider()).toThrow(
+        'Unknown STT provider: AZURE',
+      );
     });
   });
 
@@ -85,7 +100,10 @@ describe('STTRouterService', () => {
     });
 
     it('should return Whisper when config sets Whisper as fallback', () => {
-      configService.getSTTConfig.mockReturnValue({ primary: 'GOOGLE', fallback: 'WHISPER' });
+      configService.getSTTConfig.mockReturnValue({
+        primary: 'GOOGLE',
+        fallback: 'WHISPER',
+      });
 
       const provider = service.getSTTFallback();
 
@@ -105,7 +123,9 @@ describe('STTRouterService', () => {
     });
 
     it('should fallback to secondary on primary failure', async () => {
-      whisperProvider.transcribe.mockRejectedValueOnce(new Error('Whisper API error'));
+      whisperProvider.transcribe.mockRejectedValueOnce(
+        new Error('Whisper API error'),
+      );
 
       const result = await service.transcribeWithFallback(audioBuffer);
 
@@ -115,7 +135,9 @@ describe('STTRouterService', () => {
     });
 
     it('should throw when both providers fail', async () => {
-      whisperProvider.transcribe.mockRejectedValueOnce(new Error('Whisper down'));
+      whisperProvider.transcribe.mockRejectedValueOnce(
+        new Error('Whisper down'),
+      );
       googleProvider.transcribe.mockRejectedValueOnce(new Error('Google down'));
 
       await expect(service.transcribeWithFallback(audioBuffer)).rejects.toThrow(
@@ -128,11 +150,17 @@ describe('STTRouterService', () => {
 
       await service.transcribeWithFallback(audioBuffer, options);
 
-      expect(whisperProvider.transcribe).toHaveBeenCalledWith(audioBuffer, options);
+      expect(whisperProvider.transcribe).toHaveBeenCalledWith(
+        audioBuffer,
+        options,
+      );
     });
 
     it('should use config-driven provider selection', async () => {
-      configService.getSTTConfig.mockReturnValue({ primary: 'GOOGLE', fallback: 'WHISPER' });
+      configService.getSTTConfig.mockReturnValue({
+        primary: 'GOOGLE',
+        fallback: 'WHISPER',
+      });
 
       const result = await service.transcribeWithFallback(audioBuffer);
 
@@ -142,12 +170,17 @@ describe('STTRouterService', () => {
     });
 
     it('should propagate prompt option to fallback provider', async () => {
-      whisperProvider.transcribe.mockRejectedValueOnce(new Error('Whisper down'));
+      whisperProvider.transcribe.mockRejectedValueOnce(
+        new Error('Whisper down'),
+      );
       const options = { idioma: 'pt-BR', prompt: 'Frações, equações, álgebra' };
 
       await service.transcribeWithFallback(audioBuffer, options);
 
-      expect(googleProvider.transcribe).toHaveBeenCalledWith(audioBuffer, options);
+      expect(googleProvider.transcribe).toHaveBeenCalledWith(
+        audioBuffer,
+        options,
+      );
     });
 
     it('should pass prompt option to primary provider', async () => {
@@ -155,7 +188,10 @@ describe('STTRouterService', () => {
 
       await service.transcribeWithFallback(audioBuffer, options);
 
-      expect(whisperProvider.transcribe).toHaveBeenCalledWith(audioBuffer, options);
+      expect(whisperProvider.transcribe).toHaveBeenCalledWith(
+        audioBuffer,
+        options,
+      );
     });
 
     it('should propagate words field intact from provider result', async () => {
@@ -181,7 +217,9 @@ describe('STTRouterService', () => {
 
     it('should handle timeout on primary and succeed with fallback', async () => {
       // Simulate a provider that hangs indefinitely (never resolves)
-      whisperProvider.transcribe.mockRejectedValueOnce(new Error('Timeout after 300000ms'));
+      whisperProvider.transcribe.mockRejectedValueOnce(
+        new Error('Timeout after 300000ms'),
+      );
 
       const result = await service.transcribeWithFallback(audioBuffer);
 

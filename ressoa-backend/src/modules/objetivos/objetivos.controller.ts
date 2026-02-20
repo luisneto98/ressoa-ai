@@ -8,7 +8,12 @@ import {
   HttpStatus,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { ObjetivosService } from './objetivos.service';
 import { CreateObjetivoDto } from './dto/create-objetivo.dto';
 import {
@@ -33,7 +38,9 @@ export class ObjetivosController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Criar novo objetivo de aprendizagem (BNCC ou custom)' })
+  @ApiOperation({
+    summary: 'Criar novo objetivo de aprendizagem (BNCC ou custom)',
+  })
   @ApiResponse({
     status: 201,
     description: 'Objetivo criado com sucesso',
@@ -55,7 +62,9 @@ export class ObjetivosController {
   }
 
   @Get('tipo-fonte')
-  @ApiOperation({ summary: 'Listar objetivos por tipo de fonte (BNCC, CUSTOM, etc)' })
+  @ApiOperation({
+    summary: 'Listar objetivos por tipo de fonte (BNCC, CUSTOM, etc)',
+  })
   @ApiResponse({
     status: 200,
     description: 'Lista de objetivos retornada com sucesso',
@@ -97,7 +106,9 @@ export class ObjetivosController {
     description: 'Parâmetro tipo_fonte inválido',
   })
   async countByTipoFonte(@Query() query: CountByTipoFonteDto) {
-    const count = await this.objetivosService.countByTipoFonte(query.tipo_fonte);
+    const count = await this.objetivosService.countByTipoFonte(
+      query.tipo_fonte,
+    );
     return { tipo_fonte: query.tipo_fonte, total: count };
   }
 }

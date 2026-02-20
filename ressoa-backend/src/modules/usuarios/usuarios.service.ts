@@ -64,7 +64,10 @@ export class UsuariosService {
       where.perfil_usuario = { isNot: null, is: { role } };
     } else if (allowedRoles) {
       // No explicit role filter, but hierarchy restriction applies
-      where.perfil_usuario = { isNot: null, is: { role: { in: allowedRoles } } };
+      where.perfil_usuario = {
+        isNot: null,
+        is: { role: { in: allowedRoles } },
+      };
     } else {
       // No role filter, no hierarchy restriction: exclude orphaned records
       where.perfil_usuario = { isNot: null };
@@ -251,7 +254,10 @@ export class UsuariosService {
 
     // 5. Check hierarchy
     try {
-      this.validateHierarchyPermission(callerRole, targetUser.perfil_usuario?.role);
+      this.validateHierarchyPermission(
+        callerRole,
+        targetUser.perfil_usuario?.role,
+      );
     } catch {
       throw new ForbiddenException('Sem permissão para desativar este usuário');
     }
@@ -317,9 +323,7 @@ export class UsuariosService {
         targetUser.perfil_usuario?.role,
       );
     } catch {
-      throw new ForbiddenException(
-        'Sem permissão para reativar este usuário',
-      );
+      throw new ForbiddenException('Sem permissão para reativar este usuário');
     }
 
     // 5. Reactivate (set deleted_at = null)

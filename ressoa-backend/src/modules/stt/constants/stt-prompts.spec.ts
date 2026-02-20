@@ -38,7 +38,9 @@ describe('STT Prompts', () => {
     });
 
     it('should map "Língua Portuguesa" to "lingua_portuguesa"', () => {
-      expect(resolveSttPromptKey('Língua Portuguesa')).toBe('lingua_portuguesa');
+      expect(resolveSttPromptKey('Língua Portuguesa')).toBe(
+        'lingua_portuguesa',
+      );
     });
 
     it('should map "Português" to "lingua_portuguesa"', () => {

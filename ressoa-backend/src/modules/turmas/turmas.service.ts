@@ -96,7 +96,10 @@ export class TurmasService {
     this.validateSerieCompatibility(dto.serie, dto.tipo_ensino);
 
     // Story 11.2: Validar contexto pedagógico para turmas customizadas
-    this.validateContextoPedagogico(dto.curriculo_tipo, dto.contexto_pedagogico);
+    this.validateContextoPedagogico(
+      dto.curriculo_tipo,
+      dto.contexto_pedagogico,
+    );
 
     // Validar unicidade: nome + ano_letivo + turno + escola_id
     const existing = await this.prisma.turma.findFirst({
@@ -127,7 +130,9 @@ export class TurmasService {
         professor_id: dto.professor_id,
         escola_id: escolaId, // ✅ From tenant context, not parameter
         curriculo_tipo: dto.curriculo_tipo || CurriculoTipo.BNCC, // Default BNCC
-        contexto_pedagogico: dto.contexto_pedagogico as Prisma.InputJsonValue | undefined,
+        contexto_pedagogico: dto.contexto_pedagogico as
+          | Prisma.InputJsonValue
+          | undefined,
       },
     });
 
@@ -156,7 +161,9 @@ export class TurmasService {
     });
 
     if (!turmaAtual) {
-      throw new NotFoundException(`Turma ${id} não encontrada ou acesso negado`);
+      throw new NotFoundException(
+        `Turma ${id} não encontrada ou acesso negado`,
+      );
     }
 
     // Se dto altera serie OU tipo_ensino, validar compatibilidade
@@ -169,7 +176,10 @@ export class TurmasService {
 
     // Story 11.2: Validar contexto pedagógico se curriculo_tipo for alterado
     if (dto.curriculo_tipo) {
-      this.validateContextoPedagogico(dto.curriculo_tipo, dto.contexto_pedagogico);
+      this.validateContextoPedagogico(
+        dto.curriculo_tipo,
+        dto.contexto_pedagogico,
+      );
     }
 
     // ✅ NEW: Validar unicidade se nome, ano_letivo ou turno forem alterados
@@ -213,7 +223,8 @@ export class TurmasService {
     const updateData: Prisma.TurmaUpdateInput = {
       ...restDto,
       ...(contexto_pedagogico !== undefined && {
-        contexto_pedagogico: contexto_pedagogico as unknown as Prisma.InputJsonValue,
+        contexto_pedagogico:
+          contexto_pedagogico as unknown as Prisma.InputJsonValue,
       }),
     };
 
@@ -267,7 +278,9 @@ export class TurmasService {
     });
 
     if (!turma) {
-      throw new NotFoundException(`Turma ${id} não encontrada ou acesso negado`);
+      throw new NotFoundException(
+        `Turma ${id} não encontrada ou acesso negado`,
+      );
     }
 
     return turma;
@@ -385,7 +398,9 @@ export class TurmasService {
     });
 
     if (!turma) {
-      throw new NotFoundException(`Turma ${id} não encontrada ou acesso negado`);
+      throw new NotFoundException(
+        `Turma ${id} não encontrada ou acesso negado`,
+      );
     }
 
     // Soft delete: apenas seta deleted_at (preserva planejamentos e aulas)

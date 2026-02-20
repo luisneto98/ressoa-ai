@@ -34,7 +34,9 @@ describe('Prompt 3 - Geração de Relatório (Unit)', () => {
       {
         habilidade_codigo: 'EF06MA02',
         nivel_cobertura: 2,
-        evidencias: ['Múltiplos de 2 são números que podem ser divididos por 2 sem resto.'],
+        evidencias: [
+          'Múltiplos de 2 são números que podem ser divididos por 2 sem resto.',
+        ],
         tempo_estimado_minutos: 5,
       },
       {
@@ -58,8 +60,16 @@ describe('Prompt 3 - Geração de Relatório (Unit)', () => {
       { nivel: 3, descricao: 'Aplicar', percentual_tempo: 30 },
     ],
     metodologias: [
-      { tipo: 'Expositiva dialogada', percentual: 60, evidencias: ['Professor explica com perguntas'] },
-      { tipo: 'Resolução de problemas', percentual: 30, evidencias: ['Exercícios práticos em duplas'] },
+      {
+        tipo: 'Expositiva dialogada',
+        percentual: 60,
+        evidencias: ['Professor explica com perguntas'],
+      },
+      {
+        tipo: 'Resolução de problemas',
+        percentual: 30,
+        evidencias: ['Exercícios práticos em duplas'],
+      },
     ],
     adequacao_cognitiva: {
       score: 8,
@@ -238,7 +248,9 @@ Aula bem estruturada com introdução clara, desenvolvimento lógico, mas faltou
       expect(markdown).toContain('EF06MA03');
 
       // Descrições breves
-      expect(markdown).toContain('Comparar, ordenar, ler e escrever números naturais');
+      expect(markdown).toContain(
+        'Comparar, ordenar, ler e escrever números naturais',
+      );
       expect(markdown).toContain('sistema de numeração decimal');
     });
 
@@ -321,8 +333,9 @@ Aula bem estruturada com introdução clara, desenvolvimento lógico, mas faltou
       expect(markdown).toContain('Considerar');
 
       // NÃO deve ter framing negativo direto nos Próximos Passos
-      const proximosPassosSection = markdown.split('## Próximos Passos')[1] || '';
-      expect(proximosPassosSection).not.toMatch(/^faltou /mi); // Não deve iniciar com "faltou"
+      const proximosPassosSection =
+        markdown.split('## Próximos Passos')[1] || '';
+      expect(proximosPassosSection).not.toMatch(/^faltou /im); // Não deve iniciar com "faltou"
       expect(markdown).not.toContain('problema:');
       expect(markdown).not.toContain('erro:');
     });
@@ -443,7 +456,9 @@ Aula bem estruturada com introdução clara, desenvolvimento lógico, mas faltou
       const result = await gptProvider.generate('test-prompt', {});
       const markdown = result.texto;
 
-      const wordCount = markdown.split(/\s+/).filter((word) => word.length > 0).length;
+      const wordCount = markdown
+        .split(/\s+/)
+        .filter((word) => word.length > 0).length;
 
       // Extensão adequada - mock é conciso mas deve ser substancial
       // Real output from GPT-4 mini will be 800-1200 words, mock is shorter for test speed

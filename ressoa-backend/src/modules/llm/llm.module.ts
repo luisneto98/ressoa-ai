@@ -42,6 +42,12 @@ import { LLMRouterService } from './services/llm-router.service';
     PromptService,
     LLMRouterService, // Config-driven LLM provider routing (Story 14.1)
   ],
-  exports: ['CLAUDE_PROVIDER', 'GPT_PROVIDER', 'GEMINI_PROVIDER', PromptService, LLMRouterService],
+  exports: [
+    'CLAUDE_PROVIDER',
+    'GPT_PROVIDER',
+    'GEMINI_PROVIDER',
+    PromptService,
+    LLMRouterService,
+  ],
 })
 export class LLMModule {}

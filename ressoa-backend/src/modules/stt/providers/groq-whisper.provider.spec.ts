@@ -258,14 +258,18 @@ describe('GroqWhisperProvider', () => {
     it('should cleanup temp file after transcription', async () => {
       await provider.transcribe(audioBuffer);
 
-      expect(fs.promises.unlink).toHaveBeenCalledWith('/tmp/test-uuid-1234.mp3');
+      expect(fs.promises.unlink).toHaveBeenCalledWith(
+        '/tmp/test-uuid-1234.mp3',
+      );
     });
 
     it('should cleanup temp file on error', async () => {
       mockCreate.mockRejectedValueOnce(new Error('API error'));
 
       await expect(provider.transcribe(audioBuffer)).rejects.toThrow();
-      expect(fs.promises.unlink).toHaveBeenCalledWith('/tmp/test-uuid-1234.mp3');
+      expect(fs.promises.unlink).toHaveBeenCalledWith(
+        '/tmp/test-uuid-1234.mp3',
+      );
     });
 
     it('should normalize language codes (pt-BR → pt)', async () => {
@@ -322,7 +326,10 @@ describe('GroqWhisperProvider', () => {
       // Simulate a timeout error thrown by the timeout mechanism
       mockCreate.mockImplementationOnce(() => {
         return new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Groq Whisper timeout after 300000ms')), 10);
+          setTimeout(
+            () => reject(new Error('Groq Whisper timeout after 300000ms')),
+            10,
+          );
         });
       });
 
@@ -393,7 +400,9 @@ describe('GroqWhisperProvider', () => {
 
   describe('isAvailable', () => {
     it('should check availability via isAvailable()', async () => {
-      mockModelsRetrieve.mockResolvedValueOnce({ id: 'whisper-large-v3-turbo' });
+      mockModelsRetrieve.mockResolvedValueOnce({
+        id: 'whisper-large-v3-turbo',
+      });
 
       const result = await provider.isAvailable();
 

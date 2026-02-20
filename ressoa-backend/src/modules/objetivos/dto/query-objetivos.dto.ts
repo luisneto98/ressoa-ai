@@ -12,7 +12,9 @@ export class FindByTipoFonteDto {
     enum: TipoFonte,
     example: 'BNCC',
   })
-  @IsEnum(TipoFonte, { message: 'tipo_fonte deve ser um valor válido: BNCC, CUSTOM, CEFR, SENAC' })
+  @IsEnum(TipoFonte, {
+    message: 'tipo_fonte deve ser um valor válido: BNCC, CUSTOM, CEFR, SENAC',
+  })
   @IsNotEmpty()
   tipo_fonte!: TipoFonte;
 }
@@ -41,7 +43,9 @@ export class CountByTipoFonteDto {
     enum: TipoFonte,
     example: 'CUSTOM',
   })
-  @IsEnum(TipoFonte, { message: 'tipo_fonte deve ser um valor válido: BNCC, CUSTOM, CEFR, SENAC' })
+  @IsEnum(TipoFonte, {
+    message: 'tipo_fonte deve ser um valor válido: BNCC, CUSTOM, CEFR, SENAC',
+  })
   @IsNotEmpty()
   tipo_fonte!: TipoFonte;
 }

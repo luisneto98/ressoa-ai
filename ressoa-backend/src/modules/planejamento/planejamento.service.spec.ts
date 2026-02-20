@@ -4,6 +4,8 @@ import {
   NotFoundException,
   ForbiddenException,
 } from '@nestjs/common';
+import { validate } from 'class-validator';
+import { plainToInstance } from 'class-transformer';
 import { PlanejamentoService } from './planejamento.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreatePlanejamentoDto } from './dto/create-planejamento.dto';
@@ -94,7 +96,10 @@ describe('PlanejamentoService - Story 11.3 (Objetivos Genéricos)', () => {
     habilidade_bncc_id: null,
     turma_id: mockTurmaCustom.id,
     area_conhecimento: 'Matemática Financeira',
-    criterios_evidencia: ['Resolver problemas de juros', 'Calcular porcentagens'],
+    criterios_evidencia: [
+      'Resolver problemas de juros',
+      'Calcular porcentagens',
+    ],
     contexto_json: null,
     created_at: new Date(),
     updated_at: new Date(),
@@ -199,9 +204,21 @@ describe('PlanejamentoService - Story 11.3 (Objetivos Genéricos)', () => {
         bimestre: 1,
         ano_letivo: 2026,
         objetivos: [
-          { objetivo_id: mockObjetivoCustom1.id, peso: 1.0, aulas_previstas: 10 },
-          { objetivo_id: mockObjetivoCustom2.id, peso: 1.5, aulas_previstas: 12 },
-          { objetivo_id: mockObjetivoCustom3.id, peso: 1.0, aulas_previstas: 8 },
+          {
+            objetivo_id: mockObjetivoCustom1.id,
+            peso: 1.0,
+            aulas_previstas: 10,
+          },
+          {
+            objetivo_id: mockObjetivoCustom2.id,
+            peso: 1.5,
+            aulas_previstas: 12,
+          },
+          {
+            objetivo_id: mockObjetivoCustom3.id,
+            peso: 1.0,
+            aulas_previstas: 8,
+          },
         ],
       };
 
@@ -263,7 +280,9 @@ describe('PlanejamentoService - Story 11.3 (Objetivos Genéricos)', () => {
       expect(result.objetivos[0].objetivo.tipo_fonte).toBe('CUSTOM');
       expect(result.objetivos[1].peso).toBe(1.5); // Custom peso
       expect(mockPrismaService.$transaction).toHaveBeenCalled();
-      expect(mockPrismaService.planejamentoObjetivo.createMany).toHaveBeenCalledWith({
+      expect(
+        mockPrismaService.planejamentoObjetivo.createMany,
+      ).toHaveBeenCalledWith({
         data: [
           {
             planejamento_id: createdPlan.id,
@@ -416,7 +435,11 @@ describe('PlanejamentoService - Story 11.3 (Objetivos Genéricos)', () => {
             objetivo: mockObjetivoBNCC,
           },
         ],
-        professor: { id: mockProfessorId, nome: 'Prof Test', perfil_usuario: {} },
+        professor: {
+          id: mockProfessorId,
+          nome: 'Prof Test',
+          perfil_usuario: {},
+        },
       });
 
       // Act
@@ -426,7 +449,9 @@ describe('PlanejamentoService - Story 11.3 (Objetivos Genéricos)', () => {
       expect(result.habilidades).toBeDefined();
       expect(result.habilidades.length).toBeGreaterThan(0);
       expect(result.objetivos).toBeDefined(); // Dual format
-      expect(mockPrismaService.planejamentoHabilidade.createMany).toHaveBeenCalled();
+      expect(
+        mockPrismaService.planejamentoHabilidade.createMany,
+      ).toHaveBeenCalled();
     });
   });
 
@@ -528,7 +553,11 @@ describe('PlanejamentoService - Story 11.3 (Objetivos Genéricos)', () => {
         turma: mockTurma,
         habilidades: [],
         objetivos: [],
-        professor: { id: mockProfessorId, nome: 'Prof Test', perfil_usuario: {} },
+        professor: {
+          id: mockProfessorId,
+          nome: 'Prof Test',
+          perfil_usuario: {},
+        },
       });
 
       // Act & Assert
@@ -544,7 +573,10 @@ describe('PlanejamentoService - Story 11.3 (Objetivos Genéricos)', () => {
       mockPrismaService.planejamento.findMany.mockResolvedValue([
         {
           ...mockPlanejamento,
-          turma: { ...mockTurma, professor: { id: mockProfessorId, nome: 'Prof' } },
+          turma: {
+            ...mockTurma,
+            professor: { id: mockProfessorId, nome: 'Prof' },
+          },
           habilidades: [],
           _count: {
             habilidades: 3,
@@ -569,7 +601,10 @@ describe('PlanejamentoService - Story 11.3 (Objetivos Genéricos)', () => {
       mockPrismaService.planejamento.findMany.mockResolvedValue([
         {
           ...mockPlanejamento,
-          turma: { ...mockTurma, professor: { id: mockProfessorId, nome: 'Prof' } },
+          turma: {
+            ...mockTurma,
+            professor: { id: mockProfessorId, nome: 'Prof' },
+          },
           habilidades: [],
           _count: { habilidades: 2, objetivos: 3 },
         },
@@ -577,7 +612,10 @@ describe('PlanejamentoService - Story 11.3 (Objetivos Genéricos)', () => {
           ...mockPlanejamento,
           id: 'plan-2',
           professor_id: 'outro-prof-uuid',
-          turma: { ...mockTurma, professor: { id: 'outro-prof-uuid', nome: 'Prof 2' } },
+          turma: {
+            ...mockTurma,
+            professor: { id: 'outro-prof-uuid', nome: 'Prof 2' },
+          },
           habilidades: [],
           _count: { habilidades: 1, objetivos: 4 },
         },
@@ -595,6 +633,192 @@ describe('PlanejamentoService - Story 11.3 (Objetivos Genéricos)', () => {
           }),
         }),
       );
+    });
+  });
+
+  describe('Story 16.1 - campo descricao', () => {
+    it('✅ AC4 (Story 16.1): deve criar planejamento com descricao preenchida', async () => {
+      // Arrange
+      const createDto: CreatePlanejamentoDto = {
+        turma_id: mockTurma.id,
+        bimestre: 1,
+        ano_letivo: 2026,
+        habilidades: [{ habilidade_id: 'hab-uuid-1' }],
+        descricao: 'Pretendo usar material concreto para frações, ênfase em resolução de problemas.',
+      };
+
+      const mockHabilidades = [
+        { id: 'hab-uuid-1', disciplina: 'MATEMATICA', ano_inicio: 6, ano_fim: null },
+      ];
+
+      mockPrismaService.turma.findUnique.mockResolvedValue(mockTurma);
+      mockPrismaService.habilidade.findMany.mockResolvedValue(mockHabilidades);
+
+      const createdPlan = {
+        ...mockPlanejamento,
+        id: 'plan-descricao-uuid',
+        descricao: createDto.descricao,
+      };
+      mockPrismaService.planejamento.create.mockResolvedValue(createdPlan);
+
+      mockPrismaService.planejamento.findFirst.mockResolvedValue({
+        ...createdPlan,
+        turma: mockTurma,
+        habilidades: [
+          {
+            id: 'ph-1',
+            habilidade_id: 'hab-uuid-1',
+            peso: 1.0,
+            habilidade: { codigo: 'EF06MA01', descricao: 'Habilidade BNCC' },
+          },
+        ],
+        objetivos: [],
+        professor: { id: mockProfessorId, nome: 'Prof Test', perfil_usuario: {} },
+      });
+
+      // Act
+      const result = await service.create(createDto, mockUser);
+
+      // Assert
+      expect(mockPrismaService.planejamento.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            descricao: createDto.descricao,
+          }),
+        }),
+      );
+      expect(result).toBeDefined();
+    });
+
+    it('✅ AC4 (Story 16.1): findOne deve retornar descricao preenchida', async () => {
+      // Arrange
+      const planId = 'plan-findone-descricao-uuid';
+      const descricao = 'Descrição pedagógica do bimestre';
+      mockPrismaService.planejamento.findFirst.mockResolvedValue({
+        ...mockPlanejamento,
+        id: planId,
+        descricao,
+        turma: mockTurma,
+        habilidades: [],
+        objetivos: [],
+        professor: { id: mockProfessorId, nome: 'Prof Test', perfil_usuario: {} },
+      });
+
+      // Act
+      const result = await service.findOne(planId, mockUser);
+
+      // Assert
+      expect(result.descricao).toBe(descricao);
+    });
+
+    it('✅ AC3 (Story 16.1): findOne deve retornar descricao null para planejamentos sem descricao', async () => {
+      // Arrange
+      const planId = 'plan-findone-sem-descricao-uuid';
+      mockPrismaService.planejamento.findFirst.mockResolvedValue({
+        ...mockPlanejamento,
+        id: planId,
+        descricao: null,
+        turma: mockTurma,
+        habilidades: [],
+        objetivos: [],
+        professor: { id: mockProfessorId, nome: 'Prof Test', perfil_usuario: {} },
+      });
+
+      // Act
+      const result = await service.findOne(planId, mockUser);
+
+      // Assert
+      expect(result.descricao).toBeNull();
+    });
+
+    it('✅ AC3 (Story 16.1): deve criar planejamento sem descricao (retrocompatibilidade)', async () => {
+      // Arrange
+      const createDto: CreatePlanejamentoDto = {
+        turma_id: mockTurma.id,
+        bimestre: 1,
+        ano_letivo: 2026,
+        habilidades: [{ habilidade_id: 'hab-uuid-1' }],
+        // descricao ausente (undefined)
+      };
+
+      const mockHabilidades = [
+        { id: 'hab-uuid-1', disciplina: 'MATEMATICA', ano_inicio: 6, ano_fim: null },
+      ];
+
+      mockPrismaService.turma.findUnique.mockResolvedValue(mockTurma);
+      mockPrismaService.habilidade.findMany.mockResolvedValue(mockHabilidades);
+
+      const createdPlan = {
+        ...mockPlanejamento,
+        id: 'plan-sem-descricao-uuid',
+        descricao: null,
+      };
+      mockPrismaService.planejamento.create.mockResolvedValue(createdPlan);
+
+      mockPrismaService.planejamento.findFirst.mockResolvedValue({
+        ...createdPlan,
+        turma: mockTurma,
+        habilidades: [],
+        objetivos: [],
+        professor: { id: mockProfessorId, nome: 'Prof Test', perfil_usuario: {} },
+      });
+
+      // Act
+      const result = await service.create(createDto, mockUser);
+
+      // Assert — descricao é undefined (Prisma ignora campos undefined)
+      expect(mockPrismaService.planejamento.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            turma_id: mockTurma.id,
+          }),
+        }),
+      );
+      expect(result).toBeDefined();
+    });
+
+    it('❌ AC2 (Story 16.1): descricao com 2001 chars deve falhar na validação @MaxLength(2000)', async () => {
+      // Real class-validator test — verifica que o decorator @MaxLength(2000) rejeita valores acima do limite
+      const dto = plainToInstance(CreatePlanejamentoDto, {
+        turma_id: '550e8400-e29b-41d4-a716-446655440000',
+        bimestre: 1,
+        ano_letivo: 2026,
+        descricao: 'a'.repeat(2001),
+      });
+
+      const errors = await validate(dto);
+      const descricaoErrors = errors.find((e) => e.property === 'descricao');
+
+      expect(descricaoErrors).toBeDefined();
+      expect(descricaoErrors?.constraints).toHaveProperty('maxLength');
+    });
+
+    it('✅ AC2 (Story 16.1): descricao com exatamente 2000 chars deve passar na validação', async () => {
+      const dto = plainToInstance(CreatePlanejamentoDto, {
+        turma_id: '550e8400-e29b-41d4-a716-446655440000',
+        bimestre: 1,
+        ano_letivo: 2026,
+        descricao: 'a'.repeat(2000),
+      });
+
+      const errors = await validate(dto);
+      const descricaoErrors = errors.find((e) => e.property === 'descricao');
+
+      expect(descricaoErrors).toBeUndefined(); // 2000 chars é válido
+    });
+
+    it('✅ AC3 (Story 16.1): descricao ausente (undefined) deve passar na validação (@IsOptional)', async () => {
+      const dto = plainToInstance(CreatePlanejamentoDto, {
+        turma_id: '550e8400-e29b-41d4-a716-446655440000',
+        bimestre: 1,
+        ano_letivo: 2026,
+        // descricao ausente
+      });
+
+      const errors = await validate(dto);
+      const descricaoErrors = errors.find((e) => e.property === 'descricao');
+
+      expect(descricaoErrors).toBeUndefined();
     });
   });
 
@@ -710,9 +934,21 @@ describe('PlanejamentoService - Story 11.3 (Objetivos Genéricos)', () => {
         turma: mockTurmaCustom,
         habilidades: [],
         objetivos: [
-          { id: 'po-1', objetivo_id: mockObjetivoBNCC.id, objetivo: mockObjetivoBNCC },
-          { id: 'po-2', objetivo_id: mockObjetivoCustom1.id, objetivo: mockObjetivoCustom1 },
-          { id: 'po-3', objetivo_id: mockObjetivoCustom2.id, objetivo: mockObjetivoCustom2 },
+          {
+            id: 'po-1',
+            objetivo_id: mockObjetivoBNCC.id,
+            objetivo: mockObjetivoBNCC,
+          },
+          {
+            id: 'po-2',
+            objetivo_id: mockObjetivoCustom1.id,
+            objetivo: mockObjetivoCustom1,
+          },
+          {
+            id: 'po-3',
+            objetivo_id: mockObjetivoCustom2.id,
+            objetivo: mockObjetivoCustom2,
+          },
         ],
         professor: { id: mockProfessorId, nome: 'Prof', perfil_usuario: {} },
       });

@@ -233,7 +233,9 @@ export class EmailService {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
       // Throw error so AdminService can log and handle gracefully
-      throw new Error(`Failed to send director invitation email: ${errorMessage}`);
+      throw new Error(
+        `Failed to send director invitation email: ${errorMessage}`,
+      );
     }
   }
 

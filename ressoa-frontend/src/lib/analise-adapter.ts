@@ -1,20 +1,32 @@
 /**
- * Adapter para normalizar análises de diferentes versões (v2 → v3)
+ * Adapter para normalizar análises de diferentes versões (v2 → v3 → v4)
  *
  * V3 Changes:
  * - cobertura_bncc.habilidades: "codigo" → "objetivo_codigo", nivel_cobertura: string → number
  * - analise_qualitativa: estrutura reorganizada com aninhamento duplo
  * - alertas: "nivel" → "severidade", "mensagem" → "descricao", "acoes_sugeridas" → "recomendacao"
  * - exercicios_original: "exercicios" → aninhado dentro
+ *
+ * V4 Changes (incrementais sobre V3):
+ * - cobertura_bncc.habilidades[].evidencias: string[] → {tipo, texto, speaker}[]
+ * - analise_qualitativa.analise_qualitativa: adiciona campo participacao_alunos
+ * - alertas: adiciona campo speaker_analysis
+ * - exercicios_original: usa chave "exercicios" em vez de "questoes"
  */
 
 export type NivelCobertura = 'COMPLETE' | 'PARTIAL' | 'MENTIONED' | 'NOT_COVERED';
 export type NivelAlerta = 'INFO' | 'WARNING' | 'CRITICAL';
 
+interface EvidenciaV4 {
+  tipo: string;
+  texto: string;
+  speaker: 'PROFESSOR' | 'ALUNO';
+}
+
 interface HabilidadeV3 {
   objetivo_codigo: string;
   nivel_cobertura: number; // 1-3
-  evidencias: string[];
+  evidencias: string[] | EvidenciaV4[] | Array<{ texto_literal: string }>;
   observacoes?: string;
   criterios_atendidos?: string[];
   nivel_bloom_detectado?: string;
@@ -31,7 +43,7 @@ interface HabilidadeNormalized {
   codigo: string;
   descricao: string;
   nivel_cobertura: NivelCobertura;
-  evidencias: Array<{ texto_literal: string }>;
+  evidencias: Array<{ texto_literal: string; speaker?: string; tipo?: string }>;
   observacoes?: string;
   criterios_atendidos?: string[];
   nivel_bloom_detectado?: string;
@@ -59,6 +71,15 @@ interface AlertaNormalized {
   metadata?: any;
 }
 
+interface ParticipacaoAlunos {
+  observacoes: string;
+  perguntas_alunos: number;
+  respostas_alunos: number;
+  qualidade_interacoes: string;
+  intervencoes_contadas: number;
+  tempo_estimado_fala_alunos_pct: number;
+}
+
 interface AnaliseQualitativaV3 {
   analise_qualitativa: {
     pontos_fortes?: string[];
@@ -69,6 +90,7 @@ interface AnaliseQualitativaV3 {
     comentario_sintetico?: string;
     niveis_bloom_estimulados?: string[];
     estrategias_metodologicas?: string[];
+    participacao_alunos?: ParticipacaoAlunos; // V4
   };
 }
 
@@ -79,6 +101,14 @@ interface AnaliseQualitativaNormalized {
   engajamento?: any;
   clareza_comunicacao?: any;
   coerencia_narrativa?: any;
+  participacao_alunos?: {
+    perguntas_alunos: number;
+    respostas_alunos: number;
+    intervencoes_contadas: number;
+    tempo_fala_alunos_pct: number;
+    qualidade_interacoes: string;
+    observacoes: string;
+  };
   resumo_geral?: {
     nota_geral: number;
     pontos_fortes: string[];
@@ -91,10 +121,11 @@ interface QuestaoV3 {
   tipo: string;
   titulo?: string;
   enunciado: string;
-  gabarito: string; // v3 usa string direta
+  gabarito: string | object; // v3 usa string direta
   nivel_bloom: string;
   justificativa?: string;
   habilidades_trabalhadas?: string[];
+  alternativas?: Array<{ letra: string; texto: string; correta?: boolean }>;
   // Campos v2 (backward compat)
   numero?: number;
 }
@@ -103,6 +134,7 @@ interface QuestaoNormalized {
   numero: number;
   tipo?: string;
   enunciado: string;
+  alternativas?: Array<{ letra: string; texto: string; correta: boolean }>;
   gabarito?: {
     resposta_curta?: string;
   };
@@ -112,7 +144,7 @@ interface QuestaoNormalized {
 }
 
 /**
- * Converte nivel_cobertura numérico (v3) para string enum (v2)
+ * Converte nivel_cobertura numérico (v3/v4) para string enum (v2)
  */
 export function normalizeNivelCobertura(nivel: unknown): NivelCobertura {
   if (typeof nivel === 'string') {
@@ -131,19 +163,24 @@ export function normalizeNivelCobertura(nivel: unknown): NivelCobertura {
 }
 
 /**
- * Normaliza habilidade v3 → v2
+ * Normaliza habilidade v3/v4 → v2
+ * V4 evidencias: {tipo, texto, speaker}[] → {texto_literal, speaker?, tipo?}[]
  */
 export function normalizeHabilidade(hab: HabilidadeV3): HabilidadeNormalized {
   const codigo = hab.objetivo_codigo || hab.codigo || 'N/A';
   const descricao = hab.descricao || hab.observacoes || '';
   const nivel_cobertura = normalizeNivelCobertura(hab.nivel_cobertura);
 
-  // Evidências: v3 usa string[], v2 usa {texto_literal: string}[]
-  let evidencias: Array<{ texto_literal: string }> = [];
+  // Evidências: v4 usa {tipo, texto, speaker}[], v3 usa string[], v2 usa {texto_literal}[]
+  let evidencias: Array<{ texto_literal: string; speaker?: string; tipo?: string }> = [];
   if (Array.isArray(hab.evidencias)) {
-    evidencias = hab.evidencias.map((ev: any) =>
-      typeof ev === 'string' ? { texto_literal: ev } : ev
-    );
+    evidencias = hab.evidencias.map((ev: any) => {
+      if (typeof ev === 'string') return { texto_literal: ev };
+      // V4 format: { tipo, texto, speaker }
+      if ('texto' in ev) return { texto_literal: ev.texto, speaker: ev.speaker, tipo: ev.tipo };
+      // V2 format: { texto_literal, speaker?, tipo? }
+      return ev;
+    });
   }
 
   return {
@@ -162,7 +199,7 @@ export function normalizeHabilidade(hab: HabilidadeV3): HabilidadeNormalized {
 }
 
 /**
- * Mapeia severidade v3 → nivel v2
+ * Mapeia severidade v3/v4 → nivel v2
  */
 function mapSeveridadeToNivel(severidade: string): NivelAlerta {
   const upper = severidade.toUpperCase();
@@ -172,7 +209,7 @@ function mapSeveridadeToNivel(severidade: string): NivelAlerta {
 }
 
 /**
- * Normaliza alerta v3 → v2
+ * Normaliza alerta v3/v4 → v2
  */
 export function normalizeAlerta(alerta: AlertaV3): AlertaNormalized {
   return {
@@ -186,7 +223,7 @@ export function normalizeAlerta(alerta: AlertaV3): AlertaNormalized {
 }
 
 /**
- * Calcula nota geral baseada no score_geral_aula (v3)
+ * Calcula nota geral baseada no score_geral_aula (v3/v4)
  */
 function calcularNotaGeral(score?: number): number {
   if (!score) return 7; // Default neutro
@@ -195,8 +232,8 @@ function calcularNotaGeral(score?: number): number {
 }
 
 /**
- * Normaliza questão v3 → v2
- * V3: { id, gabarito: string, habilidades_trabalhadas: string[] }
+ * Normaliza questão v3/v4 → v2
+ * V3/V4: { id, gabarito: string, habilidades_trabalhadas: string[] }
  * V2: { numero, gabarito: { resposta_curta }, habilidade_bncc: string }
  */
 export function normalizeQuestao(questao: QuestaoV3): QuestaoNormalized {
@@ -205,13 +242,29 @@ export function normalizeQuestao(questao: QuestaoV3): QuestaoNormalized {
     return questao as any;
   }
 
+  const isMultipla = questao.tipo === 'MULTIPLA_ESCOLHA';
+  const gabaritoStr = typeof questao.gabarito === 'string' ? questao.gabarito : undefined;
+
+  // Preserva alternativas e marca a correta com base no gabarito (só para múltipla escolha)
+  const alternativas = questao.alternativas?.map((alt) => ({
+    letra: alt.letra,
+    texto: alt.texto,
+    correta: isMultipla && gabaritoStr
+      ? alt.letra.toUpperCase() === gabaritoStr.toUpperCase()
+      : (alt.correta ?? false),
+  }));
+
   return {
     numero: questao.id,
     tipo: questao.tipo,
     enunciado: questao.enunciado,
-    gabarito: typeof questao.gabarito === 'string'
-      ? { resposta_curta: questao.gabarito }
-      : questao.gabarito,
+    alternativas,
+    // Para múltipla escolha o gabarito já está embutido nas alternativas marcadas
+    gabarito: isMultipla
+      ? undefined
+      : typeof questao.gabarito === 'string'
+        ? { resposta_curta: questao.gabarito }
+        : (questao.gabarito as QuestaoNormalized['gabarito']),
     nivel_bloom: questao.nivel_bloom,
     habilidade_bncc: questao.habilidades_trabalhadas?.[0], // Pega a primeira habilidade
     justificativa_pedagogica: questao.justificativa,
@@ -219,8 +272,8 @@ export function normalizeQuestao(questao: QuestaoV3): QuestaoNormalized {
 }
 
 /**
- * Normaliza analise_qualitativa v3 → v2
- * V3 tem aninhamento duplo: { analise_qualitativa: { pontos_fortes, ... } }
+ * Normaliza analise_qualitativa v3/v4 → v2
+ * V3/V4 tem aninhamento duplo: { analise_qualitativa: { pontos_fortes, ..., participacao_alunos? } }
  */
 export function normalizeAnaliseQualitativa(
   qualitativaV3: AnaliseQualitativaV3 | any,
@@ -231,15 +284,27 @@ export function normalizeAnaliseQualitativa(
     return qualitativaV3;
   }
 
-  // Extrai o objeto aninhado v3
+  // Extrai o objeto aninhado v3/v4
   const qual = qualitativaV3?.analise_qualitativa || qualitativaV3 || {};
+
+  // Normaliza participacao_alunos (V4)
+  const participacaoAlunos = qual.participacao_alunos
+    ? {
+        perguntas_alunos: qual.participacao_alunos.perguntas_alunos,
+        respostas_alunos: qual.participacao_alunos.respostas_alunos,
+        intervencoes_contadas: qual.participacao_alunos.intervencoes_contadas,
+        tempo_fala_alunos_pct: qual.participacao_alunos.tempo_estimado_fala_alunos_pct,
+        qualidade_interacoes: qual.participacao_alunos.qualidade_interacoes,
+        observacoes: qual.participacao_alunos.observacoes,
+      }
+    : undefined;
 
   // Mapeia para estrutura v2
   return {
     resumo_geral: {
       nota_geral: calcularNotaGeral(scoreGeralAula),
       pontos_fortes: qual.pontos_fortes || [],
-      pontos_atencao: qual.pontos_melhoria || [], // v3 usa "pontos_melhoria"
+      pontos_atencao: qual.pontos_melhoria || [], // v3/v4 usa "pontos_melhoria"
     },
     taxonomia_bloom: {
       niveis_identificados: qual.niveis_bloom_estimulados || [],
@@ -262,19 +327,27 @@ export function normalizeAnaliseQualitativa(
     coerencia_narrativa: {
       estrutura_presente: true, // Inferido
     },
-    comentario_sintetico: qual.comentario_sintetico, // V3: Preserva comentário sintético
+    comentario_sintetico: qual.comentario_sintetico, // V3/V4: Preserva comentário sintético
+    participacao_alunos: participacaoAlunos, // V4: dados de participação
   };
 }
 
 /**
- * Adapter principal: converte análise completa v3 → v2
+ * Adapter principal: converte análise completa v3/v4 → v2
  */
 export function normalizeAnaliseV3(analise: any): any {
-  const isV3 = analise.metadata?.prompt_versoes?.cobertura?.startsWith('v3');
+  const version = analise.metadata?.prompt_versoes?.cobertura;
+  const needsNormalization = version?.startsWith('v3') || version?.startsWith('v4');
 
-  if (!isV3) {
+  if (!needsNormalization) {
     return analise; // Já está em v2 ou formato legado
   }
+
+  // exercicios_original: V4 usa chave "exercicios" (não "questoes")
+  // V3 usa "questoes" (mesmo formato que exercicios)
+  const exerciciosOriginalQuestoes =
+    analise.exercicios_original?.questoes ??
+    analise.exercicios_original?.exercicios; // V4
 
   return {
     ...analise,
@@ -297,9 +370,13 @@ export function normalizeAnaliseV3(analise: any): any {
                        analise.alertas?.score_geral_aula >= 60 ? 'BOM' : 'ATENCAO',
       },
       score_geral_aula: analise.alertas?.score_geral_aula,
+      speaker_analysis: analise.alertas?.speaker_analysis, // V4
     },
     exercicios: {
       questoes: (analise.exercicios?.questoes || []).map(normalizeQuestao),
     },
+    exercicios_original: exerciciosOriginalQuestoes
+      ? { questoes: exerciciosOriginalQuestoes.map(normalizeQuestao) }
+      : analise.exercicios_original,
   };
 }

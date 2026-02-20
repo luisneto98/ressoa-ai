@@ -109,9 +109,7 @@ describe('POST /api/v1/diretor/invite-professor (Story 13.5)', () => {
       });
 
     if (coordenadorLogin.status !== 200) {
-      throw new Error(
-        `Coordenador login failed: ${coordenadorLogin.status}`,
-      );
+      throw new Error(`Coordenador login failed: ${coordenadorLogin.status}`);
     }
 
     coordenadorToken = coordenadorLogin.body.access_token;

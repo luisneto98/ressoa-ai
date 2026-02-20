@@ -38,8 +38,7 @@ export class CreateEscolaDto {
     example: 'particular',
   })
   @IsEnum(['particular', 'publica_municipal', 'publica_estadual'], {
-    message:
-      'Tipo deve ser: particular, publica_municipal ou publica_estadual',
+    message: 'Tipo deve ser: particular, publica_municipal ou publica_estadual',
   })
   tipo!: 'particular' | 'publica_municipal' | 'publica_estadual';
 

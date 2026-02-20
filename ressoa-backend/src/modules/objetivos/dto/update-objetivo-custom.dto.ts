@@ -9,4 +9,6 @@ import { CreateObjetivoCustomDto } from './create-objetivo-custom.dto';
  * Todos os campos são opcionais (patch parcial)
  * Validações do CreateObjetivoCustomDto são aplicadas quando campos estão presentes
  */
-export class UpdateObjetivoCustomDto extends PartialType(CreateObjetivoCustomDto) {}
+export class UpdateObjetivoCustomDto extends PartialType(
+  CreateObjetivoCustomDto,
+) {}

@@ -22,6 +22,10 @@ const LABELS: Record<string, string> = {
   variacao: 'Variação Metodológica',
   nivel: 'Nível',
   perguntas_alunos: 'Perguntas dos Alunos',
+  respostas_alunos: 'Respostas dos Alunos',
+  intervencoes_contadas: 'Intervenções Contadas',
+  tempo_fala_alunos_pct: 'Fala dos Alunos (%)',
+  qualidade_interacoes: 'Qualidade das Interações',
   participacao_estimulada: 'Participação Estimulada',
   discussoes: 'Discussões Observadas',
   sinais_positivos: 'Sinais Positivos',
@@ -105,16 +109,21 @@ function renderValue(key: string, value: any): React.ReactNode {
     return <ScoreBadge value={value} />;
   }
 
-  // Bloom levels
+  // Bloom levels - V3/V4 usa strings ('LEMBRAR'), V2 usa numbers (1-6)
   if (key === 'niveis_identificados' && Array.isArray(value)) {
     return (
       <div className="flex gap-2 flex-wrap">
-        {value.map((level: number) => <BloomBadge key={level} level={level} />)}
+        {value.map((level: number | string) =>
+          typeof level === 'number'
+            ? <BloomBadge key={level} level={level} />
+            : <Badge key={level} variant="outline" className="text-xs">{level}</Badge>
+        )}
       </div>
     );
   }
-  if (key === 'nivel_dominante' && typeof value === 'number') {
-    return <BloomBadge level={value} />;
+  if (key === 'nivel_dominante') {
+    if (typeof value === 'number') return <BloomBadge level={value} />;
+    if (typeof value === 'string') return <Badge variant="outline" className="text-xs">{value}</Badge>;
   }
 
   // Percentual breakdown

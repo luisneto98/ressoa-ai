@@ -53,6 +53,10 @@ const mockPrisma = {
       id: 'transcricao-uuid',
       ...args.data,
     })),
+    upsert: jest.fn().mockImplementation((args: any) => ({
+      id: 'transcricao-uuid',
+      ...args.create,
+    })),
   },
 };
 
@@ -86,9 +90,7 @@ describe('TranscricaoService - Prompt Resolution', () => {
   });
 
   it('should pass matematica prompt when discipline is Matemática', async () => {
-    mockPrisma.aula.findUnique.mockResolvedValue(
-      createMockAula('Matemática'),
-    );
+    mockPrisma.aula.findUnique.mockResolvedValue(createMockAula('Matemática'));
 
     await service.transcribeAula('aula-uuid');
 
@@ -117,9 +119,7 @@ describe('TranscricaoService - Prompt Resolution', () => {
   });
 
   it('should pass ciencias prompt when discipline is Ciências', async () => {
-    mockPrisma.aula.findUnique.mockResolvedValue(
-      createMockAula('Ciências'),
-    );
+    mockPrisma.aula.findUnique.mockResolvedValue(createMockAula('Ciências'));
 
     await service.transcribeAula('aula-uuid');
 
@@ -132,9 +132,7 @@ describe('TranscricaoService - Prompt Resolution', () => {
   });
 
   it('should pass default prompt when discipline is unknown', async () => {
-    mockPrisma.aula.findUnique.mockResolvedValue(
-      createMockAula('História'),
-    );
+    mockPrisma.aula.findUnique.mockResolvedValue(createMockAula('História'));
 
     await service.transcribeAula('aula-uuid');
 
@@ -170,9 +168,7 @@ describe('TranscricaoService - Prompt Resolution', () => {
   });
 
   it('should include planejamento.disciplina in aula query', async () => {
-    mockPrisma.aula.findUnique.mockResolvedValue(
-      createMockAula('Matemática'),
-    );
+    mockPrisma.aula.findUnique.mockResolvedValue(createMockAula('Matemática'));
 
     await service.transcribeAula('aula-uuid');
 
@@ -188,15 +184,13 @@ describe('TranscricaoService - Prompt Resolution', () => {
   });
 
   it('should save stt_prompt_key in transcricao metadata_json', async () => {
-    mockPrisma.aula.findUnique.mockResolvedValue(
-      createMockAula('Ciências'),
-    );
+    mockPrisma.aula.findUnique.mockResolvedValue(createMockAula('Ciências'));
 
     await service.transcribeAula('aula-uuid');
 
-    expect(mockPrisma.transcricao.create).toHaveBeenCalledWith(
+    expect(mockPrisma.transcricao.upsert).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({
+        create: expect.objectContaining({
           metadata_json: expect.objectContaining({
             stt_prompt_key: 'ciencias',
           }),
@@ -214,15 +208,13 @@ describe('TranscricaoService - Prompt Resolution', () => {
       ...mockTranscribeResult,
       words: wordsArray,
     });
-    mockPrisma.aula.findUnique.mockResolvedValue(
-      createMockAula('Matemática'),
-    );
+    mockPrisma.aula.findUnique.mockResolvedValue(createMockAula('Matemática'));
 
     await service.transcribeAula('aula-uuid');
 
-    expect(mockPrisma.transcricao.create).toHaveBeenCalledWith(
+    expect(mockPrisma.transcricao.upsert).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({
+        create: expect.objectContaining({
           metadata_json: expect.objectContaining({
             words: wordsArray,
             word_count: 2,
@@ -233,15 +225,13 @@ describe('TranscricaoService - Prompt Resolution', () => {
   });
 
   it('should not include words in metadata_json when not available', async () => {
-    mockPrisma.aula.findUnique.mockResolvedValue(
-      createMockAula('Matemática'),
-    );
+    mockPrisma.aula.findUnique.mockResolvedValue(createMockAula('Matemática'));
 
     await service.transcribeAula('aula-uuid');
 
-    const createCall = mockPrisma.transcricao.create.mock.calls[0][0];
-    expect(createCall.data.metadata_json.words).toBeUndefined();
-    expect(createCall.data.metadata_json.word_count).toBeUndefined();
+    const createCall = mockPrisma.transcricao.upsert.mock.calls[0][0];
+    expect(createCall.create.metadata_json.words).toBeUndefined();
+    expect(createCall.create.metadata_json.word_count).toBeUndefined();
   });
 });
 
@@ -261,9 +251,7 @@ describe('TranscricaoService - Diarization Integration', () => {
     jest
       .spyOn(service as any, 'downloadFromS3')
       .mockResolvedValue(Buffer.from('fake-audio'));
-    mockPrisma.aula.findUnique.mockResolvedValue(
-      createMockAula('Matemática'),
-    );
+    mockPrisma.aula.findUnique.mockResolvedValue(createMockAula('Matemática'));
   });
 
   // 7.1: diarization called after STT when words available
@@ -285,9 +273,7 @@ describe('TranscricaoService - Diarization Integration', () => {
 
   // 7.2: texto replaced with SRT when diarization succeeds
   it('should replace texto with SRT when diarization succeeds', async () => {
-    const wordsArray = [
-      { word: 'Hoje', start: 0.0, end: 0.32 },
-    ];
+    const wordsArray = [{ word: 'Hoje', start: 0.0, end: 0.32 }];
     mockSTTService.transcribe.mockResolvedValueOnce({
       ...mockTranscribeResult,
       words: wordsArray,
@@ -295,9 +281,9 @@ describe('TranscricaoService - Diarization Integration', () => {
 
     await service.transcribeAula('aula-uuid');
 
-    expect(mockPrisma.transcricao.create).toHaveBeenCalledWith(
+    expect(mockPrisma.transcricao.upsert).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({
+        create: expect.objectContaining({
           texto: mockDiarizationResult.srt,
         }),
       }),
@@ -306,9 +292,7 @@ describe('TranscricaoService - Diarization Integration', () => {
 
   // 7.3: metadata_json includes diarization metrics
   it('should include diarization metrics in metadata_json', async () => {
-    const wordsArray = [
-      { word: 'Hoje', start: 0.0, end: 0.32 },
-    ];
+    const wordsArray = [{ word: 'Hoje', start: 0.0, end: 0.32 }];
     mockSTTService.transcribe.mockResolvedValueOnce({
       ...mockTranscribeResult,
       words: wordsArray,
@@ -316,9 +300,9 @@ describe('TranscricaoService - Diarization Integration', () => {
 
     await service.transcribeAula('aula-uuid');
 
-    expect(mockPrisma.transcricao.create).toHaveBeenCalledWith(
+    expect(mockPrisma.transcricao.upsert).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({
+        create: expect.objectContaining({
           tempo_processamento_ms: expect.any(Number),
           metadata_json: expect.objectContaining({
             has_diarization: true,
@@ -350,9 +334,9 @@ describe('TranscricaoService - Diarization Integration', () => {
 
     await service.transcribeAula('aula-uuid');
 
-    expect(mockPrisma.transcricao.create).toHaveBeenCalledWith(
+    expect(mockPrisma.transcricao.upsert).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({
+        create: expect.objectContaining({
           custo_usd: 0.041, // 0.033 + 0.008
         }),
       }),
@@ -377,14 +361,18 @@ describe('TranscricaoService - Diarization Integration', () => {
       custo_usd: 0,
       tempo_processamento_ms: 5,
       segments_count: 1,
-      speaker_stats: { professor_segments: 0, aluno_segments: 0, professor_time_pct: 100 },
+      speaker_stats: {
+        professor_segments: 0,
+        aluno_segments: 0,
+        professor_time_pct: 100,
+      },
     });
 
     await service.transcribeAula('aula-uuid');
 
-    expect(mockPrisma.transcricao.create).toHaveBeenCalledWith(
+    expect(mockPrisma.transcricao.upsert).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({
+        create: expect.objectContaining({
           texto: fallbackSrt,
         }),
       }),
@@ -400,15 +388,19 @@ describe('TranscricaoService - Diarization Integration', () => {
       custo_usd: 0,
       tempo_processamento_ms: 1,
       segments_count: 1,
-      speaker_stats: { professor_segments: 0, aluno_segments: 0, professor_time_pct: 100 },
+      speaker_stats: {
+        professor_segments: 0,
+        aluno_segments: 0,
+        professor_time_pct: 100,
+      },
     });
 
     await service.transcribeAula('aula-uuid');
 
     expect(mockDiarizationService.diarize).toHaveBeenCalled();
-    expect(mockPrisma.transcricao.create).toHaveBeenCalledWith(
+    expect(mockPrisma.transcricao.upsert).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({
+        create: expect.objectContaining({
           texto: fallbackSrt,
           custo_usd: mockTranscribeResult.custo_usd, // 0 diarization cost
           metadata_json: expect.objectContaining({
@@ -434,14 +426,18 @@ describe('TranscricaoService - Diarization Integration', () => {
       custo_usd: 0,
       tempo_processamento_ms: 1,
       segments_count: 0,
-      speaker_stats: { professor_segments: 0, aluno_segments: 0, professor_time_pct: 100 },
+      speaker_stats: {
+        professor_segments: 0,
+        aluno_segments: 0,
+        professor_time_pct: 100,
+      },
     });
 
     await service.transcribeAula('aula-uuid');
 
-    expect(mockPrisma.transcricao.create).toHaveBeenCalledWith(
+    expect(mockPrisma.transcricao.upsert).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({
+        create: expect.objectContaining({
           texto: mockTranscribeResult.texto, // original texto preserved
         }),
       }),
@@ -462,9 +458,9 @@ describe('TranscricaoService - Diarization Integration', () => {
 
     // Pipeline should continue, not throw
     expect(result).toBeDefined();
-    expect(mockPrisma.transcricao.create).toHaveBeenCalledWith(
+    expect(mockPrisma.transcricao.upsert).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({
+        create: expect.objectContaining({
           texto: mockTranscribeResult.texto, // fallback to original
           custo_usd: mockTranscribeResult.custo_usd, // only STT cost
         }),
@@ -480,9 +476,9 @@ describe('TranscricaoService - Diarization Integration', () => {
 
     await service.transcribeAula('aula-uuid');
 
-    expect(mockPrisma.transcricao.create).toHaveBeenCalledWith(
+    expect(mockPrisma.transcricao.upsert).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({
+        create: expect.objectContaining({
           metadata_json: expect.objectContaining({
             has_diarization: false,
           }),
@@ -514,10 +510,10 @@ describe('TranscricaoService - Diarization Integration', () => {
   it('should save total pipeline time in tempo_processamento_ms', async () => {
     await service.transcribeAula('aula-uuid');
 
-    const createCall = mockPrisma.transcricao.create.mock.calls[0][0];
+    const createCall = mockPrisma.transcricao.upsert.mock.calls[0][0];
     // tempo_processamento_ms should be a number >= 0 (stt + diarization wall-clock)
-    expect(typeof createCall.data.tempo_processamento_ms).toBe('number');
-    expect(createCall.data.tempo_processamento_ms).toBeGreaterThanOrEqual(0);
+    expect(typeof createCall.create.tempo_processamento_ms).toBe('number');
+    expect(createCall.create.tempo_processamento_ms).toBeGreaterThanOrEqual(0);
   });
 
   it('should pass diarization cost as 0 when diarization returns fallback', async () => {
@@ -527,14 +523,18 @@ describe('TranscricaoService - Diarization Integration', () => {
       custo_usd: 0,
       tempo_processamento_ms: 1,
       segments_count: 0,
-      speaker_stats: { professor_segments: 0, aluno_segments: 0, professor_time_pct: 100 },
+      speaker_stats: {
+        professor_segments: 0,
+        aluno_segments: 0,
+        professor_time_pct: 100,
+      },
     });
 
     await service.transcribeAula('aula-uuid');
 
-    expect(mockPrisma.transcricao.create).toHaveBeenCalledWith(
+    expect(mockPrisma.transcricao.upsert).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({
+        create: expect.objectContaining({
           custo_usd: mockTranscribeResult.custo_usd, // only STT cost, 0 diarization
         }),
       }),

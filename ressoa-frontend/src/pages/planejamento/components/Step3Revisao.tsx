@@ -87,6 +87,7 @@ export const Step3Revisao = ({ mode = 'create', planejamentoId }: Step3RevisaoPr
         habilidades: selectedHabilidades.map((h) => ({
           habilidade_id: h.id,
         })),
+        ...(formData.descricao ? { descricao: formData.descricao } : {}),
       };
 
       if (mode === 'edit' && planejamentoId) {

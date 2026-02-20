@@ -6,6 +6,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+
+const serieLabel: Record<string, string> = {
+  SEXTO_ANO: '6º ano',
+  SETIMO_ANO: '7º ano',
+  OITAVO_ANO: '8º ano',
+  NONO_ANO: '9º ano',
+  PRIMEIRO_ANO_EM: '1º ano EM',
+  SEGUNDO_ANO_EM: '2º ano EM',
+  TERCEIRO_ANO_EM: '3º ano EM',
+};
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -43,7 +53,7 @@ export const ViewPlanejamentoDialog = ({
                   <p className="font-semibold">
                     {planejamento.turma.nome} - {planejamento.turma.disciplina}
                   </p>
-                  <p className="text-sm text-muted-foreground">{planejamento.turma.serie}º ano</p>
+                  <p className="text-sm text-muted-foreground">{serieLabel[planejamento.turma.serie] ?? planejamento.turma.serie}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Período</p>
@@ -57,6 +67,13 @@ export const ViewPlanejamentoDialog = ({
                 <p className="text-sm text-muted-foreground mb-2">Status</p>
                 <StatusBadge validado={planejamento.validado_coordenacao} />
               </div>
+
+              {planejamento.descricao && (
+                <div className="mt-4">
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Descrição</p>
+                  <p className="text-sm text-foreground mt-1">{planejamento.descricao}</p>
+                </div>
+              )}
             </CardContent>
           </Card>
 

@@ -30,7 +30,9 @@ export class ListUsuariosQueryDto {
   @Max(100, { message: 'limit deve ser no máximo 100' })
   limit?: number = 20;
 
-  @ApiPropertyOptional({ description: 'Busca por nome ou email (2-100 caracteres)' })
+  @ApiPropertyOptional({
+    description: 'Busca por nome ou email (2-100 caracteres)',
+  })
   @IsOptional()
   @IsString()
   @MinLength(2, { message: 'search deve ter no mínimo 2 caracteres' })
@@ -50,7 +52,10 @@ export class ListUsuariosQueryDto {
   @IsUUID('4', { message: 'escola_id deve ser um UUID válido' })
   escola_id?: string;
 
-  @ApiPropertyOptional({ description: 'Incluir usuários inativos (deleted_at não null)', default: false })
+  @ApiPropertyOptional({
+    description: 'Incluir usuários inativos (deleted_at não null)',
+    default: false,
+  })
   @IsOptional()
   @IsBoolean()
   @Transform(({ value }) => value === 'true' || value === true)

@@ -190,14 +190,18 @@ describe('WhisperProvider', () => {
     it('should cleanup temp file after transcription', async () => {
       await provider.transcribe(audioBuffer);
 
-      expect(fs.promises.unlink).toHaveBeenCalledWith('/tmp/test-uuid-1234.mp3');
+      expect(fs.promises.unlink).toHaveBeenCalledWith(
+        '/tmp/test-uuid-1234.mp3',
+      );
     });
 
     it('should cleanup temp file on error', async () => {
       mockCreate.mockRejectedValueOnce(new Error('API error'));
 
       await expect(provider.transcribe(audioBuffer)).rejects.toThrow();
-      expect(fs.promises.unlink).toHaveBeenCalledWith('/tmp/test-uuid-1234.mp3');
+      expect(fs.promises.unlink).toHaveBeenCalledWith(
+        '/tmp/test-uuid-1234.mp3',
+      );
     });
   });
 

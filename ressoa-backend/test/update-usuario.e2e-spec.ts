@@ -33,7 +33,13 @@ describe('PATCH /api/v1/usuarios/:id (E2E) - Story 13.8', () => {
     })
       .overrideProvider(ThrottlerStorage)
       .useValue({
-        increment: () => Promise.resolve({ totalHits: 1, timeToExpire: 60000, isBlocked: false, timeToBlockExpire: 0 }),
+        increment: () =>
+          Promise.resolve({
+            totalHits: 1,
+            timeToExpire: 60000,
+            isBlocked: false,
+            timeToBlockExpire: 0,
+          }),
         onApplicationShutdown: () => {},
       })
       .compile();
@@ -177,7 +183,9 @@ describe('PATCH /api/v1/usuarios/:id (E2E) - Story 13.8', () => {
 
     adminToken = await loginUser(`${EMAIL_PREFIX}.admin@teste.com`);
     diretorAToken = await loginUser(`${EMAIL_PREFIX}.diretorA@teste.com`);
-    coordenadorAToken = await loginUser(`${EMAIL_PREFIX}.coordenadorA@teste.com`);
+    coordenadorAToken = await loginUser(
+      `${EMAIL_PREFIX}.coordenadorA@teste.com`,
+    );
     professorAToken = await loginUser(`${EMAIL_PREFIX}.profA1@teste.com`);
   });
 
@@ -237,7 +245,9 @@ describe('PATCH /api/v1/usuarios/:id (E2E) - Story 13.8', () => {
       .send({ nome: 'Should Fail' });
 
     expect(response.status).toBe(403);
-    expect(response.body.message).toBe('Sem permissão para editar este usuário');
+    expect(response.body.message).toBe(
+      'Sem permissão para editar este usuário',
+    );
   });
 
   // Test 5: Coordenador updates PROFESSOR from own school → 200
@@ -259,7 +269,9 @@ describe('PATCH /api/v1/usuarios/:id (E2E) - Story 13.8', () => {
       .send({ nome: 'Should Fail' });
 
     expect(response.status).toBe(403);
-    expect(response.body.message).toBe('Sem permissão para editar este usuário');
+    expect(response.body.message).toBe(
+      'Sem permissão para editar este usuário',
+    );
   });
 
   // Test 7: Professor cannot access endpoint → 403
@@ -307,7 +319,10 @@ describe('PATCH /api/v1/usuarios/:id (E2E) - Story 13.8', () => {
     const response = await request(app.getHttpServer())
       .patch(`/api/v1/usuarios/${professorA2Id}`)
       .set('Authorization', `Bearer ${adminToken}`)
-      .send({ email: `${EMAIL_PREFIX}.profA2@teste.com`, nome: 'Professor A2 SelfEmail' });
+      .send({
+        email: `${EMAIL_PREFIX}.profA2@teste.com`,
+        nome: 'Professor A2 SelfEmail',
+      });
 
     expect(response.status).toBe(200);
     // Email not changed, so it keeps original case from DB

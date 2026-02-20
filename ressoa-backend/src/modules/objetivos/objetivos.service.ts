@@ -57,7 +57,9 @@ export class ObjetivosService {
     // Validação: CUSTOM requer turma_id, area_conhecimento, criterios_evidencia
     if (dto.tipo_fonte === TipoFonte.CUSTOM) {
       if (!dto.turma_id) {
-        throw new BadRequestException('turma_id é obrigatório para objetivos customizados');
+        throw new BadRequestException(
+          'turma_id é obrigatório para objetivos customizados',
+        );
       }
 
       if (!dto.area_conhecimento) {
@@ -78,16 +80,20 @@ export class ObjetivosService {
       });
 
       if (!turma || turma.deleted_at) {
-        throw new NotFoundException(`Turma não encontrada ou foi deletada: ${dto.turma_id}`);
+        throw new NotFoundException(
+          `Turma não encontrada ou foi deletada: ${dto.turma_id}`,
+        );
       }
 
       // Validação: código único por turma (constraint do Prisma)
-      const existingObjetivo = await this.prisma.objetivoAprendizagem.findFirst({
-        where: {
-          turma_id: dto.turma_id,
-          codigo: dto.codigo,
+      const existingObjetivo = await this.prisma.objetivoAprendizagem.findFirst(
+        {
+          where: {
+            turma_id: dto.turma_id,
+            codigo: dto.codigo,
+          },
         },
-      });
+      );
 
       if (existingObjetivo) {
         throw new ConflictException(
@@ -143,7 +149,9 @@ export class ObjetivosService {
     });
 
     if (!turma || turma.deleted_at) {
-      throw new NotFoundException(`Turma não encontrada ou foi deletada: ${turmaId}`);
+      throw new NotFoundException(
+        `Turma não encontrada ou foi deletada: ${turmaId}`,
+      );
     }
 
     return this.prisma.objetivoAprendizagem.findMany({
@@ -268,7 +276,9 @@ export class ObjetivosService {
       });
     } catch (error: any) {
       if (error?.code === 'P2002') {
-        throw new ConflictException(`Código ${dto.codigo} já existe nesta turma`);
+        throw new ConflictException(
+          `Código ${dto.codigo} já existe nesta turma`,
+        );
       }
       throw error;
     }
@@ -430,16 +440,20 @@ export class ObjetivosService {
 
     // AC7: Se código mudou, validar unicidade
     if (dto.codigo && dto.codigo !== objetivo.codigo) {
-      const existingObjetivo = await this.prisma.objetivoAprendizagem.findFirst({
-        where: {
-          turma_id: turmaId,
-          codigo: dto.codigo,
-          id: { not: objetivoId }, // Excluir o próprio objetivo
+      const existingObjetivo = await this.prisma.objetivoAprendizagem.findFirst(
+        {
+          where: {
+            turma_id: turmaId,
+            codigo: dto.codigo,
+            id: { not: objetivoId }, // Excluir o próprio objetivo
+          },
         },
-      });
+      );
 
       if (existingObjetivo) {
-        throw new ConflictException(`Código ${dto.codigo} já existe nesta turma`);
+        throw new ConflictException(
+          `Código ${dto.codigo} já existe nesta turma`,
+        );
       }
     }
 
@@ -451,7 +465,9 @@ export class ObjetivosService {
         data: {
           ...(dto.codigo !== undefined && { codigo: dto.codigo }),
           ...(dto.descricao !== undefined && { descricao: dto.descricao }),
-          ...(dto.nivel_cognitivo !== undefined && { nivel_cognitivo: dto.nivel_cognitivo }),
+          ...(dto.nivel_cognitivo !== undefined && {
+            nivel_cognitivo: dto.nivel_cognitivo,
+          }),
           ...(dto.area_conhecimento !== undefined && {
             area_conhecimento: dto.area_conhecimento,
           }),
@@ -463,7 +479,9 @@ export class ObjetivosService {
       });
     } catch (error: any) {
       if (error?.code === 'P2002') {
-        throw new ConflictException(`Código ${dto.codigo} já existe nesta turma`);
+        throw new ConflictException(
+          `Código ${dto.codigo} já existe nesta turma`,
+        );
       }
       throw error;
     }
@@ -525,14 +543,15 @@ export class ObjetivosService {
     }
 
     // AC8: Verificar se objetivo está em uso em planejamentos
-    const planejamentosAfetados = await this.prisma.planejamentoObjetivo.findMany({
-      where: { objetivo_id: objetivoId },
-      include: {
-        planejamento: {
-          select: { id: true, bimestre: true },
+    const planejamentosAfetados =
+      await this.prisma.planejamentoObjetivo.findMany({
+        where: { objetivo_id: objetivoId },
+        include: {
+          planejamento: {
+            select: { id: true, bimestre: true },
+          },
         },
-      },
-    });
+      });
 
     if (planejamentosAfetados.length > 0) {
       throw new ConflictException({

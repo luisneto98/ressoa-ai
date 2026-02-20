@@ -577,10 +577,7 @@ export class AulasService {
    * @returns Aula atualizada
    * @throws NotFoundException se aula não existir
    */
-  async updateStatus(
-    aulaId: string,
-    novoStatus: StatusProcessamento,
-  ) {
+  async updateStatus(aulaId: string, novoStatus: StatusProcessamento) {
     const escolaId = this.prisma.getEscolaIdOrThrow();
 
     // Verify aula exists and belongs to school (multi-tenancy)

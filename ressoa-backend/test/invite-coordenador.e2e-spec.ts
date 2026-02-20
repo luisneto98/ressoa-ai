@@ -179,7 +179,10 @@ describe('POST /api/v1/diretor/invite-coordenador (Story 13.4)', () => {
       .send(dto)
       .expect(201);
 
-    expect(response.body).toHaveProperty('message', 'Convite enviado com sucesso');
+    expect(response.body).toHaveProperty(
+      'message',
+      'Convite enviado com sucesso',
+    );
 
     // Verify Redis token stored
     const tokenKeys = await redisService.keys('invite_coordenador:*');
@@ -271,7 +274,10 @@ describe('POST /api/v1/diretor/invite-coordenador (Story 13.4)', () => {
       .send(dto)
       .expect(409);
 
-    expect(response.body).toHaveProperty('message', 'Email já cadastrado nesta escola');
+    expect(response.body).toHaveProperty(
+      'message',
+      'Email já cadastrado nesta escola',
+    );
   });
 
   it('should reject if escola is inactive (400)', async () => {
@@ -292,7 +298,10 @@ describe('POST /api/v1/diretor/invite-coordenador (Story 13.4)', () => {
       .send(dto)
       .expect(400);
 
-    expect(response.body).toHaveProperty('message', 'Escola inativa ou suspensa');
+    expect(response.body).toHaveProperty(
+      'message',
+      'Escola inativa ou suspensa',
+    );
 
     // Restore escola status
     await prisma.escola.update({

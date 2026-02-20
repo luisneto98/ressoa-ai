@@ -38,8 +38,14 @@ export class TurmasController {
   @ApiResponse({ status: 201, description: 'Turma criada com sucesso' })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
   @ApiResponse({ status: 401, description: 'Não autenticado' })
-  @ApiResponse({ status: 403, description: 'Permissões insuficientes (PROFESSOR não permitido)' })
-  @ApiResponse({ status: 409, description: 'Turma duplicada (nome + ano + turno)' })
+  @ApiResponse({
+    status: 403,
+    description: 'Permissões insuficientes (PROFESSOR não permitido)',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Turma duplicada (nome + ano + turno)',
+  })
   async create(@Body() createTurmaDto: CreateTurmaDto) {
     return this.turmasService.create(createTurmaDto);
   }
@@ -81,7 +87,10 @@ export class TurmasController {
             example: 'FUNDAMENTAL',
           },
           ano_letivo: { type: 'number', example: 2026 },
-          turno: { type: 'string', enum: ['MATUTINO', 'VESPERTINO', 'INTEGRAL'] },
+          turno: {
+            type: 'string',
+            enum: ['MATUTINO', 'VESPERTINO', 'INTEGRAL'],
+          },
           professor: {
             type: 'object',
             description: 'Apenas para Coordenador/Diretor',
@@ -108,7 +117,9 @@ export class TurmasController {
 
   @Get('professores')
   @Roles('COORDENADOR', 'DIRETOR')
-  @ApiOperation({ summary: 'Listar professores da escola (para select de turma)' })
+  @ApiOperation({
+    summary: 'Listar professores da escola (para select de turma)',
+  })
   @ApiResponse({
     status: 200,
     description: 'Lista de professores',
@@ -142,9 +153,15 @@ export class TurmasController {
   @ApiOperation({ summary: 'Atualizar turma (COORDENADOR + DIRETOR apenas)' })
   @ApiResponse({ status: 200, description: 'Turma atualizada' })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
-  @ApiResponse({ status: 403, description: 'Permissões insuficientes (PROFESSOR não permitido)' })
+  @ApiResponse({
+    status: 403,
+    description: 'Permissões insuficientes (PROFESSOR não permitido)',
+  })
   @ApiResponse({ status: 404, description: 'Turma não encontrada' })
-  async update(@Param('id') id: string, @Body() updateTurmaDto: UpdateTurmaDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateTurmaDto: UpdateTurmaDto,
+  ) {
     return this.turmasService.update(id, updateTurmaDto);
   }
 
@@ -153,7 +170,11 @@ export class TurmasController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Remover turma (DIRETOR apenas)' })
   @ApiResponse({ status: 204, description: 'Turma removida (soft delete)' })
-  @ApiResponse({ status: 403, description: 'Permissões insuficientes (COORDENADOR/PROFESSOR não permitidos)' })
+  @ApiResponse({
+    status: 403,
+    description:
+      'Permissões insuficientes (COORDENADOR/PROFESSOR não permitidos)',
+  })
   @ApiResponse({ status: 404, description: 'Turma não encontrada' })
   async remove(@Param('id') id: string) {
     await this.turmasService.remove(id);

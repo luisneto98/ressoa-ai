@@ -68,7 +68,8 @@ describe('AnaliseService', () => {
           habilidade: {
             id: 'hab-1',
             codigo: 'EF06MA01',
-            descricao: 'Comparar, ordenar, ler e escrever números naturais e números racionais...',
+            descricao:
+              'Comparar, ordenar, ler e escrever números naturais e números racionais...',
             disciplina: 'MATEMATICA',
             ano_inicio: 6,
             ano_fim: null,
@@ -112,7 +113,8 @@ describe('AnaliseService', () => {
   };
 
   const mockLLMResult = {
-    texto: '{"habilidades": [{"codigo": "EF06MA01", "nivel_cobertura": "completo"}]}',
+    texto:
+      '{"habilidades": [{"codigo": "EF06MA01", "nivel_cobertura": "completo"}]}',
     provider: 'Gemini' as any,
     modelo: 'gemini-2.0-flash',
     tokens_input: 15000,
@@ -199,9 +201,9 @@ describe('AnaliseService', () => {
     }).compile();
 
     service = module.get<AnaliseService>(AnaliseService);
-    prisma = module.get(PrismaService) as jest.Mocked<PrismaService>;
-    promptService = module.get(PromptService) as jest.Mocked<PromptService>;
-    llmRouterService = module.get(LLMRouterService) as jest.Mocked<LLMRouterService>;
+    prisma = module.get(PrismaService);
+    promptService = module.get(PromptService);
+    llmRouterService = module.get(LLMRouterService);
 
     // Reset default mock implementation (jest.clearAllMocks removes it)
     llmRouterService.generateWithFallback.mockResolvedValue(mockLLMResult);
@@ -216,7 +218,9 @@ describe('AnaliseService', () => {
       promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
       prisma.aula.findUnique.mockResolvedValue(null);
 
-      await expect(service.analisarAula(mockAulaId)).rejects.toThrow(NotFoundException);
+      await expect(service.analisarAula(mockAulaId)).rejects.toThrow(
+        NotFoundException,
+      );
       await expect(service.analisarAula(mockAulaId)).rejects.toThrow(
         `Aula não encontrada: ${mockAulaId}`,
       );
@@ -227,7 +231,9 @@ describe('AnaliseService', () => {
       const aulaSemTranscricao = { ...mockAulaCompleta, transcricao: null };
       prisma.aula.findUnique.mockResolvedValue(aulaSemTranscricao as any);
 
-      await expect(service.analisarAula(mockAulaId)).rejects.toThrow(NotFoundException);
+      await expect(service.analisarAula(mockAulaId)).rejects.toThrow(
+        NotFoundException,
+      );
       await expect(service.analisarAula(mockAulaId)).rejects.toThrow(
         `Aula sem transcrição: ${mockAulaId}`,
       );
@@ -245,20 +251,98 @@ describe('AnaliseService', () => {
 
       // Verify correct analysisTypes in order
       expect(llmRouterService.generateWithFallback).toHaveBeenNthCalledWith(
-        1, 'analise_cobertura', expect.any(String), expect.objectContaining({ temperature: 0.7 }),
+        1,
+        'analise_cobertura',
+        expect.any(String),
+        expect.objectContaining({ temperature: 0.7 }),
       );
       expect(llmRouterService.generateWithFallback).toHaveBeenNthCalledWith(
-        2, 'analise_qualitativa', expect.any(String), expect.objectContaining({ temperature: 0.7 }),
+        2,
+        'analise_qualitativa',
+        expect.any(String),
+        expect.objectContaining({ temperature: 0.7 }),
       );
       expect(llmRouterService.generateWithFallback).toHaveBeenNthCalledWith(
-        3, 'relatorio', expect.any(String), expect.objectContaining({ temperature: 0.7 }),
+        3,
+        'relatorio',
+        expect.any(String),
+        expect.objectContaining({ temperature: 0.7 }),
       );
       expect(llmRouterService.generateWithFallback).toHaveBeenNthCalledWith(
-        4, 'exercicios', expect.any(String), expect.objectContaining({ temperature: 0.7 }),
+        4,
+        'exercicios',
+        expect.any(String),
+        expect.objectContaining({ temperature: 0.7 }),
       );
       expect(llmRouterService.generateWithFallback).toHaveBeenNthCalledWith(
-        5, 'alertas', expect.any(String), expect.objectContaining({ temperature: 0.7 }),
+        5,
+        'alertas',
+        expect.any(String),
+        expect.objectContaining({ temperature: 0.7 }),
       );
+    });
+
+    it('should use temperature and maxTokens from prompt variaveis', async () => {
+      llmRouterService.generateWithFallback.mockClear();
+      prisma.aula.findUnique.mockResolvedValue(mockAulaCompleta as any);
+      promptService.renderPrompt.mockResolvedValue('rendered prompt text');
+
+      const promptsWithTemperature = [
+        {
+          ...mockPrompt,
+          nome: 'prompt-cobertura',
+          variaveis: { temperature: 0.3, max_tokens: 2500 },
+        },
+        {
+          ...mockPrompt,
+          nome: 'prompt-qualitativa',
+          variaveis: { temperature: 0.5, max_tokens: 2000 },
+        },
+        {
+          ...mockPrompt,
+          nome: 'prompt-relatorio',
+          variaveis: { temperature: 0.6, max_tokens: 3000 },
+        },
+        {
+          ...mockPrompt,
+          nome: 'prompt-exercicios',
+          variaveis: { temperature: 0.7, max_tokens: 4000 },
+        },
+        {
+          ...mockPrompt,
+          nome: 'prompt-alertas',
+          variaveis: { temperature: 0.4, max_tokens: 2000 },
+        },
+      ];
+
+      // getActivePrompt is called 10 times: 5 for validation + 5 for execution
+      // Validation calls (0-4) use index % 5, execution calls (5-9) also use index % 5
+      let callCount = 0;
+      promptService.getActivePrompt.mockImplementation(() => {
+        const idx = callCount++ % 5;
+        return Promise.resolve(promptsWithTemperature[idx] as any);
+      });
+
+      await service.analisarAula(mockAulaId);
+
+      // Verify each prompt's temperature/maxTokens was passed correctly
+      const calls = llmRouterService.generateWithFallback.mock.calls;
+      expect(calls).toHaveLength(5);
+
+      expect(calls[0][0]).toBe('analise_cobertura');
+      expect(calls[0][2]).toEqual({ temperature: 0.3, maxTokens: 2500 });
+
+      expect(calls[1][0]).toBe('analise_qualitativa');
+      expect(calls[1][2]).toEqual({ temperature: 0.5, maxTokens: 2000 });
+
+      expect(calls[2][0]).toBe('relatorio');
+      expect(calls[2][2]).toEqual({ temperature: 0.6, maxTokens: 3000 });
+
+      expect(calls[3][0]).toBe('exercicios');
+      expect(calls[3][2]).toEqual({ temperature: 0.7, maxTokens: 4000 });
+
+      expect(calls[4][0]).toBe('alertas');
+      expect(calls[4][2]).toEqual({ temperature: 0.4, maxTokens: 2000 });
     });
 
     it('should accumulate context (Prompt 2 sees cobertura output)', async () => {
@@ -278,7 +362,7 @@ describe('AnaliseService', () => {
     });
 
     it('should save provider cost breakdown in Analise (via transaction)', async () => {
-      const costs = [0.020, 0.025, 0.015, 0.005, 0.020];
+      const costs = [0.02, 0.025, 0.015, 0.005, 0.02];
       const providers = ['Gemini', 'Gemini', 'Gemini', 'GPT', 'Gemini'];
       let callCount = 0;
 
@@ -308,8 +392,10 @@ describe('AnaliseService', () => {
       await txCallback(mockTx);
 
       const createData = mockTx.analise.create.mock.calls[0][0].data;
+      expect(createData.provider_stt).toBe('WHISPER');
+      expect(createData.custo_stt_usd).toBe(0.05);
       expect(createData.provider_llm_cobertura).toBe('Gemini');
-      expect(createData.custo_llm_cobertura_usd).toBe(0.020);
+      expect(createData.custo_llm_cobertura_usd).toBe(0.02);
       expect(createData.provider_llm_qualitativa).toBe('Gemini');
       expect(createData.custo_llm_qualitativa_usd).toBe(0.025);
       expect(createData.provider_llm_relatorio).toBe('Gemini');
@@ -317,7 +403,7 @@ describe('AnaliseService', () => {
       expect(createData.provider_llm_exercicios).toBe('GPT');
       expect(createData.custo_llm_exercicios_usd).toBe(0.005);
       expect(createData.provider_llm_alertas).toBe('Gemini');
-      expect(createData.custo_llm_alertas_usd).toBe(0.020);
+      expect(createData.custo_llm_alertas_usd).toBe(0.02);
     });
 
     it('should update Aula status to ANALISADA (via transaction)', async () => {
@@ -330,8 +416,8 @@ describe('AnaliseService', () => {
       expect(prisma.$transaction).toHaveBeenCalled();
     });
 
-    it('should track custo_total correctly (sum of 5 prompts)', async () => {
-      const costs = [0.020, 0.025, 0.015, 0.005, 0.020];
+    it('should track custo_total correctly (STT + 5 prompts LLM)', async () => {
+      const costs = [0.02, 0.025, 0.015, 0.005, 0.02];
       let callCount = 0;
 
       llmRouterService.generateWithFallback.mockImplementation(() => {
@@ -350,7 +436,7 @@ describe('AnaliseService', () => {
       // Verify $transaction was called
       expect(prisma.$transaction).toHaveBeenCalled();
 
-      // Verify custo_total inside transaction
+      // Verify custo_total inside transaction (STT=0.05 + LLM=0.085 = 0.135)
       const txCallback = prisma.$transaction.mock.calls[0][0];
       const mockTx = {
         analise: { create: jest.fn().mockResolvedValue({ id: 'analise-1' }) },
@@ -359,7 +445,9 @@ describe('AnaliseService', () => {
       await txCallback(mockTx);
 
       const createData = mockTx.analise.create.mock.calls[0][0].data;
-      expect(createData.custo_total_usd).toBeCloseTo(0.085, 4); // Sum of all costs
+      expect(createData.custo_stt_usd).toBeCloseTo(0.05, 4); // From transcricao.custo_usd
+      expect(createData.provider_stt).toBe('WHISPER');
+      expect(createData.custo_total_usd).toBeCloseTo(0.135, 4); // STT + LLM
     });
 
     it('should track prompt_versoes_json (5 versions)', async () => {
@@ -391,7 +479,9 @@ describe('AnaliseService', () => {
       promptService.renderPrompt.mockResolvedValue('rendered');
 
       llmRouterService.generateWithFallback.mockRejectedValue(
-        new Error('LLM generation failed for analise_cobertura: primary=GEMINI_FLASH, fallback=CLAUDE_SONNET'),
+        new Error(
+          'LLM generation failed for analise_cobertura: primary=GEMINI_FLASH, fallback=CLAUDE_SONNET',
+        ),
       );
 
       await expect(service.analisarAula(mockAulaId)).rejects.toThrow(
@@ -500,7 +590,9 @@ describe('AnaliseService', () => {
       it('should return default EF age range for unknown EF series', () => {
         const getFaixaEtaria = (service as any).getFaixaEtaria.bind(service);
 
-        expect(getFaixaEtaria('FUNDAMENTAL', 'UNKNOWN_SERIES')).toBe('11-14 anos');
+        expect(getFaixaEtaria('FUNDAMENTAL', 'UNKNOWN_SERIES')).toBe(
+          '11-14 anos',
+        );
         expect(getFaixaEtaria(null, 'SEXTO_ANO')).toBe('11-12 anos');
         expect(getFaixaEtaria(undefined, 'SETIMO_ANO')).toBe('12-13 anos');
       });
@@ -648,11 +740,19 @@ describe('AnaliseService', () => {
       it('should pass different context for EM vs EF (same transcript)', async () => {
         const aulaEF = {
           ...mockAulaCompleta,
-          turma: { ...mockAulaCompleta.turma, tipo_ensino: 'FUNDAMENTAL', serie: 'SEXTO_ANO' },
+          turma: {
+            ...mockAulaCompleta.turma,
+            tipo_ensino: 'FUNDAMENTAL',
+            serie: 'SEXTO_ANO',
+          },
         };
         const aulaEM = {
           ...mockAulaCompleta,
-          turma: { ...mockAulaCompleta.turma, tipo_ensino: 'MEDIO', serie: 'PRIMEIRO_ANO_EM' },
+          turma: {
+            ...mockAulaCompleta.turma,
+            tipo_ensino: 'MEDIO',
+            serie: 'PRIMEIRO_ANO_EM',
+          },
         };
 
         // Execute for EF
@@ -690,14 +790,23 @@ describe('AnaliseService', () => {
   describe('buildPlanejamentoContext (Story 11.7)', () => {
     describe('BNCC curriculum (isCurriculoCustom = false)', () => {
       it('should format BNCC habilidades context', () => {
-        const buildPlanejamentoContext = (service as any).buildPlanejamentoContext.bind(service);
+        const buildPlanejamentoContext = (
+          service as any
+        ).buildPlanejamentoContext.bind(service);
         const mockPlanejamentoBNCC = {
           id: 'plan-1',
           habilidades: [
             {
-              id: 'ph-1', planejamento_id: 'plan-1', habilidade_id: 'hab-1',
-              peso: 1.0, aulas_previstas: 4,
-              habilidade: { codigo: 'EF06MA01', descricao: 'Comparar números', unidade_tematica: 'Números' },
+              id: 'ph-1',
+              planejamento_id: 'plan-1',
+              habilidade_id: 'hab-1',
+              peso: 1.0,
+              aulas_previstas: 4,
+              habilidade: {
+                codigo: 'EF06MA01',
+                descricao: 'Comparar números',
+                unidade_tematica: 'Números',
+              },
             },
           ],
           objetivos: [],
@@ -706,31 +815,51 @@ describe('AnaliseService', () => {
         const result = buildPlanejamentoContext(mockPlanejamentoBNCC, false);
         expect(result).toEqual({
           tipo: 'bncc',
-          habilidades: [{ codigo: 'EF06MA01', descricao: 'Comparar números', unidade_tematica: 'Números' }],
+          habilidades: [
+            {
+              codigo: 'EF06MA01',
+              descricao: 'Comparar números',
+              unidade_tematica: 'Números',
+            },
+          ],
         });
       });
 
       it('should return null when planejamento is null', () => {
-        const buildPlanejamentoContext = (service as any).buildPlanejamentoContext.bind(service);
+        const buildPlanejamentoContext = (
+          service as any
+        ).buildPlanejamentoContext.bind(service);
         expect(buildPlanejamentoContext(null, false)).toBeNull();
       });
     });
 
     describe('Custom curriculum (isCurriculoCustom = true)', () => {
       it('should format custom objetivos context with Bloom fields', () => {
-        const buildPlanejamentoContext = (service as any).buildPlanejamentoContext.bind(service);
+        const buildPlanejamentoContext = (
+          service as any
+        ).buildPlanejamentoContext.bind(service);
         const mockPlanejamentoCustom = {
           id: 'plan-custom-1',
           habilidades: [],
-          objetivos: [{
-            id: 'po-1', planejamento_id: 'plan-custom-1', objetivo_id: 'obj-1',
-            peso: 1.5, aulas_previstas: 3,
-            objetivo: {
-              codigo: 'PM-MAT-01', descricao: 'Resolver problemas',
-              nivel_cognitivo: 'APLICAR', area_conhecimento: 'Matemática',
-              criterios_evidencia: ['Identificar dados', 'Aplicar regra de três'],
+          objetivos: [
+            {
+              id: 'po-1',
+              planejamento_id: 'plan-custom-1',
+              objetivo_id: 'obj-1',
+              peso: 1.5,
+              aulas_previstas: 3,
+              objetivo: {
+                codigo: 'PM-MAT-01',
+                descricao: 'Resolver problemas',
+                nivel_cognitivo: 'APLICAR',
+                area_conhecimento: 'Matemática',
+                criterios_evidencia: [
+                  'Identificar dados',
+                  'Aplicar regra de três',
+                ],
+              },
             },
-          }],
+          ],
         };
 
         const result = buildPlanejamentoContext(mockPlanejamentoCustom, true);
@@ -740,14 +869,25 @@ describe('AnaliseService', () => {
       });
 
       it('should fallback to BNCC when custom objetivos empty', () => {
-        const buildPlanejamentoContext = (service as any).buildPlanejamentoContext.bind(service);
+        const buildPlanejamentoContext = (
+          service as any
+        ).buildPlanejamentoContext.bind(service);
         const mockPlanejamentoFallback = {
           id: 'plan-1',
-          habilidades: [{
-            id: 'ph-1', planejamento_id: 'plan-1', habilidade_id: 'hab-1',
-            peso: 1.0, aulas_previstas: 4,
-            habilidade: { codigo: 'EF06MA01', descricao: 'Fallback', unidade_tematica: 'Números' },
-          }],
+          habilidades: [
+            {
+              id: 'ph-1',
+              planejamento_id: 'plan-1',
+              habilidade_id: 'hab-1',
+              peso: 1.0,
+              aulas_previstas: 4,
+              habilidade: {
+                codigo: 'EF06MA01',
+                descricao: 'Fallback',
+                unidade_tematica: 'Números',
+              },
+            },
+          ],
           objetivos: [],
         };
 
@@ -766,7 +906,8 @@ describe('AnaliseService', () => {
         ...mockAulaCompleta,
         transcricao: {
           ...mockAulaCompleta.transcricao,
-          texto: '1\n00:00:01,200 --> 00:00:05,800\n[PROFESSOR] Bom dia, turma!\n\n2\n00:00:06,100 --> 00:00:08,400\n[ALUNO] Bom dia!\n',
+          texto:
+            '1\n00:00:01,200 --> 00:00:05,800\n[PROFESSOR] Bom dia, turma!\n\n2\n00:00:06,100 --> 00:00:08,400\n[ALUNO] Bom dia!\n',
           metadata_json: {
             has_diarization: true,
             speaker_stats: {
@@ -847,7 +988,8 @@ describe('AnaliseService', () => {
     });
 
     it('should pass SRT content as transcricao in context', async () => {
-      const srtContent = '1\n00:00:01,200 --> 00:00:05,800\n[PROFESSOR] Bom dia, turma!\n\n2\n00:00:06,100 --> 00:00:08,400\n[ALUNO] Bom dia!\n';
+      const srtContent =
+        '1\n00:00:01,200 --> 00:00:05,800\n[PROFESSOR] Bom dia, turma!\n\n2\n00:00:06,100 --> 00:00:08,400\n[ALUNO] Bom dia!\n';
       const aulaWithSRT = {
         ...mockAulaCompleta,
         transcricao: {
@@ -870,7 +1012,8 @@ describe('AnaliseService', () => {
     });
 
     it('should handle plain text transcription (backward compatibility)', async () => {
-      const plainText = 'Bom dia, turma! Hoje vamos estudar frações equivalentes.';
+      const plainText =
+        'Bom dia, turma! Hoje vamos estudar frações equivalentes.';
       const aulaPlainText = {
         ...mockAulaCompleta,
         transcricao: {
@@ -909,41 +1052,57 @@ describe('AnaliseService', () => {
       'prompt-alertas',
     ];
 
-    it.each(promptNames)('should have v4.0.0 file with ativo=true for %s', (nome) => {
-      const filePath = join(promptsDir, `${nome}-v4.0.0.json`);
-      const content = JSON.parse(readFileSync(filePath, 'utf-8'));
+    it.each(promptNames)(
+      'should have v4.0.0 file with ativo=true for %s',
+      (nome) => {
+        const filePath = join(promptsDir, `${nome}-v4.0.0.json`);
+        const content = JSON.parse(readFileSync(filePath, 'utf-8'));
 
-      expect(content.nome).toBe(nome);
-      expect(content.versao).toBe('v4.0.0');
-      expect(content.ativo).toBe(true);
-    });
+        expect(content.nome).toBe(nome);
+        expect(content.versao).toBe('v4.0.0');
+        expect(content.ativo).toBe(true);
+      },
+    );
 
-    it.each(promptNames)('should have v3.0.0 file with ativo=false for %s', (nome) => {
-      const filePath = join(promptsDir, `${nome}-v3.0.0.json`);
-      const content = JSON.parse(readFileSync(filePath, 'utf-8'));
+    it.each(promptNames)(
+      'should have v3.0.0 file with ativo=false for %s',
+      (nome) => {
+        const filePath = join(promptsDir, `${nome}-v3.0.0.json`);
+        const content = JSON.parse(readFileSync(filePath, 'utf-8'));
 
-      expect(content.nome).toBe(nome);
-      expect(content.versao).toBe('v3.0.0');
-      expect(content.ativo).toBe(false);
-    });
+        expect(content.nome).toBe(nome);
+        expect(content.versao).toBe('v3.0.0');
+        expect(content.ativo).toBe(false);
+      },
+    );
 
-    it.each(promptNames)('v4.0.0 %s should contain speaker label references', (nome) => {
-      const filePath = join(promptsDir, `${nome}-v4.0.0.json`);
-      const content = JSON.parse(readFileSync(filePath, 'utf-8'));
+    it.each(promptNames)(
+      'v4.0.0 %s should contain speaker label references',
+      (nome) => {
+        const filePath = join(promptsDir, `${nome}-v4.0.0.json`);
+        const content = JSON.parse(readFileSync(filePath, 'utf-8'));
 
-      expect(content.conteudo).toContain('[PROFESSOR]');
-      expect(content.conteudo).toContain('[ALUNO]');
-      // Prompts 1-2 reference SRT format directly; prompts 3-5 reference speaker labels from analysis
-      expect(content.conteudo).toMatch(/SRT|speaker label|speaker_analysis|diarização/i);
-    });
+        expect(content.conteudo).toContain('[PROFESSOR]');
+        expect(content.conteudo).toContain('[ALUNO]');
+        // Prompts 1-2 reference SRT format directly; prompts 3-5 reference speaker labels from analysis
+        expect(content.conteudo).toMatch(
+          /SRT|speaker label|speaker_analysis|diarização/i,
+        );
+      },
+    );
 
-    it.each(promptNames)('v4.0.0 %s should contain backward compatibility fallback', (nome) => {
-      const filePath = join(promptsDir, `${nome}-v4.0.0.json`);
-      const content = JSON.parse(readFileSync(filePath, 'utf-8'));
+    it.each(promptNames)(
+      'v4.0.0 %s should contain backward compatibility fallback',
+      (nome) => {
+        const filePath = join(promptsDir, `${nome}-v4.0.0.json`);
+        const content = JSON.parse(readFileSync(filePath, 'utf-8'));
 
-      // Each prompt must handle plain text gracefully
-      expect(content.conteudo).toMatch(/texto puro|sem labels|NÃO contém labels/i);
-    });
+        // Each prompt must handle plain text gracefully
+        expect(content.conteudo).toMatch(
+          /texto puro|sem labels|NÃO contém labels/i,
+        );
+      },
+    );
 
     it('v4.0.0 prompt-cobertura should have speaker field in evidence schema', () => {
       const filePath = join(promptsDir, 'prompt-cobertura-v4.0.0.json');

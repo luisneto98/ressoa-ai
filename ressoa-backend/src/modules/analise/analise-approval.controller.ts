@@ -166,7 +166,9 @@ export class AnaliseApprovalController {
 
     // 3. Verificar: análise está em status AGUARDANDO_REVISAO
     if (analise.status !== StatusAnalise.AGUARDANDO_REVISAO) {
-      throw new BadRequestException('Exercícios já foram aprovados ou rejeitados');
+      throw new BadRequestException(
+        'Exercícios já foram aprovados ou rejeitados',
+      );
     }
 
     // 4. Validar estrutura dos exercícios
@@ -198,7 +200,11 @@ export class AnaliseApprovalController {
    */
   private validateExercicios(exercicios: any) {
     // Validação 1: Estrutura básica
-    if (!exercicios || !exercicios.questoes || !Array.isArray(exercicios.questoes)) {
+    if (
+      !exercicios ||
+      !exercicios.questoes ||
+      !Array.isArray(exercicios.questoes)
+    ) {
       throw new BadRequestException('Estrutura de exercícios inválida');
     }
 
@@ -212,40 +218,59 @@ export class AnaliseApprovalController {
         !questao.nivel_bloom ||
         !questao.explicacao
       ) {
-        throw new BadRequestException('Questão com campos obrigatórios faltando');
+        throw new BadRequestException(
+          'Questão com campos obrigatórios faltando',
+        );
       }
 
       // Validação de tamanho máximo dos campos
       if (questao.enunciado.length > 500) {
-        throw new BadRequestException('Enunciado não pode exceder 500 caracteres');
+        throw new BadRequestException(
+          'Enunciado não pode exceder 500 caracteres',
+        );
       }
       if (questao.explicacao.length > 1000) {
-        throw new BadRequestException('Explicação não pode exceder 1000 caracteres');
+        throw new BadRequestException(
+          'Explicação não pode exceder 1000 caracteres',
+        );
       }
 
       // Validação 3: Exatamente 4 alternativas
-      if (!Array.isArray(questao.alternativas) || questao.alternativas.length !== 4) {
-        throw new BadRequestException('Cada questão deve ter exatamente 4 alternativas');
+      if (
+        !Array.isArray(questao.alternativas) ||
+        questao.alternativas.length !== 4
+      ) {
+        throw new BadRequestException(
+          'Cada questão deve ter exatamente 4 alternativas',
+        );
       }
 
       // Validação de tamanho máximo das alternativas
       for (const alt of questao.alternativas) {
         if (!alt.texto || alt.texto.length > 200) {
-          throw new BadRequestException('Texto da alternativa não pode exceder 200 caracteres');
+          throw new BadRequestException(
+            'Texto da alternativa não pode exceder 200 caracteres',
+          );
         }
       }
 
       // Validação 4: Exatamente 1 alternativa correta
-      const corretas = questao.alternativas.filter((alt: any) => alt.correta === true);
+      const corretas = questao.alternativas.filter(
+        (alt: any) => alt.correta === true,
+      );
       if (corretas.length !== 1) {
-        throw new BadRequestException('Cada questão deve ter exatamente 1 alternativa correta');
+        throw new BadRequestException(
+          'Cada questão deve ter exatamente 1 alternativa correta',
+        );
       }
 
       // Validação 5: Letras A, B, C, D (sem duplicatas)
       const letras = questao.alternativas.map((alt: any) => alt.letra).sort();
       const letrasUnicas = new Set(letras);
       if (letras.join('') !== 'ABCD' || letrasUnicas.size !== 4) {
-        throw new BadRequestException('Alternativas devem ter letras A, B, C, D sem duplicatas');
+        throw new BadRequestException(
+          'Alternativas devem ter letras A, B, C, D sem duplicatas',
+        );
       }
     }
   }

@@ -52,7 +52,9 @@ export class AdminService {
 
     // 4. Validar email único (case-insensitive)
     const existingEmail = await this.prisma.escola.findFirst({
-      where: { email_contato: { equals: emailNormalizado, mode: 'insensitive' } },
+      where: {
+        email_contato: { equals: emailNormalizado, mode: 'insensitive' },
+      },
     });
     if (existingEmail) {
       throw new ConflictException('Email de contato já cadastrado');
@@ -83,7 +85,10 @@ export class AdminService {
       id: escola.id,
       nome: escola.nome,
       cnpj: escola.cnpj as string, // Garantido pela criação acima
-      tipo: escola.tipo as 'particular' | 'publica_municipal' | 'publica_estadual',
+      tipo: escola.tipo as
+        | 'particular'
+        | 'publica_municipal'
+        | 'publica_estadual',
       endereco: escola.endereco as object | undefined,
       contato_principal: escola.contato_principal as string,
       email_contato: escola.email_contato as string,

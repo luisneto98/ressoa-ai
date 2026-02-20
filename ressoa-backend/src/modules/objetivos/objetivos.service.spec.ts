@@ -1,5 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BadRequestException, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  BadRequestException,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { ObjetivosService } from './objetivos.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateObjetivoDto } from './dto/create-objetivo.dto';
@@ -135,7 +139,10 @@ describe('ObjetivosService', () => {
         tipo_fonte: TipoFonte.CUSTOM,
         turma_id: 'turma-uuid-A',
         area_conhecimento: 'Matemática Financeira',
-        criterios_evidencia: ['Identifica grandezas proporcionais', 'Aplica regra corretamente'],
+        criterios_evidencia: [
+          'Identifica grandezas proporcionais',
+          'Aplica regra corretamente',
+        ],
       };
 
       mockPrismaService.turma.findUnique.mockResolvedValue(mockTurma);
@@ -172,7 +179,9 @@ describe('ObjetivosService', () => {
       };
 
       // Act & Assert
-      await expect(service.create(createDto)).rejects.toThrow(BadRequestException);
+      await expect(service.create(createDto)).rejects.toThrow(
+        BadRequestException,
+      );
       await expect(service.create(createDto)).rejects.toThrow(
         'habilidade_bncc_id é obrigatório para objetivos BNCC',
       );
@@ -191,7 +200,9 @@ describe('ObjetivosService', () => {
       mockPrismaService.habilidade.findUnique.mockResolvedValue(null);
 
       // Act & Assert
-      await expect(service.create(createDto)).rejects.toThrow(NotFoundException);
+      await expect(service.create(createDto)).rejects.toThrow(
+        NotFoundException,
+      );
       await expect(service.create(createDto)).rejects.toThrow(
         'Habilidade BNCC não encontrada',
       );
@@ -210,7 +221,9 @@ describe('ObjetivosService', () => {
       };
 
       // Act & Assert
-      await expect(service.create(createDto)).rejects.toThrow(BadRequestException);
+      await expect(service.create(createDto)).rejects.toThrow(
+        BadRequestException,
+      );
       await expect(service.create(createDto)).rejects.toThrow(
         'Objetivos customizados requerem ao menos 1 critério de evidência',
       );
@@ -229,7 +242,9 @@ describe('ObjetivosService', () => {
       };
 
       // Act & Assert
-      await expect(service.create(createDto)).rejects.toThrow(BadRequestException);
+      await expect(service.create(createDto)).rejects.toThrow(
+        BadRequestException,
+      );
       await expect(service.create(createDto)).rejects.toThrow(
         'area_conhecimento é obrigatória',
       );
@@ -248,8 +263,12 @@ describe('ObjetivosService', () => {
       };
 
       // Act & Assert
-      await expect(service.create(createDto)).rejects.toThrow(BadRequestException);
-      await expect(service.create(createDto)).rejects.toThrow('turma_id é obrigatório');
+      await expect(service.create(createDto)).rejects.toThrow(
+        BadRequestException,
+      );
+      await expect(service.create(createDto)).rejects.toThrow(
+        'turma_id é obrigatório',
+      );
     });
 
     it('✅ should throw error if codigo duplicated in same turma', async () => {
@@ -272,8 +291,12 @@ describe('ObjetivosService', () => {
       });
 
       // Act & Assert
-      await expect(service.create(createDto)).rejects.toThrow(ConflictException);
-      await expect(service.create(createDto)).rejects.toThrow('já existe na turma');
+      await expect(service.create(createDto)).rejects.toThrow(
+        ConflictException,
+      );
+      await expect(service.create(createDto)).rejects.toThrow(
+        'já existe na turma',
+      );
     });
 
     it('✅ should succeed if codigo duplicated in different turma', async () => {
@@ -364,7 +387,9 @@ describe('ObjetivosService', () => {
       });
 
       // Act & Assert
-      await expect(service.findByTurma('turma-uuid-A')).rejects.toThrow(NotFoundException);
+      await expect(service.findByTurma('turma-uuid-A')).rejects.toThrow(
+        NotFoundException,
+      );
       await expect(service.findByTurma('turma-uuid-A')).rejects.toThrow(
         'Turma não encontrada ou foi deletada',
       );

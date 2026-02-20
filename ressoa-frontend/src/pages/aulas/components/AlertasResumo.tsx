@@ -2,6 +2,14 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AlertCircle, AlertTriangle, Info, Award, TrendingUp } from 'lucide-react';
 
+interface SpeakerAnalysis {
+  professor_fala_pct: number;
+  alunos_fala_pct: number;
+  trocas_dialogicas: number;
+  total_intervencoes_alunos?: number;
+  total_perguntas_professor?: number;
+}
+
 interface AlertasResumoProps {
   resumo: {
     total_alertas: number;
@@ -11,9 +19,10 @@ interface AlertasResumoProps {
     status_geral: string;
   };
   score_geral?: number;
+  speaker_analysis?: SpeakerAnalysis; // V4
 }
 
-export function AlertasResumo({ resumo, score_geral }: AlertasResumoProps) {
+export function AlertasResumo({ resumo, score_geral, speaker_analysis }: AlertasResumoProps) {
   const getStatusColor = (status: string) => {
     switch (status.toUpperCase()) {
       case 'EXCELENTE':
@@ -111,6 +120,45 @@ export function AlertasResumo({ resumo, score_geral }: AlertasResumoProps) {
           </div>
         </div>
       </div>
+
+      {/* V4: Speaker analysis - distribuição de fala */}
+      {speaker_analysis && (
+        <div className="mt-3 pt-3 border-t border-gray-100">
+          <p className="text-xs font-medium text-gray-500 mb-2">Distribuição de Fala</p>
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-gray-600 w-20 shrink-0">Professor</span>
+              <div className="flex-1 bg-gray-200 rounded-full h-2">
+                <div
+                  className="h-2 rounded-full bg-tech-blue"
+                  style={{ width: `${speaker_analysis.professor_fala_pct}%` }}
+                />
+              </div>
+              <span className="text-xs font-semibold text-gray-700 w-8 text-right">
+                {speaker_analysis.professor_fala_pct}%
+              </span>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-gray-600 w-20 shrink-0">Alunos</span>
+              <div className="flex-1 bg-gray-200 rounded-full h-2">
+                <div
+                  className="h-2 rounded-full bg-green-500"
+                  style={{ width: `${speaker_analysis.alunos_fala_pct}%` }}
+                />
+              </div>
+              <span className="text-xs font-semibold text-gray-700 w-8 text-right">
+                {speaker_analysis.alunos_fala_pct}%
+              </span>
+            </div>
+          </div>
+          <p className="text-xs text-gray-400 mt-1.5">
+            {speaker_analysis.trocas_dialogicas} trocas dialógicas
+            {speaker_analysis.total_intervencoes_alunos !== undefined && (
+              <> · {speaker_analysis.total_intervencoes_alunos} intervenções dos alunos</>
+            )}
+          </p>
+        </div>
+      )}
     </Card>
   );
 }

@@ -88,7 +88,8 @@ export class CreateTurmaDto {
     example: 'BNCC',
     examples: ['BNCC', 'CUSTOM'],
     default: 'BNCC',
-    description: 'Tipo de currículo: BNCC (padrão baseado na Base Nacional Comum Curricular) ou CUSTOM (cursos livres/técnicos customizados)',
+    description:
+      'Tipo de currículo: BNCC (padrão baseado na Base Nacional Comum Curricular) ou CUSTOM (cursos livres/técnicos customizados)',
     required: false,
   })
   @IsEnum(CurriculoTipo, {
@@ -100,7 +101,8 @@ export class CreateTurmaDto {
   @ApiProperty({
     type: () => ContextoPedagogicoDto,
     required: false,
-    description: 'Contexto pedagógico do curso (obrigatório se curriculo_tipo = CUSTOM)',
+    description:
+      'Contexto pedagógico do curso (obrigatório se curriculo_tipo = CUSTOM)',
   })
   @ValidateIf((o) => o.curriculo_tipo === CurriculoTipo.CUSTOM)
   @IsNotEmpty({

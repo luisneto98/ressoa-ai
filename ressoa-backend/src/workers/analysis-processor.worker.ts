@@ -22,7 +22,9 @@ export class AnalysisProcessorWorker {
   ) {}
 
   @Process('analyze-aula')
-  async handleAnalysis(job: Job<AnalysisJobPayload>): Promise<{ analiseId: string } | undefined> {
+  async handleAnalysis(
+    job: Job<AnalysisJobPayload>,
+  ): Promise<{ analiseId: string } | undefined> {
     const { aulaId, escolaId } = job.data;
     const startTime = Date.now();
 
@@ -100,6 +102,10 @@ export class AnalysisProcessorWorker {
         aulaId,
         analiseId: analise.id,
         durationMs,
+        custoSttUSD: analise.custo_stt_usd?.toFixed(4) ?? '0.0000',
+        custoLlmUSD: (
+          analise.custo_total_usd - (analise.custo_stt_usd ?? 0)
+        ).toFixed(4),
         custoTotalUSD: analise.custo_total_usd.toFixed(4),
         timestamp: new Date().toISOString(),
       });
@@ -114,9 +120,9 @@ export class AnalysisProcessorWorker {
       await job.progress(100);
 
       return { analiseId: analise.id };
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
       const errorStack = error instanceof Error ? error.stack : undefined;
 
       this.logger.error({

@@ -199,7 +199,6 @@ describe('DashboardService', () => {
       expect(callArgs[1]).toBe('escola-123');
       expect(callArgs[2]).toBe('prof-1');
     });
-
   });
 
   describe('getMetricasPorTurma', () => {
@@ -245,7 +244,9 @@ describe('DashboardService', () => {
 
       mockPrismaService.$queryRaw.mockResolvedValue(mockMetricas);
 
-      const result = await service.getMetricasPorTurma('escola-1', { bimestre: 1 });
+      const result = await service.getMetricasPorTurma('escola-1', {
+        bimestre: 1,
+      });
 
       expect(result.metricas).toHaveLength(3);
       expect(result.classificacao).toEqual({
@@ -543,9 +544,7 @@ describe('DashboardService', () => {
           total_aulas: BigInt(100),
         },
       ];
-      const mockEvolucao = [
-        { bimestre: 1, cobertura_media: 75.0 },
-      ];
+      const mockEvolucao = [{ bimestre: 1, cobertura_media: 75.0 }];
 
       mockPrismaService.$queryRaw
         .mockResolvedValueOnce(mockKPIs)
@@ -581,13 +580,15 @@ describe('DashboardService', () => {
     });
 
     it('should enforce multi-tenancy (escola_id in all queries)', async () => {
-      const mockKPIs = [{
-        cobertura_geral: 70.0,
-        total_professores_ativos: BigInt(10),
-        total_turmas: BigInt(30),
-        total_aulas: BigInt(250),
-        tempo_medio_revisao_geral: 180.0,
-      }];
+      const mockKPIs = [
+        {
+          cobertura_geral: 70.0,
+          total_professores_ativos: BigInt(10),
+          total_turmas: BigInt(30),
+          total_aulas: BigInt(250),
+          tempo_medio_revisao_geral: 180.0,
+        },
+      ];
 
       mockPrismaService.$queryRaw
         .mockResolvedValueOnce(mockKPIs)
@@ -651,19 +652,36 @@ describe('DashboardService', () => {
     });
 
     it('should order por_disciplina by cobertura DESC', async () => {
-      const mockKPIs = [{
-        cobertura_geral: 70.0,
-        total_professores_ativos: BigInt(10),
-        total_turmas: BigInt(30),
-        total_aulas: BigInt(250),
-        tempo_medio_revisao_geral: 180.0,
-      }];
+      const mockKPIs = [
+        {
+          cobertura_geral: 70.0,
+          total_professores_ativos: BigInt(10),
+          total_turmas: BigInt(30),
+          total_aulas: BigInt(250),
+          tempo_medio_revisao_geral: 180.0,
+        },
+      ];
 
       const mockBreakdown: any[] = [];
       const mockPorDisciplina = [
-        { disciplina: 'MATEMATICA', cobertura_media: 80.0, total_turmas: BigInt(10), total_aulas: BigInt(100) },
-        { disciplina: 'LINGUA_PORTUGUESA', cobertura_media: 65.0, total_turmas: BigInt(10), total_aulas: BigInt(90) },
-        { disciplina: 'CIENCIAS', cobertura_media: 70.0, total_turmas: BigInt(10), total_aulas: BigInt(95) },
+        {
+          disciplina: 'MATEMATICA',
+          cobertura_media: 80.0,
+          total_turmas: BigInt(10),
+          total_aulas: BigInt(100),
+        },
+        {
+          disciplina: 'LINGUA_PORTUGUESA',
+          cobertura_media: 65.0,
+          total_turmas: BigInt(10),
+          total_aulas: BigInt(90),
+        },
+        {
+          disciplina: 'CIENCIAS',
+          cobertura_media: 70.0,
+          total_turmas: BigInt(10),
+          total_aulas: BigInt(95),
+        },
       ];
       const mockEvolucao: any[] = [];
 

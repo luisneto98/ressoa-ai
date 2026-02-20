@@ -41,7 +41,7 @@ export class ProfessoresService {
    * SQL Query Logic:
    * - JOIN Planejamento + PlanejamentoHabilidade + Turma + Aula + Analise
    * - COUNT DISTINCT habilidades planejadas (from PlanejamentoHabilidade)
-   * - COUNT DISTINCT habilidades trabalhadas (from Analise.cobertura_json where nivel_cobertura IN ('COMPLETE', 'PARTIAL'))
+   * - COUNT DISTINCT habilidades trabalhadas (from Analise.cobertura_json where nivel_cobertura >= 2)
    * - Calcula % cobertura = trabalhadas / planejadas * 100
    * - CRITICAL: Filtra por escola_id para multi-tenancy
    * - CRITICAL: Filtra apenas análises aprovadas (status = 'APROVADO')
@@ -69,9 +69,9 @@ export class ProfessoresService {
         COUNT(DISTINCT CASE
           WHEN (
             SELECT COUNT(*)
-            FROM jsonb_array_elements(a.cobertura_json->'habilidades') AS hab
-            WHERE hab->>'codigo' = h.codigo
-            AND hab->>'nivel_cobertura' IN ('COMPLETE', 'PARTIAL')
+            FROM jsonb_array_elements(a.cobertura_json->'analise_cobertura') AS hab
+            WHERE COALESCE(hab->>'objetivo_codigo', hab->>'habilidade_codigo') = h.codigo
+            AND (hab->>'nivel_cobertura')::int >= 2
           ) > 0
           THEN ph.habilidade_id
         END)::int as habilidades_trabalhadas,
@@ -80,9 +80,9 @@ export class ProfessoresService {
             (COUNT(DISTINCT CASE
               WHEN (
                 SELECT COUNT(*)
-                FROM jsonb_array_elements(a.cobertura_json->'habilidades') AS hab
-                WHERE hab->>'codigo' = h.codigo
-                AND hab->>'nivel_cobertura' IN ('COMPLETE', 'PARTIAL')
+                FROM jsonb_array_elements(a.cobertura_json->'analise_cobertura') AS hab
+                WHERE COALESCE(hab->>'objetivo_codigo', hab->>'habilidade_codigo') = h.codigo
+                AND (hab->>'nivel_cobertura')::int >= 2
               ) > 0
               THEN ph.habilidade_id
             END)::numeric / NULLIF(COUNT(DISTINCT ph.habilidade_id), 0)) * 100,
@@ -142,7 +142,7 @@ export class ProfessoresService {
         SELECT
           DATE_TRUNC('week', au.data)::date as semana,
           au.id as aula_id,
-          a.cobertura_json->'habilidades' as habilidades_json
+          a.cobertura_json->'analise_cobertura' as habilidades_json
         FROM "aula" au
         INNER JOIN "analise" a ON a.aula_id = au.id
           AND a.status = 'APROVADO'
@@ -150,20 +150,23 @@ export class ProfessoresService {
           AND au.professor_id = ${professorId}
           AND au.escola_id = ${escolaId}
           AND EXTRACT(QUARTER FROM au.data) = ${quarter}
+      ),
+      habilidades_por_semana AS (
+        SELECT
+          wd.semana,
+          wd.aula_id,
+          COALESCE(hab->>'objetivo_codigo', hab->>'habilidade_codigo') as codigo
+        FROM weekly_data wd
+        CROSS JOIN LATERAL jsonb_array_elements(wd.habilidades_json) AS hab
+        WHERE (hab->>'nivel_cobertura')::int >= 2
       )
       SELECT
-        semana,
-        COUNT(DISTINCT (
-          SELECT hab->>'codigo'
-          FROM weekly_data wd
-          CROSS JOIN LATERAL jsonb_array_elements(wd.habilidades_json) AS hab
-          WHERE wd.semana = weekly_data.semana
-            AND hab->>'nivel_cobertura' IN ('COMPLETE', 'PARTIAL')
-        ))::int as habilidades_acumuladas,
-        COUNT(DISTINCT aula_id)::int as aulas_realizadas
-      FROM weekly_data
-      GROUP BY semana
-      ORDER BY semana ASC;
+        wd.semana,
+        COALESCE((SELECT COUNT(DISTINCT h.codigo) FROM habilidades_por_semana h WHERE h.semana <= wd.semana), 0)::int as habilidades_acumuladas,
+        COUNT(DISTINCT wd.aula_id)::int as aulas_realizadas
+      FROM weekly_data wd
+      GROUP BY wd.semana
+      ORDER BY wd.semana ASC;
     `;
 
     return timeline;

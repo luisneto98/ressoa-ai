@@ -414,7 +414,9 @@ describe('Dashboard Security (E2E)', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.aula).toBeDefined();
-      expect(response.body.relatorio).toContain('Relatório privado do professor');
+      expect(response.body.relatorio).toContain(
+        'Relatório privado do professor',
+      );
     });
 
     it('NÃO DEVE acessar transcrição de outro professor', async () => {

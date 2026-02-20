@@ -14,11 +14,13 @@ import {
 } from '../../../components/ui/select';
 import { Input } from '../../../components/ui/input';
 import { RadioGroup, RadioGroupItem } from '../../../components/ui/radio-group';
+import { Textarea } from '../../../components/ui/textarea';
 
 const step1Schema = z.object({
   turma_id: z.string().min(1, 'Selecione uma turma'),
   bimestre: z.number().int().min(1).max(4),
   ano_letivo: z.number().int().min(2024),
+  descricao: z.string().max(2000).optional(),
 });
 
 type Step1FormData = z.infer<typeof step1Schema>;
@@ -44,25 +46,21 @@ export const Step1DadosGerais = ({ mode = 'create' }: Step1DadosGeraisProps) => 
       turma_id: formData.turma_id || '',
       bimestre: formData.bimestre || 1,
       ano_letivo: formData.ano_letivo || new Date().getFullYear(),
+      descricao: formData.descricao || '',
     },
   });
+
+  const descricaoValue = watch('descricao') ?? '';
 
   const turmaId = watch('turma_id');
 
   const onSubmit = (data: Step1FormData) => {
     const selectedTurma = turmas?.find((t) => t.id === data.turma_id);
 
-    // DEBUG: Log para verificar o que está sendo salvo
-    console.log('[Step1] Setting formData:', {
-      turma_id: data.turma_id,
-      selectedTurma,
-      bimestre: data.bimestre,
-      ano_letivo: data.ano_letivo,
-    });
-
     setFormData({
       ...data,
       turma: selectedTurma,
+      descricao: data.descricao || undefined,
     });
     nextStep();
   };
@@ -144,6 +142,32 @@ export const Step1DadosGerais = ({ mode = 'create' }: Step1DadosGeraisProps) => 
           {errors.ano_letivo && (
             <span className="mt-1 text-sm text-red-500" role="alert">
               {errors.ano_letivo.message}
+            </span>
+          )}
+        </div>
+        {/* Descricao Textarea */}
+        <div className="mb-4">
+          <Label htmlFor="descricao" className="mb-2 block">
+            Descrição do Planejamento (opcional)
+          </Label>
+          <Textarea
+            id="descricao"
+            placeholder="Ex: Pretendo usar material concreto para frações, ênfase em resolução de problemas contextualizados, avaliação formativa contínua..."
+            maxLength={2000}
+            rows={4}
+            {...register('descricao')}
+            className={errors.descricao ? 'border-red-500' : ''}
+            aria-describedby="descricao-counter"
+          />
+          <p
+            id="descricao-counter"
+            className="text-xs text-muted-foreground text-right mt-1"
+          >
+            {descricaoValue.length}/2000
+          </p>
+          {errors.descricao && (
+            <span className="mt-1 text-sm text-red-500" role="alert">
+              {errors.descricao.message}
             </span>
           )}
         </div>

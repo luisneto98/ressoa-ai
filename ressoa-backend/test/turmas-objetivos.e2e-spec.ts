@@ -304,7 +304,8 @@ describe('TurmasController (E2E) - Objetivos Customizados (Story 11.4)', () => {
       .patch(`/api/v1/turmas/${turmaCustomId}/objetivos/${objetivoId}`)
       .set('Authorization', `Bearer ${professorToken}`)
       .send({
-        descricao: 'Nova descrição atualizada (mínimo 20 caracteres necessários)',
+        descricao:
+          'Nova descrição atualizada (mínimo 20 caracteres necessários)',
       })
       .expect(200);
 
@@ -422,7 +423,9 @@ describe('TurmasController (E2E) - Objetivos Customizados (Story 11.4)', () => {
 
     expect(response.body.message).toEqual(
       expect.arrayContaining([
-        expect.stringContaining('criterios_evidencia deve ter entre 1 e 5 itens'),
+        expect.stringContaining(
+          'criterios_evidencia deve ter entre 1 e 5 itens',
+        ),
       ]),
     );
   });
@@ -497,7 +500,8 @@ describe('TurmasController (E2E) - Objetivos Customizados (Story 11.4)', () => {
     // Criar objetivo
     const createDto = {
       codigo: 'PM-MAT-09',
-      descricao: 'Objetivo que será usado em planejamento (mínimo 20 caracteres)',
+      descricao:
+        'Objetivo que será usado em planejamento (mínimo 20 caracteres)',
       nivel_cognitivo: 'APLICAR',
       criterios_evidencia: ['Identifica proporções'],
     };
@@ -584,7 +588,8 @@ describe('TurmasController (E2E) - Objetivos Customizados (Story 11.4)', () => {
       .set('Authorization', `Bearer ${professorToken}`)
       .send({
         codigo: 'ORDEM-01',
-        descricao: 'Primeiro objetivo criado (mínimo 20 caracteres necessários)',
+        descricao:
+          'Primeiro objetivo criado (mínimo 20 caracteres necessários)',
         nivel_cognitivo: 'APLICAR',
         criterios_evidencia: ['Critério 1'],
       })
@@ -610,7 +615,8 @@ describe('TurmasController (E2E) - Objetivos Customizados (Story 11.4)', () => {
       .set('Authorization', `Bearer ${professorToken}`)
       .send({
         codigo: 'ORDEM-03',
-        descricao: 'Terceiro objetivo criado (mínimo 20 caracteres necessários)',
+        descricao:
+          'Terceiro objetivo criado (mínimo 20 caracteres necessários)',
         nivel_cognitivo: 'CRIAR',
         criterios_evidencia: ['Critério 3'],
       })
@@ -661,7 +667,8 @@ describe('TurmasController (E2E) - Objetivos Customizados (Story 11.4)', () => {
       .patch(`/api/v1/turmas/${turmaCustomId}/objetivos/${objetivoId}`)
       .set('Authorization', `Bearer ${professorToken}`)
       .send({
-        descricao: 'Descrição atualizada via patch parcial (mínimo 20 caracteres)',
+        descricao:
+          'Descrição atualizada via patch parcial (mínimo 20 caracteres)',
       })
       .expect(200);
 
@@ -674,7 +681,9 @@ describe('TurmasController (E2E) - Objetivos Customizados (Story 11.4)', () => {
     expect(updated.body.codigo).toBe(createDto.codigo);
     expect(updated.body.nivel_cognitivo).toBe(createDto.nivel_cognitivo);
     expect(updated.body.area_conhecimento).toBe(createDto.area_conhecimento);
-    expect(updated.body.criterios_evidencia).toEqual(createDto.criterios_evidencia);
+    expect(updated.body.criterios_evidencia).toEqual(
+      createDto.criterios_evidencia,
+    );
 
     // Verificar que updated_at foi atualizado
     expect(new Date(updated.body.updated_at).getTime()).toBeGreaterThan(

@@ -47,7 +47,10 @@ export function resolveSttPromptKey(disciplinaNome: string): string {
     .replace(/[\u0300-\u036f]/g, '');
 
   if (normalized.includes('matematica')) return 'matematica';
-  if (normalized.includes('lingua portuguesa') || normalized.includes('portugues'))
+  if (
+    normalized.includes('lingua portuguesa') ||
+    normalized.includes('portugues')
+  )
     return 'lingua_portuguesa';
   if (normalized.includes('ciencia')) return 'ciencias';
 

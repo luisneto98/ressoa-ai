@@ -75,7 +75,10 @@ export interface EvolucaoTemporal {
 export class DashboardService {
   constructor(private prisma: PrismaService) {}
 
-  async getMetricasPorProfessor(escolaId: string, filtros: FiltrosDashboardDto) {
+  async getMetricasPorProfessor(
+    escolaId: string,
+    filtros: FiltrosDashboardDto,
+  ) {
     // Query raw SQL para agregar dados da materialized view
     // Query optimized: uses turma_tipo_ensino from materialized view (no JOIN needed)
     const metricas = await this.prisma.$queryRaw<MetricasProfessor[]>`
@@ -167,7 +170,8 @@ export class DashboardService {
 
     // Classificar turmas por urgência
     const turmas_criticas = metricas.filter(
-      (t) => Number(t.percentual_cobertura) < COBERTURA_TURMA_THRESHOLDS.CRITICA,
+      (t) =>
+        Number(t.percentual_cobertura) < COBERTURA_TURMA_THRESHOLDS.CRITICA,
     );
     const turmas_atencao = metricas.filter(
       (t) =>
@@ -175,7 +179,8 @@ export class DashboardService {
         Number(t.percentual_cobertura) < COBERTURA_TURMA_THRESHOLDS.ATENCAO,
     );
     const turmas_ritmo = metricas.filter(
-      (t) => Number(t.percentual_cobertura) >= COBERTURA_TURMA_THRESHOLDS.ATENCAO,
+      (t) =>
+        Number(t.percentual_cobertura) >= COBERTURA_TURMA_THRESHOLDS.ATENCAO,
     );
 
     return {
@@ -189,11 +194,7 @@ export class DashboardService {
     };
   }
 
-  async getDetalhesTurma(
-    escolaId: string,
-    turmaId: string,
-    bimestre?: number,
-  ) {
+  async getDetalhesTurma(escolaId: string, turmaId: string, bimestre?: number) {
     // Buscar habilidades planejadas vs trabalhadas
     const detalhes = await this.prisma.$queryRaw<HabilidadeStatus[]>`
       SELECT
@@ -284,14 +285,27 @@ export class DashboardService {
     const breakdown = {
       fundamental: breakdownRaw.find((b) => b.tipo_ensino === 'FUNDAMENTAL')
         ? {
-            cobertura: Number(breakdownRaw.find((b) => b.tipo_ensino === 'FUNDAMENTAL')!.cobertura_media) || 0,
-            total_turmas: Number(breakdownRaw.find((b) => b.tipo_ensino === 'FUNDAMENTAL')!.total_turmas),
+            cobertura:
+              Number(
+                breakdownRaw.find((b) => b.tipo_ensino === 'FUNDAMENTAL')!
+                  .cobertura_media,
+              ) || 0,
+            total_turmas: Number(
+              breakdownRaw.find((b) => b.tipo_ensino === 'FUNDAMENTAL')!
+                .total_turmas,
+            ),
           }
         : { cobertura: 0, total_turmas: 0 },
       medio: breakdownRaw.find((b) => b.tipo_ensino === 'MEDIO')
         ? {
-            cobertura: Number(breakdownRaw.find((b) => b.tipo_ensino === 'MEDIO')!.cobertura_media) || 0,
-            total_turmas: Number(breakdownRaw.find((b) => b.tipo_ensino === 'MEDIO')!.total_turmas),
+            cobertura:
+              Number(
+                breakdownRaw.find((b) => b.tipo_ensino === 'MEDIO')!
+                  .cobertura_media,
+              ) || 0,
+            total_turmas: Number(
+              breakdownRaw.find((b) => b.tipo_ensino === 'MEDIO')!.total_turmas,
+            ),
           }
         : { cobertura: 0, total_turmas: 0 },
     };
@@ -303,7 +317,8 @@ export class DashboardService {
           total_professores_ativos: Number(kpisRaw[0].total_professores_ativos),
           total_turmas: Number(kpisRaw[0].total_turmas),
           total_aulas: Number(kpisRaw[0].total_aulas),
-          tempo_medio_revisao_geral: Number(kpisRaw[0].tempo_medio_revisao_geral) || 0,
+          tempo_medio_revisao_geral:
+            Number(kpisRaw[0].tempo_medio_revisao_geral) || 0,
           // Add breakdown to KPIs (AC #7)
           cobertura_fundamental: breakdown.fundamental.cobertura,
           cobertura_medio: breakdown.medio.cobertura,

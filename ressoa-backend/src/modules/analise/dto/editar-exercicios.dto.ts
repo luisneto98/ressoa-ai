@@ -1,4 +1,12 @@
-import { IsObject, IsNotEmpty, ValidateNested, IsArray, IsString, IsBoolean, IsNumber } from 'class-validator';
+import {
+  IsObject,
+  IsNotEmpty,
+  ValidateNested,
+  IsArray,
+  IsString,
+  IsBoolean,
+  IsNumber,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class AlternativaDto {

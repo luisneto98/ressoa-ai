@@ -2,7 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AnaliseApprovalController } from './analise-approval.controller';
 import { AnaliseService } from './services/analise.service';
 import { AulasService } from '../aulas/aulas.service';
-import { NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import {
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
 import { StatusAnalise } from '@prisma/client';
 
 describe('AnaliseApprovalController - Story 6.3: editarExercicios', () => {
@@ -112,9 +116,11 @@ describe('AnaliseApprovalController - Story 6.3: editarExercicios', () => {
       ],
     }).compile();
 
-    controller = module.get<AnaliseApprovalController>(AnaliseApprovalController);
-    analiseService = module.get(AnaliseService) as jest.Mocked<AnaliseService>;
-    aulasService = module.get(AulasService) as jest.Mocked<AulasService>;
+    controller = module.get<AnaliseApprovalController>(
+      AnaliseApprovalController,
+    );
+    analiseService = module.get(AnaliseService);
+    aulasService = module.get(AulasService);
   });
 
   describe('editarExercicios', () => {
@@ -124,7 +130,11 @@ describe('AnaliseApprovalController - Story 6.3: editarExercicios', () => {
       analiseService.update.mockResolvedValue({} as any);
 
       // Act
-      const result = await controller.editarExercicios('analise-123', validExerciciosDto, mockUser);
+      const result = await controller.editarExercicios(
+        'analise-123',
+        validExerciciosDto,
+        mockUser,
+      );
 
       // Assert
       expect(analiseService.findOne).toHaveBeenCalledWith('analise-123');
@@ -143,7 +153,11 @@ describe('AnaliseApprovalController - Story 6.3: editarExercicios', () => {
 
       // Act & Assert
       await expect(
-        controller.editarExercicios('analise-999', validExerciciosDto, mockUser),
+        controller.editarExercicios(
+          'analise-999',
+          validExerciciosDto,
+          mockUser,
+        ),
       ).rejects.toThrow(NotFoundException);
     });
 
@@ -157,7 +171,11 @@ describe('AnaliseApprovalController - Story 6.3: editarExercicios', () => {
 
       // Act & Assert
       await expect(
-        controller.editarExercicios('analise-123', validExerciciosDto, mockUser),
+        controller.editarExercicios(
+          'analise-123',
+          validExerciciosDto,
+          mockUser,
+        ),
       ).rejects.toThrow(ForbiddenException);
     });
 
@@ -171,7 +189,11 @@ describe('AnaliseApprovalController - Story 6.3: editarExercicios', () => {
 
       // Act & Assert
       await expect(
-        controller.editarExercicios('analise-123', validExerciciosDto, mockUser),
+        controller.editarExercicios(
+          'analise-123',
+          validExerciciosDto,
+          mockUser,
+        ),
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -185,7 +207,11 @@ describe('AnaliseApprovalController - Story 6.3: editarExercicios', () => {
 
       // Act & Assert
       await expect(
-        controller.editarExercicios('analise-123', validExerciciosDto, mockUser),
+        controller.editarExercicios(
+          'analise-123',
+          validExerciciosDto,
+          mockUser,
+        ),
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -338,7 +364,9 @@ describe('AnaliseApprovalController - Story 6.3: editarExercicios', () => {
       ).rejects.toThrow(BadRequestException);
       await expect(
         controller.editarExercicios('analise-123', invalidDto as any, mockUser),
-      ).rejects.toThrow('Alternativas devem ter letras A, B, C, D sem duplicatas');
+      ).rejects.toThrow(
+        'Alternativas devem ter letras A, B, C, D sem duplicatas',
+      );
     });
 
     it('should throw BadRequestException for enunciado exceeding 500 chars', async () => {

@@ -133,7 +133,9 @@ export class AdminController {
 
   @Post('invite-director')
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Enviar convite por email para Diretor (admin only)' })
+  @ApiOperation({
+    summary: 'Enviar convite por email para Diretor (admin only)',
+  })
   @ApiResponse({
     status: 201,
     description: 'Convite enviado com sucesso',

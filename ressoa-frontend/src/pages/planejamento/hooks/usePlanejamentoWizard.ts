@@ -27,6 +27,7 @@ interface PlanejamentoWizardState {
     turma?: Turma; // Full turma object (for disciplina/serie in Step 2)
     bimestre: number;
     ano_letivo: number;
+    descricao?: string; // Epic 16 - Contexto bimestral do professor
   };
   selectedHabilidades: Habilidade[];
 

@@ -180,7 +180,8 @@ Bem estruturada, mas faltou síntese final.
       exercicios: [
         {
           numero: 1,
-          enunciado: 'O professor usou pizza com 8 fatias. Se você comeu 3 fatias, qual fração?',
+          enunciado:
+            'O professor usou pizza com 8 fatias. Se você comeu 3 fatias, qual fração?',
           contexto_aula: 'Professor usou pizza como exemplo',
           nivel_bloom: 2,
           nivel_bloom_descricao: 'Compreender',
@@ -188,7 +189,11 @@ Bem estruturada, mas faltou síntese final.
           habilidade_relacionada: 'EF06MA07',
           gabarito: {
             resposta_curta: '3/8',
-            resolucao_passo_a_passo: ['Passo 1: Total 8 fatias', 'Passo 2: Comeu 3', 'Passo 3: 3/8'],
+            resolucao_passo_a_passo: [
+              'Passo 1: Total 8 fatias',
+              'Passo 2: Comeu 3',
+              'Passo 3: 3/8',
+            ],
             criterios_correcao: ['Aceitar: 3/8'],
             dica_professor: 'Reforçar denominador como total.',
           },
@@ -218,14 +223,18 @@ Bem estruturada, mas faltou síntese final.
           habilidade_relacionada: 'EF06MA07',
           gabarito: {
             resposta_curta: 'Desenho mostrando áreas iguais',
-            resolucao_passo_a_passo: ['Passo 1: Desenhar 1/2', 'Passo 2: Desenhar 2/4'],
+            resolucao_passo_a_passo: [
+              'Passo 1: Desenhar 1/2',
+              'Passo 2: Desenhar 2/4',
+            ],
             criterios_correcao: ['Aceitar: Representação visual correta'],
             dica_professor: 'Avalia compreensão conceitual.',
           },
         },
         {
           numero: 4,
-          enunciado: 'Crie problema como "Maria e balas" usando João e 24 figurinhas (1/4).',
+          enunciado:
+            'Crie problema como "Maria e balas" usando João e 24 figurinhas (1/4).',
           contexto_aula: 'Professor usou problema de balas',
           nivel_bloom: 4,
           nivel_bloom_descricao: 'Analisar',
@@ -233,14 +242,18 @@ Bem estruturada, mas faltou síntese final.
           habilidade_relacionada: 'EF06MA07',
           gabarito: {
             resposta_curta: '6 figurinhas',
-            resolucao_passo_a_passo: ['Passo 1: Criar problema', 'Passo 2: 24 ÷ 4 = 6'],
+            resolucao_passo_a_passo: [
+              'Passo 1: Criar problema',
+              'Passo 2: 24 ÷ 4 = 6',
+            ],
             criterios_correcao: ['Aceitar: Problema correto'],
             dica_professor: 'Avalia transferência.',
           },
         },
         {
           numero: 5,
-          enunciado: '"Frações maiores têm numeradores maiores". Verdadeiro ou falso?',
+          enunciado:
+            '"Frações maiores têm numeradores maiores". Verdadeiro ou falso?',
           contexto_aula: 'Professor comparou frações',
           nivel_bloom: 5,
           nivel_bloom_descricao: 'Avaliar',
@@ -324,7 +337,9 @@ Bem estruturada, mas faltou síntese final.
 
     it('deve gerar relatório com estrutura markdown válida', async () => {
       // Mock GPT provider
-      jest.spyOn(gptProvider, 'generate').mockResolvedValue(mockRelatorioResponse);
+      jest
+        .spyOn(gptProvider, 'generate')
+        .mockResolvedValue(mockRelatorioResponse);
 
       const prompt = await promptService.getActivePrompt('prompt-relatorio');
       const variables = {
@@ -361,7 +376,9 @@ Bem estruturada, mas faltou síntese final.
     });
 
     it('deve usar dados das análises anteriores (Prompts 1-2)', async () => {
-      jest.spyOn(gptProvider, 'generate').mockResolvedValue(mockRelatorioResponse);
+      jest
+        .spyOn(gptProvider, 'generate')
+        .mockResolvedValue(mockRelatorioResponse);
 
       const prompt = await promptService.getActivePrompt('prompt-relatorio');
       const variables = {
@@ -429,7 +446,9 @@ Bem estruturada, mas faltou síntese final.
     });
 
     it('deve gerar exercícios com JSON válido', async () => {
-      jest.spyOn(gptProvider, 'generate').mockResolvedValue(mockExerciciosResponse);
+      jest
+        .spyOn(gptProvider, 'generate')
+        .mockResolvedValue(mockExerciciosResponse);
 
       const prompt = await promptService.getActivePrompt('prompt-exercicios');
       const variables = {
@@ -458,7 +477,9 @@ Bem estruturada, mas faltou síntese final.
     });
 
     it('deve seguir distribuição Bloom (2-2-1)', async () => {
-      jest.spyOn(gptProvider, 'generate').mockResolvedValue(mockExerciciosResponse);
+      jest
+        .spyOn(gptProvider, 'generate')
+        .mockResolvedValue(mockExerciciosResponse);
 
       const prompt = await promptService.getActivePrompt('prompt-exercicios');
       const variables = {
@@ -483,7 +504,9 @@ Bem estruturada, mas faltou síntese final.
     });
 
     it('deve ter contexto fidelidade (usar exemplos da transcrição)', async () => {
-      jest.spyOn(gptProvider, 'generate').mockResolvedValue(mockExerciciosResponse);
+      jest
+        .spyOn(gptProvider, 'generate')
+        .mockResolvedValue(mockExerciciosResponse);
 
       const prompt = await promptService.getActivePrompt('prompt-exercicios');
       const variables = {
@@ -501,7 +524,9 @@ Bem estruturada, mas faltou síntese final.
       const data = JSON.parse(result.texto);
 
       // Exercícios devem usar exemplos da transcrição
-      const enunciados = data.exercicios.map((ex) => ex.enunciado.toLowerCase()).join(' ');
+      const enunciados = data.exercicios
+        .map((ex) => ex.enunciado.toLowerCase())
+        .join(' ');
 
       expect(enunciados).toMatch(/pizza/);
       expect(enunciados).toMatch(/8 fatias|balas|figurinhas/);
@@ -509,7 +534,9 @@ Bem estruturada, mas faltou síntese final.
     });
 
     it('deve ter gabaritos completos', async () => {
-      jest.spyOn(gptProvider, 'generate').mockResolvedValue(mockExerciciosResponse);
+      jest
+        .spyOn(gptProvider, 'generate')
+        .mockResolvedValue(mockExerciciosResponse);
 
       const prompt = await promptService.getActivePrompt('prompt-exercicios');
       const variables = {
@@ -544,7 +571,9 @@ Bem estruturada, mas faltou síntese final.
       };
 
       // Prompt 3 receives context from Prompts 1-2
-      jest.spyOn(gptProvider, 'generate').mockResolvedValue(mockRelatorioResponse);
+      jest
+        .spyOn(gptProvider, 'generate')
+        .mockResolvedValue(mockRelatorioResponse);
 
       const prompt = await promptService.getActivePrompt('prompt-relatorio');
       const variables = {
@@ -565,7 +594,9 @@ Bem estruturada, mas faltou síntese final.
 
     it('Prompt 4 deve usar Prompt 1 output + transcrição', async () => {
       // Prompt 4 receives cobertura (Prompt 1) + transcript
-      jest.spyOn(gptProvider, 'generate').mockResolvedValue(mockExerciciosResponse);
+      jest
+        .spyOn(gptProvider, 'generate')
+        .mockResolvedValue(mockExerciciosResponse);
 
       const prompt = await promptService.getActivePrompt('prompt-exercicios');
       const variables = {
@@ -583,7 +614,9 @@ Bem estruturada, mas faltou síntese final.
       const data = JSON.parse(result.texto);
 
       // Deve usar habilidades da cobertura (Prompt 1)
-      const habilidades = data.exercicios.map((ex) => ex.habilidade_relacionada);
+      const habilidades = data.exercicios.map(
+        (ex) => ex.habilidade_relacionada,
+      );
       expect(habilidades).toContain('EF06MA01');
       expect(habilidades).toContain('EF06MA07');
 

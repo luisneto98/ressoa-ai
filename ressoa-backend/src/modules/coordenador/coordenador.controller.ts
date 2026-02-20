@@ -39,7 +39,8 @@ export class CoordenadorController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Enviar convite por email para Professor',
-    description: 'Coordenador envia convite de cadastro para Professor da sua escola',
+    description:
+      'Coordenador envia convite de cadastro para Professor da sua escola',
   })
   @ApiResponse({ status: 201, description: 'Convite enviado com sucesso' })
   @ApiResponse({
@@ -59,6 +60,10 @@ export class CoordenadorController {
     @CurrentUser() user: AuthenticatedUser,
     @Body() dto: InviteProfessorDto,
   ) {
-    return this.coordenadorService.inviteProfessor(user.escolaId, dto, user.userId);
+    return this.coordenadorService.inviteProfessor(
+      user.escolaId,
+      dto,
+      user.userId,
+    );
   }
 }

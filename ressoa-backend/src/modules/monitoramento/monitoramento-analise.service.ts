@@ -33,39 +33,38 @@ export class MonitoramentoAnaliseService {
   async getMetricas(periodo: string): Promise<MonitoramentoAnaliseResponse> {
     const dataInicio = this.calcularDataInicio(periodo);
 
-    const [agregados, tempoRevisao, porStatus, queueStats] =
-      await Promise.all([
-        // KPI aggregations: total, avg tempo, avg custo
-        this.prisma.analise.aggregate({
-          where: { created_at: { gte: dataInicio } },
-          _count: { _all: true },
-          _avg: {
-            tempo_processamento_ms: true,
-            custo_total_usd: true,
-          },
-        }),
+    const [agregados, tempoRevisao, porStatus, queueStats] = await Promise.all([
+      // KPI aggregations: total, avg tempo, avg custo
+      this.prisma.analise.aggregate({
+        where: { created_at: { gte: dataInicio } },
+        _count: { _all: true },
+        _avg: {
+          tempo_processamento_ms: true,
+          custo_total_usd: true,
+        },
+      }),
 
-        // Avg tempo_revisao (only where not null)
-        this.prisma.analise.aggregate({
-          where: {
-            created_at: { gte: dataInicio },
-            tempo_revisao: { not: null },
-          },
-          _avg: {
-            tempo_revisao: true,
-          },
-        }),
+      // Avg tempo_revisao (only where not null)
+      this.prisma.analise.aggregate({
+        where: {
+          created_at: { gte: dataInicio },
+          tempo_revisao: { not: null },
+        },
+        _avg: {
+          tempo_revisao: true,
+        },
+      }),
 
-        // Status distribution
-        this.prisma.analise.groupBy({
-          by: ['status'],
-          where: { created_at: { gte: dataInicio } },
-          _count: { _all: true },
-        }),
+      // Status distribution
+      this.prisma.analise.groupBy({
+        by: ['status'],
+        where: { created_at: { gte: dataInicio } },
+        _count: { _all: true },
+      }),
 
-        // Queue stats (NOT cached, real-time from Bull)
-        this.getQueueStats(),
-      ]);
+      // Queue stats (NOT cached, real-time from Bull)
+      this.getQueueStats(),
+    ]);
 
     const total = agregados._count._all;
 
@@ -103,7 +102,9 @@ export class MonitoramentoAnaliseService {
     return this.analysisQueue.getWaitingCount();
   }
 
-  private async getQueueStats(): Promise<MonitoramentoAnaliseResponse['queue_stats']> {
+  private async getQueueStats(): Promise<
+    MonitoramentoAnaliseResponse['queue_stats']
+  > {
     const [waiting, active, completed, failed, delayed] = await Promise.all([
       this.analysisQueue.getWaitingCount(),
       this.analysisQueue.getActiveCount(),

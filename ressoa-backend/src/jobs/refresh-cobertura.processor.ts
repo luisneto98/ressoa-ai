@@ -13,11 +13,15 @@ export class RefreshCoberturaProcessor {
   constructor(private prisma: PrismaService) {}
 
   @Process('refresh-cobertura-bimestral')
-  async refreshCoberturaBimestral(job: Job): Promise<{ success: boolean; duration: number }> {
+  async refreshCoberturaBimestral(
+    job: Job,
+  ): Promise<{ success: boolean; duration: number }> {
     const startTime = Date.now();
 
     try {
-      this.logger.log(`Starting materialized view refresh for job ${job.id}...`);
+      this.logger.log(
+        `Starting materialized view refresh for job ${job.id}...`,
+      );
 
       // Refresh CONCURRENTLY (não bloqueia leituras - queries retornam dados stale durante refresh)
       await this.prisma.$executeRaw`

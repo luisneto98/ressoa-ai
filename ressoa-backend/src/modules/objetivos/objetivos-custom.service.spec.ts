@@ -150,11 +150,21 @@ describe('ObjetivosService - Custom CRUD (Story 11.4)', () => {
 
   describe('createCustom()', () => {
     it('AC1: Deve criar objetivo customizado com dados válidos', async () => {
-      jest.spyOn(prisma.turma, 'findUnique').mockResolvedValue(mockTurmaCustom as any);
-      jest.spyOn(prisma.objetivoAprendizagem, 'findFirst').mockResolvedValue(null);
-      jest.spyOn(prisma.objetivoAprendizagem, 'create').mockResolvedValue(mockObjetivo);
+      jest
+        .spyOn(prisma.turma, 'findUnique')
+        .mockResolvedValue(mockTurmaCustom as any);
+      jest
+        .spyOn(prisma.objetivoAprendizagem, 'findFirst')
+        .mockResolvedValue(null);
+      jest
+        .spyOn(prisma.objetivoAprendizagem, 'create')
+        .mockResolvedValue(mockObjetivo);
 
-      const result = await service.createCustom(turmaIdCustom, mockCreateDto, mockProfessor);
+      const result = await service.createCustom(
+        turmaIdCustom,
+        mockCreateDto,
+        mockProfessor,
+      );
 
       expect(result).toEqual(mockObjetivo);
       expect(prisma.objetivoAprendizagem.create).toHaveBeenCalledWith({
@@ -172,7 +182,9 @@ describe('ObjetivosService - Custom CRUD (Story 11.4)', () => {
     });
 
     it('AC4: Deve rejeitar se turma não for CUSTOM (400)', async () => {
-      jest.spyOn(prisma.turma, 'findUnique').mockResolvedValue(mockTurmaBncc as any);
+      jest
+        .spyOn(prisma.turma, 'findUnique')
+        .mockResolvedValue(mockTurmaBncc as any);
 
       await expect(
         service.createCustom(turmaIdBncc, mockCreateDto, mockProfessor),
@@ -184,7 +196,9 @@ describe('ObjetivosService - Custom CRUD (Story 11.4)', () => {
     });
 
     it('AC2: Deve rejeitar se código duplicado na turma (409)', async () => {
-      jest.spyOn(prisma.turma, 'findUnique').mockResolvedValue(mockTurmaCustom as any);
+      jest
+        .spyOn(prisma.turma, 'findUnique')
+        .mockResolvedValue(mockTurmaCustom as any);
       jest
         .spyOn(prisma.objetivoAprendizagem, 'findFirst')
         .mockResolvedValue(mockObjetivo);
@@ -192,24 +206,36 @@ describe('ObjetivosService - Custom CRUD (Story 11.4)', () => {
       await expect(
         service.createCustom(turmaIdCustom, mockCreateDto, mockProfessor),
       ).rejects.toThrow(
-        new ConflictException(`Código ${mockCreateDto.codigo} já existe nesta turma`),
+        new ConflictException(
+          `Código ${mockCreateDto.codigo} já existe nesta turma`,
+        ),
       );
     });
 
     it('AC3: Deve aplicar RBAC - professor só cria em turma própria', async () => {
-      jest.spyOn(prisma.turma, 'findUnique').mockResolvedValue(mockTurmaCustom as any);
+      jest
+        .spyOn(prisma.turma, 'findUnique')
+        .mockResolvedValue(mockTurmaCustom as any);
 
       await expect(
         service.createCustom(turmaIdCustom, mockCreateDto, mockOutroProfessor),
       ).rejects.toThrow(
-        new ForbiddenException('Você não tem permissão para criar objetivos nesta turma'),
+        new ForbiddenException(
+          'Você não tem permissão para criar objetivos nesta turma',
+        ),
       );
     });
 
     it('AC3: Coordenador pode criar em qualquer turma da escola (201)', async () => {
-      jest.spyOn(prisma.turma, 'findUnique').mockResolvedValue(mockTurmaCustom as any);
-      jest.spyOn(prisma.objetivoAprendizagem, 'findFirst').mockResolvedValue(null);
-      jest.spyOn(prisma.objetivoAprendizagem, 'create').mockResolvedValue(mockObjetivo);
+      jest
+        .spyOn(prisma.turma, 'findUnique')
+        .mockResolvedValue(mockTurmaCustom as any);
+      jest
+        .spyOn(prisma.objetivoAprendizagem, 'findFirst')
+        .mockResolvedValue(null);
+      jest
+        .spyOn(prisma.objetivoAprendizagem, 'create')
+        .mockResolvedValue(mockObjetivo);
 
       const result = await service.createCustom(
         turmaIdCustom,
@@ -245,8 +271,12 @@ describe('ObjetivosService - Custom CRUD (Story 11.4)', () => {
         { ...mockObjetivo, id: '2', created_at: new Date('2026-01-02') },
       ];
 
-      jest.spyOn(prisma.turma, 'findUnique').mockResolvedValue(mockTurmaCustom as any);
-      jest.spyOn(prisma.objetivoAprendizagem, 'findMany').mockResolvedValue(objetivos);
+      jest
+        .spyOn(prisma.turma, 'findUnique')
+        .mockResolvedValue(mockTurmaCustom as any);
+      jest
+        .spyOn(prisma.objetivoAprendizagem, 'findMany')
+        .mockResolvedValue(objetivos);
 
       const result = await service.findAllByTurma(turmaIdCustom, mockProfessor);
 
@@ -261,7 +291,9 @@ describe('ObjetivosService - Custom CRUD (Story 11.4)', () => {
     });
 
     it('AC5: Deve retornar array vazio para turma BNCC (200, sem erro)', async () => {
-      jest.spyOn(prisma.turma, 'findUnique').mockResolvedValue(mockTurmaBncc as any);
+      jest
+        .spyOn(prisma.turma, 'findUnique')
+        .mockResolvedValue(mockTurmaBncc as any);
       jest.spyOn(prisma.objetivoAprendizagem, 'findMany').mockResolvedValue([]);
 
       const result = await service.findAllByTurma(turmaIdBncc, mockProfessor);
@@ -270,7 +302,9 @@ describe('ObjetivosService - Custom CRUD (Story 11.4)', () => {
     });
 
     it('AC5: Deve aplicar RBAC - professor só lista turmas próprias (403)', async () => {
-      jest.spyOn(prisma.turma, 'findUnique').mockResolvedValue(mockTurmaCustom as any);
+      jest
+        .spyOn(prisma.turma, 'findUnique')
+        .mockResolvedValue(mockTurmaCustom as any);
 
       await expect(
         service.findAllByTurma(turmaIdCustom, mockOutroProfessor),
@@ -284,7 +318,9 @@ describe('ObjetivosService - Custom CRUD (Story 11.4)', () => {
 
   describe('findOneByTurma()', () => {
     it('AC6: Deve retornar objetivo específico por ID', async () => {
-      jest.spyOn(prisma.turma, 'findUnique').mockResolvedValue(mockTurmaCustom as any);
+      jest
+        .spyOn(prisma.turma, 'findUnique')
+        .mockResolvedValue(mockTurmaCustom as any);
       jest
         .spyOn(prisma.objetivoAprendizagem, 'findFirst')
         .mockResolvedValue(mockObjetivo);
@@ -305,17 +341,31 @@ describe('ObjetivosService - Custom CRUD (Story 11.4)', () => {
     });
 
     it('AC6: Deve retornar 404 se objetivo não existe', async () => {
-      jest.spyOn(prisma.turma, 'findUnique').mockResolvedValue(mockTurmaCustom as any);
-      jest.spyOn(prisma.objetivoAprendizagem, 'findFirst').mockResolvedValue(null);
+      jest
+        .spyOn(prisma.turma, 'findUnique')
+        .mockResolvedValue(mockTurmaCustom as any);
+      jest
+        .spyOn(prisma.objetivoAprendizagem, 'findFirst')
+        .mockResolvedValue(null);
 
       await expect(
-        service.findOneByTurma(turmaIdCustom, 'objetivo-inexistente', mockProfessor),
-      ).rejects.toThrow(new NotFoundException('Objetivo objetivo-inexistente não encontrado'));
+        service.findOneByTurma(
+          turmaIdCustom,
+          'objetivo-inexistente',
+          mockProfessor,
+        ),
+      ).rejects.toThrow(
+        new NotFoundException('Objetivo objetivo-inexistente não encontrado'),
+      );
     });
 
     it('AC6: Deve retornar 404 se objetivo de outra turma (isolamento)', async () => {
-      jest.spyOn(prisma.turma, 'findUnique').mockResolvedValue(mockTurmaCustom as any);
-      jest.spyOn(prisma.objetivoAprendizagem, 'findFirst').mockResolvedValue(null);
+      jest
+        .spyOn(prisma.turma, 'findUnique')
+        .mockResolvedValue(mockTurmaCustom as any);
+      jest
+        .spyOn(prisma.objetivoAprendizagem, 'findFirst')
+        .mockResolvedValue(null);
 
       await expect(
         service.findOneByTurma(turmaIdCustom, mockObjetivo.id, mockProfessor),
@@ -331,11 +381,15 @@ describe('ObjetivosService - Custom CRUD (Story 11.4)', () => {
     it('AC7: Deve atualizar campos parcialmente (PATCH)', async () => {
       const updated = { ...mockObjetivo, descricao: updateDto.descricao! };
 
-      jest.spyOn(prisma.turma, 'findUnique').mockResolvedValue(mockTurmaCustom as any);
+      jest
+        .spyOn(prisma.turma, 'findUnique')
+        .mockResolvedValue(mockTurmaCustom as any);
       jest
         .spyOn(prisma.objetivoAprendizagem, 'findFirst')
         .mockResolvedValue(mockObjetivo);
-      jest.spyOn(prisma.objetivoAprendizagem, 'update').mockResolvedValue(updated);
+      jest
+        .spyOn(prisma.objetivoAprendizagem, 'update')
+        .mockResolvedValue(updated);
 
       const result = await service.updateCustom(
         turmaIdCustom,
@@ -358,9 +412,15 @@ describe('ObjetivosService - Custom CRUD (Story 11.4)', () => {
       const updateDtoComCodigoDuplicado: UpdateObjetivoCustomDto = {
         codigo: 'PM-MAT-02',
       };
-      const outroObjetivo = { ...mockObjetivo, id: 'outro-id', codigo: 'PM-MAT-02' };
+      const outroObjetivo = {
+        ...mockObjetivo,
+        id: 'outro-id',
+        codigo: 'PM-MAT-02',
+      };
 
-      jest.spyOn(prisma.turma, 'findUnique').mockResolvedValue(mockTurmaCustom as any);
+      jest
+        .spyOn(prisma.turma, 'findUnique')
+        .mockResolvedValue(mockTurmaCustom as any);
       jest
         .spyOn(prisma.objetivoAprendizagem, 'findFirst')
         .mockResolvedValueOnce(mockObjetivo) // Primeiro: buscar objetivo existente
@@ -381,22 +441,33 @@ describe('ObjetivosService - Custom CRUD (Story 11.4)', () => {
     });
 
     it('AC7: Deve aplicar RBAC (403)', async () => {
-      jest.spyOn(prisma.turma, 'findUnique').mockResolvedValue(mockTurmaCustom as any);
+      jest
+        .spyOn(prisma.turma, 'findUnique')
+        .mockResolvedValue(mockTurmaCustom as any);
 
       await expect(
-        service.updateCustom(turmaIdCustom, mockObjetivo.id, updateDto, mockOutroProfessor),
+        service.updateCustom(
+          turmaIdCustom,
+          mockObjetivo.id,
+          updateDto,
+          mockOutroProfessor,
+        ),
       ).rejects.toThrow(ForbiddenException);
     });
   });
 
   describe('removeCustom()', () => {
     it('AC8: Deve deletar objetivo não vinculado (200)', async () => {
-      jest.spyOn(prisma.turma, 'findUnique').mockResolvedValue(mockTurmaCustom as any);
+      jest
+        .spyOn(prisma.turma, 'findUnique')
+        .mockResolvedValue(mockTurmaCustom as any);
       jest
         .spyOn(prisma.objetivoAprendizagem, 'findFirst')
         .mockResolvedValue(mockObjetivo);
       jest.spyOn(prisma.planejamentoObjetivo, 'findMany').mockResolvedValue([]);
-      jest.spyOn(prisma.objetivoAprendizagem, 'delete').mockResolvedValue(mockObjetivo);
+      jest
+        .spyOn(prisma.objetivoAprendizagem, 'delete')
+        .mockResolvedValue(mockObjetivo);
 
       const result = await service.removeCustom(
         turmaIdCustom,
@@ -424,7 +495,9 @@ describe('ObjetivosService - Custom CRUD (Story 11.4)', () => {
         },
       ];
 
-      jest.spyOn(prisma.turma, 'findUnique').mockResolvedValue(mockTurmaCustom as any);
+      jest
+        .spyOn(prisma.turma, 'findUnique')
+        .mockResolvedValue(mockTurmaCustom as any);
       jest
         .spyOn(prisma.objetivoAprendizagem, 'findFirst')
         .mockResolvedValue(mockObjetivo);
@@ -452,10 +525,16 @@ describe('ObjetivosService - Custom CRUD (Story 11.4)', () => {
     });
 
     it('AC8: Deve aplicar RBAC (403)', async () => {
-      jest.spyOn(prisma.turma, 'findUnique').mockResolvedValue(mockTurmaCustom as any);
+      jest
+        .spyOn(prisma.turma, 'findUnique')
+        .mockResolvedValue(mockTurmaCustom as any);
 
       await expect(
-        service.removeCustom(turmaIdCustom, mockObjetivo.id, mockOutroProfessor),
+        service.removeCustom(
+          turmaIdCustom,
+          mockObjetivo.id,
+          mockOutroProfessor,
+        ),
       ).rejects.toThrow(ForbiddenException);
     });
   });

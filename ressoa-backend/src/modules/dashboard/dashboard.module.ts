@@ -1,5 +1,8 @@
 import { Module } from '@nestjs/common';
-import { DashboardCoordenadorController, DashboardDiretorController } from './dashboard.controller';
+import {
+  DashboardCoordenadorController,
+  DashboardDiretorController,
+} from './dashboard.controller';
 import { DashboardService } from './dashboard.service';
 import { PrismaModule } from '../../prisma/prisma.module';
 

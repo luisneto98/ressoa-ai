@@ -1,4 +1,11 @@
-import { IsString, IsInt, MinLength, MaxLength, Min, Max } from 'class-validator';
+import {
+  IsString,
+  IsInt,
+  MinLength,
+  MaxLength,
+  Min,
+  Max,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 /**
@@ -9,18 +16,24 @@ export class ContextoPedagogicoDto {
   @ApiProperty({
     minLength: 100,
     maxLength: 500,
-    example: 'Preparar alunos para concurso da Polícia Militar SP (prova de matemática e português)',
+    example:
+      'Preparar alunos para concurso da Polícia Militar SP (prova de matemática e português)',
     description: 'Objetivo geral do curso customizado',
   })
   @IsString()
-  @MinLength(100, { message: 'objetivo_geral deve ter no mínimo 100 caracteres' })
-  @MaxLength(500, { message: 'objetivo_geral deve ter no máximo 500 caracteres' })
+  @MinLength(100, {
+    message: 'objetivo_geral deve ter no mínimo 100 caracteres',
+  })
+  @MaxLength(500, {
+    message: 'objetivo_geral deve ter no máximo 500 caracteres',
+  })
   objetivo_geral!: string;
 
   @ApiProperty({
     minLength: 20,
     maxLength: 200,
-    example: 'Jovens 18-25 anos, ensino médio completo, aspirantes a carreira militar',
+    example:
+      'Jovens 18-25 anos, ensino médio completo, aspirantes a carreira militar',
     description: 'Descrição do público-alvo do curso',
   })
   @IsString({ message: 'publico_alvo deve ser uma string' })
@@ -31,7 +44,8 @@ export class ContextoPedagogicoDto {
   @ApiProperty({
     minLength: 20,
     maxLength: 300,
-    example: 'Simulados semanais + revisão teórica + resolução de provas anteriores',
+    example:
+      'Simulados semanais + revisão teórica + resolução de provas anteriores',
     description: 'Metodologia utilizada no curso',
   })
   @IsString({ message: 'metodologia deve ser uma string' })

@@ -37,7 +37,13 @@ describe('PATCH /api/v1/usuarios/:id/reativar (E2E) - Story 13.10', () => {
     })
       .overrideProvider(ThrottlerStorage)
       .useValue({
-        increment: () => Promise.resolve({ totalHits: 1, timeToExpire: 60000, isBlocked: false, timeToBlockExpire: 0 }),
+        increment: () =>
+          Promise.resolve({
+            totalHits: 1,
+            timeToExpire: 60000,
+            isBlocked: false,
+            timeToBlockExpire: 0,
+          }),
         onApplicationShutdown: () => {},
       })
       .compile();
@@ -234,7 +240,9 @@ describe('PATCH /api/v1/usuarios/:id/reativar (E2E) - Story 13.10', () => {
 
     adminToken = await loginUser(`${EMAIL_PREFIX}.admin@teste.com`);
     diretorAToken = await loginUser(`${EMAIL_PREFIX}.diretorA@teste.com`);
-    coordenadorAToken = await loginUser(`${EMAIL_PREFIX}.coordenadorA@teste.com`);
+    coordenadorAToken = await loginUser(
+      `${EMAIL_PREFIX}.coordenadorA@teste.com`,
+    );
     professorAToken = await loginUser(`${EMAIL_PREFIX}.profA1active@teste.com`);
   });
 

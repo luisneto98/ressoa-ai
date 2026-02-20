@@ -64,7 +64,8 @@ export class PromptService {
 
     // Se há 2 prompts ativos e o mais recente tem ab_testing=true → 50/50 random
     if (promptsAtivos.length === 2 && promptsAtivos[0].ab_testing) {
-      const escolhido = Math.random() < 0.5 ? promptsAtivos[0] : promptsAtivos[1];
+      const escolhido =
+        Math.random() < 0.5 ? promptsAtivos[0] : promptsAtivos[1];
       this.logger.log({
         message: 'A/B testing ativo - prompt escolhido aleatoriamente',
         nome,

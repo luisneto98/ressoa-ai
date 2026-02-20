@@ -114,8 +114,8 @@ describe('HabilidadesService', () => {
     }).compile();
 
     service = module.get<HabilidadesService>(HabilidadesService);
-    prisma = module.get(PrismaService) as jest.Mocked<PrismaService>;
-    redis = module.get(RedisService) as jest.Mocked<RedisService>;
+    prisma = module.get(PrismaService);
+    redis = module.get(RedisService);
 
     // Default: Redis cache miss (sempre query database)
     redis.get.mockResolvedValue(null);

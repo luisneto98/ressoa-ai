@@ -17,7 +17,9 @@ describe('Dashboard Coordenador (E2E)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+    app.useGlobalPipes(
+      new ValidationPipe({ whitelist: true, transform: true }),
+    );
     await app.init();
 
     prisma = app.get(PrismaService);
@@ -245,11 +247,14 @@ describe('Dashboard Coordenador (E2E)', () => {
       expect(ownSchoolResponse.status).toBe(200);
 
       if (ownSchoolResponse.body.metricas.length > 0) {
-        const ownSchoolProfessorId = ownSchoolResponse.body.metricas[0].professor_id;
+        const ownSchoolProfessorId =
+          ownSchoolResponse.body.metricas[0].professor_id;
 
         // Access own school's professor (should work)
         const validResponse = await request(app.getHttpServer())
-          .get(`/api/v1/dashboard/coordenador/professores/${ownSchoolProfessorId}/turmas`)
+          .get(
+            `/api/v1/dashboard/coordenador/professores/${ownSchoolProfessorId}/turmas`,
+          )
           .set('Authorization', `Bearer ${coordenadorToken}`);
 
         expect(validResponse.status).toBe(200);
@@ -261,7 +266,9 @@ describe('Dashboard Coordenador (E2E)', () => {
       const fakeSchoolProfessorId = '00000000-0000-0000-0000-000000000001';
 
       const crossSchoolResponse = await request(app.getHttpServer())
-        .get(`/api/v1/dashboard/coordenador/professores/${fakeSchoolProfessorId}/turmas`)
+        .get(
+          `/api/v1/dashboard/coordenador/professores/${fakeSchoolProfessorId}/turmas`,
+        )
         .set('Authorization', `Bearer ${coordenadorToken}`);
 
       expect(crossSchoolResponse.status).toBe(200);
@@ -516,12 +523,9 @@ describe('Dashboard Coordenador (E2E)', () => {
           expect(hab).toHaveProperty('habilidade_descricao');
           expect(hab).toHaveProperty('status_cobertura');
           expect(hab).toHaveProperty('aulas_relacionadas');
-          expect([
-            'COMPLETE',
-            'PARTIAL',
-            'MENTIONED',
-            'NOT_COVERED',
-          ]).toContain(hab.status_cobertura);
+          expect(['COMPLETE', 'PARTIAL', 'MENTIONED', 'NOT_COVERED']).toContain(
+            hab.status_cobertura,
+          );
         });
       }
     });

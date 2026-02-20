@@ -1,5 +1,9 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
-import type { LLMProvider, LLMResult, GenerateOptions } from '../interfaces/llm-provider.interface';
+import type {
+  LLMProvider,
+  LLMResult,
+  GenerateOptions,
+} from '../interfaces/llm-provider.interface';
 import { LLMAnalysisType } from '../../../config/providers.config';
 import { ProvidersConfigService } from '../../providers-config/providers-config.service';
 
@@ -46,7 +50,12 @@ export class LLMRouterService {
         `LLM routing: analysisType=${analysisType}, attempting primary provider ${config.primary}`,
       );
 
-      const result = await this.generateWithTimeout(primary, prompt, options, 300000);
+      const result = await this.generateWithTimeout(
+        primary,
+        prompt,
+        options,
+        300000,
+      );
 
       const duration = Date.now() - startTime;
       this.logger.log(
@@ -67,7 +76,12 @@ export class LLMRouterService {
           `LLM routing: analysisType=${analysisType}, attempting fallback provider ${config.fallback}`,
         );
 
-        const result = await this.generateWithTimeout(fallback, prompt, options, 300000);
+        const result = await this.generateWithTimeout(
+          fallback,
+          prompt,
+          options,
+          300000,
+        );
 
         const duration = Date.now() - startTime;
         this.logger.log(

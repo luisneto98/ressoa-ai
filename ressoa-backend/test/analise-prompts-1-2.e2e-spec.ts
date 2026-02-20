@@ -67,7 +67,9 @@ describe('Análise Prompts 1-2 (e2e)', () => {
         {
           habilidade_codigo: 'EF06MA02',
           nivel_cobertura: 2,
-          evidencias: ['Múltiplos de 2 são números que podem ser divididos por 2.'],
+          evidencias: [
+            'Múltiplos de 2 são números que podem ser divididos por 2.',
+          ],
           observacoes: 'Parcialmente coberta, sem exercícios.',
           tempo_estimado_minutos: 10,
         },
@@ -118,7 +120,10 @@ describe('Análise Prompts 1-2 (e2e)', () => {
       },
       metodologia: {
         dominante: 'Expositiva dialogada',
-        metodos_identificados: ['Expositiva dialogada', 'Resolução de problemas'],
+        metodos_identificados: [
+          'Expositiva dialogada',
+          'Resolução de problemas',
+        ],
         percentual_estimado: {
           expositiva: 60,
           investigativa: 0,
@@ -274,9 +279,13 @@ describe('Análise Prompts 1-2 (e2e)', () => {
         turma: turmaContext,
       });
 
-      const result = await claudeProvider.generate(rendered, {
-        modelo: ProviderLLM.CLAUDE_SONNET,
-      }, 'test-user-id');
+      const result = await claudeProvider.generate(
+        rendered,
+        {
+          modelo: ProviderLLM.CLAUDE_SONNET,
+        },
+        'test-user-id',
+      );
 
       const output = JSON.parse(result.texto);
 
@@ -284,10 +293,14 @@ describe('Análise Prompts 1-2 (e2e)', () => {
       expect(output.analise_cobertura[0]).toHaveProperty('habilidade_codigo');
       expect(output.analise_cobertura[0]).toHaveProperty('nivel_cobertura');
       expect(output.analise_cobertura[0]).toHaveProperty('evidencias');
-      expect(output.analise_cobertura[0]).toHaveProperty('tempo_estimado_minutos');
+      expect(output.analise_cobertura[0]).toHaveProperty(
+        'tempo_estimado_minutos',
+      );
 
       // Validate types
-      expect(typeof output.analise_cobertura[0].habilidade_codigo).toBe('string');
+      expect(typeof output.analise_cobertura[0].habilidade_codigo).toBe(
+        'string',
+      );
       expect(typeof output.analise_cobertura[0].nivel_cobertura).toBe('number');
       expect(Array.isArray(output.analise_cobertura[0].evidencias)).toBe(true);
     });
@@ -315,9 +328,13 @@ describe('Análise Prompts 1-2 (e2e)', () => {
         turma: turmaContext,
       });
 
-      const result1 = await claudeProvider.generate(rendered1, {
-        modelo: ProviderLLM.CLAUDE_SONNET,
-      }, 'test-user-id');
+      const result1 = await claudeProvider.generate(
+        rendered1,
+        {
+          modelo: ProviderLLM.CLAUDE_SONNET,
+        },
+        'test-user-id',
+      );
 
       const cobertura = JSON.parse(result1.texto);
 
@@ -365,9 +382,13 @@ describe('Análise Prompts 1-2 (e2e)', () => {
         turma: turmaContext,
       });
 
-      const result = await claudeProvider.generate(rendered2, {
-        modelo: ProviderLLM.CLAUDE_SONNET,
-      }, 'test-user-id');
+      const result = await claudeProvider.generate(
+        rendered2,
+        {
+          modelo: ProviderLLM.CLAUDE_SONNET,
+        },
+        'test-user-id',
+      );
 
       const output = JSON.parse(result.texto);
 
@@ -388,16 +409,22 @@ describe('Análise Prompts 1-2 (e2e)', () => {
         turma: turmaContext,
       });
 
-      const result = await claudeProvider.generate(rendered2, {
-        modelo: ProviderLLM.CLAUDE_SONNET,
-      }, 'test-user-id');
+      const result = await claudeProvider.generate(
+        rendered2,
+        {
+          modelo: ProviderLLM.CLAUDE_SONNET,
+        },
+        'test-user-id',
+      );
 
       const output = JSON.parse(result.texto);
 
       // Validate Bloom
       expect(output.taxonomia_bloom).toHaveProperty('niveis_identificados');
       expect(output.taxonomia_bloom).toHaveProperty('nivel_dominante');
-      expect(Array.isArray(output.taxonomia_bloom.niveis_identificados)).toBe(true);
+      expect(Array.isArray(output.taxonomia_bloom.niveis_identificados)).toBe(
+        true,
+      );
 
       // Validate Coerência
       expect(output.coerencia_narrativa).toHaveProperty('score');
@@ -425,9 +452,13 @@ describe('Análise Prompts 1-2 (e2e)', () => {
         turma: turmaContext,
       });
 
-      const result1 = await claudeProvider.generate(rendered1, {
-        modelo: ProviderLLM.CLAUDE_SONNET,
-      }, 'test-user-id');
+      const result1 = await claudeProvider.generate(
+        rendered1,
+        {
+          modelo: ProviderLLM.CLAUDE_SONNET,
+        },
+        'test-user-id',
+      );
 
       const cobertura = JSON.parse(result1.texto);
 
@@ -439,9 +470,13 @@ describe('Análise Prompts 1-2 (e2e)', () => {
         turma: turmaContext,
       });
 
-      const result2 = await claudeProvider.generate(rendered2, {
-        modelo: ProviderLLM.CLAUDE_SONNET,
-      }, 'test-user-id');
+      const result2 = await claudeProvider.generate(
+        rendered2,
+        {
+          modelo: ProviderLLM.CLAUDE_SONNET,
+        },
+        'test-user-id',
+      );
 
       const qualitativa = JSON.parse(result2.texto);
 

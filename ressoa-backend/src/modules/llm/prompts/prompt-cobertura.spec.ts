@@ -191,7 +191,9 @@ describe('Prompt 1 - Cobertura BNCC (Unit)', () => {
 
       expect(output).toHaveProperty('resumo_quantitativo');
       expect(output.resumo_quantitativo).toHaveProperty('total_planejadas');
-      expect(output.resumo_quantitativo).toHaveProperty('cobertas_nivel_2_ou_3');
+      expect(output.resumo_quantitativo).toHaveProperty(
+        'cobertas_nivel_2_ou_3',
+      );
       expect(output.resumo_quantitativo).toHaveProperty('apenas_mencionadas');
       expect(output.resumo_quantitativo).toHaveProperty('nao_cobertas');
       expect(output.resumo_quantitativo).toHaveProperty('percentual_cobertura');
@@ -286,7 +288,9 @@ describe('Prompt 1 - Cobertura BNCC (Unit)', () => {
       // Percentage should be accurate (allowing for rounding)
       const expectedPercentage =
         (resumo.cobertas_nivel_2_ou_3 / resumo.total_planejadas) * 100;
-      expect(Math.abs(resumo.percentual_cobertura - expectedPercentage)).toBeLessThan(1);
+      expect(
+        Math.abs(resumo.percentual_cobertura - expectedPercentage),
+      ).toBeLessThan(1);
     });
 
     it('should match habilidades_nao_cobertas count with resumo', () => {
@@ -314,13 +318,10 @@ describe('Prompt 1 - Cobertura BNCC (Unit)', () => {
     });
 
     it('should return valid JSON structure from LLM', async () => {
-      const result = await claudeProvider.generate(
-        'Test prompt content',
-        {
-          temperature: 0.3,
-          maxTokens: 2000,
-        },
-      );
+      const result = await claudeProvider.generate('Test prompt content', {
+        temperature: 0.3,
+        maxTokens: 2000,
+      });
 
       expect(result.texto).toBeDefined();
       expect(() => JSON.parse(result.texto)).not.toThrow();

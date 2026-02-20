@@ -69,7 +69,12 @@ export class GroqWhisperProvider implements STTProvider {
         } as any),
         new Promise<never>((_, reject) => {
           timer = setTimeout(
-            () => reject(new Error(`Groq Whisper timeout after ${TRANSCRIPTION_TIMEOUT_MS}ms`)),
+            () =>
+              reject(
+                new Error(
+                  `Groq Whisper timeout after ${TRANSCRIPTION_TIMEOUT_MS}ms`,
+                ),
+              ),
             TRANSCRIPTION_TIMEOUT_MS,
           );
         }),
@@ -131,10 +136,7 @@ export class GroqWhisperProvider implements STTProvider {
         throw new Error('Groq Whisper rate limit exceeded');
       }
 
-      if (
-        error.status === 402 ||
-        error.error?.code === 'insufficient_quota'
-      ) {
+      if (error.status === 402 || error.error?.code === 'insufficient_quota') {
         this.logger.error('Groq Whisper quota exceeded - check billing');
         throw new Error('Groq Whisper quota exceeded');
       }
@@ -162,9 +164,7 @@ export class GroqWhisperProvider implements STTProvider {
       const response = await this.groq.models.retrieve(model);
       return !!response;
     } catch (error: any) {
-      this.logger.warn(
-        `Groq Whisper health check failed: ${error.message}`,
-      );
+      this.logger.warn(`Groq Whisper health check failed: ${error.message}`);
       return false;
     }
   }
@@ -172,7 +172,18 @@ export class GroqWhisperProvider implements STTProvider {
   private normalizeLanguageCode(idioma: string): string {
     const baseLang = idioma.split('-')[0].toLowerCase();
     const supportedLanguages = [
-      'pt', 'en', 'es', 'fr', 'de', 'it', 'ja', 'ko', 'zh', 'ru', 'ar', 'hi',
+      'pt',
+      'en',
+      'es',
+      'fr',
+      'de',
+      'it',
+      'ja',
+      'ko',
+      'zh',
+      'ru',
+      'ar',
+      'hi',
     ];
 
     if (supportedLanguages.includes(baseLang)) {
@@ -188,8 +199,10 @@ export class GroqWhisperProvider implements STTProvider {
   private calculateConfidence(segments: any[]): number {
     if (!segments || segments.length === 0) return 0.9;
     const avgLogprob =
-      segments.reduce((sum: number, s: any) => sum + (s.avg_logprob || -0.3), 0) /
-      segments.length;
+      segments.reduce(
+        (sum: number, s: any) => sum + (s.avg_logprob || -0.3),
+        0,
+      ) / segments.length;
     return Math.max(0, Math.min(1, 1 + avgLogprob));
   }
 }

@@ -11,7 +11,8 @@ interface CoberturaBadgeProps {
   codigo: string;
   descricao: string;
   nivel: NivelCobertura;
-  evidencias: Array<{ texto_literal: string }>;
+  // V3: string[], V4: {texto_literal, speaker?, tipo?}[] - normalizado pelo adapter
+  evidencias: Array<{ texto_literal: string; speaker?: string; tipo?: string }>;
 
   // BNCC-specific (optional)
   unidade_tematica?: string;
@@ -191,7 +192,7 @@ export function CoberturaBadge({
           />
         )}
 
-        {/* Evidências literais (AC6) */}
+        {/* Evidências literais (AC6) - V4: com speaker badge */}
         {evidencias && evidencias.length > 0 && (
           <div className="bg-gray-50 rounded-lg p-3 space-y-2">
             <p className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
@@ -200,9 +201,20 @@ export function CoberturaBadge({
             {evidencias.slice(0, 3).map((ev, idx) => (
               <blockquote
                 key={idx}
-                className="text-sm italic border-l-4 border-cyan-500 pl-3 text-gray-700"
+                className="text-sm border-l-4 border-cyan-500 pl-3 text-gray-700"
               >
-                "{ev.texto_literal}"
+                {ev.speaker && (
+                  <span
+                    className={`inline-block text-xs px-1.5 py-0.5 rounded mr-1.5 font-medium ${
+                      ev.speaker === 'PROFESSOR'
+                        ? 'bg-blue-100 text-blue-700'
+                        : 'bg-green-100 text-green-700'
+                    }`}
+                  >
+                    {ev.speaker === 'PROFESSOR' ? 'Prof.' : 'Aluno'}
+                  </span>
+                )}
+                <span className="italic">"{ev.texto_literal}"</span>
               </blockquote>
             ))}
           </div>

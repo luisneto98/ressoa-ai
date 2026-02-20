@@ -218,7 +218,9 @@ describe('Analise Pipeline (E2E)', () => {
     jest.spyOn(claudeProvider, 'generate').mockImplementation(async () => {
       // Return realistic JSON structures
       return {
-        texto: JSON.stringify({ habilidades: [{ codigo: 'EF06MA01', nivel_cobertura: 'completo' }] }),
+        texto: JSON.stringify({
+          habilidades: [{ codigo: 'EF06MA01', nivel_cobertura: 'completo' }],
+        }),
         tokens_entrada: 100,
         tokens_saida: 50,
         custo_usd: 0.02,
@@ -228,7 +230,9 @@ describe('Analise Pipeline (E2E)', () => {
 
     jest.spyOn(gptProvider, 'generate').mockImplementation(async () => {
       return {
-        texto: JSON.stringify({ exercicios: [{ enunciado: 'Calcule 1/2 + 1/4', gabarito: '3/4' }] }),
+        texto: JSON.stringify({
+          exercicios: [{ enunciado: 'Calcule 1/2 + 1/4', gabarito: '3/4' }],
+        }),
         tokens_entrada: 80,
         tokens_saida: 40,
         custo_usd: 0.005,
@@ -242,11 +246,15 @@ describe('Analise Pipeline (E2E)', () => {
     await prisma.analise.deleteMany({ where: { aula_id: testAulaId } });
     await prisma.transcricao.deleteMany({ where: { aula_id: testAulaId } });
     await prisma.aula.deleteMany({ where: { id: testAulaId } });
-    await prisma.planejamentoHabilidade.deleteMany({ where: { planejamento_id: testPlanejamentoId } });
+    await prisma.planejamentoHabilidade.deleteMany({
+      where: { planejamento_id: testPlanejamentoId },
+    });
     await prisma.planejamento.deleteMany({ where: { id: testPlanejamentoId } });
     await prisma.habilidade.deleteMany({ where: { id: testHabilidadeId } });
     await prisma.turma.deleteMany({ where: { id: testTurmaId } });
-    await prisma.perfilUsuario.deleteMany({ where: { usuario_id: testProfessorId } });
+    await prisma.perfilUsuario.deleteMany({
+      where: { usuario_id: testProfessorId },
+    });
     await prisma.usuario.deleteMany({ where: { id: testProfessorId } });
     await prisma.escola.deleteMany({ where: { id: testEscolaId } });
 

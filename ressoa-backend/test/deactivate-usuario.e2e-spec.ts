@@ -40,7 +40,13 @@ describe('PATCH /api/v1/usuarios/:id/desativar (E2E) - Story 13.9', () => {
     })
       .overrideProvider(ThrottlerStorage)
       .useValue({
-        increment: () => Promise.resolve({ totalHits: 1, timeToExpire: 60000, isBlocked: false, timeToBlockExpire: 0 }),
+        increment: () =>
+          Promise.resolve({
+            totalHits: 1,
+            timeToExpire: 60000,
+            isBlocked: false,
+            timeToBlockExpire: 0,
+          }),
         onApplicationShutdown: () => {},
       })
       .compile();
@@ -223,7 +229,9 @@ describe('PATCH /api/v1/usuarios/:id/desativar (E2E) - Story 13.9', () => {
 
     adminToken = await loginUser(`${EMAIL_PREFIX}.admin@teste.com`);
     diretorAToken = await loginUser(`${EMAIL_PREFIX}.diretorA@teste.com`);
-    coordenadorAToken = await loginUser(`${EMAIL_PREFIX}.coordenadorA@teste.com`);
+    coordenadorAToken = await loginUser(
+      `${EMAIL_PREFIX}.coordenadorA@teste.com`,
+    );
     professorAToken = await loginUser(`${EMAIL_PREFIX}.profA1@teste.com`);
   });
 
@@ -266,7 +274,6 @@ describe('PATCH /api/v1/usuarios/:id/desativar (E2E) - Story 13.9', () => {
     expect(response.body.id).toBe(professorB1Id);
     expect(response.body.deleted_at).toBeDefined();
     expect(response.body.deleted_at).not.toBeNull();
-
   });
 
   // Test 2: Admin deactivates DIRETOR → 200
@@ -278,7 +285,6 @@ describe('PATCH /api/v1/usuarios/:id/desativar (E2E) - Story 13.9', () => {
     expect(response.status).toBe(200);
     expect(response.body.id).toBe(diretorA2Id);
     expect(response.body.deleted_at).toBeDefined();
-
   });
 
   // Test 3: Admin deactivates COORDENADOR → 200
@@ -290,7 +296,6 @@ describe('PATCH /api/v1/usuarios/:id/desativar (E2E) - Story 13.9', () => {
     expect(response.status).toBe(200);
     expect(response.body.id).toBe(coordenadorA2Id);
     expect(response.body.deleted_at).toBeDefined();
-
   });
 
   // Test 4: Diretor deactivates PROFESSOR from own school → 200
@@ -302,7 +307,6 @@ describe('PATCH /api/v1/usuarios/:id/desativar (E2E) - Story 13.9', () => {
     expect(response.status).toBe(200);
     expect(response.body.id).toBe(professorA2Id);
     expect(response.body.deleted_at).toBeDefined();
-
   });
 
   // Test 5: Diretor deactivates COORDENADOR from own school → 200
@@ -314,7 +318,6 @@ describe('PATCH /api/v1/usuarios/:id/desativar (E2E) - Story 13.9', () => {
     expect(response.status).toBe(200);
     expect(response.body.id).toBe(coordenadorA2Id);
     expect(response.body.deleted_at).toBeDefined();
-
   });
 
   // Test 6: Diretor tries to deactivate DIRETOR → 403
@@ -335,7 +338,6 @@ describe('PATCH /api/v1/usuarios/:id/desativar (E2E) - Story 13.9', () => {
     expect(response.status).toBe(200);
     expect(response.body.id).toBe(professorA3Id);
     expect(response.body.deleted_at).toBeDefined();
-
   });
 
   // Test 8: Coordenador tries to deactivate COORDENADOR → 403
@@ -421,7 +423,6 @@ describe('PATCH /api/v1/usuarios/:id/desativar (E2E) - Story 13.9', () => {
     expect(response.body.deleted_at).toBeDefined();
     expect(response.body.created_at).toBeDefined();
     expect(response.body.updated_at).toBeDefined();
-
   });
 
   // Test 16: Listing excludes deactivated users
@@ -441,6 +442,5 @@ describe('PATCH /api/v1/usuarios/:id/desativar (E2E) - Story 13.9', () => {
     const userIds = response.body.data.map((u: { id: string }) => u.id);
     expect(userIds).not.toContain(professorA2Id);
     expect(userIds).not.toContain(alreadyDeactivatedId);
-
   });
 });

@@ -188,17 +188,11 @@ describe('GET /api/v1/usuarios (E2E) - Story 13.7', () => {
 
     // Admin sees users from both schools (at least our test users)
     const emails = response.body.data.map((u: any) => u.email);
-    expect(
-      emails.some((e: string) => e.includes('diretorA')),
-    ).toBe(true);
-    expect(
-      emails.some((e: string) => e.includes('profB1')),
-    ).toBe(true);
+    expect(emails.some((e: string) => e.includes('diretorA'))).toBe(true);
+    expect(emails.some((e: string) => e.includes('profB1'))).toBe(true);
 
     // Admin response includes escola_nome with correct value
-    const userWithEscola = response.body.data.find(
-      (u: any) => u.escola_nome,
-    );
+    const userWithEscola = response.body.data.find((u: any) => u.escola_nome);
     expect(userWithEscola).toBeDefined();
     expect(userWithEscola.escola_nome).toEqual(
       expect.stringContaining('Story 13.7'),
@@ -225,9 +219,7 @@ describe('GET /api/v1/usuarios (E2E) - Story 13.7', () => {
 
     // Should only see escola A users
     const emails = response.body.data.map((u: any) => u.email);
-    expect(
-      emails.every((e: string) => !e.includes('profB1')),
-    ).toBe(true);
+    expect(emails.every((e: string) => !e.includes('profB1'))).toBe(true);
   });
 
   // Test 3: Coordenador sees only PROFESSOR from own school
@@ -261,9 +253,7 @@ describe('GET /api/v1/usuarios (E2E) - Story 13.7', () => {
 
   // Test 5: Unauthenticated gets 401
   it('should return 401 when no auth token provided', async () => {
-    const response = await request(app.getHttpServer()).get(
-      '/api/v1/usuarios',
-    );
+    const response = await request(app.getHttpServer()).get('/api/v1/usuarios');
 
     expect(response.status).toBe(401);
   });
@@ -285,9 +275,7 @@ describe('GET /api/v1/usuarios (E2E) - Story 13.7', () => {
   // Test 7: Search by name (case-insensitive)
   it('should filter by name search (case-insensitive)', async () => {
     const response = await request(app.getHttpServer())
-      .get(
-        `/api/v1/usuarios?search=professor a1`,
-      )
+      .get(`/api/v1/usuarios?search=professor a1`)
       .set('Authorization', `Bearer ${adminToken}`);
 
     expect(response.status).toBe(200);
@@ -354,12 +342,8 @@ describe('GET /api/v1/usuarios (E2E) - Story 13.7', () => {
 
     const emails = response.body.data.map((u: any) => u.email);
     // Must NOT contain escola B users
-    expect(
-      emails.some((e: string) => e.includes('profB1')),
-    ).toBe(false);
-    expect(
-      emails.some((e: string) => e.includes('diretorB')),
-    ).toBe(false);
+    expect(emails.some((e: string) => e.includes('profB1'))).toBe(false);
+    expect(emails.some((e: string) => e.includes('diretorB'))).toBe(false);
   });
 
   // Test 13: Coordenador cannot see Diretores or Coordenadores (role hierarchy)
@@ -419,8 +403,8 @@ describe('GET /api/v1/usuarios (E2E) - Story 13.7', () => {
 
     expect(response.status).toBe(200);
 
-    const dates = response.body.data.map(
-      (u: any) => new Date(u.created_at).getTime(),
+    const dates = response.body.data.map((u: any) =>
+      new Date(u.created_at).getTime(),
     );
 
     for (let i = 1; i < dates.length; i++) {

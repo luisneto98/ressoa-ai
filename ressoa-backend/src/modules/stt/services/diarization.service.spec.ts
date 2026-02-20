@@ -8,7 +8,9 @@ import type { LLMResult } from '../../llm/interfaces/llm-provider.interface';
 describe('DiarizationService', () => {
   let service: DiarizationService;
   let mockRouter: jest.Mocked<Pick<LLMRouterService, 'generateWithFallback'>>;
-  let mockProvidersConfig: jest.Mocked<Pick<ProvidersConfigService, 'isDiarizationEnabled'>>;
+  let mockProvidersConfig: jest.Mocked<
+    Pick<ProvidersConfigService, 'isDiarizationEnabled'>
+  >;
 
   const sampleWords: TranscriptionWord[] = [
     { word: 'Bom', start: 0.0, end: 0.2 },
@@ -120,7 +122,9 @@ describe('DiarizationService', () => {
 
     it('should return fallback SRT without labels when LLM throws error', async () => {
       mockRouter.generateWithFallback.mockRejectedValue(
-        new Error('LLM generation failed: primary=GEMINI_FLASH, fallback=GPT4_MINI'),
+        new Error(
+          'LLM generation failed: primary=GEMINI_FLASH, fallback=GPT4_MINI',
+        ),
       );
 
       const result = await service.diarize(sampleWords);
@@ -293,7 +297,9 @@ describe('DiarizationService', () => {
       const result = await service.diarize(sampleWords);
 
       // Should have valid SRT format
-      expect(result.srt).toMatch(/\d+\n\d{2}:\d{2}:\d{2},\d{3} --> \d{2}:\d{2}:\d{2},\d{3}/);
+      expect(result.srt).toMatch(
+        /\d+\n\d{2}:\d{2}:\d{2},\d{3} --> \d{2}:\d{2}:\d{2},\d{3}/,
+      );
       expect(result.provider).toBe('FALLBACK');
     });
 
@@ -301,11 +307,14 @@ describe('DiarizationService', () => {
       mockRouter.generateWithFallback.mockRejectedValue(new Error('Timeout'));
 
       // Create 25 words to test grouping (should create 3 segments: 10, 10, 5)
-      const manyWords: TranscriptionWord[] = Array.from({ length: 25 }, (_, i) => ({
-        word: `word${i}`,
-        start: i * 0.5,
-        end: i * 0.5 + 0.4,
-      }));
+      const manyWords: TranscriptionWord[] = Array.from(
+        { length: 25 },
+        (_, i) => ({
+          word: `word${i}`,
+          start: i * 0.5,
+          end: i * 0.5 + 0.4,
+        }),
+      );
 
       const result = await service.diarize(manyWords);
 

@@ -17,7 +17,13 @@ import type { AuthenticatedUser } from '../auth/decorators/current-user.decorato
 import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import { DashboardService } from './dashboard.service';
 import { FiltrosDashboardDto } from './dto/filtros-dashboard.dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { RoleUsuario } from '@prisma/client';
 
 @ApiTags('Dashboard - Coordenador')
@@ -186,19 +192,23 @@ export class DashboardDiretorController {
     name: 'bimestre',
     required: false,
     type: Number,
-    description: 'Filtro opcional: 1-4 (se omitido, retorna dados de todos os bimestres)',
+    description:
+      'Filtro opcional: 1-4 (se omitido, retorna dados de todos os bimestres)',
     example: 1,
   })
   @ApiResponse({
     status: 200,
-    description: 'KPIs consolidados + distribuição por disciplina + evolução temporal',
+    description:
+      'KPIs consolidados + distribuição por disciplina + evolução temporal',
   })
   async getMetricasEscola(
     @CurrentUser() user: AuthenticatedUser,
     @Query('bimestre', new ParseIntPipe({ optional: true })) bimestre?: number,
   ) {
     if (!user.escolaId) {
-      throw new BadRequestException('Dashboard diretor não disponível para ADMIN');
+      throw new BadRequestException(
+        'Dashboard diretor não disponível para ADMIN',
+      );
     }
     return this.dashboardService.getMetricasEscola(user.escolaId, bimestre);
   }

@@ -97,6 +97,13 @@ interface AnaliseResponse {
       status_geral: string;
     };
     score_geral_aula?: number;
+    speaker_analysis?: { // V4
+      professor_fala_pct: number;
+      alunos_fala_pct: number;
+      trocas_dialogicas: number;
+      total_intervencoes_alunos?: number;
+      total_perguntas_professor?: number;
+    };
   };
   metadata: {
     tempo_processamento_ms: number;
@@ -208,6 +215,7 @@ export function AulaAnalisePage() {
         <AlertasResumo
           resumo={analise.alertas.resumo}
           score_geral={analise.alertas.score_geral_aula}
+          speaker_analysis={analise.alertas.speaker_analysis}
         />
       )}
 

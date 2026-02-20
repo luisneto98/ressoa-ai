@@ -299,7 +299,9 @@ describe('Reenviar Convite API (E2E) - Story 13.12', () => {
 
     expect(response.status).toBe(201);
     expect(response.body.message).toContain('reenviado');
-    expect(response.body.message).toContain(`${EMAIL_PREFIX}.expired@teste.com`);
+    expect(response.body.message).toContain(
+      `${EMAIL_PREFIX}.expired@teste.com`,
+    );
   });
 
   // Test 2: Diretor resends own school invite → 201

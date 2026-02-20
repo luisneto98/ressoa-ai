@@ -22,7 +22,7 @@ describe('Seed BNCC Ensino Médio (Integration)', () => {
     it('should allow running seed multiple times without duplicates', async () => {
       // Get count before second run
       const countBefore = await prisma.habilidade.count({
-        where: { tipo_ensino: 'MEDIO' }
+        where: { tipo_ensino: 'MEDIO' },
       });
 
       // Re-run seed (via script or direct function call)
@@ -30,7 +30,7 @@ describe('Seed BNCC Ensino Médio (Integration)', () => {
 
       // Get count after second run
       const countAfter = await prisma.habilidade.count({
-        where: { tipo_ensino: 'MEDIO' }
+        where: { tipo_ensino: 'MEDIO' },
       });
 
       // Should be same count (upsert prevents duplicates)
@@ -44,8 +44,8 @@ describe('Seed BNCC Ensino Médio (Integration)', () => {
       const invalidCount = await prisma.habilidade.count({
         where: {
           codigo: { startsWith: 'EM' }, // EM codes start with "EM"
-          tipo_ensino: { not: 'MEDIO' }
-        }
+          tipo_ensino: { not: 'MEDIO' },
+        },
       });
 
       expect(invalidCount).toBe(0);
@@ -55,11 +55,8 @@ describe('Seed BNCC Ensino Médio (Integration)', () => {
       const invalidCount = await prisma.habilidade.count({
         where: {
           tipo_ensino: 'MEDIO',
-          OR: [
-            { ano_inicio: { not: 1 } },
-            { ano_fim: { not: 3 } }
-          ]
-        }
+          OR: [{ ano_inicio: { not: 1 } }, { ano_fim: { not: 3 } }],
+        },
       });
 
       expect(invalidCount).toBe(0);
@@ -69,8 +66,8 @@ describe('Seed BNCC Ensino Médio (Integration)', () => {
       const invalidCount = await prisma.habilidade.count({
         where: {
           tipo_ensino: 'MEDIO',
-          unidade_tematica: { not: null }
-        }
+          unidade_tematica: { not: null },
+        },
       });
 
       expect(invalidCount).toBe(0);
@@ -83,9 +80,9 @@ describe('Seed BNCC Ensino Médio (Integration)', () => {
           OR: [
             { competencia_especifica: null },
             { competencia_especifica: { lt: 1 } },
-            { competencia_especifica: { gt: 7 } }
-          ]
-        }
+            { competencia_especifica: { gt: 7 } },
+          ],
+        },
       });
 
       expect(invalidCount).toBe(0);
@@ -94,7 +91,7 @@ describe('Seed BNCC Ensino Médio (Integration)', () => {
     it('should have metadata with area field for all EM', async () => {
       const habilidades = await prisma.habilidade.findMany({
         where: { tipo_ensino: 'MEDIO' },
-        select: { metadata: true }
+        select: { metadata: true },
       });
 
       for (const hab of habilidades) {
@@ -105,13 +102,18 @@ describe('Seed BNCC Ensino Médio (Integration)', () => {
     });
 
     it('should have valid disciplina for all EM habilidades', async () => {
-      const validDisciplinas = ['LINGUA_PORTUGUESA', 'MATEMATICA', 'CIENCIAS', 'CIENCIAS_HUMANAS'];
+      const validDisciplinas = [
+        'LINGUA_PORTUGUESA',
+        'MATEMATICA',
+        'CIENCIAS',
+        'CIENCIAS_HUMANAS',
+      ];
 
       const invalidCount = await prisma.habilidade.count({
         where: {
           tipo_ensino: 'MEDIO',
-          disciplina: { notIn: validDisciplinas }
-        }
+          disciplina: { notIn: validDisciplinas },
+        },
       });
 
       expect(invalidCount).toBe(0);
@@ -119,7 +121,7 @@ describe('Seed BNCC Ensino Médio (Integration)', () => {
 
     it('should NOT affect Ensino Fundamental habilidades', async () => {
       const fundamentalCount = await prisma.habilidade.count({
-        where: { tipo_ensino: 'FUNDAMENTAL' }
+        where: { tipo_ensino: 'FUNDAMENTAL' },
       });
 
       // Fundamental habilidades should exist (~276+ from previous seeds)
@@ -129,8 +131,8 @@ describe('Seed BNCC Ensino Médio (Integration)', () => {
       const invalidFundamental = await prisma.habilidade.count({
         where: {
           tipo_ensino: 'FUNDAMENTAL',
-          codigo: { startsWith: 'EM' }
-        }
+          codigo: { startsWith: 'EM' },
+        },
       });
 
       expect(invalidFundamental).toBe(0);
@@ -144,9 +146,9 @@ describe('Seed BNCC Ensino Médio (Integration)', () => {
         _count: { codigo: true },
         having: {
           codigo: {
-            _count: { gt: 1 }
-          }
-        }
+            _count: { gt: 1 },
+          },
+        },
       });
 
       // No duplicates
@@ -159,10 +161,10 @@ describe('Seed BNCC Ensino Médio (Integration)', () => {
       const distribution = await prisma.habilidade.groupBy({
         by: ['disciplina'],
         where: { tipo_ensino: 'MEDIO' },
-        _count: { disciplina: true }
+        _count: { disciplina: true },
       });
 
-      const disciplinas = distribution.map(d => d.disciplina);
+      const disciplinas = distribution.map((d) => d.disciplina);
 
       // Should have at least 3 of the 4 areas (LGG, MAT, CNT, CHS)
       expect(disciplinas.length).toBeGreaterThanOrEqual(3);
@@ -172,7 +174,7 @@ describe('Seed BNCC Ensino Médio (Integration)', () => {
 
     it('should have at least 40 EM habilidades (MVP representative sample)', async () => {
       const count = await prisma.habilidade.count({
-        where: { tipo_ensino: 'MEDIO' }
+        where: { tipo_ensino: 'MEDIO' },
       });
 
       // MVP has ~53, tolerance for variations

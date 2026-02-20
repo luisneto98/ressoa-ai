@@ -1,6 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import type { Queue } from 'bull';
+import { jsonrepair } from 'jsonrepair';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { PromptService } from '../../llm/services/prompt.service';
 import { LLMRouterService } from '../../llm/services/llm-router.service';
@@ -61,24 +62,49 @@ export class AnaliseService {
    * @throws Error se JSON inválido
    */
   private parseMarkdownJSON(output: string | any): any {
+    // If already an object, return as-is (for tests or pre-parsed data)
+    if (typeof output !== 'string') {
+      return output;
+    }
+
+    // Remove markdown code fences if present (handles both complete and truncated fences)
+    const jsonMatch = output.match(/```(?:json)?\s*\n?([\s\S]*?)(?:\n?```|$)/);
+    const jsonString = jsonMatch ? jsonMatch[1].trim() : output.trim();
+
+    // 1st attempt: parse directly
     try {
-      // If already an object, return as-is (for tests or pre-parsed data)
-      if (typeof output !== 'string') {
-        return output;
-      }
-
-      // Remove markdown code fences if present
-      const jsonMatch = output.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
-      const jsonString = jsonMatch ? jsonMatch[1].trim() : output.trim();
-
       return JSON.parse(jsonString);
-    } catch (error) {
-      this.logger.error({
-        message: 'Failed to parse LLM JSON output',
-        output: typeof output === 'string' ? output.substring(0, 500) : JSON.stringify(output).substring(0, 500), // Log first 500 chars
-        error: error instanceof Error ? error.message : 'Unknown error',
-      });
-      throw new Error(`Invalid JSON from LLM: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } catch (parseError) {
+      // 2nd attempt: jsonrepair (handles truncated output, missing commas, trailing content)
+      try {
+        this.logger.warn({
+          message:
+            'JSON parse failed — attempting jsonrepair (likely truncated LLM output)',
+          parseError:
+            parseError instanceof Error ? parseError.message : 'Unknown',
+          outputLength: output.length,
+          outputPreview: output.substring(0, 200),
+        });
+        const repaired = jsonrepair(jsonString);
+        const result = JSON.parse(repaired);
+        this.logger.warn({
+          message:
+            'jsonrepair succeeded — check max_tokens config for this prompt',
+        });
+        return result;
+      } catch (repairError) {
+        this.logger.error({
+          message: 'Failed to parse LLM JSON output (even after jsonrepair)',
+          output: output.substring(0, 500),
+          parseError:
+            parseError instanceof Error ? parseError.message : 'Unknown',
+          repairError:
+            repairError instanceof Error ? repairError.message : 'Unknown',
+        });
+        throw new Error(
+          `Invalid JSON from LLM: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`,
+        );
+      }
     }
   }
 
@@ -120,7 +146,9 @@ export class AnaliseService {
       requiredPrompts.map(async (nome) => {
         const prompt = await this.promptService.getActivePrompt(nome);
         if (!prompt) {
-          throw new NotFoundException(`Prompt obrigatório não encontrado: ${nome}`);
+          throw new NotFoundException(
+            `Prompt obrigatório não encontrado: ${nome}`,
+          );
         }
       }),
     );
@@ -176,7 +204,10 @@ export class AnaliseService {
       // STORY 10.6: Adicionar contexto de tipo_ensino para adaptar prompts EM vs EF
       tipo_ensino: aula.turma.tipo_ensino || 'FUNDAMENTAL', // Default EF (backward compat)
       nivel_ensino: this.getNivelEnsino(aula.turma.tipo_ensino),
-      faixa_etaria: this.getFaixaEtaria(aula.turma.tipo_ensino, aula.turma.serie),
+      faixa_etaria: this.getFaixaEtaria(
+        aula.turma.tipo_ensino,
+        aula.turma.serie,
+      ),
       ano_serie: this.formatarSerie(aula.turma.serie),
       // CRITICAL FIX (Code Review): Add top-level serie/disciplina for template conditionals
       // Templates use {{#if (eq serie 'TERCEIRO_ANO_EM')}} and {{#if (eq disciplina 'LINGUA_PORTUGUESA')}}
@@ -188,36 +219,45 @@ export class AnaliseService {
 
       // Se custom, incluir contexto pedagógico
       // CRITICAL FIX (Code Review HIGH-3): Validate contexto_pedagogico exists for CUSTOM
-      contexto_pedagogico: isCurriculoCustom ? (() => {
-        if (!aula.turma.contexto_pedagogico) {
-          throw new NotFoundException(
-            `Turma CUSTOM sem contexto_pedagógico definido: ${aula.turma.id}. ` +
-            `Configure objetivo_geral, publico_alvo, metodologia e carga_horaria_total.`
-          );
-        }
-        const contexto = aula.turma.contexto_pedagogico as unknown as ContextoPedagogico;
-        return {
-          objetivo_geral: contexto.objetivo_geral,
-          publico_alvo: contexto.publico_alvo,
-          metodologia: contexto.metodologia,
-          carga_horaria_total: contexto.carga_horaria_total,
-        };
-      })() : null,
+      contexto_pedagogico: isCurriculoCustom
+        ? (() => {
+            if (!aula.turma.contexto_pedagogico) {
+              throw new NotFoundException(
+                `Turma CUSTOM sem contexto_pedagógico definido: ${aula.turma.id}. ` +
+                  `Configure objetivo_geral, publico_alvo, metodologia e carga_horaria_total.`,
+              );
+            }
+            const contexto = aula.turma
+              .contexto_pedagogico as unknown as ContextoPedagogico;
+            return {
+              objetivo_geral: contexto.objetivo_geral,
+              publico_alvo: contexto.publico_alvo,
+              metodologia: contexto.metodologia,
+              carga_horaria_total: contexto.carga_horaria_total,
+            };
+          })()
+        : null,
 
       // Objetivos de aprendizagem (adapta formato BNCC vs custom)
-      planejamento: this.buildPlanejamentoContext(aula.planejamento, isCurriculoCustom),
+      planejamento: this.buildPlanejamentoContext(
+        aula.planejamento,
+        isCurriculoCustom,
+      ),
 
       // STORY 15.6: Diarization metadata for SRT-aware prompts
-      ...(aula.transcricao.metadata_json && (() => {
-        const meta = aula.transcricao.metadata_json as TranscricaoMetadataJson;
-        return {
-          has_diarization: meta.has_diarization || false,
-          speaker_stats: meta.speaker_stats || null,
-        };
-      })()),
+      ...(aula.transcricao.metadata_json &&
+        (() => {
+          const meta = aula.transcricao
+            .metadata_json as TranscricaoMetadataJson;
+          return {
+            has_diarization: meta.has_diarization || false,
+            speaker_stats: meta.speaker_stats || null,
+          };
+        })()),
     };
 
-    let custoTotal = 0;
+    const custoStt = aula.transcricao.custo_usd ?? 0;
+    let custoTotal = custoStt; // Começa com custo STT, acumula LLM
     const promptVersoes: any = {};
 
     try {
@@ -228,7 +268,11 @@ export class AnaliseService {
         custo: custo1,
         versao: versao1,
         provider: prov1,
-      } = await this.executePrompt('prompt-cobertura', contexto, 'analise_cobertura');
+      } = await this.executePrompt(
+        'prompt-cobertura',
+        contexto,
+        'analise_cobertura',
+      );
       contexto.cobertura = coberturaOutput;
       custoTotal += custo1;
       promptVersoes.cobertura = versao1;
@@ -240,7 +284,11 @@ export class AnaliseService {
         custo: custo2,
         versao: versao2,
         provider: prov2,
-      } = await this.executePrompt('prompt-qualitativa', contexto, 'analise_qualitativa');
+      } = await this.executePrompt(
+        'prompt-qualitativa',
+        contexto,
+        'analise_qualitativa',
+      );
       contexto.analise_qualitativa = qualitativaOutput;
       custoTotal += custo2;
       promptVersoes.qualitativa = versao2;
@@ -292,8 +340,11 @@ export class AnaliseService {
             exercicios_json: this.parseMarkdownJSON(exerciciosOutput),
             alertas_json: this.parseMarkdownJSON(alertasOutput),
             prompt_versoes_json: promptVersoes,
-            custo_total_usd: custoTotal,
+            custo_total_usd: custoTotal, // STT + 5 prompts LLM
             tempo_processamento_ms: Date.now() - startTime,
+            // STT cost (denormalizado de Transcricao para facilitar queries)
+            provider_stt: aula.transcricao!.provider,
+            custo_stt_usd: custoStt,
             // Provider cost breakdown (Story 14.4)
             provider_llm_cobertura: prov1,
             custo_llm_cobertura_usd: custo1,
@@ -320,12 +371,15 @@ export class AnaliseService {
       });
 
       const tempoTotal = Date.now() - startTime;
+      const custoLlm = custoTotal - custoStt;
       this.logger.log({
         message: 'Análise pedagógica concluída',
         aula_id: aulaId,
         tipo_ensino: aula.turma.tipo_ensino || 'FUNDAMENTAL',
         serie: aula.turma.serie,
         faixa_etaria: contexto.faixa_etaria,
+        custo_stt_usd: parseFloat(custoStt.toFixed(4)),
+        custo_llm_usd: parseFloat(custoLlm.toFixed(4)),
         custo_total_usd: parseFloat(custoTotal.toFixed(4)),
         tempo_total_ms: tempoTotal,
         prompts_executados: 5,
@@ -333,7 +387,10 @@ export class AnaliseService {
 
       return analise;
     } catch (error) {
-      this.logger.error(`Erro ao analisar aula: aulaId=${aulaId}`, error instanceof Error ? error.stack : String(error));
+      this.logger.error(
+        `Erro ao analisar aula: aulaId=${aulaId}`,
+        error instanceof Error ? error.stack : String(error),
+      );
       throw error;
     }
   }
@@ -373,13 +430,21 @@ export class AnaliseService {
       );
 
       // 2. Renderizar prompt com variáveis do contexto
-      const promptRendered = await this.promptService.renderPrompt(prompt, contexto);
+      const promptRendered = await this.promptService.renderPrompt(
+        prompt,
+        contexto,
+      );
 
       // 3. Executar LLM via router (fallback + timeout + logging handled by router)
+      // Use temperature/maxTokens from prompt config (variaveis) instead of hardcoded values
+      const promptVars = prompt.variaveis as Record<string, any> | null;
+      const temperature = promptVars?.temperature ?? 0.7;
+      const maxTokens = promptVars?.max_tokens ?? 4000;
+
       const result = await this.llmRouterService.generateWithFallback(
         analysisType,
         promptRendered,
-        { temperature: 0.7, maxTokens: 4000 },
+        { temperature, maxTokens },
       );
 
       // 4. Parse JSON output (assumindo que prompts retornam JSON)
@@ -393,7 +458,7 @@ export class AnaliseService {
 
       this.logger.log(
         `Prompt ${nomePrompt} concluído: versao=${prompt.versao}, provider=${result.provider}, custo=$${result.custo_usd.toFixed(4)}, ` +
-        `tokens_in=${result.tokens_input}, tokens_out=${result.tokens_output}`,
+          `tokens_in=${result.tokens_input}, tokens_out=${result.tokens_output}`,
       );
 
       return {
@@ -426,7 +491,6 @@ export class AnaliseService {
    */
   async findByAulaId(aulaId: string) {
     const escolaId = this.prisma.getEscolaIdOrThrow();
-
 
     return this.prisma.analise.findFirst({
       where: {
@@ -548,7 +612,11 @@ export class AnaliseService {
    * @param data Dados do job { analise_id, original, editado }
    * @returns Job enfileirado
    */
-  async enqueueReportDiff(data: { analise_id: string; original: string; editado: string }) {
+  async enqueueReportDiff(data: {
+    analise_id: string;
+    original: string;
+    editado: string;
+  }) {
     return this.feedbackQueue.add('calculate-report-diff', data, {
       priority: 2, // Regular priority
       attempts: 3,
@@ -577,7 +645,11 @@ export class AnaliseService {
    * @param data Dados do job { analise_id, motivo, aula_id }
    * @returns Job enfileirado
    */
-  async enqueueRejectionAnalysis(data: { analise_id: string; motivo: string; aula_id: string }) {
+  async enqueueRejectionAnalysis(data: {
+    analise_id: string;
+    motivo: string;
+    aula_id: string;
+  }) {
     return this.feedbackQueue.add('analyze-rejection', data, {
       priority: 1, // High priority (feedback is critical)
       attempts: 3,
@@ -611,7 +683,10 @@ export class AnaliseService {
    * @returns Faixa etária (ex: "14-17 anos", "11-14 anos")
    * @private
    */
-  private getFaixaEtaria(tipoEnsino: string | null | undefined, serie: string): string {
+  private getFaixaEtaria(
+    tipoEnsino: string | null | undefined,
+    serie: string,
+  ): string {
     if (tipoEnsino === 'MEDIO') {
       const map: Record<string, string> = {
         PRIMEIRO_ANO_EM: '14-15 anos',

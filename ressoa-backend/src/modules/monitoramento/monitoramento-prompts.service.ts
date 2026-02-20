@@ -188,10 +188,7 @@ export class MonitoramentoPromptsService {
     const diffs: DiffItem[] = rows.map((r) => ({
       analise_id: r.analise_id,
       aula_titulo: r.turma_nome,
-      data_aula:
-        r.data instanceof Date
-          ? r.data.toISOString()
-          : String(r.data),
+      data_aula: r.data instanceof Date ? r.data.toISOString() : String(r.data),
       change_count: Number(r.change_count),
       original_length: Number(r.original_length),
       edited_length: Number(r.edited_length),

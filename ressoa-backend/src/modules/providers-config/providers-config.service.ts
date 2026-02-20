@@ -1,4 +1,9 @@
-import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  OnModuleInit,
+  OnModuleDestroy,
+} from '@nestjs/common';
 import { watch, existsSync, FSWatcher } from 'fs';
 import {
   ProvidersConfig,
@@ -37,7 +42,10 @@ export class ProvidersConfigService implements OnModuleInit, OnModuleDestroy {
     return this.config.stt;
   }
 
-  getLLMConfig(analysisType: LLMAnalysisType): { primary: string; fallback: string } {
+  getLLMConfig(analysisType: LLMAnalysisType): {
+    primary: string;
+    fallback: string;
+  } {
     return this.config.llm[analysisType];
   }
 

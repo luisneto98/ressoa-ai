@@ -155,10 +155,11 @@ export class PlanejamentoService {
 
     if (dto.objetivos && dto.objetivos.length > 0) {
       const objetivoIds = dto.objetivos.map((o) => o.objetivo_id);
-      const objetivosExistentes = await this.prisma.objetivoAprendizagem.findMany({
-        where: { id: { in: objetivoIds } },
-        select: { id: true },
-      });
+      const objetivosExistentes =
+        await this.prisma.objetivoAprendizagem.findMany({
+          where: { id: { in: objetivoIds } },
+          select: { id: true },
+        });
 
       if (objetivosExistentes.length !== objetivoIds.length) {
         throw new BadRequestException(
@@ -185,6 +186,7 @@ export class PlanejamentoService {
             escola_id: escolaId,
             professor_id: user.userId,
             validado_coordenacao: false,
+            descricao: dto.descricao,
           },
         });
 
@@ -421,7 +423,10 @@ export class PlanejamentoService {
       });
 
       if (turmaCompleta) {
-        this.validateHabilidadesCompatibilidade(habilidadesExistentes, turmaCompleta);
+        this.validateHabilidadesCompatibilidade(
+          habilidadesExistentes,
+          turmaCompleta,
+        );
       }
 
       // Aplicar regras de negócio
@@ -460,6 +465,7 @@ export class PlanejamentoService {
         bimestre: dto.bimestre,
         ano_letivo: dto.ano_letivo,
         turma_id: dto.turma_id,
+        descricao: dto.descricao,
       },
       include: {
         turma: true,

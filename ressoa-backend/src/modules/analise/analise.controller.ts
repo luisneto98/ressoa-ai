@@ -179,7 +179,8 @@ export class AnaliseController {
 
     // 4. Transform and structure analysis data for frontend
     const coberturaData = analise.cobertura_json as any;
-    const exerciciosData = (analise.exercicios_editado || analise.exercicios_json) as any;
+    const exerciciosData = (analise.exercicios_editado ||
+      analise.exercicios_json) as any;
     const alertasData = analise.alertas_json as any;
 
     return {

@@ -7,9 +7,15 @@ import { Logger } from '@nestjs/common';
 
 describe('MonitoramentoAlertasService', () => {
   let service: MonitoramentoAlertasService;
-  let mockSTTService: jest.Mocked<Pick<MonitoramentoSTTService, 'getTaxaErroUltimaHora'>>;
-  let mockAnaliseService: jest.Mocked<Pick<MonitoramentoAnaliseService, 'getQueueWaitingCount'>>;
-  let mockCustosService: jest.Mocked<Pick<MonitoramentoCustosService, 'getMetricas'>>;
+  let mockSTTService: jest.Mocked<
+    Pick<MonitoramentoSTTService, 'getTaxaErroUltimaHora'>
+  >;
+  let mockAnaliseService: jest.Mocked<
+    Pick<MonitoramentoAnaliseService, 'getQueueWaitingCount'>
+  >;
+  let mockCustosService: jest.Mocked<
+    Pick<MonitoramentoCustosService, 'getMetricas'>
+  >;
   let loggerWarnSpy: jest.SpyInstance;
   let loggerErrorSpy: jest.SpyInstance;
 
@@ -44,7 +50,9 @@ describe('MonitoramentoAlertasService', () => {
       ],
     }).compile();
 
-    service = module.get<MonitoramentoAlertasService>(MonitoramentoAlertasService);
+    service = module.get<MonitoramentoAlertasService>(
+      MonitoramentoAlertasService,
+    );
     loggerWarnSpy = jest.spyOn(Logger.prototype, 'warn').mockImplementation();
     loggerErrorSpy = jest.spyOn(Logger.prototype, 'error').mockImplementation();
   });
@@ -66,7 +74,12 @@ describe('MonitoramentoAlertasService', () => {
       expect(loggerWarnSpy).toHaveBeenCalledTimes(1);
       expect(loggerWarnSpy).toHaveBeenCalledWith(
         expect.stringContaining('ALERTA STT'),
-        expect.objectContaining({ taxaErro: 8.5, erros: 17, total: 200, threshold: 5 }),
+        expect.objectContaining({
+          taxaErro: 8.5,
+          erros: 17,
+          total: 200,
+          threshold: 5,
+        }),
       );
     });
 
@@ -212,7 +225,9 @@ describe('MonitoramentoAlertasService', () => {
   });
 
   describe('verificarCustosAltos', () => {
-    const makeResponse = (escolas: Array<{ escola_nome: string; custo_total: number }>) => ({
+    const makeResponse = (
+      escolas: Array<{ escola_nome: string; custo_total: number }>,
+    ) => ({
       escolas: escolas.map((e, i) => ({
         escola_id: `uuid-${i}`,
         escola_nome: e.escola_nome,

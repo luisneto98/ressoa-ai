@@ -99,8 +99,7 @@ export class GeminiProvider implements LLMProvider {
       ]);
 
       // Check safety filter block
-      const finishReason =
-        response.candidates?.[0]?.finishReason ?? 'UNKNOWN';
+      const finishReason = response.candidates?.[0]?.finishReason ?? 'UNKNOWN';
       if (finishReason === 'SAFETY') {
         throw new Error(
           'GeminiProvider: Output bloqueado por safety filters - ' +
@@ -114,8 +113,7 @@ export class GeminiProvider implements LLMProvider {
 
       // Token usage
       const tokensInput = response.usageMetadata?.promptTokenCount ?? 0;
-      const tokensOutput =
-        response.usageMetadata?.candidatesTokenCount ?? 0;
+      const tokensOutput = response.usageMetadata?.candidatesTokenCount ?? 0;
 
       // Cost calculation: $0.10/1M input, $0.40/1M output
       const custoInput = (tokensInput / 1_000_000) * 0.1;
@@ -153,12 +151,8 @@ export class GeminiProvider implements LLMProvider {
         error instanceof Error ? error.message : String(error);
 
       // Detect rate limit (429)
-      if (
-        error instanceof Error &&
-        ('status' in error || 'code' in error)
-      ) {
-        const statusCode =
-          (error as any).status ?? (error as any).code;
+      if (error instanceof Error && ('status' in error || 'code' in error)) {
+        const statusCode = (error as any).status ?? (error as any).code;
         if (statusCode === 429) {
           this.logger.error({
             message: 'Gemini API rate limit (429)',
@@ -173,16 +167,17 @@ export class GeminiProvider implements LLMProvider {
       }
 
       // Detect quota exceeded
-      if (errorMessage.includes('quota') || errorMessage.includes('RESOURCE_EXHAUSTED')) {
+      if (
+        errorMessage.includes('quota') ||
+        errorMessage.includes('RESOURCE_EXHAUSTED')
+      ) {
         this.logger.error({
           message: 'Gemini API quota exceeded',
           provider: 'GEMINI_FLASH',
           error: errorMessage,
           tempo_ms: tempoMs,
         });
-        throw new Error(
-          `GeminiProvider: Quota excedida - ${errorMessage}`,
-        );
+        throw new Error(`GeminiProvider: Quota excedida - ${errorMessage}`);
       }
 
       this.logger.error({
@@ -191,9 +186,7 @@ export class GeminiProvider implements LLMProvider {
         error: errorMessage,
         tempo_ms: tempoMs,
       });
-      throw new Error(
-        `GeminiProvider: Falha ao gerar texto - ${errorMessage}`,
-      );
+      throw new Error(`GeminiProvider: Falha ao gerar texto - ${errorMessage}`);
     } finally {
       clearTimeout(timer!);
     }

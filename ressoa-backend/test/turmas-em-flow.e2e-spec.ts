@@ -501,7 +501,9 @@ describe('Turmas EM Flow (e2e) - Story 10.9', () => {
         });
 
       expect(response.status).toBe(400);
-      expect(response.body.message).toMatch(/Série.*incompatível.*Ensino Médio/i);
+      expect(response.body.message).toMatch(
+        /Série.*incompatível.*Ensino Médio/i,
+      );
     });
 
     it('Rejeita turma com série incompatível (tipo_ensino=FUNDAMENTAL, serie=PRIMEIRO_ANO_EM)', async () => {
@@ -519,7 +521,9 @@ describe('Turmas EM Flow (e2e) - Story 10.9', () => {
         });
 
       expect(response.status).toBe(400);
-      expect(response.body.message).toMatch(/Série.*incompatível.*Ensino Fundamental/i);
+      expect(response.body.message).toMatch(
+        /Série.*incompatível.*Ensino Fundamental/i,
+      );
     });
   });
 
@@ -545,7 +549,9 @@ describe('Turmas EM Flow (e2e) - Story 10.9', () => {
     it('PROFESSOR cria planejamento para turma EM', async () => {
       // First, get some EM habilidades to include in planejamento
       const habResponse = await request(app.getHttpServer())
-        .get('/api/v1/habilidades?tipo_ensino=MEDIO&disciplina=MATEMATICA&limit=3')
+        .get(
+          '/api/v1/habilidades?tipo_ensino=MEDIO&disciplina=MATEMATICA&limit=3',
+        )
         .set('Authorization', `Bearer ${tokenProfessorA}`);
 
       expect(habResponse.status).toBe(200);
@@ -631,7 +637,8 @@ describe('Turmas EM Flow (e2e) - Story 10.9', () => {
       await prisma.transcricao.create({
         data: {
           aula_id: aulaId,
-          texto: 'Hoje vamos trabalhar com funções quadráticas. Uma função quadrática é representada por f(x) = ax² + bx + c...',
+          texto:
+            'Hoje vamos trabalhar com funções quadráticas. Uma função quadrática é representada por f(x) = ax² + bx + c...',
           confianca: 0.95,
           servico_usado: 'whisper-api',
           provider: 'WHISPER', // Required field
@@ -705,7 +712,14 @@ describe('Turmas EM Flow (e2e) - Story 10.9', () => {
         const bloomLevels = Object.keys(analiseQualitativa.bloom_levels);
 
         // EM should have higher-order thinking skills
-        const higherOrderSkills = ['Análise', 'Avaliação', 'Criação', 'Analyzing', 'Evaluating', 'Creating'];
+        const higherOrderSkills = [
+          'Análise',
+          'Avaliação',
+          'Criação',
+          'Analyzing',
+          'Evaluating',
+          'Creating',
+        ];
         const hasHigherOrder = bloomLevels.some((level) =>
           higherOrderSkills.some((skill) => level.includes(skill)),
         );
@@ -759,7 +773,9 @@ describe('Turmas EM Flow (e2e) - Story 10.9', () => {
 
         exercicios.forEach((exercicio: any) => {
           expect(exercicio.enunciado || exercicio.questao).toBeDefined();
-          expect(typeof (exercicio.enunciado || exercicio.questao)).toBe('string');
+          expect(typeof (exercicio.enunciado || exercicio.questao)).toBe(
+            'string',
+          );
         });
       } else if (typeof exercicios === 'object') {
         // Alternative structure: { questoes: [...] }
@@ -875,7 +891,9 @@ describe('Turmas EM Flow (e2e) - Story 10.9', () => {
 
       // Get habilidades first
       const habResponse = await request(app.getHttpServer())
-        .get('/api/v1/habilidades?tipo_ensino=MEDIO&disciplina=MATEMATICA&limit=2')
+        .get(
+          '/api/v1/habilidades?tipo_ensino=MEDIO&disciplina=MATEMATICA&limit=2',
+        )
         .set('Authorization', `Bearer ${tokenProfessorA}`);
 
       const habilidades = habResponse.body.data.slice(0, 1).map((h: any) => ({

@@ -96,9 +96,7 @@ describe('MonitoramentoAnaliseService', () => {
       // Queue stats
       mockAnalysisQueue.getWaitingCount.mockResolvedValueOnce(queueWaiting);
       mockAnalysisQueue.getActiveCount.mockResolvedValueOnce(queueActive);
-      mockAnalysisQueue.getCompletedCount.mockResolvedValueOnce(
-        queueCompleted,
-      );
+      mockAnalysisQueue.getCompletedCount.mockResolvedValueOnce(queueCompleted);
       mockAnalysisQueue.getFailedCount.mockResolvedValueOnce(queueFailed);
       mockAnalysisQueue.getDelayedCount.mockResolvedValueOnce(queueDelayed);
     };
@@ -172,9 +170,7 @@ describe('MonitoramentoAnaliseService', () => {
 
     it('should handle all same status', async () => {
       setupMocks({
-        statusDistribution: [
-          { status: 'APROVADO', _count: { _all: 50 } },
-        ],
+        statusDistribution: [{ status: 'APROVADO', _count: { _all: 50 } }],
       });
       const result = await service.getMetricas('24h');
 
@@ -190,8 +186,7 @@ describe('MonitoramentoAnaliseService', () => {
       const beforeCall = Date.now();
       await service.getMetricas('1h');
 
-      const firstCall =
-        mockPrismaService.analise.aggregate.mock.calls[0][0];
+      const firstCall = mockPrismaService.analise.aggregate.mock.calls[0][0];
       const gteDate = firstCall.where.created_at.gte as Date;
       const expectedGte = beforeCall - 60 * 60 * 1000;
       expect(Math.abs(gteDate.getTime() - expectedGte)).toBeLessThan(5000);
@@ -202,8 +197,7 @@ describe('MonitoramentoAnaliseService', () => {
       const beforeCall = Date.now();
       await service.getMetricas('7d');
 
-      const firstCall =
-        mockPrismaService.analise.aggregate.mock.calls[0][0];
+      const firstCall = mockPrismaService.analise.aggregate.mock.calls[0][0];
       const gteDate = firstCall.where.created_at.gte as Date;
       const expectedGte = beforeCall - 7 * 24 * 60 * 60 * 1000;
       expect(Math.abs(gteDate.getTime() - expectedGte)).toBeLessThan(5000);
@@ -214,8 +208,7 @@ describe('MonitoramentoAnaliseService', () => {
       const beforeCall = Date.now();
       await service.getMetricas('30d');
 
-      const firstCall =
-        mockPrismaService.analise.aggregate.mock.calls[0][0];
+      const firstCall = mockPrismaService.analise.aggregate.mock.calls[0][0];
       const gteDate = firstCall.where.created_at.gte as Date;
       const expectedGte = beforeCall - 30 * 24 * 60 * 60 * 1000;
       expect(Math.abs(gteDate.getTime() - expectedGte)).toBeLessThan(5000);
@@ -226,8 +219,7 @@ describe('MonitoramentoAnaliseService', () => {
       const beforeCall = Date.now();
       await service.getMetricas('invalid');
 
-      const firstCall =
-        mockPrismaService.analise.aggregate.mock.calls[0][0];
+      const firstCall = mockPrismaService.analise.aggregate.mock.calls[0][0];
       const gteDate = firstCall.where.created_at.gte as Date;
       const expectedGte = beforeCall - 24 * 60 * 60 * 1000;
       expect(Math.abs(gteDate.getTime() - expectedGte)).toBeLessThan(5000);

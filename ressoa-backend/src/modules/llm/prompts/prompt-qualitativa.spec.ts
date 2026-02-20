@@ -72,7 +72,10 @@ describe('Prompt 2 - Análise Qualitativa (Unit)', () => {
       },
       metodologia: {
         dominante: 'Expositiva dialogada',
-        metodos_identificados: ['Expositiva dialogada', 'Resolução de problemas'],
+        metodos_identificados: [
+          'Expositiva dialogada',
+          'Resolução de problemas',
+        ],
         percentual_estimado: {
           expositiva: 60,
           investigativa: 0,
@@ -402,13 +405,10 @@ describe('Prompt 2 - Análise Qualitativa (Unit)', () => {
     });
 
     it('should return valid JSON structure from LLM', async () => {
-      const result = await claudeProvider.generate(
-        'Test prompt content',
-        {
-          temperature: 0.4,
-          maxTokens: 2500,
-        },
-      );
+      const result = await claudeProvider.generate('Test prompt content', {
+        temperature: 0.4,
+        maxTokens: 2500,
+      });
 
       expect(result.texto).toBeDefined();
       expect(() => JSON.parse(result.texto)).not.toThrow();

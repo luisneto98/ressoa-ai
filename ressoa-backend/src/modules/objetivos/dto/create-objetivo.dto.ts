@@ -23,7 +23,8 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
  */
 export class CreateObjetivoDto {
   @ApiProperty({
-    description: 'Código único do objetivo (ex: EF06MA01 para BNCC, PM-MAT-01 para custom)',
+    description:
+      'Código único do objetivo (ex: EF06MA01 para BNCC, PM-MAT-01 para custom)',
     example: 'PM-MAT-01',
   })
   @IsString()
@@ -65,7 +66,9 @@ export class CreateObjetivoDto {
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
   @ValidateIf((o) => o.tipo_fonte === 'BNCC')
-  @IsNotEmpty({ message: 'habilidade_bncc_id é obrigatório para objetivos BNCC' })
+  @IsNotEmpty({
+    message: 'habilidade_bncc_id é obrigatório para objetivos BNCC',
+  })
   @IsUUID('4', { message: 'habilidade_bncc_id deve ser um UUID válido' })
   habilidade_bncc_id?: string;
 
@@ -87,7 +90,9 @@ export class CreateObjetivoDto {
     example: 'Matemática Financeira',
   })
   @ValidateIf((o) => o.tipo_fonte === 'CUSTOM')
-  @IsNotEmpty({ message: 'area_conhecimento é obrigatória para objetivos customizados' })
+  @IsNotEmpty({
+    message: 'area_conhecimento é obrigatória para objetivos customizados',
+  })
   @IsString()
   area_conhecimento?: string;
 

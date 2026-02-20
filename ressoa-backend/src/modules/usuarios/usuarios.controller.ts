@@ -1,4 +1,13 @@
-import { Controller, Get, Patch, Query, Param, Body, UseGuards, ParseUUIDPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Patch,
+  Query,
+  Param,
+  Body,
+  UseGuards,
+  ParseUUIDPipe,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiBearerAuth,
@@ -56,7 +65,8 @@ export class UsuariosController {
   @Roles(RoleUsuario.ADMIN, RoleUsuario.DIRETOR, RoleUsuario.COORDENADOR)
   @ApiOperation({
     summary: 'Reativar usuário desativado',
-    description: 'Restaura acesso de usuário desativado respeitando hierarquia de roles.',
+    description:
+      'Restaura acesso de usuário desativado respeitando hierarquia de roles.',
   })
   @ApiParam({ name: 'id', description: 'ID do usuário (UUID)' })
   @ApiResponse({ status: 200, description: 'Usuário reativado com sucesso' })
@@ -75,11 +85,15 @@ export class UsuariosController {
   @Roles(RoleUsuario.ADMIN, RoleUsuario.DIRETOR, RoleUsuario.COORDENADOR)
   @ApiOperation({
     summary: 'Desativar usuário (soft delete)',
-    description: 'Marca usuário como inativo respeitando hierarquia de roles. LGPD compliance.',
+    description:
+      'Marca usuário como inativo respeitando hierarquia de roles. LGPD compliance.',
   })
   @ApiParam({ name: 'id', description: 'ID do usuário (UUID)' })
   @ApiResponse({ status: 200, description: 'Usuário desativado com sucesso' })
-  @ApiResponse({ status: 400, description: 'Auto-desativação ou UUID inválido' })
+  @ApiResponse({
+    status: 400,
+    description: 'Auto-desativação ou UUID inválido',
+  })
   @ApiResponse({ status: 403, description: 'Sem permissão (hierarquia)' })
   @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
   @ApiResponse({ status: 409, description: 'Usuário já desativado' })
@@ -99,7 +113,10 @@ export class UsuariosController {
   @ApiParam({ name: 'id', description: 'ID do usuário (UUID)' })
   @ApiResponse({ status: 200, description: 'Usuário atualizado com sucesso' })
   @ApiResponse({ status: 400, description: 'Validação falhou' })
-  @ApiResponse({ status: 403, description: 'Sem permissão para editar este usuário' })
+  @ApiResponse({
+    status: 403,
+    description: 'Sem permissão para editar este usuário',
+  })
   @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
   @ApiResponse({ status: 409, description: 'Email já cadastrado nesta escola' })
   async updateUsuario(
@@ -107,10 +124,6 @@ export class UsuariosController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateUsuarioDto,
   ) {
-    return this.usuariosService.updateUsuario(
-      user.role,
-      id,
-      dto,
-    );
+    return this.usuariosService.updateUsuario(user.role, id, dto);
   }
 }

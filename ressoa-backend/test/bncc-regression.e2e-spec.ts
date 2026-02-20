@@ -277,7 +277,8 @@ describe('BNCC Regression Tests (Story 11.10 AC2)', () => {
               {
                 habilidade_id: habilidadeIds[0],
                 codigo_habilidade: 'EF07MA18',
-                descricao: 'Resolver e elaborar problemas que possam ser representados por equações...',
+                descricao:
+                  'Resolver e elaborar problemas que possam ser representados por equações...',
                 nivel_cobertura: 'COMPLETO',
                 evidencias: [
                   'Hoje vamos estudar equações do primeiro grau.',
@@ -290,9 +291,7 @@ describe('BNCC Regression Tests (Story 11.10 AC2)', () => {
                 codigo_habilidade: 'EF07MA19',
                 descricao: 'Realizar operações com números racionais...',
                 nivel_cobertura: 'PARCIAL',
-                evidencias: [
-                  '2x = 15 - 5, logo 2x = 10, portanto x = 5',
-                ],
+                evidencias: ['2x = 15 - 5, logo 2x = 10, portanto x = 5'],
                 tempo_dedicado_minutos: 5,
               },
             ],
@@ -307,7 +306,8 @@ describe('BNCC Regression Tests (Story 11.10 AC2)', () => {
             total_habilidades: 3,
             habilidades_atingidas: 2,
           },
-          relatorio_texto: '# Relatório de Análise Pedagógica\n\n## Cobertura de Habilidades BNCC\n\nA aula cobriu **2 de 3 habilidades** planejadas.',
+          relatorio_texto:
+            '# Relatório de Análise Pedagógica\n\n## Cobertura de Habilidades BNCC\n\nA aula cobriu **2 de 3 habilidades** planejadas.',
           status_analise: 'APROVADA',
         },
       });
@@ -332,9 +332,13 @@ describe('BNCC Regression Tests (Story 11.10 AC2)', () => {
 
       // Verify BNCC-specific fields (NOT custom fields)
       expect(res.body.cobertura_json).toHaveProperty('habilidades_cobertas');
-      expect(res.body.cobertura_json).toHaveProperty('habilidades_nao_cobertas');
+      expect(res.body.cobertura_json).toHaveProperty(
+        'habilidades_nao_cobertas',
+      );
       expect(res.body.cobertura_json).not.toHaveProperty('objetivos_cobertos');
-      expect(res.body.cobertura_json).not.toHaveProperty('nivel_bloom_planejado');
+      expect(res.body.cobertura_json).not.toHaveProperty(
+        'nivel_bloom_planejado',
+      );
 
       // Verify BNCC habilidade structure
       const coberta = res.body.cobertura_json.habilidades_cobertas[0];
@@ -452,7 +456,9 @@ describe('BNCC Regression Tests (Story 11.10 AC2)', () => {
       console.log('   - BNCC turma creation unchanged');
       console.log('   - BNCC planejamento with habilidades intact');
       console.log('   - BNCC analysis structure preserved');
-      console.log('   - BNCC terminology maintained (habilidades, not objetivos)');
+      console.log(
+        '   - BNCC terminology maintained (habilidades, not objetivos)',
+      );
       console.log('   - Custom features isolated from BNCC flow');
       console.log('   - 0 breaking changes detected');
     });

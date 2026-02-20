@@ -91,10 +91,16 @@ export class CreateObjetivoCustomDto {
     maxItems: 5,
   })
   @IsArray({ message: 'criterios_evidencia deve ser um array' })
-  @ArrayMinSize(1, { message: 'criterios_evidencia deve ter entre 1 e 5 itens' })
-  @ArrayMaxSize(5, { message: 'criterios_evidencia deve ter entre 1 e 5 itens' })
+  @ArrayMinSize(1, {
+    message: 'criterios_evidencia deve ter entre 1 e 5 itens',
+  })
+  @ArrayMaxSize(5, {
+    message: 'criterios_evidencia deve ter entre 1 e 5 itens',
+  })
   @Transform(({ value }) =>
-    Array.isArray(value) ? value.map((v) => (typeof v === 'string' ? v.trim() : v)) : value,
+    Array.isArray(value)
+      ? value.map((v) => (typeof v === 'string' ? v.trim() : v))
+      : value,
   )
   @Validate(IsCriteriosEvidenciaValid)
   criterios_evidencia!: string[];

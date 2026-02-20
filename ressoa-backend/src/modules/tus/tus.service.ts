@@ -66,7 +66,9 @@ export class TusService {
         // JWT já validado por JwtAuthGuard do NestJS (req.user populado pelo guard)
         // Se req.user não existir, o guard já bloqueou - verificação defensiva apenas
         if (!req.user) {
-          this.logger.warn('onIncomingRequest: req.user ausente (esperado ser validado pelo JwtAuthGuard)');
+          this.logger.warn(
+            'onIncomingRequest: req.user ausente (esperado ser validado pelo JwtAuthGuard)',
+          );
           return; // Allow TUS to proceed - auth is handled by NestJS guard
         }
 
@@ -130,7 +132,9 @@ export class TusService {
         const escolaId = escola_id;
         const professorId = professor_id;
 
-        this.logger.log(`onUploadCreate: aulaId=${aulaId}, escolaId=${escolaId}, professorId=${professorId}`);
+        this.logger.log(
+          `onUploadCreate: aulaId=${aulaId}, escolaId=${escolaId}, professorId=${professorId}`,
+        );
 
         const aula = await this.prisma.aula.findFirst({
           where: {
@@ -141,7 +145,9 @@ export class TusService {
         });
 
         if (!aula) {
-          this.logger.error(`Aula não encontrada: id=${aulaId}, escola=${escolaId}, professor=${professorId}`);
+          this.logger.error(
+            `Aula não encontrada: id=${aulaId}, escola=${escolaId}, professor=${professorId}`,
+          );
           throw new ForbiddenException('Aula não encontrada ou sem permissão');
         }
 

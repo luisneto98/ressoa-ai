@@ -25,8 +25,10 @@ describe('RefreshCoberturaProcessor', () => {
       ],
     }).compile();
 
-    processor = module.get<RefreshCoberturaProcessor>(RefreshCoberturaProcessor);
-    prisma = module.get(PrismaService) as jest.Mocked<PrismaService>;
+    processor = module.get<RefreshCoberturaProcessor>(
+      RefreshCoberturaProcessor,
+    );
+    prisma = module.get(PrismaService);
   });
 
   afterEach(() => {
@@ -50,7 +52,9 @@ describe('RefreshCoberturaProcessor', () => {
 
       expect(prisma.$executeRaw).toHaveBeenCalledWith(
         expect.arrayContaining([
-          expect.stringContaining('REFRESH MATERIALIZED VIEW CONCURRENTLY cobertura_bimestral'),
+          expect.stringContaining(
+            'REFRESH MATERIALIZED VIEW CONCURRENTLY cobertura_bimestral',
+          ),
         ]),
       );
     });
@@ -108,7 +112,9 @@ describe('RefreshCoberturaProcessor', () => {
       ).rejects.toThrow();
 
       expect(errorSpy).toHaveBeenCalledWith(
-        expect.stringMatching(/Failed to refresh materialized view for job test-job-123/),
+        expect.stringMatching(
+          /Failed to refresh materialized view for job test-job-123/,
+        ),
         expect.stringContaining('Error: Refresh failed'),
       );
     });
@@ -117,14 +123,11 @@ describe('RefreshCoberturaProcessor', () => {
       prisma.$executeRaw.mockRejectedValue('String error');
       const errorSpy = jest.spyOn(processor['logger'], 'error');
 
-      await expect(
-        processor.refreshCoberturaBimestral(mockJob),
-      ).rejects.toBe('String error');
-
-      expect(errorSpy).toHaveBeenCalledWith(
-        expect.any(String),
+      await expect(processor.refreshCoberturaBimestral(mockJob)).rejects.toBe(
         'String error',
       );
+
+      expect(errorSpy).toHaveBeenCalledWith(expect.any(String), 'String error');
     });
   });
 });

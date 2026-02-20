@@ -120,7 +120,9 @@ export class GPTProvider implements LLMProvider {
         error: error instanceof Error ? error.message : String(error),
         tempo_ms: Date.now() - startTime,
       });
-      throw new Error(`GPTProvider: Falha ao gerar texto - ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `GPTProvider: Falha ao gerar texto - ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 

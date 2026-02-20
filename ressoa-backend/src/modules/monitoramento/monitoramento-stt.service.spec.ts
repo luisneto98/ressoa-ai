@@ -164,7 +164,14 @@ describe('MonitoramentoSTTService', () => {
     });
 
     it('should handle 0 transcricoes (avoid division by zero)', async () => {
-      setupMocks({ total: 0, erros: 0, fallback: 0, avgTempo: null, avgConfianca: null, sumCusto: null });
+      setupMocks({
+        total: 0,
+        erros: 0,
+        fallback: 0,
+        avgTempo: null,
+        avgConfianca: null,
+        sumCusto: null,
+      });
       const result = await service.getMetricas('24h');
 
       expect(result.kpis.total_transcricoes).toBe(0);
@@ -290,7 +297,8 @@ describe('MonitoramentoSTTService', () => {
       const beforeCall = Date.now();
       await service.getTaxaErroUltimaHora();
 
-      const transcricaoCall = mockPrismaService.transcricao.count.mock.calls[0][0];
+      const transcricaoCall =
+        mockPrismaService.transcricao.count.mock.calls[0][0];
       const gteDate = transcricaoCall.where.created_at.gte as Date;
       const expectedGte = beforeCall - 60 * 60 * 1000;
       expect(Math.abs(gteDate.getTime() - expectedGte)).toBeLessThan(5000);

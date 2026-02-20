@@ -46,7 +46,9 @@ describe('ProvidersConfigService', () => {
     });
 
     it('should start file watcher on init', () => {
-      jest.spyOn(providersConfig, 'loadProvidersConfig').mockReturnValue(DEFAULT_PROVIDERS_CONFIG);
+      jest
+        .spyOn(providersConfig, 'loadProvidersConfig')
+        .mockReturnValue(DEFAULT_PROVIDERS_CONFIG);
 
       service.onModuleInit();
 
@@ -55,7 +57,9 @@ describe('ProvidersConfigService', () => {
 
     it('should skip file watcher when config file does not exist', () => {
       mockedFs.existsSync.mockReturnValue(false);
-      jest.spyOn(providersConfig, 'loadProvidersConfig').mockReturnValue(DEFAULT_PROVIDERS_CONFIG);
+      jest
+        .spyOn(providersConfig, 'loadProvidersConfig')
+        .mockReturnValue(DEFAULT_PROVIDERS_CONFIG);
 
       service.onModuleInit();
 
@@ -65,7 +69,9 @@ describe('ProvidersConfigService', () => {
 
   describe('getSTTConfig', () => {
     it('should return STT config', () => {
-      jest.spyOn(providersConfig, 'loadProvidersConfig').mockReturnValue(DEFAULT_PROVIDERS_CONFIG);
+      jest
+        .spyOn(providersConfig, 'loadProvidersConfig')
+        .mockReturnValue(DEFAULT_PROVIDERS_CONFIG);
       service.onModuleInit();
 
       const sttConfig = service.getSTTConfig();
@@ -76,28 +82,46 @@ describe('ProvidersConfigService', () => {
 
   describe('getLLMConfig', () => {
     it('should return LLM config for analise_cobertura', () => {
-      jest.spyOn(providersConfig, 'loadProvidersConfig').mockReturnValue(DEFAULT_PROVIDERS_CONFIG);
+      jest
+        .spyOn(providersConfig, 'loadProvidersConfig')
+        .mockReturnValue(DEFAULT_PROVIDERS_CONFIG);
       service.onModuleInit();
 
       const llmConfig = service.getLLMConfig('analise_cobertura');
 
-      expect(llmConfig).toEqual({ primary: 'CLAUDE_SONNET', fallback: 'GPT4_MINI' });
+      expect(llmConfig).toEqual({
+        primary: 'CLAUDE_SONNET',
+        fallback: 'GPT4_MINI',
+      });
     });
 
     it('should return LLM config for exercicios (GPT4_MINI primary)', () => {
-      jest.spyOn(providersConfig, 'loadProvidersConfig').mockReturnValue(DEFAULT_PROVIDERS_CONFIG);
+      jest
+        .spyOn(providersConfig, 'loadProvidersConfig')
+        .mockReturnValue(DEFAULT_PROVIDERS_CONFIG);
       service.onModuleInit();
 
       const llmConfig = service.getLLMConfig('exercicios');
 
-      expect(llmConfig).toEqual({ primary: 'GPT4_MINI', fallback: 'CLAUDE_SONNET' });
+      expect(llmConfig).toEqual({
+        primary: 'GPT4_MINI',
+        fallback: 'CLAUDE_SONNET',
+      });
     });
 
     it('should return config for all analysis types', () => {
-      jest.spyOn(providersConfig, 'loadProvidersConfig').mockReturnValue(DEFAULT_PROVIDERS_CONFIG);
+      jest
+        .spyOn(providersConfig, 'loadProvidersConfig')
+        .mockReturnValue(DEFAULT_PROVIDERS_CONFIG);
       service.onModuleInit();
 
-      const types = ['analise_cobertura', 'analise_qualitativa', 'relatorio', 'exercicios', 'alertas'] as const;
+      const types = [
+        'analise_cobertura',
+        'analise_qualitativa',
+        'relatorio',
+        'exercicios',
+        'alertas',
+      ] as const;
       for (const type of types) {
         const config = service.getLLMConfig(type);
         expect(config).toHaveProperty('primary');
@@ -109,7 +133,9 @@ describe('ProvidersConfigService', () => {
   describe('hot-reload', () => {
     it('should reload config when file changes with valid content', () => {
       jest.useFakeTimers();
-      jest.spyOn(providersConfig, 'loadProvidersConfig').mockReturnValue(DEFAULT_PROVIDERS_CONFIG);
+      jest
+        .spyOn(providersConfig, 'loadProvidersConfig')
+        .mockReturnValue(DEFAULT_PROVIDERS_CONFIG);
 
       let watchCallback: Function;
       mockedFs.watch.mockImplementation((_path, cb) => {
@@ -142,7 +168,9 @@ describe('ProvidersConfigService', () => {
 
     it('should keep previous config when reload produces invalid data', () => {
       jest.useFakeTimers();
-      jest.spyOn(providersConfig, 'loadProvidersConfig').mockReturnValue(DEFAULT_PROVIDERS_CONFIG);
+      jest
+        .spyOn(providersConfig, 'loadProvidersConfig')
+        .mockReturnValue(DEFAULT_PROVIDERS_CONFIG);
 
       let watchCallback: Function;
       mockedFs.watch.mockImplementation((_path, cb) => {
@@ -170,7 +198,9 @@ describe('ProvidersConfigService', () => {
 
     it('should keep previous config when reload fails to read file', () => {
       jest.useFakeTimers();
-      jest.spyOn(providersConfig, 'loadProvidersConfig').mockReturnValue(DEFAULT_PROVIDERS_CONFIG);
+      jest
+        .spyOn(providersConfig, 'loadProvidersConfig')
+        .mockReturnValue(DEFAULT_PROVIDERS_CONFIG);
 
       let watchCallback: Function;
       mockedFs.watch.mockImplementation((_path, cb) => {
@@ -199,7 +229,9 @@ describe('ProvidersConfigService', () => {
 
     it('should debounce rapid file changes', () => {
       jest.useFakeTimers();
-      jest.spyOn(providersConfig, 'loadProvidersConfig').mockReturnValue(DEFAULT_PROVIDERS_CONFIG);
+      jest
+        .spyOn(providersConfig, 'loadProvidersConfig')
+        .mockReturnValue(DEFAULT_PROVIDERS_CONFIG);
 
       let watchCallback: Function;
       mockedFs.watch.mockImplementation((_path, cb) => {
@@ -257,13 +289,18 @@ describe('ProvidersConfigService', () => {
 
   describe('onModuleDestroy', () => {
     it('should close file watcher on destroy', () => {
-      jest.spyOn(providersConfig, 'loadProvidersConfig').mockReturnValue(DEFAULT_PROVIDERS_CONFIG);
+      jest
+        .spyOn(providersConfig, 'loadProvidersConfig')
+        .mockReturnValue(DEFAULT_PROVIDERS_CONFIG);
 
       const closeFn = jest.fn();
-      mockedFs.watch.mockImplementation(() => ({
-        on: jest.fn().mockReturnThis(),
-        close: closeFn,
-      }) as any);
+      mockedFs.watch.mockImplementation(
+        () =>
+          ({
+            on: jest.fn().mockReturnThis(),
+            close: closeFn,
+          }) as any,
+      );
 
       service.onModuleInit();
       service.onModuleDestroy();

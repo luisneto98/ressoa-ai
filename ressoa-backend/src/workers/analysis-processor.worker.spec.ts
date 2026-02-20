@@ -84,9 +84,13 @@ describe('AnalysisProcessorWorker', () => {
       custo_total_usd: 0.198,
     };
 
-    jest.spyOn(prismaService.aula, 'findUnique').mockResolvedValue(mockAula as any);
+    jest
+      .spyOn(prismaService.aula, 'findUnique')
+      .mockResolvedValue(mockAula as any);
     jest.spyOn(prismaService.aula, 'update').mockResolvedValue(mockAula as any);
-    jest.spyOn(analiseService, 'analisarAula').mockResolvedValue(mockAnalise as any);
+    jest
+      .spyOn(analiseService, 'analisarAula')
+      .mockResolvedValue(mockAnalise as any);
     jest.spyOn(notificacoesService, 'notifyAnalisePronta').mockResolvedValue();
 
     // Act
@@ -112,7 +116,9 @@ describe('AnalysisProcessorWorker', () => {
     expect(prismaService.aula.update).toHaveBeenCalledTimes(1); // Only ANALISANDO
 
     // Notify professor
-    expect(notificacoesService.notifyAnalisePronta).toHaveBeenCalledWith('aula-123');
+    expect(notificacoesService.notifyAnalisePronta).toHaveBeenCalledWith(
+      'aula-123',
+    );
 
     // Return analise ID
     expect(result).toEqual({ analiseId: 'analise-123' });
@@ -137,7 +143,9 @@ describe('AnalysisProcessorWorker', () => {
       turma: { id: 'turma-123', nome: '6A' },
     };
 
-    jest.spyOn(prismaService.aula, 'findUnique').mockResolvedValue(mockAula as any);
+    jest
+      .spyOn(prismaService.aula, 'findUnique')
+      .mockResolvedValue(mockAula as any);
 
     // Act
     const result = await worker.handleAnalysis(mockJob);
@@ -157,7 +165,9 @@ describe('AnalysisProcessorWorker', () => {
       turma: { id: 'turma-123', nome: '6A' },
     };
 
-    jest.spyOn(prismaService.aula, 'findUnique').mockResolvedValue(mockAula as any);
+    jest
+      .spyOn(prismaService.aula, 'findUnique')
+      .mockResolvedValue(mockAula as any);
 
     // Act & Assert
     await expect(worker.handleAnalysis(mockJob)).rejects.toThrow(
@@ -174,14 +184,18 @@ describe('AnalysisProcessorWorker', () => {
       turma: { id: 'turma-123', nome: '6A' },
     };
 
-    jest.spyOn(prismaService.aula, 'findUnique').mockResolvedValue(mockAula as any);
+    jest
+      .spyOn(prismaService.aula, 'findUnique')
+      .mockResolvedValue(mockAula as any);
     jest.spyOn(prismaService.aula, 'update').mockResolvedValue(mockAula as any);
     jest
       .spyOn(analiseService, 'analisarAula')
       .mockRejectedValue(new Error('LLM API timeout'));
 
     // Act & Assert
-    await expect(worker.handleAnalysis(mockJob)).rejects.toThrow('LLM API timeout');
+    await expect(worker.handleAnalysis(mockJob)).rejects.toThrow(
+      'LLM API timeout',
+    );
 
     // Status should be set to ERRO
     expect(prismaService.aula.update).toHaveBeenCalledWith({
@@ -204,9 +218,13 @@ describe('AnalysisProcessorWorker', () => {
       custo_total_usd: 0.198,
     };
 
-    jest.spyOn(prismaService.aula, 'findUnique').mockResolvedValue(mockAula as any);
+    jest
+      .spyOn(prismaService.aula, 'findUnique')
+      .mockResolvedValue(mockAula as any);
     jest.spyOn(prismaService.aula, 'update').mockResolvedValue(mockAula as any);
-    jest.spyOn(analiseService, 'analisarAula').mockResolvedValue(mockAnalise as any);
+    jest
+      .spyOn(analiseService, 'analisarAula')
+      .mockResolvedValue(mockAnalise as any);
     jest.spyOn(notificacoesService, 'notifyAnalisePronta').mockResolvedValue();
 
     // Act
@@ -233,22 +251,30 @@ describe('AnalysisProcessorWorker', () => {
       custo_total_usd: 0.198,
     };
 
-    jest.spyOn(prismaService.aula, 'findUnique').mockResolvedValue(mockAula as any);
+    jest
+      .spyOn(prismaService.aula, 'findUnique')
+      .mockResolvedValue(mockAula as any);
     jest.spyOn(prismaService.aula, 'update').mockResolvedValue(mockAula as any);
-    jest.spyOn(analiseService, 'analisarAula').mockResolvedValue(mockAnalise as any);
+    jest
+      .spyOn(analiseService, 'analisarAula')
+      .mockResolvedValue(mockAnalise as any);
     jest.spyOn(notificacoesService, 'notifyAnalisePronta').mockResolvedValue();
 
     // Act
     await worker.handleAnalysis(mockJob);
 
     // Assert: Notification should be sent
-    expect(notificacoesService.notifyAnalisePronta).toHaveBeenCalledWith('aula-123');
+    expect(notificacoesService.notifyAnalisePronta).toHaveBeenCalledWith(
+      'aula-123',
+    );
   });
 
   it('should log error on job failure (handleFailure)', async () => {
     // Arrange
     const mockError = new Error('Test failure');
-    const loggerSpy = jest.spyOn((worker as any).logger, 'error').mockImplementation();
+    const loggerSpy = jest
+      .spyOn((worker as any).logger, 'error')
+      .mockImplementation();
 
     // Act
     await worker.handleFailure(mockJob, mockError);

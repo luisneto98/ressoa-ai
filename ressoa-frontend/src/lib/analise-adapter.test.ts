@@ -160,6 +160,37 @@ describe('analise-adapter', () => {
       expect(result.justificativa_pedagogica).toContain('relevância da Igreja');
     });
 
+    it('should handle MULTIPLA_ESCOLHA with alternativas and mark correct answer', () => {
+      const questaoV3 = {
+        id: 1,
+        tipo: 'MULTIPLA_ESCOLHA',
+        enunciado: 'Qual o ano da Proclamação da República?',
+        gabarito: 'B',
+        nivel_bloom: 'LEMBRAR',
+        justificativa: 'A Proclamação da República foi em 1889.',
+        habilidades_trabalhadas: ['EF09HI03'],
+        alternativas: [
+          { letra: 'A', texto: '1888' },
+          { letra: 'B', texto: '1889' },
+          { letra: 'C', texto: '1890' },
+          { letra: 'D', texto: '1891' },
+        ],
+      } as any;
+
+      const result = normalizeQuestao(questaoV3);
+
+      expect(result.numero).toBe(1);
+      expect(result.tipo).toBe('MULTIPLA_ESCOLHA');
+      // Alternativas devem ser preservadas
+      expect(result.alternativas).toHaveLength(4);
+      // Só B deve estar marcada como correta
+      expect(result.alternativas?.find(a => a.letra === 'B')?.correta).toBe(true);
+      expect(result.alternativas?.find(a => a.letra === 'A')?.correta).toBe(false);
+      expect(result.alternativas?.find(a => a.letra === 'C')?.correta).toBe(false);
+      // Gabarito não deve ser gerado (a informação está nas alternativas)
+      expect(result.gabarito).toBeUndefined();
+    });
+
     it('should handle v2 format (backward compat)', () => {
       const questaoV2 = {
         numero: 1,
@@ -265,6 +296,120 @@ describe('analise-adapter', () => {
       // Verify exercicios
       expect(result.exercicios.questoes).toHaveLength(1);
       expect(result.exercicios.questoes[0].numero).toBe(1);
+    });
+
+    it('should normalize complete v4 analysis with new fields', () => {
+      const analiseV4 = {
+        id: 'v4-test-id',
+        aula: {
+          id: 'aula-v4',
+          titulo: 'Aula - Português 6º ano',
+          data_aula: '2026-02-19T00:00:00.000Z',
+          turma: { nome: 'Turma 6A', serie: 'SEXTO_ANO', disciplina: 'LINGUA_PORTUGUESA' },
+        },
+        cobertura_bncc: {
+          habilidades: [
+            {
+              objetivo_codigo: 'EF06LP04',
+              nivel_cobertura: 2,
+              evidencias: [
+                { tipo: 'professor-explanation', texto: '[00:33:740] [PROFESSOR] Substantivos próprios.', speaker: 'PROFESSOR' },
+                { tipo: 'student-response', texto: '[00:51:740] [ALUNO] Dando nomes.', speaker: 'ALUNO' },
+              ],
+              observacoes: 'Professora explica substantivos.',
+              nivel_bloom_detectado: 'Compreensão',
+              nivel_bloom_planejado: 'Conhecimento',
+              tempo_estimado_minutos: 15,
+              adequacao_nivel_cognitivo: 'ADEQUADO',
+            },
+          ],
+        },
+        analise_qualitativa: {
+          analise_qualitativa: {
+            pontos_fortes: ['Contextualização do conteúdo'],
+            pontos_melhoria: ['Estruturação da aula'],
+            adequacao_publico: 'ADEQUADO',
+            clareza_conceitual: 'MEDIA',
+            engajamento_alunos: 'MEDIO',
+            comentario_sintetico: 'Aula com bom potencial.',
+            niveis_bloom_estimulados: ['LEMBRAR', 'ENTENDER'],
+            estrategias_metodologicas: ['Exposição dialogada'],
+            participacao_alunos: {
+              observacoes: 'Participação incentivada por perguntas.',
+              perguntas_alunos: 3,
+              respostas_alunos: 18,
+              qualidade_interacoes: 'MEDIA',
+              intervencoes_contadas: 21,
+              tempo_estimado_fala_alunos_pct: 20,
+            },
+          },
+        },
+        relatorio: '## Relatório V4',
+        exercicios: {
+          questoes: [
+            { id: 1, tipo: 'DISSERTATIVA', enunciado: 'Questão 1?', gabarito: 'Resposta 1.', nivel_bloom: 'ENTENDER', habilidades_trabalhadas: ['EF06LP04'] },
+          ],
+        },
+        exercicios_original: {
+          exercicios: [
+            { id: 1, tipo: 'DISSERTATIVA', enunciado: 'Questão 1?', gabarito: 'Resposta 1.', nivel_bloom: 'ENTENDER', habilidades_trabalhadas: ['EF06LP04'] },
+          ],
+          observacoes_gerais: 'Exercícios contextualizados.',
+        },
+        alertas: {
+          alertas: [
+            { tipo: 'PARTICIPACAO_DESEQUILIBRADA', titulo: 'Participação Desequilibrada', descricao: 'Professor fala 80%.', severidade: 'IMPORTANTE', recomendacao: 'Incentivar mais participação.' },
+          ],
+          resumo_alertas: { atencao: 1, criticos: 0, importantes: 2, reconhecimentos: 1 },
+          score_geral_aula: 75,
+          speaker_analysis: {
+            professor_fala_pct: 80,
+            alunos_fala_pct: 20,
+            trocas_dialogicas: 26,
+            total_intervencoes_alunos: 21,
+            total_perguntas_professor: 5,
+          },
+        },
+        metadata: {
+          tempo_processamento_ms: 61549,
+          custo_total_usd: 0.034,
+          prompt_versoes: { alertas: 'v4.0.0', cobertura: 'v4.0.0', relatorio: 'v4.0.0', exercicios: 'v4.0.0', qualitativa: 'v4.0.0' },
+          created_at: '2026-02-19T18:20:45.853Z',
+        },
+      };
+
+      const result = normalizeAnaliseV3(analiseV4);
+
+      // V4 evidencias: {tipo, texto, speaker} → {texto_literal, speaker, tipo}
+      const hab = result.cobertura_bncc.habilidades[0];
+      expect(hab.codigo).toBe('EF06LP04');
+      expect(hab.nivel_cobertura).toBe('PARTIAL');
+      expect(hab.evidencias).toHaveLength(2);
+      expect(hab.evidencias[0].texto_literal).toBe('[00:33:740] [PROFESSOR] Substantivos próprios.');
+      expect(hab.evidencias[0].speaker).toBe('PROFESSOR');
+      expect(hab.evidencias[0].tipo).toBe('professor-explanation');
+      expect(hab.evidencias[1].speaker).toBe('ALUNO');
+
+      // participacao_alunos normalization
+      expect(result.analise_qualitativa.participacao_alunos).toBeDefined();
+      expect(result.analise_qualitativa.participacao_alunos.perguntas_alunos).toBe(3);
+      expect(result.analise_qualitativa.participacao_alunos.respostas_alunos).toBe(18);
+      expect(result.analise_qualitativa.participacao_alunos.intervencoes_contadas).toBe(21);
+      expect(result.analise_qualitativa.participacao_alunos.tempo_fala_alunos_pct).toBe(20);
+      expect(result.analise_qualitativa.participacao_alunos.qualidade_interacoes).toBe('MEDIA');
+
+      // speaker_analysis passthrough
+      expect(result.alertas.speaker_analysis).toBeDefined();
+      expect(result.alertas.speaker_analysis.professor_fala_pct).toBe(80);
+      expect(result.alertas.speaker_analysis.alunos_fala_pct).toBe(20);
+      expect(result.alertas.speaker_analysis.trocas_dialogicas).toBe(26);
+
+      // exercicios_original V4 (exercicios → questoes)
+      expect(result.exercicios_original.questoes).toHaveLength(1);
+      expect(result.exercicios_original.questoes[0].numero).toBe(1);
+
+      // exercicios normalization
+      expect(result.exercicios.questoes[0].habilidade_bncc).toBe('EF06LP04');
     });
 
     it('should pass through v2 format unchanged', () => {

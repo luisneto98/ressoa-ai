@@ -1,5 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BadRequestException, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  BadRequestException,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { TurmasService } from './turmas.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Serie, TipoEnsino } from '@prisma/client';
@@ -219,13 +223,11 @@ describe('TurmasService', () => {
         professor_id: 'uuid-professor',
       };
 
-      await expect(service.create(dto))
-        .rejects
-        .toThrow(BadRequestException);
+      await expect(service.create(dto)).rejects.toThrow(BadRequestException);
 
-      await expect(service.create(dto))
-        .rejects
-        .toThrow('incompatível com Ensino Fundamental');
+      await expect(service.create(dto)).rejects.toThrow(
+        'incompatível com Ensino Fundamental',
+      );
     });
 
     it('should reject FUNDAMENTAL with SEGUNDO_ANO_EM', async () => {
@@ -239,9 +241,9 @@ describe('TurmasService', () => {
         professor_id: 'uuid-professor',
       };
 
-      await expect(service.create(dto))
-        .rejects
-        .toThrow('incompatível com Ensino Fundamental');
+      await expect(service.create(dto)).rejects.toThrow(
+        'incompatível com Ensino Fundamental',
+      );
     });
 
     it('should reject FUNDAMENTAL with TERCEIRO_ANO_EM', async () => {
@@ -255,9 +257,9 @@ describe('TurmasService', () => {
         professor_id: 'uuid-professor',
       };
 
-      await expect(service.create(dto))
-        .rejects
-        .toThrow('incompatível com Ensino Fundamental');
+      await expect(service.create(dto)).rejects.toThrow(
+        'incompatível com Ensino Fundamental',
+      );
     });
 
     it('should reject MEDIO with SEXTO_ANO', async () => {
@@ -271,13 +273,11 @@ describe('TurmasService', () => {
         professor_id: 'uuid-professor',
       };
 
-      await expect(service.create(dto))
-        .rejects
-        .toThrow(BadRequestException);
+      await expect(service.create(dto)).rejects.toThrow(BadRequestException);
 
-      await expect(service.create(dto))
-        .rejects
-        .toThrow('incompatível com Ensino Médio');
+      await expect(service.create(dto)).rejects.toThrow(
+        'incompatível com Ensino Médio',
+      );
     });
 
     it('should reject MEDIO with SETIMO_ANO', async () => {
@@ -291,9 +291,9 @@ describe('TurmasService', () => {
         professor_id: 'uuid-professor',
       };
 
-      await expect(service.create(dto))
-        .rejects
-        .toThrow('incompatível com Ensino Médio');
+      await expect(service.create(dto)).rejects.toThrow(
+        'incompatível com Ensino Médio',
+      );
     });
 
     it('should reject MEDIO with OITAVO_ANO', async () => {
@@ -307,9 +307,9 @@ describe('TurmasService', () => {
         professor_id: 'uuid-professor',
       };
 
-      await expect(service.create(dto))
-        .rejects
-        .toThrow('incompatível com Ensino Médio');
+      await expect(service.create(dto)).rejects.toThrow(
+        'incompatível com Ensino Médio',
+      );
     });
 
     it('should reject MEDIO with NONO_ANO', async () => {
@@ -323,9 +323,9 @@ describe('TurmasService', () => {
         professor_id: 'uuid-professor',
       };
 
-      await expect(service.create(dto))
-        .rejects
-        .toThrow('incompatível com Ensino Médio');
+      await expect(service.create(dto)).rejects.toThrow(
+        'incompatível com Ensino Médio',
+      );
     });
   });
 
@@ -352,9 +352,9 @@ describe('TurmasService', () => {
         serie: Serie.PRIMEIRO_ANO_EM, // Incompatível com FUNDAMENTAL
       };
 
-      await expect(service.update('uuid-turma', dto))
-        .rejects
-        .toThrow('incompatível com Ensino Fundamental');
+      await expect(service.update('uuid-turma', dto)).rejects.toThrow(
+        'incompatível com Ensino Fundamental',
+      );
     });
 
     it('should validate compatibility when updating tipo_ensino', async () => {
@@ -379,9 +379,9 @@ describe('TurmasService', () => {
         tipo_ensino: TipoEnsino.MEDIO, // Incompatível com SEXTO_ANO
       };
 
-      await expect(service.update('uuid-turma', dto))
-        .rejects
-        .toThrow('incompatível com Ensino Médio');
+      await expect(service.update('uuid-turma', dto)).rejects.toThrow(
+        'incompatível com Ensino Médio',
+      );
     });
 
     it('should allow update when changing both to compatible values', async () => {
@@ -427,9 +427,9 @@ describe('TurmasService', () => {
         serie: Serie.SETIMO_ANO,
       };
 
-      await expect(service.update('uuid-inexistente', dto))
-        .rejects
-        .toThrow(NotFoundException);
+      await expect(service.update('uuid-inexistente', dto)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -454,13 +454,11 @@ describe('TurmasService', () => {
         professor_id: 'uuid-professor',
       };
 
-      await expect(service.create(dto))
-        .rejects
-        .toThrow(ConflictException);
+      await expect(service.create(dto)).rejects.toThrow(ConflictException);
 
-      await expect(service.create(dto))
-        .rejects
-        .toThrow("Turma com nome '6A' já existe para 2026 no turno MATUTINO");
+      await expect(service.create(dto)).rejects.toThrow(
+        "Turma com nome '6A' já existe para 2026 no turno MATUTINO",
+      );
     });
 
     it('should allow same nome+ano but different turno', async () => {
@@ -497,7 +495,7 @@ describe('TurmasService', () => {
           escola_id: 'escola-test-123',
           nome: '6A',
           ano_letivo: 2026,
-        turno: 'VESPERTINO',
+          turno: 'VESPERTINO',
           deleted_at: null,
         },
       });
@@ -523,9 +521,9 @@ describe('TurmasService', () => {
     it('should throw NotFoundException when turma does not exist', async () => {
       mockPrismaService.turma.findUnique.mockResolvedValue(null);
 
-      await expect(service.remove('uuid-inexistente'))
-        .rejects
-        .toThrow(NotFoundException);
+      await expect(service.remove('uuid-inexistente')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -539,7 +537,7 @@ describe('TurmasService', () => {
           serie: Serie.SEXTO_ANO,
           tipo_ensino: TipoEnsino.FUNDAMENTAL,
           ano_letivo: 2026,
-        turno: 'MATUTINO',
+          turno: 'MATUTINO',
           professor: {
             id: 'prof-1',
             nome: 'Professor A',
@@ -553,7 +551,7 @@ describe('TurmasService', () => {
           serie: Serie.SETIMO_ANO,
           tipo_ensino: TipoEnsino.FUNDAMENTAL,
           ano_letivo: 2026,
-        turno: 'VESPERTINO',
+          turno: 'VESPERTINO',
           professor: {
             id: 'prof-2',
             nome: 'Professor B',
@@ -573,7 +571,7 @@ describe('TurmasService', () => {
             escola_id: 'escola-test-123',
             deleted_at: null,
           },
-        })
+        }),
       );
     });
   });
@@ -582,16 +580,16 @@ describe('TurmasService', () => {
     it('should return 404 for soft-deleted turma', async () => {
       mockPrismaService.turma.findFirst.mockResolvedValue(null); // Soft-deleted turmas excluded
 
-      await expect(service.findOne('turma-deletada'))
-        .rejects
-        .toThrow(NotFoundException);
+      await expect(service.findOne('turma-deletada')).rejects.toThrow(
+        NotFoundException,
+      );
 
       expect(mockPrismaService.turma.findFirst).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             deleted_at: null,
           }),
-        })
+        }),
       );
     });
   });
@@ -622,7 +620,7 @@ describe('TurmasService', () => {
             professor_id: 'prof-123',
             deleted_at: null,
           }),
-        })
+        }),
       );
     });
   });

@@ -94,9 +94,7 @@ describe('AdminService.createEscola', () => {
       cnpj: '12345678000190',
     });
 
-    await expect(service.createEscola(dto)).rejects.toThrow(
-      ConflictException,
-    );
+    await expect(service.createEscola(dto)).rejects.toThrow(ConflictException);
     await expect(service.createEscola(dto)).rejects.toThrow(
       'CNPJ já cadastrado no sistema',
     );
@@ -121,9 +119,7 @@ describe('AdminService.createEscola', () => {
       email_contato: dto.email_contato,
     });
 
-    await expect(service.createEscola(dto)).rejects.toThrow(
-      ConflictException,
-    );
+    await expect(service.createEscola(dto)).rejects.toThrow(ConflictException);
     await expect(service.createEscola(dto)).rejects.toThrow(
       'Email de contato já cadastrado',
     );

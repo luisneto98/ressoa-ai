@@ -56,60 +56,67 @@ export class MonitoramentoSTTService {
   async getMetricas(periodo: string): Promise<MonitoramentoSTTResponse> {
     const dataInicio = this.calcularDataInicio(periodo);
 
-    const [total, errosSTT, fallbackCount, agregados, porProvider, errosTimeline, errosRecentes] =
-      await Promise.all([
-        // Total de transcrições no período
-        this.prisma.transcricao.count({
-          where: { created_at: { gte: dataInicio } },
-        }),
+    const [
+      total,
+      errosSTT,
+      fallbackCount,
+      agregados,
+      porProvider,
+      errosTimeline,
+      errosRecentes,
+    ] = await Promise.all([
+      // Total de transcrições no período
+      this.prisma.transcricao.count({
+        where: { created_at: { gte: dataInicio } },
+      }),
 
-        // Erros STT: Aulas com ERRO que não geraram transcrição
-        this.prisma.aula.count({
-          where: {
-            status_processamento: 'ERRO',
-            transcricao: null,
-            updated_at: { gte: dataInicio },
-          },
-        }),
+      // Erros STT: Aulas com ERRO que não geraram transcrição
+      this.prisma.aula.count({
+        where: {
+          status_processamento: 'ERRO',
+          transcricao: null,
+          updated_at: { gte: dataInicio },
+        },
+      }),
 
-        // Transcrições que usaram fallback provider
-        this.prisma.transcricao.count({
-          where: {
-            created_at: { gte: dataInicio },
-            provider: { not: this.primaryProvider as any },
-          },
-        }),
+      // Transcrições que usaram fallback provider
+      this.prisma.transcricao.count({
+        where: {
+          created_at: { gte: dataInicio },
+          provider: { not: this.primaryProvider as any },
+        },
+      }),
 
-        // Agregados: tempo médio, confiança média, custo total
-        this.prisma.transcricao.aggregate({
-          where: { created_at: { gte: dataInicio } },
-          _avg: {
-            tempo_processamento_ms: true,
-            confianca: true,
-          },
-          _sum: {
-            custo_usd: true,
-          },
-        }),
+      // Agregados: tempo médio, confiança média, custo total
+      this.prisma.transcricao.aggregate({
+        where: { created_at: { gte: dataInicio } },
+        _avg: {
+          tempo_processamento_ms: true,
+          confianca: true,
+        },
+        _sum: {
+          custo_usd: true,
+        },
+      }),
 
-        // Distribuição por provider
-        this.prisma.transcricao.groupBy({
-          by: ['provider'],
-          where: { created_at: { gte: dataInicio } },
-          _count: { _all: true },
-          _avg: {
-            tempo_processamento_ms: true,
-            confianca: true,
-            custo_usd: true,
-          },
-        }),
+      // Distribuição por provider
+      this.prisma.transcricao.groupBy({
+        by: ['provider'],
+        where: { created_at: { gte: dataInicio } },
+        _count: { _all: true },
+        _avg: {
+          tempo_processamento_ms: true,
+          confianca: true,
+          custo_usd: true,
+        },
+      }),
 
-        // Timeline de erros (raw query para DATE_TRUNC)
-        // Note: Assumes aulas with ERRO status and no transcricao are STT failures.
-        // Aulas in pre-STT states (CRIADA, UPLOAD_PROGRESSO, AGUARDANDO_TRANSCRICAO) are excluded.
-        this.prisma.$queryRaw<
-          Array<{ hora: Date; erros_stt: bigint; transcricoes_ok: bigint }>
-        >`
+      // Timeline de erros (raw query para DATE_TRUNC)
+      // Note: Assumes aulas with ERRO status and no transcricao are STT failures.
+      // Aulas in pre-STT states (CRIADA, UPLOAD_PROGRESSO, AGUARDANDO_TRANSCRICAO) are excluded.
+      this.prisma.$queryRaw<
+        Array<{ hora: Date; erros_stt: bigint; transcricoes_ok: bigint }>
+      >`
           SELECT
             DATE_TRUNC('hour', COALESCE(t.created_at, a.updated_at)) as hora,
             COUNT(*) FILTER (WHERE a.status_processamento = 'ERRO' AND t.id IS NULL)::bigint as erros_stt,
@@ -122,25 +129,25 @@ export class MonitoramentoSTTService {
           ORDER BY hora ASC
         `,
 
-        // Últimos erros recentes (para debugging)
-        this.prisma.aula.findMany({
-          where: {
-            status_processamento: 'ERRO',
-            transcricao: null,
-            updated_at: { gte: dataInicio },
-          },
-          select: {
-            id: true,
-            escola_id: true,
-            data: true,
-            updated_at: true,
-            arquivo_tamanho: true,
-            tipo_entrada: true,
-          },
-          orderBy: { updated_at: 'desc' },
-          take: 10,
-        }),
-      ]);
+      // Últimos erros recentes (para debugging)
+      this.prisma.aula.findMany({
+        where: {
+          status_processamento: 'ERRO',
+          transcricao: null,
+          updated_at: { gte: dataInicio },
+        },
+        select: {
+          id: true,
+          escola_id: true,
+          data: true,
+          updated_at: true,
+          arquivo_tamanho: true,
+          tipo_entrada: true,
+        },
+        orderBy: { updated_at: 'desc' },
+        take: 10,
+      }),
+    ]);
 
     // Calculate rates (avoid division by zero)
     const totalBase = total + errosSTT;
@@ -155,12 +162,8 @@ export class MonitoramentoSTTService {
         taxa_erro: Number(taxaErro.toFixed(2)),
         fallback_count: fallbackCount,
         tempo_medio_ms: Math.round(agregados._avg.tempo_processamento_ms ?? 0),
-        confianca_media: Number(
-          (agregados._avg.confianca ?? 0).toFixed(4),
-        ),
-        custo_total_usd: Number(
-          (agregados._sum.custo_usd ?? 0).toFixed(4),
-        ),
+        confianca_media: Number((agregados._avg.confianca ?? 0).toFixed(4)),
+        custo_total_usd: Number((agregados._sum.custo_usd ?? 0).toFixed(4)),
       },
       por_provider: porProvider.map((p) => ({
         provider: p.provider,

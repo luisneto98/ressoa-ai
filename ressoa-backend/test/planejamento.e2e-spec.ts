@@ -767,6 +767,92 @@ describe('Planejamento CRUD API (E2E) - Story 2.1', () => {
   });
 
   // ============================================
+  // TEST SUITE: Story 16.1 - campo descricao
+  // ============================================
+
+  describe('Story 16.1 - campo descricao (AC: #1, #4, #7, #9)', () => {
+    let planejamentoComDescricaoId: string;
+
+    it('POST /planejamentos com descricao → retorna 201 com descricao no body (AC#1, #4, #9)', async () => {
+      const descricao = 'Pretendo usar material concreto para frações, ênfase em resolução de problemas contextualizados, avaliação formativa contínua.';
+      const createDto = {
+        turma_id: turma1Id,
+        bimestre: 1,
+        ano_letivo: 2030,
+        habilidades: [{ habilidade_id: habilidade1Id }],
+        descricao,
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/planejamentos')
+        .set('Authorization', `Bearer ${professor1Token}`)
+        .send(createDto);
+
+      expect(response.status).toBe(201);
+      expect(response.body.descricao).toBe(descricao);
+
+      planejamentoComDescricaoId = response.body.id;
+    });
+
+    it('GET /planejamentos/:id retorna descricao corretamente (AC#4, #9)', async () => {
+      const response = await request(app.getHttpServer())
+        .get(`/api/v1/planejamentos/${planejamentoComDescricaoId}`)
+        .set('Authorization', `Bearer ${professor1Token}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.descricao).toBe(
+        'Pretendo usar material concreto para frações, ênfase em resolução de problemas contextualizados, avaliação formativa contínua.',
+      );
+    });
+
+    it('PATCH /planejamentos/:id atualiza descricao com sucesso (AC#7, #9)', async () => {
+      const novaDescricao = 'Nova descrição atualizada via PATCH.';
+      const response = await request(app.getHttpServer())
+        .patch(`/api/v1/planejamentos/${planejamentoComDescricaoId}`)
+        .set('Authorization', `Bearer ${professor1Token}`)
+        .send({ descricao: novaDescricao });
+
+      expect(response.status).toBe(200);
+      expect(response.body.descricao).toBe(novaDescricao);
+    });
+
+    it('POST /planejamentos sem descricao continua funcionando (AC#3, #9)', async () => {
+      const createDto = {
+        turma_id: turma1Id,
+        bimestre: 2,
+        ano_letivo: 2030,
+        habilidades: [{ habilidade_id: habilidade1Id }],
+        // descricao ausente
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/planejamentos')
+        .set('Authorization', `Bearer ${professor1Token}`)
+        .send(createDto);
+
+      expect(response.status).toBe(201);
+      expect(response.body.descricao).toBeNull();
+    });
+
+    it('POST /planejamentos com descricao > 2000 chars → retorna 400 (AC#2)', async () => {
+      const createDto = {
+        turma_id: turma1Id,
+        bimestre: 3,
+        ano_letivo: 2030,
+        habilidades: [{ habilidade_id: habilidade1Id }],
+        descricao: 'a'.repeat(2001),
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/planejamentos')
+        .set('Authorization', `Bearer ${professor1Token}`)
+        .send(createDto);
+
+      expect(response.status).toBe(400);
+    });
+  });
+
+  // ============================================
   // TEST SUITE: Soft Delete Validation (Issue #9)
   // ============================================
 

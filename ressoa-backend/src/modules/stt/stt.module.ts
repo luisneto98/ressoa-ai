@@ -78,6 +78,11 @@ import { LLMModule } from '../llm/llm.module';
       useClass: GroqWhisperProvider, // Story 14.2 - Groq Whisper Large v3 Turbo (89% cost reduction)
     },
   ],
-  exports: [STTService, TranscricaoService, STTRouterService, DiarizationService],
+  exports: [
+    STTService,
+    TranscricaoService,
+    STTRouterService,
+    DiarizationService,
+  ],
 })
 export class SttModule {}

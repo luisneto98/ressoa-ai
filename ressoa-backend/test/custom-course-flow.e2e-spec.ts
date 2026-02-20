@@ -40,7 +40,8 @@ describe('Custom Course Complete Flow E2E (Story 11.10 AC1)', () => {
 
   // Mock transcription data (from fixture)
   const mockTranscricao = {
-    transcricao_texto: "Bom dia turma! Hoje vamos começar nosso preparatório para a prova da Polícia Militar. Primeiro, vamos trabalhar com silogismos. Atenção: se todo A é B, e todo B é C, então todo A é C. Vamos resolver alguns exemplos. Se todo policial é brasileiro, e todo brasileiro é sul-americano, então todo policial é sul-americano. Vejam, aplicamos a lógica aqui. Agora vamos para sequências lógicas. Identifiquem o próximo número na sequência: 2, 4, 8, 16... qual seria? Isso mesmo, 32! Cada número é o dobro do anterior. Esse tipo de questão é muito comum em provas. Por último, vamos ler atentamente este problema: Um trem sai de São Paulo às 10h com velocidade de 80km/h. Outro trem sai de Rio de Janeiro às 11h com velocidade de 100km/h. A distância entre as cidades é 400km. A que horas os trens se encontram? Leiam com calma, identifiquem os dados, montem as equações. Esse é o tipo de interpretação que a prova vai exigir. Vamos resolver juntos.",
+    transcricao_texto:
+      'Bom dia turma! Hoje vamos começar nosso preparatório para a prova da Polícia Militar. Primeiro, vamos trabalhar com silogismos. Atenção: se todo A é B, e todo B é C, então todo A é C. Vamos resolver alguns exemplos. Se todo policial é brasileiro, e todo brasileiro é sul-americano, então todo policial é sul-americano. Vejam, aplicamos a lógica aqui. Agora vamos para sequências lógicas. Identifiquem o próximo número na sequência: 2, 4, 8, 16... qual seria? Isso mesmo, 32! Cada número é o dobro do anterior. Esse tipo de questão é muito comum em provas. Por último, vamos ler atentamente este problema: Um trem sai de São Paulo às 10h com velocidade de 80km/h. Outro trem sai de Rio de Janeiro às 11h com velocidade de 100km/h. A distância entre as cidades é 400km. A que horas os trens se encontram? Leiam com calma, identifiquem os dados, montem as equações. Esse é o tipo de interpretação que a prova vai exigir. Vamos resolver juntos.',
     duracao_segundos: 900,
   };
 
@@ -56,7 +57,8 @@ describe('Custom Course Complete Flow E2E (Story 11.10 AC1)', () => {
       codigo_objetivo: 'PM-MAT-02',
       descricao: 'Interpretar problemas matemáticos contextualizados',
       nivel_bloom: NivelBloom.ENTENDER,
-      criterios_evidencia: 'Identificação de dados e montagem de equações em problemas contextualizados',
+      criterios_evidencia:
+        'Identificação de dados e montagem de equações em problemas contextualizados',
     },
     {
       codigo_objetivo: 'PM-LOG-01',
@@ -66,7 +68,8 @@ describe('Custom Course Complete Flow E2E (Story 11.10 AC1)', () => {
     },
     {
       codigo_objetivo: 'PM-LOG-02',
-      descricao: 'Aplicar técnicas de eliminação em questões de múltipla escolha',
+      descricao:
+        'Aplicar técnicas de eliminação em questões de múltipla escolha',
       nivel_bloom: NivelBloom.APLICAR,
       criterios_evidencia: 'Demonstração de processo de eliminação lógica',
     },
@@ -74,7 +77,8 @@ describe('Custom Course Complete Flow E2E (Story 11.10 AC1)', () => {
       codigo_objetivo: 'PM-POR-01',
       descricao: 'Compreender gramática contextualizada em provas',
       nivel_bloom: NivelBloom.ENTENDER,
-      criterios_evidencia: 'Aplicação de regras gramaticais em contextos de prova',
+      criterios_evidencia:
+        'Aplicação de regras gramaticais em contextos de prova',
     },
   ];
 
@@ -207,7 +211,7 @@ describe('Custom Course Complete Flow E2E (Story 11.10 AC1)', () => {
    * AC1 Step 2: Define 5 Custom Objectives in Planning
    */
   describe('Step 2: Define 5 Custom Objetivos', () => {
-    let objetivoIds: string[] = [];
+    const objetivoIds: string[] = [];
 
     it('should create 5 custom objetivos for turma', async () => {
       for (const obj of customObjetivos) {
@@ -347,7 +351,8 @@ describe('Custom Course Complete Flow E2E (Story 11.10 AC1)', () => {
                   'Identifiquem o próximo número na sequência: 2, 4, 8, 16... qual seria? Isso mesmo, 32! Cada número é o dobro do anterior.',
                 ],
                 tempo_dedicado_minutos: 4,
-                observacao: 'Objetivo abordado mas com profundidade cognitiva menor que o planejado',
+                observacao:
+                  'Objetivo abordado mas com profundidade cognitiva menor que o planejado',
               },
               {
                 objetivo_id: customObjetivos[1].codigo_objetivo, // PM-MAT-02
@@ -380,7 +385,8 @@ describe('Custom Course Complete Flow E2E (Story 11.10 AC1)', () => {
             total_objetivos: 5,
             objetivos_atingidos: 3,
           },
-          relatorio_texto: '# Relatório de Análise Pedagógica\n\n## Cobertura de Objetivos de Aprendizagem\n\nA aula cobriu **3 de 5 objetivos** planejados (60% de cobertura).',
+          relatorio_texto:
+            '# Relatório de Análise Pedagógica\n\n## Cobertura de Objetivos de Aprendizagem\n\nA aula cobriu **3 de 5 objetivos** planejados (60% de cobertura).',
           status_analise: 'APROVADA',
         },
       });

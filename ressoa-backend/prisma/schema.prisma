@@ -44,6 +44,7 @@ enum TipoEntrada {
 }
 
 enum StatusProcessamento {
+  RASCUNHO                // Story 16.2: Estado antes de CRIADA — aula planejada sem áudio
   CRIADA
   UPLOAD_PROGRESSO
   AGUARDANDO_TRANSCRICAO
@@ -495,7 +496,8 @@ model Aula {
   turma_id             String
   planejamento_id      String?
   data                 DateTime
-  tipo_entrada         TipoEntrada
+  tipo_entrada         TipoEntrada?        // Story 16.2: nullable para suportar rascunhos sem tipo definido
+  descricao            String?             @db.Text // Story 16.2: objetivo/intenção da aula (imutável após início processamento)
   status_processamento StatusProcessamento @default(CRIADA)
   arquivo_url          String? // S3/MinIO URL
   arquivo_tamanho      Int? // bytes

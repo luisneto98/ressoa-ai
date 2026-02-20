@@ -16,6 +16,9 @@ import { UpdateAulaDto } from './dto/update-aula.dto';
 import { QueryAulasDto } from './dto/query-aulas.dto';
 import { UploadTranscricaoDto } from './dto/upload-transcricao.dto';
 import { EntradaManualDto } from './dto/entrada-manual.dto';
+import { CreateAulaRascunhoDto } from './dto/create-aula-rascunho.dto';
+import { UpdateAulaDescricaoDto } from './dto/update-aula-descricao.dto';
+import { IniciarProcessamentoDto } from './dto/iniciar-processamento.dto';
 import { AuthenticatedUser } from '../auth/decorators/current-user.decorator';
 
 @Injectable()
@@ -26,6 +29,7 @@ export class AulasService {
     StatusProcessamento,
     StatusProcessamento[]
   > = {
+    RASCUNHO: ['CRIADA'], // Story 16.2: via iniciarProcessamento com AUDIO
     CRIADA: ['AGUARDANDO_TRANSCRICAO'],
     ANALISADA: ['APROVADA', 'REJEITADA'],
     UPLOAD_PROGRESSO: [],
@@ -561,6 +565,185 @@ export class AulasService {
     return {
       message: 'Aula adicionada à fila de processamento',
     };
+  }
+
+  /**
+   * Story 16.2: Criar rascunho de aula (sem áudio/tipo_entrada)
+   *
+   * @description Cria aula com status RASCUNHO para planejamento antecipado.
+   *              Aceita datas futuras. Não exige tipo_entrada nem arquivo_url.
+   *
+   * @param dto - Dados do rascunho (turma_id, data, planejamento_id?, descricao?)
+   * @param user - Professor autenticado
+   * @returns Aula criada com status RASCUNHO
+   */
+  async createRascunho(dto: CreateAulaRascunhoDto, user: AuthenticatedUser) {
+    const escolaId = this.prisma.getEscolaIdOrThrow();
+
+    // Validate: turma belongs to professor
+    await this.validateTurmaOwnership(escolaId, user.userId, dto.turma_id);
+
+    // Validate: planejamento (if provided) belongs to turma
+    if (dto.planejamento_id) {
+      await this.validatePlanejamento(escolaId, dto.turma_id, dto.planejamento_id);
+    }
+
+    const aula = await this.prisma.aula.create({
+      data: {
+        escola_id: escolaId,
+        professor_id: user.userId,
+        turma_id: dto.turma_id,
+        planejamento_id: dto.planejamento_id,
+        data: this.parseDate(dto.data),
+        descricao: dto.descricao,
+        status_processamento: StatusProcessamento.RASCUNHO,
+        // tipo_entrada: null — intencionalmente omitido para rascunhos
+      },
+      include: {
+        turma: true,
+        planejamento: true,
+      },
+    });
+
+    this.logger.log(
+      `[RASCUNHO] Professor ${user.userId} (escola: ${escolaId}) criou rascunho de aula ${aula.id}`,
+    );
+
+    return aula;
+  }
+
+  /**
+   * Story 16.2: Atualizar descrição de uma aula rascunho
+   *
+   * @description Atualiza o campo descricao somente quando status === RASCUNHO.
+   *              Após início do processamento, a descrição é imutável (DT-4).
+   *
+   * @param id - UUID da aula
+   * @param dto - Dados da descrição
+   * @param user - Professor autenticado
+   * @returns Aula atualizada
+   * @throws BadRequestException se status !== RASCUNHO
+   */
+  async updateDescricao(id: string, dto: UpdateAulaDescricaoDto, user: AuthenticatedUser) {
+    const escolaId = this.prisma.getEscolaIdOrThrow();
+
+    const aula = await this.prisma.aula.findUnique({
+      where: {
+        id,
+        escola_id: escolaId,
+        professor_id: user.userId,
+        deleted_at: null,
+      },
+    });
+
+    if (!aula) {
+      throw new NotFoundException('Aula não encontrada');
+    }
+
+    if (aula.status_processamento !== StatusProcessamento.RASCUNHO) {
+      throw new BadRequestException(
+        'Descrição só pode ser editada em aulas com status RASCUNHO',
+      );
+    }
+
+    return this.prisma.aula.update({
+      where: { id, escola_id: escolaId },
+      data: { descricao: dto.descricao },
+      include: {
+        turma: true,
+        planejamento: true,
+      },
+    });
+  }
+
+  /**
+   * Story 16.2: Iniciar processamento de um rascunho
+   *
+   * @description Transiciona RASCUNHO → CRIADA (AUDIO) ou RASCUNHO → TRANSCRITA (TRANSCRICAO/MANUAL).
+   *              Para AUDIO: apenas atualiza status e tipo_entrada; TUS upload ocorre separadamente.
+   *              Para TRANSCRICAO/MANUAL: cria Transcricao atomicamente.
+   *
+   * @param id - UUID da aula
+   * @param dto - Tipo de entrada e dados opcionais (transcricao_texto ou resumo)
+   * @param user - Professor autenticado
+   * @returns Aula atualizada
+   * @throws BadRequestException se status !== RASCUNHO
+   */
+  async iniciarProcessamento(id: string, dto: IniciarProcessamentoDto, user: AuthenticatedUser) {
+    const escolaId = this.prisma.getEscolaIdOrThrow();
+
+    const aula = await this.prisma.aula.findUnique({
+      where: {
+        id,
+        escola_id: escolaId,
+        professor_id: user.userId,
+        deleted_at: null,
+      },
+    });
+
+    if (!aula) {
+      throw new NotFoundException('Aula não encontrada');
+    }
+
+    if (aula.status_processamento !== StatusProcessamento.RASCUNHO) {
+      throw new BadRequestException(
+        'Apenas aulas em RASCUNHO podem ser iniciadas',
+      );
+    }
+
+    if (dto.tipo_entrada === TipoEntrada.AUDIO) {
+      // RASCUNHO → CRIADA: TUS upload acontecerá separadamente
+      const updated = await this.prisma.aula.update({
+        where: { id, escola_id: escolaId },
+        data: {
+          tipo_entrada: TipoEntrada.AUDIO,
+          status_processamento: StatusProcessamento.CRIADA,
+        },
+        include: { turma: true, planejamento: true },
+      });
+
+      this.logger.log(
+        `[INICIAR_AUDIO] Professor ${user.userId} iniciou rascunho ${id} → CRIADA (aguardando TUS upload)`,
+      );
+
+      return updated;
+    }
+
+    // TRANSCRICAO ou MANUAL: criar Transcricao atomicamente
+    const texto = dto.tipo_entrada === TipoEntrada.TRANSCRICAO ? dto.transcricao_texto! : dto.resumo!;
+    const confianca = dto.tipo_entrada === TipoEntrada.TRANSCRICAO ? 1.0 : 0.5;
+
+    const updated = await this.prisma.$transaction(async (tx) => {
+      await tx.aula.update({
+        where: { id, escola_id: escolaId },
+        data: {
+          tipo_entrada: dto.tipo_entrada,
+          status_processamento: StatusProcessamento.TRANSCRITA,
+        },
+      });
+
+      await tx.transcricao.create({
+        data: {
+          aula_id: id,
+          texto,
+          provider: 'MANUAL',
+          confianca,
+          duracao_segundos: null,
+        },
+      });
+
+      // Buscar aula após criar transcricao para que a relação esteja presente na resposta
+      return tx.aula.findUniqueOrThrow({
+        where: { id, escola_id: escolaId },
+        include: { turma: true, planejamento: true, transcricao: true },
+      });
+    });
+
+    this.logger.log(
+      `[INICIAR_${dto.tipo_entrada}] Professor ${user.userId} iniciou rascunho ${id} → TRANSCRITA`,
+    );
+
+    return updated;
   }
 
   /**

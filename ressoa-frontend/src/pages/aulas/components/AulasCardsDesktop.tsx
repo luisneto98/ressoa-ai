@@ -1,11 +1,13 @@
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { GradientCard } from '@/components/ui/gradient-card';
 import { Button } from '@/components/ui/button';
-import { IconEye, IconFileText, IconRefresh, IconTrash, IconSparkles } from '@tabler/icons-react';
+import { IconEye, IconFileText, IconRefresh, IconTrash, IconSparkles, IconUpload } from '@tabler/icons-react';
 import { StatusBadge } from './StatusBadge';
 import { TipoBadge } from './TipoBadge';
 import { formatDate } from '@/lib/utils';
 import type { AulaListItem } from '@/api/aulas';
+import { useIniciarProcessamento } from '@/hooks/useIniciarProcessamento';
 
 interface AulasCardsDesktopProps {
   aulas: AulaListItem[];
@@ -24,6 +26,9 @@ export const AulasCardsDesktop = ({
   onDelete,
   onStartAnalise,
 }: AulasCardsDesktopProps) => {
+  const navigate = useNavigate();
+  const { mutate: iniciarProcessamento, isPending: isIniciarPending } = useIniciarProcessamento();
+
   return (
     <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {aulas.map((aula) => {
@@ -95,9 +100,37 @@ export const AulasCardsDesktop = ({
                 <StatusBadge status={aula.status_processamento} />
                 <TipoBadge tipo={aula.tipo_entrada} />
               </div>
+
+              {/* Story 16.2: Descrição (readonly, visível quando preenchida) */}
+              {aula.descricao && (
+                <p
+                  className="text-sm text-deep-navy/70 italic line-clamp-2"
+                  title={aula.descricao}
+                >
+                  {aula.descricao}
+                </p>
+              )}
             </CardContent>
 
             <CardFooter className="flex flex-col gap-2">
+              {/* Story 16.2: Enviar Áudio — apenas para RASCUNHO */}
+              {/* Chama iniciarProcessamento (RASCUNHO→CRIADA) antes de navegar para upload */}
+              {aula.status_processamento === 'RASCUNHO' && (
+                <Button
+                  variant="default"
+                  size="default"
+                  onClick={() =>
+                    iniciarProcessamento({ aulaId: aula.id, data: { tipo_entrada: 'AUDIO' } })
+                  }
+                  disabled={isIniciarPending}
+                  className="w-full justify-start min-h-[44px]"
+                  aria-label={`Enviar áudio para a aula de ${aula.turma_nome}`}
+                >
+                  <IconUpload className="h-4 w-4 mr-2" />
+                  {isIniciarPending ? 'Iniciando...' : 'Enviar Áudio'}
+                </Button>
+              )}
+
               {/* View Details - always available */}
               <Button
                 variant="outline"
@@ -152,8 +185,8 @@ export const AulasCardsDesktop = ({
                 </Button>
               )}
 
-              {/* Delete - only for CRIADA or ERRO */}
-              {['CRIADA', 'ERRO'].includes(aula.status_processamento) && (
+              {/* Delete - for RASCUNHO, CRIADA or ERRO */}
+              {['RASCUNHO', 'CRIADA', 'ERRO'].includes(aula.status_processamento) && (
                 <Button
                   variant="destructive"
                   size="default"

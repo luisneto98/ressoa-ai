@@ -11,6 +11,7 @@ import {
   IconCircleX,
   IconAlertTriangle,
   IconHelp,
+  IconPencil,
 } from '@tabler/icons-react';
 
 const statusConfig: Record<StatusProcessamento, {
@@ -24,6 +25,13 @@ const statusConfig: Record<StatusProcessamento, {
   icon: React.ComponentType<{ className?: string }>;
   tooltip: string;
 }> = {
+  RASCUNHO: {
+    label: 'Rascunho',
+    variant: 'status',
+    statusColor: 'default', // Cinza — ainda não iniciado
+    icon: IconPencil,
+    tooltip: 'Aula planejada, aguardando envio de áudio ou texto',
+  },
   CRIADA: {
     label: 'Criada',
     variant: 'status',

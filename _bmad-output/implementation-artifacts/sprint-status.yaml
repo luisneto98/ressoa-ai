@@ -174,7 +174,7 @@ development_status:
     epic-15-retrospective: optional
     epic-16: in-progress # Contexto de Planejamento, Aula como Rascunho e Aderência ao Objetivo - Descrição em Planejamento/Aula + status RASCUNHO + datas futuras + análise de aderência ao objetivo
     16-1-adicionar-descricao-planejamento: done # Code review complete - 2 HIGH + 2 MEDIUM auto-fixed: fake MaxLength test replaced with real class-validator, findOne unit tests added, serie type fixed (number→string), @Transform empty string→undefined added
-    16-2-aula-rascunho-descricao-datas-futuras: backlog # Aula como Rascunho + descricao + datas futuras + imutabilidade pós-processamento
+    16-2-aula-rascunho-descricao-datas-futuras: done # Code review complete - 3 HIGH + 4 MEDIUM auto-fixed: @IsNotEmpty() no DTO, service TRANSCRICAO response com transcricao real, "Enviar Áudio" usa iniciarProcessamento, delete RASCUNHO habilitado, Aula interface tipada, testes corrigidos
     16-3-passar-descricoes-contexto-prompts-v5: backlog # Passar descricao_planejamento e descricao_aula para os 5 prompts (v5.0.0)
     16-4-analise-aderencia-objetivo-relatorio: backlog # Análise de aderência ao objetivo no relatório (faixas BAIXA/MEDIA/ALTA/TOTAL + qualitativa)
     16-5-frontend-exibicao-aderencia-objetivo: backlog # Frontend — AderenciaObjetivoCard + integração no RelatorioTab

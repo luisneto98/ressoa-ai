@@ -16,6 +16,9 @@ import { UpdateAulaDto } from './dto/update-aula.dto';
 import { QueryAulasDto } from './dto/query-aulas.dto';
 import { UploadTranscricaoDto } from './dto/upload-transcricao.dto';
 import { EntradaManualDto } from './dto/entrada-manual.dto';
+import { CreateAulaRascunhoDto } from './dto/create-aula-rascunho.dto';
+import { UpdateAulaDescricaoDto } from './dto/update-aula-descricao.dto';
+import { IniciarProcessamentoDto } from './dto/iniciar-processamento.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -57,6 +60,20 @@ export class AulasController {
     return this.aulasService.entradaManual(dto, user);
   }
 
+  /**
+   * Story 16.2: Criar rascunho de aula para planejamento antecipado
+   * ATENÇÃO: declarado ANTES de endpoints :id para evitar conflito de rota
+   */
+  @Post('rascunho')
+  @Roles('PROFESSOR')
+  @HttpCode(HttpStatus.CREATED)
+  createRascunho(
+    @Body() dto: CreateAulaRascunhoDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.aulasService.createRascunho(dto, user);
+  }
+
   @Get()
   @Roles('PROFESSOR')
   findAll(
@@ -80,6 +97,33 @@ export class AulasController {
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.aulasService.update(id, updateAulaDto, user);
+  }
+
+  /**
+   * Story 16.2: Atualizar descrição de um rascunho de aula
+   */
+  @Patch(':id/descricao')
+  @Roles('PROFESSOR')
+  updateDescricao(
+    @Param('id') id: string,
+    @Body() dto: UpdateAulaDescricaoDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.aulasService.updateDescricao(id, dto, user);
+  }
+
+  /**
+   * Story 16.2: Iniciar processamento de um rascunho
+   */
+  @Post(':id/iniciar')
+  @Roles('PROFESSOR')
+  @HttpCode(HttpStatus.OK)
+  iniciarProcessamento(
+    @Param('id') id: string,
+    @Body() dto: IniciarProcessamentoDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.aulasService.iniciarProcessamento(id, dto, user);
   }
 
   /**

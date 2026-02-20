@@ -60,8 +60,9 @@ export interface Aula {
   turma_id: string;
   data: string;
   planejamento_id?: string;
-  tipo_entrada: string;
-  status_processamento: string;
+  tipo_entrada: 'AUDIO' | 'TRANSCRICAO' | 'MANUAL' | null; // Story 16.2: null para rascunhos
+  descricao?: string | null; // Story 16.2: objetivo/intenção da aula
+  status_processamento: StatusProcessamento;
   created_at: string;
 }
 
@@ -70,7 +71,8 @@ export interface AulaListItem {
   turma_id: string;
   turma_nome: string;
   data: string;
-  tipo_entrada: 'AUDIO' | 'TRANSCRICAO' | 'MANUAL';
+  tipo_entrada: 'AUDIO' | 'TRANSCRICAO' | 'MANUAL' | null; // Story 16.2: null para rascunhos
+  descricao?: string | null; // Story 16.2: objetivo/intenção da aula
   status_processamento: StatusProcessamento;
   arquivo_tamanho?: number;
   error_message?: string;
@@ -79,6 +81,7 @@ export interface AulaListItem {
 }
 
 export type StatusProcessamento =
+  | 'RASCUNHO' // Story 16.2: Aula planejada, aguardando envio de áudio ou texto
   | 'CRIADA'
   | 'UPLOAD_PROGRESSO'
   | 'AGUARDANDO_TRANSCRICAO'
@@ -152,4 +155,43 @@ export const reprocessAula = async (aulaId: string): Promise<void> => {
 // DELETE aula
 export const deleteAula = async (aulaId: string): Promise<void> => {
   await apiClient.delete(`/aulas/${aulaId}`);
+};
+
+// ─────────────────────────────────────────────────────────────
+// Story 16.2: Rascunho de Aula
+// ─────────────────────────────────────────────────────────────
+
+export interface CreateAulaRascunhoDto {
+  turma_id: string;
+  data: string;
+  planejamento_id?: string;
+  descricao?: string;
+}
+
+export interface UpdateAulaDescricaoDto {
+  descricao?: string;
+}
+
+export interface IniciarProcessamentoDto {
+  tipo_entrada: 'AUDIO' | 'TRANSCRICAO' | 'MANUAL';
+  transcricao_texto?: string;
+  resumo?: string;
+}
+
+// POST criar rascunho de aula (datas futuras permitidas)
+export const createAulaRascunho = async (data: CreateAulaRascunhoDto): Promise<Aula> => {
+  const response = await apiClient.post('/aulas/rascunho', data);
+  return response.data;
+};
+
+// PATCH editar descrição de rascunho (somente status RASCUNHO)
+export const updateAulaDescricao = async (aulaId: string, data: UpdateAulaDescricaoDto): Promise<Aula> => {
+  const response = await apiClient.patch(`/aulas/${aulaId}/descricao`, data);
+  return response.data;
+};
+
+// POST iniciar processamento de rascunho (RASCUNHO → CRIADA ou TRANSCRITA)
+export const iniciarProcessamento = async (aulaId: string, data: IniciarProcessamentoDto): Promise<Aula> => {
+  const response = await apiClient.post(`/aulas/${aulaId}/iniciar`, data);
+  return response.data;
 };

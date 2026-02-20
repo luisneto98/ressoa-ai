@@ -10,8 +10,9 @@ import { AulasCards } from './components/AulasCards';
 import { AulaDetailsModal } from './components/AulaDetailsModal';
 import { AulasListSkeleton } from './components/AulasListSkeleton';
 import { AulasListEmpty } from './components/AulasListEmpty';
+import { RascunhoAulaDialog } from './components/RascunhoAulaDialog';
 import { Button } from '@/components/ui/button';
-import { IconPlus } from '@tabler/icons-react';
+import { IconPlus, IconCalendarPlus } from '@tabler/icons-react';
 import type { AulaListItem } from '@/api/aulas';
 import {
   Pagination,
@@ -45,6 +46,7 @@ export default function AulasListPage() {
     open: false,
     aulaId: null,
   });
+  const [rascunhoDialogOpen, setRascunhoDialogOpen] = useState(false);
 
   const page = parseInt(searchParams.get('page') || '1', 10);
   const filters = {
@@ -143,10 +145,16 @@ export default function AulasListPage() {
           <h1 className="text-3xl md:text-4xl font-montserrat font-bold text-deep-navy mb-2">Minhas Aulas</h1>
           <p className="text-deep-navy/80">Visualize e gerencie suas aulas</p>
         </div>
-        <Button onClick={() => navigate('/aulas/upload')} size="lg">
-          <IconPlus className="h-5 w-5 mr-2" />
-          Nova Aula
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setRascunhoDialogOpen(true)} size="lg">
+            <IconCalendarPlus className="h-5 w-5 mr-2" />
+            Planejar Aula
+          </Button>
+          <Button onClick={() => navigate('/aulas/upload')} size="lg">
+            <IconPlus className="h-5 w-5 mr-2" />
+            Nova Aula
+          </Button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -267,6 +275,12 @@ export default function AulasListPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Story 16.2: Rascunho Dialog */}
+      <RascunhoAulaDialog
+        open={rascunhoDialogOpen}
+        onOpenChange={setRascunhoDialogOpen}
+      />
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialog.open} onOpenChange={(open) => setDeleteDialog({ open, aulaId: null })}>

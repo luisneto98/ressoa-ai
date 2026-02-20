@@ -22,7 +22,7 @@ interface ErroRecente {
   data: string;
   updated_at: string;
   arquivo_tamanho: number | null;
-  tipo_entrada: 'AUDIO' | 'TRANSCRICAO' | 'MANUAL';
+  tipo_entrada: 'AUDIO' | 'TRANSCRICAO' | 'MANUAL' | null; // Story 16.2: nullable para rascunhos
 }
 
 export interface MonitoramentoSTTResponse {

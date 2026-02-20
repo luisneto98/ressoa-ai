@@ -441,4 +441,99 @@ describe('analise-adapter', () => {
       expect(result.cobertura_bncc.habilidades[0].nivel_cobertura).toBe('COMPLETE');
     });
   });
+
+  describe('normalizeAnaliseV3 — Story 16.5', () => {
+    const baseAnalise = {
+      id: 'v5-test-id',
+      aula: {
+        id: 'aula-v5',
+        titulo: 'Aula de Matemática',
+        data_aula: '2026-02-20T00:00:00.000Z',
+        turma: { nome: 'Turma 7A', serie: 'SETIMO_ANO', disciplina: 'MATEMATICA' },
+        descricao: 'Trabalhar frações equivalentes com material concreto',
+      },
+      cobertura_bncc: { habilidades: [] },
+      analise_qualitativa: {
+        analise_qualitativa: { pontos_fortes: [], pontos_melhoria: [] },
+      },
+      relatorio: '# Relatório',
+      exercicios: { questoes: [] },
+      alertas: { alertas: [], score_geral_aula: 80 },
+      metadata: {
+        tempo_processamento_ms: 1000,
+        custo_total_usd: 0.01,
+        prompt_versoes: { cobertura: 'v5.0.0' },
+        created_at: '2026-02-20T00:00:00.000Z',
+      },
+    };
+
+    const mockAderencia = {
+      faixa_aderencia: 'ALTA' as const,
+      descricao_faixa: 'Entre 70% e 90% do objetivo declarado foi trabalhado',
+      analise_qualitativa: 'O professor planejou trabalhar frações equivalentes.',
+      pontos_atingidos: ['Uso de exemplos visuais'],
+      pontos_nao_atingidos: ['Atividade em grupos não realizada'],
+      recomendacao: 'Retomar a atividade em grupos na próxima aula.',
+    };
+
+    it('passa aderencia_objetivo_json sem transformação quando presente', () => {
+      const analise = { ...baseAnalise, aderencia_objetivo_json: mockAderencia };
+      const result = normalizeAnaliseV3(analise);
+
+      expect(result.aderencia_objetivo_json).toBeDefined();
+      expect(result.aderencia_objetivo_json?.faixa_aderencia).toBe('ALTA');
+      expect(result.aderencia_objetivo_json?.pontos_atingidos).toEqual(['Uso de exemplos visuais']);
+      expect(result.aderencia_objetivo_json?.recomendacao).toBe('Retomar a atividade em grupos na próxima aula.');
+    });
+
+    it('preserva aderencia_objetivo_json como null quando ausente', () => {
+      const analise = { ...baseAnalise, aderencia_objetivo_json: null };
+      const result = normalizeAnaliseV3(analise);
+
+      expect(result.aderencia_objetivo_json).toBeNull();
+    });
+
+    it('passa aula.descricao sem transformação', () => {
+      const analise = { ...baseAnalise, aderencia_objetivo_json: mockAderencia };
+      const result = normalizeAnaliseV3(analise);
+
+      expect(result.aula.descricao).toBe('Trabalhar frações equivalentes com material concreto');
+    });
+
+    it('normalizeAnaliseV3 é retrocompatível com responses v4 (sem aderencia)', () => {
+      const analiseV4 = {
+        ...baseAnalise,
+        metadata: {
+          ...baseAnalise.metadata,
+          prompt_versoes: { cobertura: 'v4.0.0' },
+        },
+        // No aderencia_objetivo_json field at all
+      };
+      // Should not throw
+      expect(() => normalizeAnaliseV3(analiseV4)).not.toThrow();
+      const result = normalizeAnaliseV3(analiseV4);
+      expect(result.aderencia_objetivo_json).toBeNull();
+      expect(result.cobertura_bncc).toBeDefined();
+    });
+
+    it('preserva aderencia_objetivo_json no caminho de normalização v3/v4', () => {
+      // Exercises the explicit `aderencia_objetivo_json: analise.aderencia_objetivo_json ?? null`
+      // in the normalization return (not the early-return path)
+      const analiseV3ComAderencia = {
+        ...baseAnalise,
+        metadata: {
+          ...baseAnalise.metadata,
+          prompt_versoes: { cobertura: 'v3.0.0' },
+        },
+        aderencia_objetivo_json: mockAderencia,
+      };
+      const result = normalizeAnaliseV3(analiseV3ComAderencia);
+
+      expect(result.aderencia_objetivo_json).toBeDefined();
+      expect(result.aderencia_objetivo_json?.faixa_aderencia).toBe('ALTA');
+      expect(result.aderencia_objetivo_json?.pontos_atingidos).toEqual(['Uso de exemplos visuais']);
+      // Normalization should not have mutated aderencia
+      expect(result.aderencia_objetivo_json?.recomendacao).toBe('Retomar a atividade em grupos na próxima aula.');
+    });
+  });
 });

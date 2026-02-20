@@ -9,6 +9,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import ReactMarkdown from 'react-markdown';
 import { CoberturaBadge } from './CoberturaBadge';
 import { QualitativaCard } from './QualitativaCard';
+import { AderenciaObjetivoCard } from './AderenciaObjetivoCard';
+import type { AderenciaObjetivoJson } from '@/lib/analise-adapter';
 import { CoberturaBNCCChart } from './CoberturaBNCCChart';
 import { useToast } from '@/hooks/use-toast';
 import { usePdfExport } from '@/hooks/usePdfExport';
@@ -86,7 +88,9 @@ interface RelatorioTabProps {
         disciplina: string;
         curriculo_tipo?: 'BNCC' | 'CUSTOM';
       };
+      descricao?: string; // ✅ Story 16.5
     };
+    aderencia_objetivo_json?: AderenciaObjetivoJson | null; // ✅ Story 16.5
     cobertura_bncc: {
       habilidades: Habilidade[]; // FIX Issue #1: Typed array instead of any[]
     };
@@ -308,6 +312,14 @@ export function RelatorioTab({ analise }: RelatorioTabProps) {
           )}
         </CardContent>
       </Card>
+
+      {/* Story 16.5 — Aderência ao Objetivo */}
+      {analise.aderencia_objetivo_json && analise.aula.descricao && (
+        <AderenciaObjetivoCard
+          aderencia={analise.aderencia_objetivo_json}
+          descricaoAula={analise.aula.descricao}
+        />
+      )}
 
       {/* Análise Qualitativa - Grid 2 colunas */}
       <div>

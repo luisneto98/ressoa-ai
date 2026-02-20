@@ -177,6 +177,6 @@ development_status:
     16-2-aula-rascunho-descricao-datas-futuras: done # Code review complete - 3 HIGH + 4 MEDIUM auto-fixed: @IsNotEmpty() no DTO, service TRANSCRICAO response com transcricao real, "Enviar Áudio" usa iniciarProcessamento, delete RASCUNHO habilitado, Aula interface tipada, testes corrigidos
     16-3-passar-descricoes-contexto-prompts-v5: done # Code review complete - 7 issues found & auto-fixed (2 HIGH: mock base fields, 4 MEDIUM: dead helpers + AC11 null tests + triple braces coverage, 1 LOW: test title) - 128/128 tests passing
     16-4-analise-aderencia-objetivo-relatorio: done # Code review complete — 1 HIGH + 4 MEDIUM auto-fixed: Prisma.DbNull assertion fortalecida, regex CRLF-safe, testes Handlebars v5.1.0 adicionados, sprint-status.yaml no File List, migration comentada
-    16-5-frontend-exibicao-aderencia-objetivo: backlog # Frontend — AderenciaObjetivoCard + integração no RelatorioTab
+    16-5-frontend-exibicao-aderencia-objetivo: done # Code review complete — 1 HIGH + 2 MEDIUM auto-fixed: null guard test, describe nesting, v3 normalization path test; L2/L4 also fixed. 33 tests passing
     16-6-validacao-e2e-retrocompatibilidade: backlog # Testes E2E completos + validação de retrocompatibilidade v4→v5
     epic-16-retrospective: optional

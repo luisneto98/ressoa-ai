@@ -14,6 +14,7 @@ import { AlertasResumo } from './components/AlertasResumo';
 import api from '@/lib/api';
 import { AxiosError } from 'axios';
 import { normalizeAnaliseV3 } from '@/lib/analise-adapter';
+import type { AderenciaObjetivoJson } from '@/lib/analise-adapter';
 
 // MEDIUM FIX: TypeScript interface for API response (type safety)
 interface AnaliseResponse {
@@ -29,6 +30,7 @@ interface AnaliseResponse {
       curriculo_tipo?: 'BNCC' | 'CUSTOM'; // ✅ Story 11.9
     };
     status: string;
+    descricao?: string; // ✅ Story 16.5
     planejamento?: any;
   };
   cobertura_bncc: {
@@ -111,6 +113,7 @@ interface AnaliseResponse {
     prompt_versoes: any;
     created_at: string;
   };
+  aderencia_objetivo_json?: AderenciaObjetivoJson | null; // ✅ Story 16.5
 }
 
 export function AulaAnalisePage() {

@@ -17,6 +17,15 @@
 export type NivelCobertura = 'COMPLETE' | 'PARTIAL' | 'MENTIONED' | 'NOT_COVERED';
 export type NivelAlerta = 'INFO' | 'WARNING' | 'CRITICAL';
 
+export interface AderenciaObjetivoJson {
+  faixa_aderencia: 'BAIXA' | 'MEDIA' | 'ALTA' | 'TOTAL';
+  descricao_faixa: string;
+  analise_qualitativa: string;
+  pontos_atingidos: string[];
+  pontos_nao_atingidos: string[];
+  recomendacao: string;
+}
+
 interface EvidenciaV4 {
   tipo: string;
   texto: string;
@@ -333,7 +342,9 @@ export function normalizeAnaliseQualitativa(
 }
 
 /**
- * Adapter principal: converte análise completa v3/v4 → v2
+ * Adapter principal: normaliza análise completa v3/v4 → v2.
+ * Para v5+, retorna o objeto original sem transformação (pass-through).
+ * Garante que aderencia_objetivo_json é propagado em todas as versões.
  */
 export function normalizeAnaliseV3(analise: any): any {
   const version = analise.metadata?.prompt_versoes?.cobertura;
@@ -378,5 +389,6 @@ export function normalizeAnaliseV3(analise: any): any {
     exercicios_original: exerciciosOriginalQuestoes
       ? { questoes: exerciciosOriginalQuestoes.map(normalizeQuestao) }
       : analise.exercicios_original,
+    aderencia_objetivo_json: analise.aderencia_objetivo_json ?? null,
   };
 }

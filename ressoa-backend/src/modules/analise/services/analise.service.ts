@@ -124,6 +124,11 @@ export class AnaliseService {
    * @param aulaId ID da aula a ser analisada
    * @returns Analise entity com outputs dos 5 prompts
    * @throws NotFoundException se aula ou transcrição não existir
+   *
+   * **Story 16.3:** Contexto enriquecido com descrições opcionais:
+   * - `descricao_planejamento`: texto do professor sobre o bimestre (null se não preenchido)
+   * - `descricao_aula`: objetivo específico da aula (null se não preenchido)
+   * Ambos passados como variáveis para os 5 prompts v5.0.0 com blocos condicionais Handlebars.
    */
   async analisarAula(aulaId: string): Promise<Analise> {
     const startTime = Date.now();
@@ -254,6 +259,12 @@ export class AnaliseService {
             speaker_stats: meta.speaker_stats || null,
           };
         })()),
+
+      // STORY 16.3: Descrições para contextualização dos prompts v5.0.0
+      // DT-1: campos opcionais — null quando professor não preencheu
+      // planejamento.descricao já disponível via include (todos campos escalares retornados)
+      descricao_planejamento: aula.planejamento?.descricao ?? null,
+      descricao_aula: aula.descricao ?? null,
     };
 
     const custoStt = aula.transcricao.custo_usd ?? 0;

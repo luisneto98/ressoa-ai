@@ -2,7 +2,7 @@
   "nome": "prompt-cobertura",
   "versao": "v4.0.0",
   "modelo_sugerido": "CLAUDE_SONNET",
-  "ativo": true,
+  "ativo": false,
   "ab_testing": false,
   "variaveis": {
     "temperature": 0.1,

@@ -29,6 +29,8 @@ describe('AnaliseService', () => {
     status_processamento: 'TRANSCRITA',
     arquivo_url: 's3://bucket/audio.mp3',
     arquivo_tamanho: 5000000,
+    // Story 16.2: campo descricao adicionado ao modelo Aula (nullable)
+    descricao: null,
     created_at: new Date(),
     updated_at: new Date(),
     deleted_at: null,
@@ -53,10 +55,14 @@ describe('AnaliseService', () => {
       ano_letivo: 2026,
       escola_id: 'escola-123',
       professor_id: 'prof-123',
+      // Story 16.1: campo descricao adicionado ao modelo Planejamento (nullable)
+      descricao: null,
       validado_coordenacao: true,
       deleted_at: null,
       created_at: new Date(),
       updated_at: new Date(),
+      // Story 11.7: objetivos genéricos (vazio para turmas BNCC no mock base)
+      objetivos: [],
       habilidades: [
         {
           id: 'ph-1',
@@ -1039,6 +1045,144 @@ describe('AnaliseService', () => {
   });
 
   /**
+   * STORY 16.3: Tests for descricao_planejamento and descricao_aula in context
+   */
+  describe('Contexto com descrições v5.0.0 (Story 16.3)', () => {
+    it('contexto inclui descricao_aula quando aula.descricao existe', async () => {
+      const aulaComDescricao = {
+        ...mockAulaCompleta,
+        descricao: 'Trabalhar frações equivalentes com material concreto',
+        planejamento: { ...mockAulaCompleta.planejamento, descricao: null },
+      };
+
+      prisma.aula.findUnique.mockResolvedValue(aulaComDescricao as any);
+      promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
+      promptService.renderPrompt.mockResolvedValue('rendered');
+
+      await service.analisarAula(mockAulaId);
+
+      const contexto = promptService.renderPrompt.mock.calls[0][1];
+      expect(contexto.descricao_aula).toBe(
+        'Trabalhar frações equivalentes com material concreto',
+      );
+    });
+
+    it('contexto inclui descricao_planejamento quando planejamento.descricao existe', async () => {
+      const aulaComDescPlanj = {
+        ...mockAulaCompleta,
+        descricao: null,
+        planejamento: {
+          ...mockAulaCompleta.planejamento,
+          descricao: 'Ênfase em material concreto e jogos matemáticos',
+        },
+      };
+
+      prisma.aula.findUnique.mockResolvedValue(aulaComDescPlanj as any);
+      promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
+      promptService.renderPrompt.mockResolvedValue('rendered');
+
+      await service.analisarAula(mockAulaId);
+
+      const contexto = promptService.renderPrompt.mock.calls[0][1];
+      expect(contexto.descricao_planejamento).toBe(
+        'Ênfase em material concreto e jogos matemáticos',
+      );
+    });
+
+    it('contexto tem descricao_aula = null quando aula.descricao é null', async () => {
+      const aulaSemDescricao = { ...mockAulaCompleta, descricao: null };
+
+      prisma.aula.findUnique.mockResolvedValue(aulaSemDescricao as any);
+      promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
+      promptService.renderPrompt.mockResolvedValue('rendered');
+
+      await service.analisarAula(mockAulaId);
+
+      const contexto = promptService.renderPrompt.mock.calls[0][1];
+      expect(contexto.descricao_aula).toBeNull();
+    });
+
+    it('contexto tem descricao_planejamento = null quando planejamento.descricao é null', async () => {
+      const aulaComPlanjSemDesc = {
+        ...mockAulaCompleta,
+        planejamento: { ...mockAulaCompleta.planejamento, descricao: null },
+      };
+
+      prisma.aula.findUnique.mockResolvedValue(aulaComPlanjSemDesc as any);
+      promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
+      promptService.renderPrompt.mockResolvedValue('rendered');
+
+      await service.analisarAula(mockAulaId);
+
+      const contexto = promptService.renderPrompt.mock.calls[0][1];
+      expect(contexto.descricao_planejamento).toBeNull();
+    });
+
+    it('contexto tem descricao_planejamento = null quando planejamento é null', async () => {
+      const aulaSemPlanejamento = { ...mockAulaCompleta, planejamento: null };
+
+      prisma.aula.findUnique.mockResolvedValue(aulaSemPlanejamento as any);
+      promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
+      promptService.renderPrompt.mockResolvedValue('rendered');
+
+      await service.analisarAula(mockAulaId);
+
+      const contexto = promptService.renderPrompt.mock.calls[0][1];
+      expect(contexto.descricao_planejamento).toBeNull();
+    });
+
+    it('pipeline v5 executa sem erro quando ambas descrições são null (retrocompatibilidade)', async () => {
+      llmRouterService.generateWithFallback.mockClear(); // Reset call count from previous tests
+      const aulaSemDescricoes = {
+        ...mockAulaCompleta,
+        descricao: null,
+        planejamento: { ...mockAulaCompleta.planejamento, descricao: null },
+      };
+
+      prisma.aula.findUnique.mockResolvedValue(aulaSemDescricoes as any);
+      promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
+      promptService.renderPrompt.mockResolvedValue('rendered');
+
+      const result = await service.analisarAula(mockAulaId);
+      expect(result).toBeDefined();
+
+      const contexto = promptService.renderPrompt.mock.calls[0][1];
+      expect(contexto.descricao_aula).toBeNull();
+      expect(contexto.descricao_planejamento).toBeNull();
+
+      // Todos os 5 prompts devem ter sido executados
+      expect(llmRouterService.generateWithFallback).toHaveBeenCalledTimes(5);
+    });
+
+    it('descricao_aula e descricao_planejamento são incluídos em todos os 5 prompts do pipeline', async () => {
+      const aulaComAmbas = {
+        ...mockAulaCompleta,
+        descricao: 'Objetivo da aula: frações',
+        planejamento: {
+          ...mockAulaCompleta.planejamento,
+          descricao: 'Planejamento bimestral: números racionais',
+        },
+      };
+
+      prisma.aula.findUnique.mockResolvedValue(aulaComAmbas as any);
+      promptService.getActivePrompt.mockResolvedValue(mockPrompt as any);
+      promptService.renderPrompt.mockResolvedValue('rendered');
+
+      await service.analisarAula(mockAulaId);
+
+      // Verifica que todos os 5 renderPrompt calls têm as descrições no contexto
+      expect(promptService.renderPrompt).toHaveBeenCalledTimes(5);
+      for (let i = 0; i < 5; i++) {
+        const contexto = promptService.renderPrompt.mock.calls[i][1];
+        expect(contexto.descricao_aula).toBe('Objetivo da aula: frações');
+        expect(contexto.descricao_planejamento).toBe(
+          'Planejamento bimestral: números racionais',
+        );
+      }
+    });
+  });
+
+  /**
    * STORY 15.6: Validate v4.0.0 prompt seed files
    */
   describe('Story 15.6: Prompt Seed Files Validation', () => {
@@ -1053,14 +1197,28 @@ describe('AnaliseService', () => {
     ];
 
     it.each(promptNames)(
-      'should have v4.0.0 file with ativo=true for %s',
+      'should have v4.0.0 file with ativo=false for %s (superseded by v5.0.0 - Story 16.3)',
       (nome) => {
         const filePath = join(promptsDir, `${nome}-v4.0.0.json`);
         const content = JSON.parse(readFileSync(filePath, 'utf-8'));
 
         expect(content.nome).toBe(nome);
         expect(content.versao).toBe('v4.0.0');
+        expect(content.ativo).toBe(false);
+      },
+    );
+
+    it.each(promptNames)(
+      'should have v5.0.0 file with ativo=true for %s (Story 16.3)',
+      (nome) => {
+        const filePath = join(promptsDir, `${nome}-v5.0.0.json`);
+        const content = JSON.parse(readFileSync(filePath, 'utf-8'));
+
+        expect(content.nome).toBe(nome);
+        expect(content.versao).toBe('v5.0.0');
         expect(content.ativo).toBe(true);
+        expect(content.variaveis).toHaveProperty('descricao_planejamento');
+        expect(content.variaveis).toHaveProperty('descricao_aula');
       },
     );
 
